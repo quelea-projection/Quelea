@@ -19,13 +19,16 @@ package org.quelea.data.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
  * A PDF presentation that can be displayed.
  *
- * @author Arvid, based on PresentationDisplayable
+ * @author Arvid
  */
 public class PDFPresentation implements Pdf {
 
@@ -64,17 +67,23 @@ public class PDFPresentation implements Pdf {
     }
 
     /**
-     * Make the slides that go in this PDF, this is what takes time and
-     * should only be done once.
+     * Make the slides that go in this PDF, this is what takes time and should
+     * only be done once.
      *
      * @return all the slides.
      */
     private PdfSlide[] makeSlides() throws IOException {
-        PDDocument document = PDDocument.load(new File(file));
+        File pdf = new File(file);
+        PDDocument document = PDDocument.load(pdf.getAbsoluteFile());
+        Path f = Files.createTempDirectory(null);
+        f.toFile().deleteOnExit();
         ArrayList<PdfSlide> ret = new ArrayList<>();
-        for (int i = 0; i < document.getPages().getCount(); i++) {
-            ret.add(new PdfSlide(i + 1, file));
+        PDFRenderer pdfRenderer = new PDFRenderer(document);
+        int totalPages = document.getPages().getCount();
+        for (int i = 0; i < totalPages; i++) {
+            ret.add(new PdfSlide(i + 1, pdfRenderer));
         }
+        document.close();
         return ret.toArray(new PdfSlide[ret.size()]);
     }
 }

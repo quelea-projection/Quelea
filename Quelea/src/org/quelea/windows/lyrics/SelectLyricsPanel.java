@@ -151,6 +151,15 @@ public class SelectLyricsPanel extends AbstractPanel {
     }
 
     /**
+     * Get the length of the item on this panel.
+     * <p/>
+     * @return the length of the item on this panel.
+     */
+    public int getSlideCount() {
+        return lyricsList.getItems().size();
+    }
+
+    /**
      * Advances the current slide.
      * <p/>
      */
@@ -158,7 +167,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectNext();
         updateCanvas();
-        
+
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         boolean lastSongTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
@@ -175,20 +184,19 @@ public class SelectLyricsPanel extends AbstractPanel {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectPrevious();
         updateCanvas();
-        
+
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         //Check to see if first song first verse
-        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable() &&
-                (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
-        if ((start == end || qmp.getLivePanel().getLyricsPanel().getLyricsList().getItems().size() == 1) && 
-                QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
+        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable()
+                && (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
+        if ((start == end || qmp.getLivePanel().getLyricsPanel().getLyricsList().getItems().size() == 1)
+                && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
             //Assuming preview panel is one ahead, and should be one behind
             int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
-            if(qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
                 index -= 1;
-            }
-            else{
+            } else {
                 index -= 2;
             }
             if (index >= 0) {
@@ -196,7 +204,7 @@ public class SelectLyricsPanel extends AbstractPanel {
                 qmp.getPreviewPanel().selectLastLyric();
                 qmp.getPreviewPanel().goLive();
                 //qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
-                
+
             }
         }
     }

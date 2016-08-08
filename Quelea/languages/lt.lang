@@ -426,7 +426,7 @@ one.monitor.warning=Atrodo, kad turite prijungtą tik vieną ekraną. Jeigu naud
 easyslides.import.line1=Čia bus importuojamos giesmės iš EasySlides XML failo.
 off.button=Išjungta
 bible.search.title=Ieškoti Biblijoje
-cancel.button=Atšaukti
+cancel.button=Atsisakyti
 print.chords.export.question=Eksportuojant šias giesmes, įtraukti akordus?
 filefilters.description.xml.easyslide=XML Easyslides failai
 no.pdb.message=Dėl techninių priežasčių, prieš Quelea patikimai importuojant Easyworship duomenų bazes, turite atsisiųsti Paradox JDBC valdyklę\:\n\n1. Apsilankykite adresu http\://www.hxtt.com/download.jsp tuomet, norėdami tęsti, susikurkite nemokamą paskyrą.\n2. Atsisiųskite "DBF JDBC 4.1 Package for JDK1.7.X and JDK1.8.X" failą. Jo pavadinimas turėtų būti Paradox_JDBC41.jar.\n3. Nukopijuokite Paradox_JDBC41.jar į $1.\n\nIškilus problemoms, drąsiai klauskite diskusijų grupėje (http\://bit.ly/1mePoeh). Quelea vis dar bandys importuoti Easyworship duomenų bazę be šio failo, tačiau rezultatas gali būti nepatikimas.
@@ -598,3 +598,60 @@ presentation.options.heading=Pateiktys
 recordings.options.heading=Įrašai
 copy.song.db.default=Pagal numatymą kopijuoti giesmę į tvarkaraštį
 mp.button=Mission Praise
+pco.button=Planning Center Online
+pco.login.import.heading=Prisijungimas prie Planning Center Online
+pco.loginerror.title=Prisijungimo klaida
+pco.loginerror.warning=Prisijungti nepavyko, patikrinkite el. paštą bei
+slaptažodį ir bandykite vėl
+pco.import.heading=Planning Center Online
+password.text=Slaptažodis
+emailaddress.text=El. paštas
+login.text=Prisijungti
+freeworship.button=Freeworship
+import.all.button=Importuoti visas
+import.selection.button=Importuoti žymėjimą
+refresh.button=Įkelti iš naujo
+freeworship.import.line1=Tai importuos FreeWorship giesmes iš XML failų.
+download.path=Atsiuntimo kelias
+add.pdf.tooltip=Pridėti PDF
+importexport.options.heading=Importavimas/Eksportavimas
+preview.failed=Peržiūra nepavyko
+set.loop.manually.title=PowerPoint nerasta
+set.loop.manually.message=Pateiktis buvo užverta. Jeigu jūs norite su
+PowerPoint peržiūros programa naudoti programos Quelea ciklo funkciją,
+tuomet jums, kuriant pateiktį, reikės rankiniu būdu nustatyti, kad
+pateiktis būtų kartojama tol, kol ji bus sustabdyta.
+presentation.changed.message=Tam, kad įsigaliotų nauji pateikčių
+nustatymai, jums reikės iš naujo paleisti Quelea.
+presentation.changed.label=Pateikčių nustatymai pakeisti
+presentation.not.started.label=PowerPoint nebuvo paleista
+presentation.not.started.message=Deja, jūsų pateikties nepavyko paleisti
+su PowerPoint. Galbūt, failas yra pažeistas?
+pp.already.running.label=PowerPoint jau yra vykdoma
+pp.already.running.message=Buvo rastas kitas PowerPoint egzempliorius.
+Prašome, prieš programoje Quelea paleidžiant pateiktį, užverti visus
+PowerPoint programos egzempliorius, kad išvengtumėte duomenų praradimo.
+pp.path.label=Kelias iki PowerPoint programos
+use.pp.label=Pateiktims naudoti PowerPoint
+close.all.presentations.label=Užverkite visas pateiktis
+close.all.presentations.message=Prašome, prieš nuspaudžiant Gerai,
+užverti visus atvertus PowerPoint langus arba kitu atveju tai bus
+atlikta automatiškai, kad būtų išvengta signalų siuntimo į klaidingą langą.
+live.text.message=Bet koks žemiau parašytas tekstas, esant tuščiam
+ekranui, bus matomas mobilių giesmės žodžių naudotojams.\n\nNorėdami
+pradėti naujoje skaidrėje, naudokite tuščią eilutę. Jūs taip pat galite
+naudoti išvalymo mygtuką (arba CTRL + Return (Vald + Įved)), kad
+atstatytumėte abiejuose galuose. Daugiau nei 200 simbolių skaidrėje,
+naudotojui bus automatiškai sutrumpinami.
+live.text.title=Gyvas tekstas
+exit.live.text=Išeiti iš gyvo teksto
+clear.live.text=Išvalyti
+default.translation=Numatytasis
+select.language=Pasirinkite kalbą:
+send.live.text=Gyvas tekstas
+converting.to.mp3=Įrašas konvertuojamas į MP3
+verse.tooltip=Pridėti posmelio antraštę
+bridge.tooltip=Pridėti tiltelio antraštę
+prechorus.tooltip=Pridėti prieš-priegiesmio antraštę
+tag.tooltip=Pridėti žymės antraštę
+add.website=Pridėti svetainę

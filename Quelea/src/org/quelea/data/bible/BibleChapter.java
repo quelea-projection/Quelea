@@ -81,7 +81,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * <p/>
      * @param book the book this chapter is part of.
      */
-    void setBook(BibleBook book) {
+    public void setBook(BibleBook book) {
         this.book = book;
     }
 

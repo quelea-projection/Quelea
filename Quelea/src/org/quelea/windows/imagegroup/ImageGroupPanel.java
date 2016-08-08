@@ -221,6 +221,15 @@ public class ImageGroupPanel extends AbstractPanel {
     public int getIndex() {
         return imageGroupPreview.getSelectedIndex();
     }
+    
+    /**
+     * Get the length of the item on this panel.
+     * <p/>
+     * @return the length of the item on this panel.
+     */
+    public int getSlideCount() {
+        return imageGroupPreview.getSlidesCount();
+    }
 
     /**
      * Clear this panel (well, actually don't do anything because we can't clear
@@ -260,6 +269,10 @@ public class ImageGroupPanel extends AbstractPanel {
 
     public void selectLast() {
         imageGroupPreview.selectLast();
+    }
+    
+    public void selectFirst() {
+        imageGroupPreview.select(1, true);
     }
 
     public ImageGroupPreview getPresentationPreview() {

@@ -23,25 +23,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.bible.BibleChangeListener;
@@ -52,6 +42,17 @@ import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import netscape.javascript.JSObject;
 
 /**
  * The panel used to get bible verses.
@@ -63,11 +64,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     private final ComboBox<Bible> bibleSelector;
     private final ComboBox<BibleBook> bookSelector;
     private final TextField passageSelector;
-    private final TextArea preview;
+    private final WebView preview;
     private final Button addToSchedule;
     private final List<BibleVerse> verses;
     private boolean multi;
     private ObservableList<BibleBook> master;
+    private WebEngine webEngine;
+    private ChapterVerseParser cvp;
 
     /**
      * Create and populate a new library bible panel.
@@ -88,6 +91,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getChildren().add(bibleSelector);
         HBox chapterPanel = new HBox();
         chapterPanel.setSpacing(5.0);
+        preview = new WebView();
+        webEngine = preview.getEngine();
         if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
         } else {
@@ -113,9 +118,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             }
         });
         getChildren().add(chapterPanel);
-        preview = new TextArea();
-        preview.setEditable(false);
-        preview.setWrapText(true);
         BorderPane bottomPane = new BorderPane();
         VBox.setVgrow(bottomPane, Priority.SOMETIMES);
         bottomPane.setCenter(preview);
@@ -123,10 +125,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         addToSchedule.setOnAction((ActionEvent t) -> {
             BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
+            passageSelector.setText("");
         });
         addToSchedule.setDisable(true);
         chapterPanel.getChildren().add(addToSchedule);
-        //bottomPane.setBottom(addToSchedule);
         getChildren().add(bottomPane);
 
         addUpdateListeners();
@@ -195,6 +197,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         });
     }
 
+    public ChapterVerseParser getCVP() {
+        return cvp;
+    }
+
     // Should be on FX thread at all times
     private void refreshMaster() {
         master = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
@@ -240,15 +246,36 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      */
     private void update() {
         verses.clear();
-        String[] sections = passageSelector.getText().split("(;|,)");
+        String[] sections;
+        if (!passageSelector.getText().contains(":") && passageSelector.getText().contains("-")) {
+            String[] temp = passageSelector.getText().split("-");
+            StringBuilder sb = new StringBuilder("");
+            for (int i = Integer.valueOf(temp[0]); i <= Integer.valueOf(temp[1]); i++) {
+                sb.append(i).append(",");
+            }
+            sections = sb.toString().split(",");
+        } else {
+            sections = passageSelector.getText().split("(;|,)");
+        }
         ArrayList<BiblePassage> passages = new ArrayList<>();
         if (passageSelector.getText().isEmpty()) {
             getAddToSchedule().setDisable(true);
+            webEngine.loadContent("");
         }
         StringBuilder previewText = new StringBuilder();
         multi = (sections.length > 1);
+        previewText.append(getBibleViewHead());
+
+        // Setup JavaScript/Java bridge
+        webEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) -> {
+            if (newState == State.SUCCEEDED) {
+                JSObject window = (JSObject) webEngine.executeScript("window");
+                window.setMember("java", new JavaScriptBridge());
+            }
+        });
+
         for (String s : sections) {
-            ChapterVerseParser cvp = new ChapterVerseParser(s);
+            cvp = new ChapterVerseParser(s);
             BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
             if (book != null
                     && book.getChapter(cvp.getFromChapter()) != null
@@ -261,11 +288,47 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                     toVerse = cvp.getToVerse();
                 }
 
-                for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
-                    BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
+                previewText.append("<b><h3><span id=\"").append(cvp.getFromChapter() + 1).append("\">").append(cvp.getFromChapter() + 1).append("</span></h3></b>");
+                String oldText = passageSelector.getText();
+                for (BibleVerse verse : book.getChapter(cvp.getFromChapter()).getVerses()) {
                     if (verse != null) {
-                        previewText.append(verse.getText()).append(' ');
-                        verses.add(verse);
+                        // Scroll to selected verse
+                        if (!previewText.toString().contains("<body")) {
+
+                            String firstVerse = oldText.replaceAll("((\\d+)(:\\d+)?-?(\\d+)?(;|,))+((\\d+)(:\\d+)?)(-?\\d+)?", "$6");
+                            // Remove any non-numeric character in the end
+                            if (firstVerse.substring(firstVerse.length() - 1).matches("-|,|;")) {
+                                firstVerse = firstVerse.substring(0, firstVerse.length() - 1);
+                            }
+                            // Find the last number entered for passages separated with a hyphen
+                            String lastVerse = "";
+                            if (firstVerse.contains("-") && firstVerse.contains(":")) {
+                                lastVerse = firstVerse.substring(0, firstVerse.indexOf(":") + 1) + firstVerse.substring(firstVerse.indexOf("-") + 1);
+                                firstVerse = firstVerse.substring(0, firstVerse.indexOf("-"));
+                            }
+                            // Delete the last character if it is a colon
+                            if (firstVerse.length() > 1 && firstVerse.substring(firstVerse.length() - 1).contains(":")) {
+                                firstVerse = firstVerse.replaceAll(":", "");
+                            }
+
+                            // Scroll so that the most recent verse entered always is visible
+                            if (lastVerse.length() > 0) {
+                                previewText.append("    <body onload=\"scrollToBottom('").append(lastVerse).append("')\">");
+                            } else {
+                                previewText.append("    <body onload=\"scrollTo('").append(firstVerse).append("')\">");
+                            }
+                        }
+
+                        // Only add and mark the selected verses but load the others from the chapter as well
+                        String id = (cvp.getFromChapter() + 1) + ":" + verse.getNum();
+                        if ((verse.getNum() >= cvp.getFromVerse() && verse.getNum() <= toVerse) || cvp.getFromVerse() == 0) {
+                            verses.add(verse);
+                            previewText.append("<mark>");
+                            previewText.append("<span onclick=\"java.send('").append(verse.getNum()).append("')\" id=\"").append(id).append("\"><sup>").append(verse.getNum()).append("</sup>").append(' ').append(verse.getText()).append(' ').append("</span>");
+                            previewText.append("</mark>");
+                        } else {
+                            previewText.append("<span onclick=\"java.send('").append(verse.getNum()).append("')\" id=\"").append(id).append("\"><sup>").append(verse.getNum()).append("</sup>").append(' ').append(verse.getText()).append(' ').append("</span>");
+                        }
                     }
                 }
                 for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
@@ -286,14 +349,94 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
             } else {
                 getAddToSchedule().setDisable(true);
+                webEngine.loadContent("");
                 return;
             }
         }
-        preview.setText(previewText.toString());
         if (previewText.toString().trim().isEmpty()) {
             getAddToSchedule().setDisable(true);
         } else {
             getAddToSchedule().setDisable(false);
+        }
+
+        previewText.append("    </body>\n"
+                + "</html>");
+
+        webEngine.loadContent(previewText.toString());
+    }
+
+    private String getBibleViewHead() {
+        return "<!DOCTYPE html>\n"
+                + "<html>\n"
+                + "    <head>\n"
+                + "        <title>Bible Browser</title>\n"
+                + "        <meta charset=\"utf-8\">\n"
+                + "        <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n"
+                + "        <meta name=\"mobile-web-app-capable\" content=\"yes\">\n"
+                + "     <style>\n"
+                + "         mark {\n"
+                + "         background-color: #D7D7D7;\n"
+                + "         color: black;\n"
+                + "         }\n"
+                + "         h3 {\n"
+                + "             display: block;\n"
+                + "             font-size: 1.67em;\n"
+                + "             margin-top: 0.67em;\n"
+                + "             margin-bottom: 0.0em;\n"
+                + "             margin-left: 0;\n"
+                + "             margin-right: 0;\n"
+                + "         }"
+                + "     </style>\n"
+                + "     <script>\n"
+                + "     function scrollTo(eleID) {\n"
+                + "         var e = document.getElementById(eleID);\n"
+                + "         if (!!e && e.scrollIntoView) {\n"
+                + "             e.scrollIntoView();\n"
+                + "         }\n"
+                + "        }\n"
+                + "     function scrollToBottom(elementID) {\n"
+                + "         var el = document.getElementById(elementID);\n"
+                + "         if (!!el && el.scrollIntoView) {\n"
+                + "			el.scrollIntoView(false);\n"
+                + "         }\n"
+                + "     }\n"
+                + "     </script>\n"
+                + "    </head>\n";
+    }
+
+    /**
+     * Class to receive the clicked verses in the WebView
+     */
+    public class JavaScriptBridge {
+
+        public void send(String verse) {
+            String oldText = passageSelector.getText();
+            int verseNum = Integer.parseInt(verse);
+            String chapterNum;
+            if (!oldText.contains(":")) {
+                chapterNum = oldText;
+            } else {
+                chapterNum = oldText.substring(0, oldText.lastIndexOf(":"));
+            }
+            ChapterVerseParser cvp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel().getCVP();
+            if (cvp != null) {
+                final String chapter = chapterNum;
+                final int fromVerse = cvp.getFromVerse();
+                Platform.runLater(() -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(chapter).append(":");
+                    if (fromVerse == 0) {
+                        sb.append(verseNum);
+                    } else if (verseNum > cvp.getToVerse()) {
+                        sb.append(fromVerse).append("-").append(verseNum);
+                    } else {
+                        sb.append(verseNum).append("-").append(cvp.getToVerse());
+                    }
+                    passageSelector.setText(sb.toString());
+                });
+
+            }
+
         }
     }
 
@@ -332,7 +475,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      * <p/>
      * @return the preview text area.
      */
-    public TextArea getPreview() {
+    public WebView getPreview() {
         return preview;
     }
 

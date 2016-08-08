@@ -97,6 +97,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
         BibleVerse ret = new BibleVerse();
         if (node.getAttributes().getNamedItem("cnumber") != null) {
             ret.setChapterNum(Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getTextContent()));
+            ret.setChapter(BibleChapter.parseXML(node, ret.getChapterNum()));
         } 
         if (node.getAttributes().getNamedItem("vnumber") == null) {
             ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
