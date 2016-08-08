@@ -22,6 +22,9 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
+        
+        
+        
         if(getCanvas().isStageView()) {
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
@@ -35,6 +38,10 @@ public class MultimediaDrawer extends DisplayableDrawer {
                 VLCWindow.INSTANCE.show();
             }
         }
+    }
+    
+    public void setVisible(boolean visible) {
+        VLCWindow.INSTANCE.setWindowVisible(visible);
     }
 
     public void setPlayVideo(boolean playVideo) {
