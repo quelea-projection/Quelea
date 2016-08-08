@@ -152,34 +152,32 @@ public class PresentationPanel extends AbstractPanel {
                                 if (containerPanel instanceof LivePanel) {
                                     LivePanel livePanel = ((LivePanel) containerPanel);
                                     if (livePanel.isLoopSelected()) {
-                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable || livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
-                                            if (livePanel.getDisplayable() instanceof PdfDisplayable) {
-                                                presentationPreview.advanceSlide(true);
-                                                PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
-                                                pdfPreview.advanceSlide(true);
-                                            } else if (livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
-                                                presentationPreview.advanceSlide(true);
-                                                ImageGroupPreview imageGroupPreview = livePanel.getImageGroupPanel().getPresentationPreview();
-                                                imageGroupPreview.advanceSlide(true);
-                                            }
-                                        } else {
+                                        if (QueleaProperties.get().getUsePP() && livePanel.getDisplayable() instanceof PresentationDisplayable) {
                                             String result = PowerPointHandler.gotoNext();
                                             if (result.contains("not running")) {
                                                 Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
                                                 livePanel.stopLoop();
                                             }
+                                        } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
+                                            presentationPreview.advanceSlide(true);
+                                        } else {
+                                            if (livePanel.getIndex() != livePanel.getLenght()) {
+                                                livePanel.advance();
+                                            } else {
+                                                livePanel.selectFirstLyric();
+                                            }
                                         }
-                                    }
-                                    LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                                    if (lp.getDisplayable() instanceof PresentationDisplayable) {
-                                        String result = PowerPointHandler.getCurrentSlide();
-                                        if (!result.contains("not running") && !result.equals("")) {
-                                            int i = Integer.parseInt(result);
-                                            presentationPreview.select(i, false);
+                                        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+                                        if (lp.getDisplayable() instanceof PresentationDisplayable) {
+                                            String result = PowerPointHandler.getCurrentSlide();
+                                            if (!result.contains("not running") && !result.equals("")) {
+                                                int i = Integer.parseInt(result);
+                                                presentationPreview.select(i, false);
+                                            }
                                         }
-                                    }
-                                    if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                                        lp.setBlacked(false);
+                                        if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
+                                            lp.setBlacked(false);
+                                        }
                                     }
                                 }
                             }
@@ -188,69 +186,73 @@ public class PresentationPanel extends AbstractPanel {
                 new KeyFrame(Duration.seconds(10))
         );
         loopTimeline.setCycleCount(Animation.INDEFINITE);
-        loopTimeline.play();
-        QueleaApp.get().doOnLoad(new Runnable() {
 
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLoopDurationTextField().textProperty().addListener(new ChangeListener<String>() {
+        loopTimeline.play();
+
+        QueleaApp.get()
+                .doOnLoad(new Runnable() {
 
                     @Override
-                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        int newTime;
-                        try {
-                            newTime = Integer.parseInt(t1);
-                        } catch (NumberFormatException ex) {
-                            return;
-                        }
-                        loopTimeline.stop();
-                        loopTimeline = new Timeline(
-                                new KeyFrame(Duration.seconds(0),
-                                        new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent actionEvent) {
-                                                if (containerPanel instanceof LivePanel) {
-                                                    LivePanel livePanel = ((LivePanel) containerPanel);
-                                                    if (livePanel.isLoopSelected()) {
-                                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable || livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
-                                                            if (livePanel.getDisplayable() instanceof PdfDisplayable) {
-                                                                presentationPreview.advanceSlide(true);
-                                                                PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
-                                                                pdfPreview.advanceSlide(true);
-                                                            } else if (livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
-                                                                presentationPreview.advanceSlide(true);
-                                                                ImageGroupPreview imageGroupPreview = livePanel.getImageGroupPanel().getPresentationPreview();
-                                                                imageGroupPreview.advanceSlide(true);
-                                                            }
-                                                        } else {
-                                                            String result = PowerPointHandler.gotoNext();
-                                                            if (result.contains("not running")) {
-                                                                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
+                    public void run() {
+                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLoopDurationTextField().textProperty().addListener(new ChangeListener<String>() {
+
+                            @Override
+                            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                                int newTime;
+                                try {
+                                    newTime = Integer.parseInt(t1);
+                                } catch (NumberFormatException ex) {
+                                    return;
+                                }
+                                loopTimeline.stop();
+                                loopTimeline = new Timeline(
+                                        new KeyFrame(Duration.seconds(0),
+                                                new EventHandler<ActionEvent>() {
+                                                    @Override
+                                                    public void handle(ActionEvent actionEvent) {
+                                                        if (containerPanel instanceof LivePanel) {
+                                                            LivePanel livePanel = ((LivePanel) containerPanel);
+                                                            if (livePanel.isLoopSelected()) {
+                                                                if (QueleaProperties.get().getUsePP() && livePanel.getDisplayable() instanceof PresentationDisplayable) {
+                                                                    String result = PowerPointHandler.gotoNext();
+                                                                    if (result.contains("not running")) {
+                                                                        Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
+                                                                        livePanel.stopLoop();
+                                                                    }
+                                                                } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
+                                                                    presentationPreview.advanceSlide(true);
+                                                                } else {
+                                                                    if (livePanel.getIndex() != livePanel.getLenght()) {
+                                                                        livePanel.advance();
+                                                                    } else {
+                                                                        livePanel.selectFirstLyric();
+                                                                    }
+                                                                }
+                                                                LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+                                                                if (lp.getDisplayable() instanceof PresentationDisplayable) {
+                                                                    String result = PowerPointHandler.getCurrentSlide();
+                                                                    if (!result.contains("not running") && !result.equals("")) {
+                                                                        int i = Integer.parseInt(result);
+                                                                        presentationPreview.select(i, false);
+                                                                    }
+                                                                }
+                                                                if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
+                                                                    lp.setBlacked(false);
+                                                                }
                                                             }
                                                         }
                                                     }
-
-                                                    String result = PowerPointHandler.getCurrentSlide();
-                                                    if (!result.contains("not running") && !result.equals("")) {
-                                                        int i = Integer.parseInt(result);
-                                                        presentationPreview.select(i, false);
-                                                    }
-                                                    LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                                                    if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                                                        lp.setBlacked(false);
-                                                    }
                                                 }
-                                            }
-                                        }
-                                ),
-                                new KeyFrame(Duration.seconds(newTime))
-                        );
-                        loopTimeline.setCycleCount(Animation.INDEFINITE);
-                        loopTimeline.play();
+                                        ),
+                                        new KeyFrame(Duration.seconds(newTime))
+                                );
+                                loopTimeline.setCycleCount(Animation.INDEFINITE);
+                                loopTimeline.play();
+                            }
+                        });
                     }
-                });
-            }
-        });
+                }
+                );
     }
 
     private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {
@@ -331,6 +333,15 @@ public class PresentationPanel extends AbstractPanel {
      */
     public int getIndex() {
         return presentationPreview.getSelectedIndex();
+    }
+
+    /**
+     * Get the length of the item on this panel.
+     * <p/>
+     * @return the length of the item on this panel.
+     */
+    public int getSlideCount() {
+        return presentationPreview.getSlideCount();
     }
 
     /**

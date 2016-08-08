@@ -42,7 +42,7 @@ public class SlideThumbnail extends BorderPane {
     public SlideThumbnail(PdfSlide slide, int num) {
         this.num = num;
         this.slide = slide;
-        image = new ImageView(slide.getImage());
+        image = new ImageView(slide.getThumbnail());
         image.setFitWidth(QueleaProperties.get().getThumbnailSize());
         image.setPreserveRatio(true);
         image.setSmooth(true);
@@ -84,3 +84,4 @@ public class SlideThumbnail extends BorderPane {
         return slide;
     }
 }
+

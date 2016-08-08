@@ -144,9 +144,13 @@ public class PresentationPreview extends ScrollPane {
             thumbnail.setActive(focusedProperty().get());
         }
     }
-
+    
     public int getSelectedIndex() {
         return selectedIndex;
+    }
+
+    public int getSlideCount() {
+        return slides.length;
     }
 
     public PresentationSlide getSelectedSlide() {

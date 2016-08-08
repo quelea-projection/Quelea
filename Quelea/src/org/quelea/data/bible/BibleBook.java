@@ -83,7 +83,7 @@ public final class BibleBook implements BibleInterface, Serializable {
      *
      * @param bible the bible this book is part of.
      */
-    void setBible(Bible bible) {
+    public void setBible(Bible bible) {
         this.bible = bible;
     }
 

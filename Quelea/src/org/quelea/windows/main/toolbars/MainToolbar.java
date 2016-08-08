@@ -182,15 +182,15 @@ public class MainToolbar extends ToolBar {
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
         add.getItems().add(addPresentationButton);
         
-        MenuItem addVideoButton;
+        MenuItem addMultimediaoButton;
         if (Utils.isMac()) {
-            addVideoButton = getMenuItemFromImage("file:icons/video file big.png");
+            addMultimediaoButton = getMenuItemFromImage("file:icons/multimedia big.png");
         } else {
-            addVideoButton = getMenuItemFromImage("file:icons/video file.png");
+            addMultimediaoButton = getMenuItemFromImage("file:icons/multimedia.png");
         }
-        addVideoButton.setText(LabelGrabber.INSTANCE.getLabel("add.video.tooltip"));
-        addVideoButton.setOnAction(new AddVideoActionHandler());
-        add.getItems().add(addVideoButton);
+        addMultimediaoButton.setText(LabelGrabber.INSTANCE.getLabel("add.multimedia.tooltip"));
+        addMultimediaoButton.setOnAction(new AddVideoActionHandler());
+        add.getItems().add(addMultimediaoButton);
         
         MenuItem addYoutubeButton;
         if (Utils.isMac()) {

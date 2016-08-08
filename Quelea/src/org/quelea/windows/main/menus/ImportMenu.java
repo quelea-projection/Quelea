@@ -31,7 +31,6 @@ import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.EpicWorshipImportDialog;
 import org.quelea.services.importexport.FreeWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
-import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.MediaShoutImportDialog;
 import org.quelea.services.importexport.MissionPraiseImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
@@ -70,7 +69,6 @@ public class ImportMenu extends Menu {
     private final ImportDialog openLyricsImportDialog;
     private final ImportDialog zionWorxImportDialog;
     private final ImportDialog sourceImportDialog;
-    private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
     private final ImportDialog freeWorshipImportDialog;
@@ -107,7 +105,6 @@ public class ImportMenu extends Menu {
     private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
     private final MenuItem pcoItem;
-    private final Menu kingswayItem;
 
     /**
      * Create the import menu.
@@ -123,7 +120,6 @@ public class ImportMenu extends Menu {
         zionWorxImportDialog = new ZionWorxImportDialog();
         sImportDialog = new SurvivorImportDialog();
         sourceImportDialog = new SourceImportDialog();
-        kingswayImportDialog = new KingswayImportDialog(null);
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
         freeWorshipImportDialog = new FreeWorshipImportDialog();
@@ -250,30 +246,6 @@ public class ImportMenu extends Menu {
             sofImportDialog.show();
         });
 
-        MenuItem kingswayAll, kingswayRange, kingswayOne;
-
-        kingswayItem = new Menu(LabelGrabber.INSTANCE.getLabel("kingsway.button"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayAll.setOnAction((ActionEvent t) -> {
-            kingswayImportDialog.setAll(true);
-            kingswayImportDialog.show();
-        });
-
-        kingswayRange = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.range"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayRange.setOnAction((ActionEvent t) -> {
-            kingswayImportDialog.setRange(true);
-            kingswayImportDialog.show();
-        });
-
-        kingswayOne = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayOne.setOnAction((ActionEvent t) -> {
-            kingswayImportDialog.setAll(false);
-            kingswayImportDialog.setRange(false);
-            kingswayImportDialog.show();
-        });
-
-        kingswayItem.getItems().addAll(kingswayAll, kingswayRange, kingswayOne);
-
         plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
         plainTextItem.setOnAction((ActionEvent t) -> {
             plainTextImportDialog.show();
@@ -283,7 +255,6 @@ public class ImportMenu extends Menu {
         getItems().add(easyWorshipItem);
         getItems().add(epicWorshipItem);
         getItems().add(freeWorshipItem);
-        getItems().add(kingswayItem);
         getItems().add(mediaShoutItem);
         getItems().add(mpItem);
         getItems().add(olpItem);
