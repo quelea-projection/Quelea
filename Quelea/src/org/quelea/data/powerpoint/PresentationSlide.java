@@ -62,7 +62,7 @@ public class PresentationSlide {
             int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
             scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
             scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-//            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
+            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
         }
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
