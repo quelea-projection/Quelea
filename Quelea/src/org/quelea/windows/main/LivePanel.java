@@ -48,6 +48,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.BiblePassage;
@@ -63,7 +64,6 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.presentation.PowerPointHandler;
@@ -89,6 +89,7 @@ public class LivePanel extends LivePreviewPanel {
     private Displayable oldD;
     private WritableImage webPreviewImage;
     private ScheduledExecutorService updateWebPreview;
+    private Dialog focusDialog;
 
     /**
      * Create a new live lyrics panel.
@@ -96,7 +97,7 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         getPresentationPanel().setLive();
         getPdfPanel().setLive();
-         getVideoPanel().setLive();
+        getVideoPanel().setLive();
         getImageGroupPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
@@ -389,34 +390,16 @@ public class LivePanel extends LivePreviewPanel {
             }
             if (d instanceof PresentationDisplayable) {
                 if (QueleaProperties.get().getUsePP() && (oldD == null || !oldD.equals(d))) {
-                    String filePath;
-                    filePath = "\"" + d.getResources().toString().replace("[", "").replace("]", "") + "\"";
-                    String openPP = PowerPointHandler.openPresentation(filePath);
-                    if (openPP.contains("not started")) {
-                        Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
-                        LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
-                    } else if (openPP.contains("running")) {
-                        if (!(oldD instanceof PresentationDisplayable)) {
-                            Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("close.all.presentations.label"), LabelGrabber.INSTANCE.getLabel("close.all.presentations.message"));
-                        }
-                        PowerPointHandler.closePresentation();
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(LivePanel.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        openPP = PowerPointHandler.openPresentation(filePath);
-                        if (openPP.contains("not started")) {
-                            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
-                            LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
-                        }
-                    }
+                    startPowerPoint(d);
                 }
             }
         } else {
             header.getItems().remove(loopBox);
             if (oldD != null && oldD instanceof PresentationDisplayable) {
                 PowerPointHandler.closePresentation();
+            }
+            if (focusDialog != null) {
+                focusDialog.close();
             }
         }
         if (d == null) {
@@ -428,7 +411,7 @@ public class LivePanel extends LivePreviewPanel {
                 clear.setSelected(false);
             }
         }
-         if (d instanceof WebDisplayable) {
+        if (d instanceof WebDisplayable) {
             updateWebPreview = Executors.newSingleThreadScheduledExecutor();
             updateWebPreview.scheduleAtFixedRate(new Runnable() {
                 @Override
@@ -604,5 +587,41 @@ public class LivePanel extends LivePreviewPanel {
         }
     }
 
+    /**
+     * Start native PowerPoint service.
+     * @param d a Presentation displayable to show in PowerPoint
+     */
+    private void startPowerPoint(Displayable d) {
+        String filePath;
+        filePath = "\"" + d.getResources().toString().replace("[", "").replace("]", "") + "\"";
+        String openPP = PowerPointHandler.openPresentation(filePath);
+        if (openPP.contains("not started")) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
+            LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
+        } else if (openPP.contains("running")) {
+            if (!(oldD instanceof PresentationDisplayable)) {
+                Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("close.all.presentations.label"), LabelGrabber.INSTANCE.getLabel("close.all.presentations.message"));
+            }
+            PowerPointHandler.closePresentation();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(LivePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            openPP = PowerPointHandler.openPresentation(filePath);
+            if (openPP.contains("not started")) {
+                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
+                LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
+            }
+        }
+        if (!openPP.contains("not started")) {
+            focusDialog = Dialog.buildFocusSwitcher().build();
+            focusDialog.setAlwaysOnTop(true);
+            focusDialog.initModality(Modality.NONE);
+            focusDialog.setResizable(false);
+            focusDialog.setY(20);
+            focusDialog.setX(20);
+            focusDialog.show();
+        }
+    }
 }
-

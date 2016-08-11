@@ -649,3 +649,7 @@ bridge.tooltip=Add bridge title
 prechorus.tooltip=Add pre-chorus title
 tag.tooltip=Add tag title
 add.website=Add website
+focus.switcher.title=Quelea Focus Switcher
+focus.switcher.message=Toogle window focus here if needed during the presentation.
+focus.pp=Shift focus to PowerPoint
+focus.quelea=Shift focus to Quelea
