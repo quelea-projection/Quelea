@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
  *
@@ -122,7 +123,7 @@ public class Dialog extends Stage {
         }
 
         public Builder setOwner(Window owner) {
-            if(owner != null) {
+            if (owner != null) {
                 stage.initOwner(owner);
                 stage.borderPanel.setMaxWidth(owner.getWidth());
                 stage.borderPanel.setMaxHeight(owner.getHeight());
@@ -144,27 +145,27 @@ public class Dialog extends Stage {
             stage.setWidth(
                     stage.icon.getImage().getWidth()
                     + Math.max(
-                    stage.messageLabel.getWidth(),
-                    (stage.stacktraceVisible
-                    ? Math.max(
-                    stage.stacktraceButtonsPanel.getWidth(),
-                    stage.stackTraceLabel.getWidth())
-                    : stage.stacktraceButtonsPanel.getWidth()))
+                            stage.messageLabel.getWidth(),
+                            (stage.stacktraceVisible
+                                    ? Math.max(
+                                            stage.stacktraceButtonsPanel.getWidth(),
+                                            stage.stackTraceLabel.getWidth())
+                                    : stage.stacktraceButtonsPanel.getWidth()))
                     + 5 * MARGIN);
 
             stage.setHeight(
                     Math.max(
-                    stage.icon.getImage().getHeight(),
-                    stage.messageLabel.getHeight()
-                    + stage.stacktraceButtonsPanel.getHeight()
-                    + (stage.stacktraceVisible
-                    ? Math.min(
-                    stage.stackTraceLabel.getHeight(),
-                    STACKTRACE_LABEL_MAXHEIGHT)
-                    : 0))
+                            stage.icon.getImage().getHeight(),
+                            stage.messageLabel.getHeight()
+                            + stage.stacktraceButtonsPanel.getHeight()
+                            + (stage.stacktraceVisible
+                                    ? Math.min(
+                                            stage.stackTraceLabel.getHeight(),
+                                            STACKTRACE_LABEL_MAXHEIGHT)
+                                    : 0))
                     + stage.buttonsPanel.getHeight()
                     + 3 * MARGIN);
-            if(stage.stacktraceVisible) {
+            if (stage.stacktraceVisible) {
                 stage.scrollPane.setPrefHeight(
                         stage.getHeight()
                         - stage.messageLabel.getHeight()
@@ -216,13 +217,12 @@ public class Dialog extends Stage {
                 @Override
                 public void handle(ActionEvent t) {
                     stage.stacktraceVisible = !stage.stacktraceVisible;
-                    if(stage.stacktraceVisible) {
+                    if (stage.stacktraceVisible) {
                         stage.messageBox.getChildren().add(stage.scrollPane);
                         stage.stackTraceLabel.setText(stage.stacktrace);
 
                         alignScrollPane();
-                    }
-                    else {
+                    } else {
                         stage.messageBox.getChildren().remove(stage.scrollPane);
 
                         //alignScrollPane();
@@ -248,7 +248,7 @@ public class Dialog extends Stage {
             stage.showingProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if(newValue) {
+                    if (newValue) {
                         stage.originalWidth = stage.getWidth();
                         stage.originalHeight = stage.getHeight();
                     }
@@ -308,13 +308,30 @@ public class Dialog extends Stage {
                 @Override
                 public void handle(ActionEvent t) {
                     stage.close();
-                    if(actionHandler != null) {
+                    if (actionHandler != null) {
                         actionHandler.handle(t);
                     }
                 }
             });
 
             stage.buttonsPanel.getChildren().add(confirmationButton);
+            return this;
+        }
+        
+        
+        protected Builder addApplyButton(String buttonCaption, final EventHandler<ActionEvent> actionHandler) {
+            Button applyButton = new Button(buttonCaption);
+            applyButton.setMinWidth(BUTTON_WIDTH);
+            applyButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    if (actionHandler != null) {
+                        actionHandler.handle(t);
+                    }
+                }
+            });
+
+            stage.buttonsPanel.getChildren().add(applyButton);
             return this;
         }
 
@@ -347,7 +364,7 @@ public class Dialog extends Stage {
         public Builder addCancelButton(EventHandler<ActionEvent> actionHandler) {
             return addConfirmationButton(LabelGrabber.INSTANCE.getLabel("cancel.text"), actionHandler);
         }
-        
+
         public Builder addLabelledButton(String label, EventHandler<ActionEvent> actionHandler) {
             return addConfirmationButton(label, actionHandler);
         }
@@ -358,7 +375,7 @@ public class Dialog extends Stage {
          * @return dialog instance
          */
         public Dialog build() {
-            if(stage.buttonsPanel.getChildren().size() == 0) {
+            if (stage.buttonsPanel.getChildren().size() == 0) {
                 throw new RuntimeException("Add one dialog button at least");
             }
 
@@ -541,5 +558,23 @@ public class Dialog extends Stage {
      */
     public static Builder buildConfirmation(String title, String message) {
         return buildConfirmation(title, message, null);
+    }
+
+    /**
+     * Build focus switcher
+     * <p/>
+     * @return
+     */
+    public static Builder buildFocusSwitcher() {
+        return new Builder()
+                .create()
+                .setTitle(LabelGrabber.INSTANCE.getLabel("focus.switcher.title"))
+                .setMessage(LabelGrabber.INSTANCE.getLabel("focus.switcher.message"))
+                .addApplyButton(LabelGrabber.INSTANCE.getLabel("focus.quelea"), (ActionEvent event) -> {
+                    PowerPointHandler.focusQuelea();
+                })
+                .addApplyButton(LabelGrabber.INSTANCE.getLabel("focus.pp"), (ActionEvent event) -> {
+                    PowerPointHandler.focusPowerPoint();
+                });
     }
 }
