@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Class to send OS-native signals to control a PowerPoint presentation
@@ -70,7 +71,7 @@ public class PowerPointHandler {
                 } else {
                     ret = loadAppleScript(getAppleScript("open").replace("filepath", path));
                 }
-                returnFocusToQuelea();
+//                returnFocusToQuelea();
                 return ret;
             } else if (Utils.isWindows() && new File(ppPath).exists()) {
                 String ret = "";
@@ -79,6 +80,7 @@ public class PowerPointHandler {
                 } else {
                     ret = sendVBSSignal(getVBScriptPath("openPresentation.vbs") + " " + path);
                     returnFocusToQuelea();
+                    focusPowerPoint();
                     return ret;
                 }
             }
@@ -122,6 +124,7 @@ public class PowerPointHandler {
                 ret = pptViewNext();
             } else {
                 ret = sendVBSSignal(getVBScriptPath("gotoNext.vbs"));
+                focusPowerPoint();
             }
         }
         return ret;
@@ -141,6 +144,7 @@ public class PowerPointHandler {
                 ret = pptViewPrevious();
             } else {
                 ret = sendVBSSignal(getVBScriptPath("gotoPrevious.vbs"));
+                focusPowerPoint();
             }
         }
         return ret;
@@ -156,12 +160,13 @@ public class PowerPointHandler {
         String ret = "";
         if (Utils.isMac()) {
             ret = loadAppleScript(getAppleScript("gotoSlide").replace("{0}", String.valueOf(slideNumber))); // Is done with key event signals as it doesn't seem to be possible to do with AppleScript
-            returnFocusToQuelea();
+//            returnFocusToQuelea();
         } else if (Utils.isWindows()) {
             if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
                 pptViewGoToSlide(slideNumber);
             } else {
                 ret = sendVBSSignal(getVBScriptPath("gotoSlide.vbs") + " " + slideNumber);
+                focusPowerPoint();
             }
         }
         return ret;
@@ -261,7 +266,7 @@ public class PowerPointHandler {
         String ret = "";
         if (Utils.isMac()) {
             ret = loadAppleScript(getAppleScript("black")); // Is done with key event signals as it doesn't seem to be possible to set slide state with AppleScript
-            returnFocusToQuelea();
+//            returnFocusToQuelea();
         } else if (Utils.isWindows()) {
             if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
                 return pptViewBlack();
@@ -317,6 +322,32 @@ public class PowerPointHandler {
                 }
                 ret = sendVBSSignal(getVBScriptPath("exportToPDF.vbs") + " " + path + " \"" + mainFolder.getAbsolutePath() + "\\" + title + ".pdf\"");
             }
+        }
+        return ret;
+    }
+
+    /**
+     * Move focus to the Quelea main window.
+     */
+    public static void focusQuelea() {
+        QueleaApp.get().getMainWindow().toFront();
+    }
+
+    /**
+     * Move focus to the PowerPoint window.
+     *
+     * @return Message whether the command was successful
+     */
+    public static String focusPowerPoint() {
+        String ret = "";
+        if (Utils.isWindows()) {
+            if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
+                ret = focusPPTView();
+            } else {
+                ret = sendVBSSignal(getVBScriptPath("focus.vbs"));
+            }
+        } else {
+            ret = loadAppleScript(getAppleScript("focus"));
         }
         return ret;
     }
@@ -569,6 +600,30 @@ public class PowerPointHandler {
      */
     private static String sendPPTViewSignals(int keyEvent) {
         // Set focus to PowerPoint presentation and send key signals
+        String ret;
+        if (focusPowerPoint().contains("successfully")) {
+            Robot robot;
+            try {
+                robot = new Robot();
+                robot.keyPress(keyEvent);
+                robot.keyRelease(keyEvent);
+            } catch (AWTException e) {
+                LOGGER.log(Level.INFO, "Failed sendng key event to PowerPoint Viewer");
+            }
+            returnFocusToQuelea();
+            ret = "Signal sending was successful";
+        } else {
+            ret = "PowerPoint Viewer is not running";
+        }
+        return ret;
+    }
+
+    /**
+     * Manually focus the PowerPoint Viewer window. Shift focus to PowerPoint
+     * Viewer to move that window to the top or resume playback.
+     */
+    private static String focusPPTView() {
+        // Set focus to PowerPoint Viewer
         HWND hwnd = User32.INSTANCE.FindWindow(null,
                 title); // window title
         String ret = "";
@@ -579,15 +634,7 @@ public class PowerPointHandler {
         } else {
             User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
             User32.INSTANCE.SetForegroundWindow(hwnd); // bring to front
-            Robot robot;
-            try {
-                robot = new Robot();
-                robot.keyPress(keyEvent);
-                robot.keyRelease(keyEvent);
-            } catch (AWTException e) {
-                LOGGER.log(Level.INFO, "Failed sendng key event to PowerPoint Viewer");
-            }
-            returnFocusToQuelea();
+            ret = "Successfully focued PPTView";
         }
         return ret;
     }
@@ -767,6 +814,14 @@ public class PowerPointHandler {
                         + "     end try\n"
                         + "	run slide show theSlideShowSet\n"
                         + "end tell\n"
+                        + "end if";
+            case "focus":
+                return "if application \"Microsoft PowerPoint\" is running then\n"
+                        + "  tell application \"Microsoft PowerPoint\"\n"
+                        + "	activate\n"
+                        + "end tell\n"
+                        + "else\n"
+                        + "    return \"Not running\"\n"
                         + "end if";
             default:
                 return null;
