@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
@@ -63,22 +61,20 @@ public class RecordingsHandler {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private Dialog noDevicesDialog;
-    private boolean running;
     private File wavFile;
     private final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
-    private String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
+    private final String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
     private final AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
+    private AudioInputStream ais;
     private TargetDataLine targetLine; // the line from which audio data is captured
     private AudioFormat format;
-    private long startTime;
-    private Thread captureThread;
-    private ByteArrayOutputStream outStream;
     //Sound level variables
-    private float level;
-    private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
-    private final static float MAX_8_BITS_UNSIGNED = 0xff;
-    private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
-    private final static float MAX_16_BITS_UNSIGNED = 0xffff;
+//    private Thread captureThread;
+//    private float level;
+//    private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
+//    private final static float MAX_8_BITS_UNSIGNED = 0xff;
+//    private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
+//    private final static float MAX_16_BITS_UNSIGNED = 0xffff;
     private boolean isRecording;
     private boolean finishedSaving;
     private StatusPanel statusPanel;
@@ -108,6 +104,7 @@ public class RecordingsHandler {
         try {
             isRecording = true;
             String fileName = timeStamp;
+            wavFile = new File(path, fileName + ".wav");
             Platform.runLater(() -> {
                 textField.setText(fileName);
             });
@@ -120,7 +117,7 @@ public class RecordingsHandler {
                 targetLine = (TargetDataLine) AudioSystem.getLine(info);
                 targetLine.open(format);
                 targetLine.start();   // start capturing
-                startTime = System.currentTimeMillis();
+                ais = new AudioInputStream(targetLine);
                 startBuffering(pb, tb);
             } else {
                 LOGGER.log(Level.INFO, "No recording device found");
@@ -159,30 +156,21 @@ public class RecordingsHandler {
             }
             targetLine.stop();
             targetLine.close();
-            running = false;
-
-            byte[] audioData = outStream.toByteArray();
-            ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
-            AudioInputStream audioInputStream = new AudioInputStream(bais, format,
-                    audioData.length / format.getFrameSize());
-
-            wavFile = new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav");
-
             try {
-                AudioSystem.write(audioInputStream, fileType, wavFile);
-                audioInputStream.close();
-                outStream.close();
+                ais.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Error writing to wav", ex);
+                Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+            File newName = new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav");
+            wavFile.renameTo(newName);
 
             // Convert to MP3 if setting is checked
             if (QueleaProperties.get().getConvertRecordings()) {
                 if (!Utils.isMac()) {
-                    String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + wavFile.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
-                    new RecordingEncoder(wavFile.getAbsolutePath(), options).run();
+                    String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + newName.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
+                    new RecordingEncoder(newName.getAbsolutePath(), options).run();
                 } else {
-                    convertOSX(wavFile.getAbsolutePath());
+                    convertOSX(newName.getAbsolutePath());
                 }
             }
 
@@ -200,127 +188,111 @@ public class RecordingsHandler {
      * @param tb ToggleButton to display time
      */
     private void startBuffering(ProgressBar pb, ToggleButton tb) {
-        Runnable runner = new Runnable() {
-            int bufferSize = 10000;
-            byte buffer[] = new byte[bufferSize];
-
-            @Override
+        new Thread() {
             public void run() {
-                outStream = new ByteArrayOutputStream();
-                running = true;
-                while (running) {
-                    int count
-                            = targetLine.read(buffer, 0, buffer.length);
-                    if (count > 0) {
-                        outStream.write(buffer, 0, count);
-                    }
-                    calculateLevel(buffer, 0, 0);
-                    Platform.runLater(() -> {
-                        pb.setProgress(level);
-                    });
-                    long elapsedTimeMillis;
-                    elapsedTimeMillis = System.currentTimeMillis() - startTime;
-                    setTime(elapsedTimeMillis, tb);
-
-                    // Change the color of the ProgressBar depending on level
-                    // Proper limits should be checked
-                    Platform.runLater(() -> {
-                        if (level > 0.9f) {
-                            pb.setStyle("-fx-accent: red;");
-                        } else if (level > 0.7) {
-                            pb.setStyle("-fx-accent: orange;");
-                        } else {
-                            pb.setStyle("-fx-accent: green;");
-                        }
-                    });
-
+                try {
+                    AudioSystem.write(ais, fileType, wavFile);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error writing to wav", ex);
                 }
-                targetLine.stop();
-                Platform.runLater(() -> {
-                    tb.setText("");
-                });
             }
-
-        };
-        captureThread = new Thread(runner);
-        captureThread.start();
-    }
-
-    /**
-     * Method to calculate input level.
-     *
-     * @param buffer
-     * @param readPoint
-     * @param leftOver
-     */
-    private void calculateLevel(byte[] buffer,
-            int readPoint,
-            int leftOver) {
-        int max = 0;
-        boolean use16Bit = (format.getSampleSizeInBits() == 16);
-        boolean signed = (format.getEncoding()
-                == AudioFormat.Encoding.PCM_SIGNED);
-        boolean bigEndian = (format.isBigEndian());
-        if (use16Bit) {
-            for (int i = readPoint; i < buffer.length - leftOver; i += 2) {
-                int value = 0;
-                // deal with endianness
-                int hiByte = (bigEndian ? buffer[i] : buffer[i + 1]);
-                int loByte = (bigEndian ? buffer[i + 1] : buffer[i]);
-                if (signed) {
-                    short shortVal = (short) hiByte;
-                    shortVal = (short) ((shortVal << 8) | (byte) loByte);
-                    value = shortVal;
-                } else {
-                    value = (hiByte << 8) | loByte;
-                }
-                max = Math.max(max, value);
-            } // for
-        } else {
-            // 8 bit - no endianness issues, just sign
-            for (int i = readPoint; i < buffer.length - leftOver; i++) {
-                int value = 0;
-                if (signed) {
-                    value = buffer[i];
-                } else {
-                    short shortVal = 0;
-                    shortVal = (short) (shortVal | buffer[i]);
-                    value = shortVal;
-                }
-                max = Math.max(max, value);
-            } // for
-        } // 8 bit
-        // express max as float of 0.0 to 1.0 of max value
-        // of 8 or 16 bits (signed or unsigned)
-        if (signed) {
-            if (use16Bit) {
-                level = (float) max / MAX_16_BITS_SIGNED;
-            } else {
-                level = (float) max / MAX_8_BITS_SIGNED;
-            }
-        } else if (use16Bit) {
-            level = (float) max / MAX_16_BITS_UNSIGNED;
-        } else {
-            level = (float) max / MAX_8_BITS_UNSIGNED;
+        }.start();
+//        Runnable runner = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                running = true;
+//        while (running) {
+//                    calculateLevel(buffer, 0, 0);
+//                    Platform.runLater(() -> {
+//                        pb.setProgress(level);
+//                    });
+//                    long elapsedTimeMillis;
+//                    elapsedTimeMillis = System.currentTimeMillis() - startTime + tempTime;
+//                    setTime(elapsedTimeMillis, tb);
+//
+//                    // Change the color of the ProgressBar depending on level
+//                    // Proper limits should be checked
+//                    Platform.runLater(() -> {
+//                        if (level > 0.9f) {
+//                            pb.setStyle("-fx-accent: red;");
+//                        } else if (level > 0.7) {
+//                            pb.setStyle("-fx-accent: orange;");
+//                        } else {
+//                            pb.setStyle("-fx-accent: green;");
+//                        }
+//                    });
+//
+//                }
+//                Platform.runLater(() -> {
+//                    tb.setText("");
+//                });
+//            }
+//
+//        };
+//        captureThread = new Thread(runner);
+//        captureThread.start();
         }
-    } // calculateLevel
 
-    /**
-     * Method to set elapsed time on ToggleButton
-     *
-     * @param elapsedTimeMillis Time elapsed recording last was started
-     * @param tb ToggleButton to set time
-     */
-    private void setTime(long elapsedTimeMillis, ToggleButton tb) {
-        float elapsedTimeSec = elapsedTimeMillis / 1000F;
-        int hours = (int) elapsedTimeSec / 3600;
-        int minutes = (int) (elapsedTimeSec % 3600) / 60;
-        int seconds = (int) elapsedTimeSec % 60;
-        String time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        Platform.runLater(() -> {
-            tb.setText(time);
-        });
-    }
+//    /**
+//     * Method to calculate input level.
+//     *
+//     * @param buffer
+//     * @param readPoint
+//     * @param leftOver
+//     */
+//    private void calculateLevel(byte[] buffer,
+//            int readPoint,
+//            int leftOver) {
+//        int max = 0;
+//        boolean use16Bit = (format.getSampleSizeInBits() == 16);
+//        boolean signed = (format.getEncoding()
+//                == AudioFormat.Encoding.PCM_SIGNED);
+//        boolean bigEndian = (format.isBigEndian());
+//        if (use16Bit) {
+//            for (int i = readPoint; i < buffer.length - leftOver; i += 2) {
+//                int value = 0;
+//                // deal with endianness
+//                int hiByte = (bigEndian ? buffer[i] : buffer[i + 1]);
+//                int loByte = (bigEndian ? buffer[i + 1] : buffer[i]);
+//                if (signed) {
+//                    short shortVal = (short) hiByte;
+//                    shortVal = (short) ((shortVal << 8) | (byte) loByte);
+//                    value = shortVal;
+//                } else {
+//                    value = (hiByte << 8) | loByte;
+//                }
+//                max = Math.max(max, value);
+//            } // for
+//        } else {
+//            // 8 bit - no endianness issues, just sign
+//            for (int i = readPoint; i < buffer.length - leftOver; i++) {
+//                int value = 0;
+//                if (signed) {
+//                    value = buffer[i];
+//                } else {
+//                    short shortVal = 0;
+//                    shortVal = (short) (shortVal | buffer[i]);
+//                    value = shortVal;
+//                }
+//                max = Math.max(max, value);
+//            } // for
+//        } // 8 bit
+//        // express max as float of 0.0 to 1.0 of max value
+//        // of 8 or 16 bits (signed or unsigned)
+//        if (signed) {
+//            if (use16Bit) {
+//                level = (float) max / MAX_16_BITS_SIGNED;
+//            } else {
+//                level = (float) max / MAX_8_BITS_SIGNED;
+//            }
+//        } else if (use16Bit) {
+//            level = (float) max / MAX_16_BITS_UNSIGNED;
+//        } else {
+//            level = (float) max / MAX_8_BITS_UNSIGNED;
+//        }
+//    } // calculateLevel
+
 
     public boolean getIsRecording() {
         return isRecording;
@@ -394,5 +366,5 @@ public class RecordingsHandler {
             }
         }
     }
-
+    
 }
