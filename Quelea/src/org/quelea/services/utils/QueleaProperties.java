@@ -1936,10 +1936,6 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-    public boolean getUseAutoDetectServers() {
-        return Boolean.parseBoolean(getProperty("use.auto.detect.server", "false"));
-    }
-
     public int getAutoDetectPort() {
         return Integer.parseInt(getProperty("auto.detect.port", "50015"));
     }
