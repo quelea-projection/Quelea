@@ -171,7 +171,7 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Remote control disabled");
                     }
 
-                    if (QueleaProperties.get().getUseAutoDetectServers()) {
+                    if (QueleaProperties.get().getUseMobLyrics() || QueleaProperties.get().getUseRemoteControl()) {
                         LOGGER.log(Level.INFO, "Starting auto-detection server on {0}", QueleaProperties.get().getAutoDetectPort());
                         try {
                             AutoDetectServer ads = new AutoDetectServer(QueleaProperties.get().getAutoDetectPort());
