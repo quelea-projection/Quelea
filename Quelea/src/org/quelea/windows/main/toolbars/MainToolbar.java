@@ -55,7 +55,6 @@ import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.QuickInsertActionHandler;
-import org.quelea.windows.main.actionhandlers.RecordLevelCalculator;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 
