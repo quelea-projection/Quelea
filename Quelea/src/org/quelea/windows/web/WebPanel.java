@@ -255,28 +255,25 @@ public class WebPanel extends AbstractPanel {
         }
     }
 
-    public void addWebView() {
-        if (!imagePane.getChildren().contains(wd.getWebView())) {
-            imagePane.getChildren().add(wd.getWebView());
-        }
+    public void addWebView(WebDisplayable displayable) {
+        removeWebView();
+        imagePane.getChildren().add(displayable.getWebView());
     }
-    
+
     public WebView removeWebView() {
-        if (imagePane.getChildren().contains(wd.getWebView())) {
-            imagePane.getChildren().remove(wd.getWebView());
-        }
+        imagePane.getChildren().clear();
+        imagePane.getChildren().add(imagePreview);
         return wd.getWebView();
     }
 
-    public void blockButtons() {
-        wd = null;
-        back.setDisable(true);
-        forward.setDisable(true);
-        go.setDisable(true);
-        reload.setDisable(true);
-        url.setDisable(true);
-        plus.setDisable(true);
-        minus.setDisable(true);
+    public void blockButtons(boolean block) {
+        back.setDisable(block);
+        forward.setDisable(block);
+        go.setDisable(block);
+        reload.setDisable(block);
+        url.setDisable(block);
+        plus.setDisable(block);
+        minus.setDisable(block);
     }
 
     public void setText() {
