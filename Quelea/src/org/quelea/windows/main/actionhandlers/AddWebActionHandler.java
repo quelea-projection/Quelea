@@ -22,7 +22,11 @@ import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import org.quelea.data.displayable.WebDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -36,13 +40,20 @@ public class AddWebActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         TextInputDialog dialog = new TextInputDialog("http://");
-        dialog.setTitle("Web page URL");
-        dialog.setHeaderText("Enter web page URL");
-        dialog.setContentText("Please enter the web page you would like to display:");
+        dialog.setTitle(LabelGrabber.INSTANCE.getLabel("website.dialog.title"));
+        dialog.setHeaderText(LabelGrabber.INSTANCE.getLabel("website.dialog.header"));
+        dialog.setContentText(LabelGrabber.INSTANCE.getLabel("website.dialog.content"));
+        dialog.setGraphic(new ImageView(new Image("file:icons/website.png")));
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("file:icons/web-small.png"));
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            WebDisplayable displayable = new WebDisplayable(result.get());
+            String url = result.get();
+            if (!url.startsWith("http")) {
+                url = "http://" + url;
+            }
+            WebDisplayable displayable = new WebDisplayable(url);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }

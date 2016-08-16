@@ -653,3 +653,6 @@ focus.switcher.title=Quelea Focus Switcher
 focus.switcher.message=Toogle window focus here if needed during the presentation.
 focus.pp=Shift focus to PowerPoint
 focus.quelea=Shift focus to Quelea
+website.dialog.title=Web page URL
+website.dialog.header=Enter web page URL
+website.dialog.content=Enter the web page you would like to display:
