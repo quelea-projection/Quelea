@@ -1974,4 +1974,24 @@ public final class QueleaProperties extends Properties {
         setProperty("default.song.db.update", Boolean.toString(updateInDB));
         write();
     }
+    
+    public int getWebDisplayableRefreshRate() {
+        return Integer.parseInt(getProperty("web.refresh.rate", "500"));
+    }
+    
+    public String getWebProxyHost() {
+        return getProperty("web.proxy.host", null);
+    }
+    
+    public String getWebProxyPort() {
+        return getProperty("web.proxy.port", null);
+    }
+    
+    public String getWebProxyUser() {
+        return getProperty("web.proxy.user", null);
+    }
+    
+    public String getWebProxyPassword() {
+        return getProperty("web.proxy.password", null);
+    }
 }
