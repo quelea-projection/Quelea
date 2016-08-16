@@ -426,7 +426,7 @@ public class LivePanel extends LivePreviewPanel {
                         }
                     });
                 }
-            }, 0, 500, TimeUnit.MILLISECONDS);
+            }, 0, QueleaProperties.get().getWebDisplayableRefreshRate(), TimeUnit.MILLISECONDS);
         }
         if (oldD instanceof WebDisplayable) {
             ((WebDisplayable) oldD).dispose();
@@ -582,7 +582,7 @@ public class LivePanel extends LivePreviewPanel {
             }
             return webPreviewImage;
         } else {
-            getWebPanel().addWebView();
+            getWebPanel().addWebView((WebDisplayable)getDisplayable());
             return new Image("file:icons/web preview.png");
         }
     }

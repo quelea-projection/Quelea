@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -32,6 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -65,7 +67,7 @@ public class PreviewPanel extends LivePreviewPanel {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
                 ListView<Displayable> list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView();
-                if (list.getSelectionModel().getSelectedIndex() < list.getItems().size()-1 && QueleaProperties.get().getAdvanceOnLive()) {
+                if (list.getSelectionModel().getSelectedIndex() < list.getItems().size() - 1 && QueleaProperties.get().getAdvanceOnLive()) {
                     list.getSelectionModel().clearAndSelect(list.getSelectionModel().getSelectedIndex() + 1);
                 }
             }
@@ -111,7 +113,18 @@ public class PreviewPanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         liveButton.setDisable(false);
-        getWebPanel().blockButtons();
+        if (d instanceof WebDisplayable) {
+            final WebDisplayable webDisplayable = (WebDisplayable)d;
+            Platform.runLater(() -> {
+                if (!webDisplayable.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable())) {
+                    getWebPanel().addWebView(webDisplayable);
+                    getWebPanel().blockButtons(false);
+                } else {
+                    getWebPanel().removeWebView();
+                    getWebPanel().blockButtons(true);
+                }
+            });
+        }
     }
 
     /**
