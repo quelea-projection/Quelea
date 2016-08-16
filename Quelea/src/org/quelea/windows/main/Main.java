@@ -71,7 +71,7 @@ public final class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
-    
+
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
@@ -102,7 +102,7 @@ public final class Main extends Application {
                 try {
                     boolean vlcOk = false;
                     try {
-                        vlcOk = new NativeDiscovery().discover();                        
+                        vlcOk = new NativeDiscovery().discover();
                     } catch (Throwable ex) {
                         LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
                     }
@@ -184,6 +184,13 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Auto-detect servers disabled");
                     }
 
+                    if (QueleaProperties.get().getWebProxyHost() != null && QueleaProperties.get().getWebProxyPort() != null && QueleaProperties.get().getWebProxyUser() != null && QueleaProperties.get().getWebProxyPassword() != null) {
+                        System.setProperty("http.proxyHost", QueleaProperties.get().getWebProxyHost());
+                        System.setProperty("http.proxyPort", QueleaProperties.get().getWebProxyPort());
+                        System.setProperty("http.proxyUser", QueleaProperties.get().getWebProxyUser());
+                        System.setProperty("http.proxyPassword", QueleaProperties.get().getWebProxyPassword());
+                    }
+
                     Platform.runLater(new Runnable() {
 
                         @Override
@@ -200,7 +207,7 @@ public final class Main extends Application {
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
                                 fullScreenWindow.setFullScreenAlwaysOnTop(true);
                             }
-                            
+
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
 
                             if (stageHidden) {

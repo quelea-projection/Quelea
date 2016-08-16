@@ -19,11 +19,16 @@ package org.quelea.data.displayable;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -40,6 +45,7 @@ public class WebDisplayable implements Displayable {
     private final WebView webView;
     private final WebEngine webEngine;
     private double zoomLevel = 1;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new web displayable.
@@ -54,6 +60,9 @@ public class WebDisplayable implements Displayable {
         webView.setCursor(Cursor.NONE);
         webView.setZoom(zoomLevel);
         webEngine.load(getUrl());
+        webEngine.getLoadWorker().exceptionProperty().addListener((ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) -> {
+            LOGGER.log(Level.WARNING, "Website loading exception: ", t1);
+        });
     }
 
     /**
@@ -184,9 +193,9 @@ public class WebDisplayable implements Displayable {
 
     public void zoom(boolean zoomIn) {
         if (!zoomIn) {
-            zoomLevel = webView.getZoom()*0.9;
+            zoomLevel = webView.getZoom() * 0.9;
         } else {
-            zoomLevel = webView.getZoom()*1.1;
+            zoomLevel = webView.getZoom() * 1.1;
         }
         webView.setZoom(zoomLevel);
     }
