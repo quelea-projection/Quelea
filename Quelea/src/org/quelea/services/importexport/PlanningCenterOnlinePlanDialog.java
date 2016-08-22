@@ -46,6 +46,7 @@ import org.quelea.data.YoutubeInfo;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.VideoDisplayable;
@@ -71,8 +72,9 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     
     enum MediaType {
         PRESENTATION,
+        PDF,
         VIDEO,
-        IMAGE,
+        IMAGE,        
         UNKNOWN,
     }
     
@@ -311,6 +313,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                             e.printStackTrace();
                         }
                         break;
+                        
+                    case PDF:
+                        try {
+                            displayable = new PdfDisplayable(new File(fileName));                    
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
 
                     case VIDEO:
                         displayable = new VideoDisplayable(fileName);
@@ -400,6 +411,10 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             return MediaType.PRESENTATION;
         }
         
+        if (FileFilters.PDF_GENERIC.getExtensions().contains(extension)) {
+            return MediaType.PDF;
+        }
+                
         if (FileFilters.VIDEOS.getExtensions().contains(extension)) {
             return MediaType.VIDEO;
         }
