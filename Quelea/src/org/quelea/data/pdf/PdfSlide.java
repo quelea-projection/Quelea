@@ -31,6 +31,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A slide in a PDF presentation.
@@ -43,7 +44,6 @@ public class PdfSlide {
     private BufferedImage originalImage;
     private final File outputfile;
     private final File thumbnailFile;
-    private final int SMALL_SIZE = 200;
     private final int BIG_SIZE = 1920;
 
     /**
@@ -58,7 +58,7 @@ public class PdfSlide {
         outputfile.deleteOnExit();
         ImageIO.write(originalImage, "png", outputfile);
 
-        thumbnail = resizeImage(originalImage, SMALL_SIZE, SMALL_SIZE);
+        thumbnail = resizeImage(originalImage, QueleaProperties.get().getThumbnailSize(), QueleaProperties.get().getThumbnailSize());
         thumbnailFile = File.createTempFile("thumb" + numSlide, ".png");
         thumbnailFile.deleteOnExit();
         ImageIO.write(thumbnail, "png", thumbnailFile);
