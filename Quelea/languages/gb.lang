@@ -237,6 +237,7 @@ theme.name.label=Theme Name
 help.menu=Help
 help.menu.website=Website
 help.menu.discussion=Support / Discussion (ask questions here)
+help.menu.feedback=Feedback
 help.menu.download=Download
 help.menu.update=Check for updates
 help.menu.about=About...
