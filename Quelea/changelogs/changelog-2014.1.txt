@@ -1,0 +1,31 @@
+quelea (2014.1) stable; urgency=normal
+ 
+  * Added remote control functionality
+  * Added Youtube support
+  * Added PDF export option for songs / schedule
+  * Added DVD / Bluray support
+  * Added ability to import more than one presentation at a time
+  * Added ZionWorx import
+  * Added Easyworship import
+  * Added Openlyrics import / export
+  * Added song translation support
+  * Improved text wrapping algorithm for bible text
+  * Added option for displaying verse numbers in bible text
+  * Added Hungarian translation
+  * Added Norwegian translation
+  * Added additional options for specifying the notice colour, speed, font, size and position
+  * Added VLCARG file support - ability to create video "files" that pass arguments directly to VLC
+  * Added ability to stretch videos
+  * Added more shadow options
+  * Added manual entry to help menu
+  * Bugfix - italic font property now saved when selecting an image or video background
+  * Bugfix - no longer possible to add empty bible passages
+  * Bugfix - quick edit cursor doesn't show on bible passages anymore
+  * Bugfix - bible search now filters out duplicate results correctly
+  * Bugfix - long notices now behave correctly
+  * Bugfix - printing now works properly for songs and schedules
+  * Bugfix - shadows now display correctly
+  * Bugfix - Cancelling the confirm exit dialog by pressing "x" no longer exits Quelea without saving
+  * Various other minor bug fixes
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 04 Oct 2014 00:00:00 +0000
