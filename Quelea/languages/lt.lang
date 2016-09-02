@@ -655,3 +655,15 @@ bridge.tooltip=Pridėti tiltelio antraštę
 prechorus.tooltip=Pridėti prieš-priegiesmio antraštę
 tag.tooltip=Pridėti žymės antraštę
 add.website=Pridėti svetainę
+help.menu.feedback=Atsiliepimai
+add.multimedia.tooltip=Pridėti multimediją
+filefilters.description.multimedia.files=Multimedijos failai
+thumbnail.size.label=Miniatiūrų dydis
+focus.switcher.title=Quelea fokusavimo perjungiklis
+focus.switcher.message=Pristatymo metu, jei reikia, čia galite perjungti
+lango fokusavimą.
+focus.pp=Nukreipti fokusavimą į PowerPoint
+focus.quelea=Nukreipti fokusavimą į Quelea
+website.dialog.title=Svetainės URL
+website.dialog.header=Įveskite svetainės URL
+website.dialog.content=Įveskite svetainę, kurią norėtumėte rodyti:
