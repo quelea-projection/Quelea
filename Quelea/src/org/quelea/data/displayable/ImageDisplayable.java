@@ -83,7 +83,12 @@ public class ImageDisplayable implements Displayable {
      */
     public static ImageDisplayable parseXML(Node node) {
         File file = new File(node.getTextContent());
-        return new ImageDisplayable(new File(QueleaProperties.get().getImageDir(), file.getName()));
+        File imgFile = new File(QueleaProperties.get().getImageDir(), file.getName());
+        if (!imgFile.exists())
+        {
+            imgFile = new File(QueleaProperties.get().getDownloadPath(), file.getName());
+        }
+        return new ImageDisplayable(imgFile);
     }
 
     /**
