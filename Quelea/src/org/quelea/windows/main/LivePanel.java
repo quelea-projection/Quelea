@@ -342,6 +342,12 @@ public class LivePanel extends LivePreviewPanel {
                 if (shortcut.matches("\\d") && sectionTitle.toLowerCase().contains("verse " + shortcut)) {
                     return true;
                 }
+                if (shortcut.equalsIgnoreCase("i") && sectionTitle.toLowerCase().contains("interlude")) {
+                    return true;
+                }
+                if (shortcut.equalsIgnoreCase("e") && sectionTitle.toLowerCase().contains("ending")) {
+                    return true;
+                }
                 return false;
             }
 
