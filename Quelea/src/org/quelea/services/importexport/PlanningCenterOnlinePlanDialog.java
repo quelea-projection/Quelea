@@ -46,6 +46,7 @@ import org.quelea.data.YoutubeInfo;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.VideoDisplayable;
@@ -71,8 +72,9 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     
     enum MediaType {
         PRESENTATION,
+        PDF,
         VIDEO,
-        IMAGE,
+        IMAGE,        
         UNKNOWN,
     }
     
@@ -311,6 +313,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                             e.printStackTrace();
                         }
                         break;
+                        
+                    case PDF:
+                        try {
+                            displayable = new PdfDisplayable(new File(fileName));                    
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
 
                     case VIDEO:
                         displayable = new VideoDisplayable(fileName);
@@ -400,6 +411,10 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             return MediaType.PRESENTATION;
         }
         
+        if (FileFilters.PDF_GENERIC.getExtensions().contains(extension)) {
+            return MediaType.PDF;
+        }
+                
         if (FileFilters.VIDEOS.getExtensions().contains(extension)) {
             return MediaType.VIDEO;
         }
@@ -414,16 +429,19 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     // clean up things like (C2) transform it to (Chorus 2)
     // so Quelea can handle it
     protected String cleanLyrics(String lyrics) {
-        Pattern titleExp = Pattern.compile("\\(?(Verse|Chorus|Tag|Outro|Bridge|Misc)\\)?\\s?(\\d?)|\\(?(\\S)(\\d+)\\)?");
+        Pattern titleExp = Pattern.compile("\\(?(Verse|Chorus|Pre-Chorus|Pre Chorus|Tag|Outro|Bridge|Misc|Interlude|Ending)\\)?\\s?(\\d?)|\\(?(\\S)(\\d+)\\)?");
         
         // allows us to expand abbreviations to full name (ensure Key value is all uppercase)
         Map<String, String> titleDict = new HashMap<String, String>();
         titleDict.put("C", "Chorus");
+        titleDict.put("PC", "Pre-Chorus");
         titleDict.put("V", "Verse");
         titleDict.put("T", "Tag");
         titleDict.put("O", "Outro");
         titleDict.put("B", "Bridge");
         titleDict.put("M", "Misc");
+        titleDict.put("E", "Ending");
+        titleDict.put("I", "Interlude");
         
         class TitleTextBlock
         {
@@ -436,6 +454,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             }
         }
         List<TitleTextBlock> titleTextBlockList = new ArrayList<TitleTextBlock>();
+        
+       
+        // lets clean up some funky stuff we don't want the audience to know about:
+        // remove line repat X time tags - (5X) 
+        // and (REPEAT) tags
+        Pattern removeExp = Pattern.compile("\\(\\d+X\\)|\\(REPEAT\\)", Pattern.CASE_INSENSITIVE);
+        Matcher m = removeExp.matcher(lyrics);
+        lyrics = m.replaceAll("");
+       
         
         int lastMatchEnd = -1;
         String lastTitle = "";

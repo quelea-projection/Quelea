@@ -124,7 +124,9 @@ public class LineTypeChecker {
                 || processedLine.toLowerCase().startsWith("coda")
                 || processedLine.toLowerCase().startsWith("bridge")
                 || processedLine.toLowerCase().startsWith("intro")
-                || processedLine.toLowerCase().startsWith("outro");
+                || processedLine.toLowerCase().startsWith("outro")
+                || processedLine.toLowerCase().startsWith("interlude")
+                || processedLine.toLowerCase().startsWith("ending");
     }
 
     private static final TreeMap<String, String> titleMap = new TreeMap<>();
