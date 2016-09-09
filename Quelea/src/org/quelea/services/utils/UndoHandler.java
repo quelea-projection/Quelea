@@ -126,7 +126,7 @@ public class UndoHandler {
                 if (!s.equals(partsNew[i])) {
                     int j = 0;
                     for (char c : partsNew[i].toCharArray()) {
-                        if (c != s.charAt(j)) {
+                        if (j < s.length() && s.length() > 0 && c != s.charAt(j)) {
                             break;
                         }
                         caretPos++;
