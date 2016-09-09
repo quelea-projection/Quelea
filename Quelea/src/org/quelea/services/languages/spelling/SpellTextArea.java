@@ -23,20 +23,20 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import org.fxmisc.richtext.StyleClassedTextArea;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.UndoHandler;
 import org.quelea.windows.lyrics.LyricsTextArea;
 
 /**
@@ -56,12 +56,14 @@ public class SpellTextArea extends StackPane {
     private ImageView warning;
     private Thread checkerThread;
     private volatile SimpleBooleanProperty spellingOkProperty;
+    private UndoHandler undoHandler;
 
     /**
      * Create a new spell text area.
      */
     public SpellTextArea() {
         runSpellKey = KeyCode.F7;
+        undoHandler = new UndoHandler();
         speller = new Speller(QueleaProperties.get().getDictionary());
         area = new LyricsTextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
@@ -73,21 +75,48 @@ public class SpellTextArea extends StackPane {
         warning.setOpacity(0);
         getChildren().add(warning);
         dialog = new SpellingDialog(speller);
+
+        MenuItem undoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("undo.label"));
+        undoItem.setOnAction(e -> {
+            undo();
+        });
+        area.getContextMenu().getItems().add(undoItem);
+        MenuItem redoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("redo.label"));
+        redoItem.setOnAction(e -> {
+            redo();
+        });
+        area.getContextMenu().getItems().add(redoItem);
+        area.getContextMenu().setOnShown(e -> {
+            undoItem.setDisable(!undoHandler.canUndo());
+            redoItem.setDisable(!undoHandler.canRedo());
+        });
+
         area.setOnKeyPressed((KeyEvent t) -> {
-            if(t.getCode() == runSpellKey) {
+            if (t.getCode() == runSpellKey) {
                 runSpellCheck();
             }
-            if(t.getCode() == KeyCode.ENTER && t.isShiftDown()) {
+            if (t.getCode() == KeyCode.ENTER && t.isShiftDown()) {
                 area.replaceText(area.getCaretPosition(), area.getCaretPosition(), "\n<>");
                 area.refreshStyle();
+            }
+            if (t.getCode() == KeyCode.Z && t.isShortcutDown()) {
+                undo();
+            }
+            if (t.getCode() == KeyCode.Y && t.isShortcutDown()) {
+                redo();
             }
         });
         area.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, final String t1) {
                 updateSpelling(false);
+                if (!undoHandler.isUndo()) {
+                    undoHandler.add(t, t1);
+                } else {
+                    undoHandler.setUndo(false);
+                }
 
-                if(checkerThread != null && checkerThread.isAlive()) {
+                if (checkerThread != null && checkerThread.isAlive()) {
                     checkerThread.interrupt();
                 }
                 checkerThread = new Thread() {
@@ -100,8 +129,7 @@ public class SpellTextArea extends StackPane {
                                     updateSpelling(true);
                                 }
                             });
-                        }
-                        catch(InterruptedException ex) {
+                        } catch (InterruptedException ex) {
                             //Quit silently if interrupted
                         }
                     }
@@ -110,14 +138,14 @@ public class SpellTextArea extends StackPane {
             }
         });
     }
-    
+
     /**
      * Activate a spell check for this area.
      */
     public void runSpellCheck() {
         dialog.check(SpellTextArea.this);
     }
-    
+
     public void setDictionary(Dictionary dict) {
         speller.setDictionary(dict);
         updateSpelling(true);
@@ -133,19 +161,19 @@ public class SpellTextArea extends StackPane {
     public void updateSpelling(boolean lastWord) {
         spellingOkProperty.set(speller.checkText(getText(), lastWord));
         FadeTransition transition = new FadeTransition(Duration.seconds(0.2), warning);
-        if(spellingOkProperty.get()) {
+        if (spellingOkProperty.get()) {
             transition.setFromValue(warning.getOpacity());
             transition.setToValue(0);
-        }
-        else {
+        } else {
             transition.setFromValue(warning.getOpacity());
             transition.setToValue(WARNING_OPACITY);
         }
         transition.play();
     }
-    
+
     /**
      * Get the boolean property representing whether the spelling is ok.
+     *
      * @return true if the spelling is ok, false otherwise.
      */
     public BooleanProperty spellingOkProperty() {
@@ -169,10 +197,24 @@ public class SpellTextArea extends StackPane {
     public String getText() {
         String[] lines = area.getText().split("\n");
         StringBuilder ret = new StringBuilder();
-        for(String line : lines) {
-            if(new LineTypeChecker(line).getLineType() != Type.CHORDS) {
+        for (String line : lines) {
+            if (new LineTypeChecker(line).getLineType() != Type.CHORDS) {
                 ret.append(line).append("\n");
             }
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Get the text on this text area, including any chords.
+     * <p/>
+     * @return the text area's text, with chord lines.
+     */
+    public String getTextAndChords() {
+        String[] lines = area.getText().split("\n");
+        StringBuilder ret = new StringBuilder();
+        for (String line : lines) {
+            ret.append(line).append("\n");
         }
         return ret.toString();
     }
@@ -194,4 +236,33 @@ public class SpellTextArea extends StackPane {
     public void setRunSpellKey(KeyCode runSpellKey) {
         this.runSpellKey = runSpellKey;
     }
+
+    public void clearUndo() {
+        if (undoHandler != null) {
+            undoHandler.clearUndo();
+        }
+    }
+
+    private void undo() {
+        if (undoHandler.canUndo()) {
+            String newText = undoHandler.undo();
+            if (!newText.equals(getTextAndChords())) {
+                area.replaceText(0, area.getText().length(), newText);
+                int pos = undoHandler.getCaretPos(true);
+                area.selectRange(pos, pos);
+            }
+        }
+    }
+
+    private void redo() {
+        if (undoHandler.canRedo()) {
+            String newText = undoHandler.redo();
+            if (!newText.equals(getTextAndChords())) {
+                area.replaceText(0, area.getText().length(), newText);
+                int pos = undoHandler.getCaretPos(false);
+                area.selectRange(pos, pos);
+            }
+        }
+    }
+
 }
