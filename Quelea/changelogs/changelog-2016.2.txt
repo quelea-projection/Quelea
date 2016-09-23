@@ -34,5 +34,6 @@ quelea (2016.2) stable; urgency=normal
   * Add basic support for undo/redo while editing songs
   * Add right-click menu in song edit window with paste option
   * Fix bug when trying to add a non-breaking line or a section title to a song with chords
+  * Fix Stage View alignment bug
 
  -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
