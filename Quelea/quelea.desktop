@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=2016.2
+Terminal=false
+Path=/usr/share/quelea
+Categories=AudioVideo;
+Type=Application
+Name=Quelea
+Icon=/usr/share/quelea/icons/logo.png
+Comment=Projection software for churches
+Exec=/usr/share/quelea/launch.sh
