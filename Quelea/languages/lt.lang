@@ -667,3 +667,6 @@ focus.quelea=Nukreipti fokusavimą į Quelea
 website.dialog.title=Svetainės URL
 website.dialog.header=Įveskite svetainės URL
 website.dialog.content=Įveskite svetainę, kurią norėtumėte rodyti:
+paste.label=Įdėti
+undo.label=Atšaukti
+redo.label=Grąžinti
