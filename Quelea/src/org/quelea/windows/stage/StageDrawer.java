@@ -46,6 +46,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
@@ -225,7 +226,7 @@ public class StageDrawer extends WordDrawer {
         double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
-        if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+        if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("left"))) {
             t.setLayoutX(getCanvas().getWidth());
         } else {
             t.setLayoutX(centreOffset);
