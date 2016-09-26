@@ -429,7 +429,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     // clean up things like (C2) transform it to (Chorus 2)
     // so Quelea can handle it
     protected String cleanLyrics(String lyrics) {
-        Pattern titleExp = Pattern.compile("\\(?(Verse|Chorus|Pre-Chorus|Pre Chorus|Tag|Outro|Bridge|Misc|Interlude|Ending)\\)?\\s?(\\d?)|\\(?(\\S)(\\d+)\\)?");
+        Pattern titleExp = Pattern.compile("^\\(?(Verse|Chorus|Pre-Chorus|Pre Chorus|Tag|Outro|Bridge|Misc|Interlude|Ending)\\)?\\s?(\\d?)|\\(?(\\S)(\\d+)\\)?$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         
         // allows us to expand abbreviations to full name (ensure Key value is all uppercase)
         Map<String, String> titleDict = new HashMap<String, String>();
