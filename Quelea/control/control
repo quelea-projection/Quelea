@@ -1,0 +1,11 @@
+Package: quelea
+Version: 2016.2
+Section: misc
+Priority: optional
+Depends: oracle-java8-installer
+Recommends: vlc
+Homepage: http://www.quelea.org
+Architecture: all
+Maintainer: Michael Berry <michael@quelea.org>
+Description:Lyrics projection package designed for use in churches.
+ Supports importing and displaying songs, scripture, videos and more.
