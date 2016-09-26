@@ -48,6 +48,7 @@ public class HelpMenu extends Menu {
     private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
+    private final MenuItem queleaFeedback;
     private final MenuItem queleaWiki;
     private final MenuItem updateCheck;
     private final MenuItem about;
@@ -109,6 +110,20 @@ public class HelpMenu extends Menu {
                 }
             });
             getItems().add(queleaDiscuss);
+            queleaFeedback = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.feedback"), new ImageView(new Image("file:icons/feedback.png", 16, 16, false, true)));
+            queleaFeedback.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                @Override
+                public void handle(javafx.event.ActionEvent t) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFeedbackLocation()));
+                    }
+                    catch(Exception ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea feedback", ex);
+                        showError();
+                    }
+                }
+            });
+            getItems().add(queleaFeedback);
             queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
             queleaWiki.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -126,6 +141,7 @@ public class HelpMenu extends Menu {
         }
         else {
             queleaDiscuss = null;
+            queleaFeedback = null;
             queleaFacebook = null;
             queleaWiki = null;
             queleaManual = null;
