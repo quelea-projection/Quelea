@@ -115,7 +115,7 @@ public class BasicSongPanel extends BorderPane {
         nonBreakingLineButton = getNonBreakingLineButton();
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(nonBreakingLineButton);
-        
+
         chorusButton = getTitleButton("chorus.png", "chorus.tooltip", "Chorus");
         preChorusButton = getTitleButton("pre_chorus.png", "prechorus.tooltip", "Pre-chorus");
         bridgeButton = getTitleButton("bridge.png", "bridge.tooltip", "Bridge");
@@ -127,7 +127,7 @@ public class BasicSongPanel extends BorderPane {
         lyricsToolbar.getItems().add(bridgeButton);
         lyricsToolbar.getItems().add(tagButton);
         lyricsToolbar.getItems().add(verseButton);
-        
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
@@ -177,8 +177,8 @@ public class BasicSongPanel extends BorderPane {
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
         ret.setOnAction((event) -> {
             int caretPos = lyricsArea.getArea().getCaretPosition();
-            String[] parts = lyricsArea.getText().split("\n");
-            int lineIndex = lineFromPos(lyricsArea.getText(), caretPos);
+            String[] parts = lyricsArea.getTextAndChords().split("\n");
+            int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
             String line = parts[lineIndex];
             if (line.trim().isEmpty()) {
                 Platform.runLater(new Runnable() {
@@ -190,8 +190,8 @@ public class BasicSongPanel extends BorderPane {
                     }
                 });
             } else {
-                int nextLinePos = nextLinePos(lyricsArea.getText(), caretPos);
-                if (nextLinePos >= lyricsArea.getText().length()) {
+                int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
+                if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
                     Platform.runLater(new Runnable() {
 
                         @Override
@@ -364,6 +364,7 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().clear();
         getLyricsField().replaceText("");
         getTitleField().requestFocus();
+        lyricsArea.clearUndo();
     }
 
     /**
@@ -378,6 +379,7 @@ public class BasicSongPanel extends BorderPane {
         getLyricsField().insertText(0, song.getLyrics(true, true));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
+        lyricsArea.clearUndo();
     }
 
     /**
@@ -409,7 +411,7 @@ public class BasicSongPanel extends BorderPane {
 
     /**
      * Get the verse title button
-     * 
+     *
      * @return verse button
      */
     private SplitMenuButton getVerseButton() {
@@ -417,8 +419,8 @@ public class BasicSongPanel extends BorderPane {
         m.setGraphic(new ImageView(new Image("file:icons/verse.png", 24, 24, false, true)));
         m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
         m.setOnMouseClicked((MouseEvent event) -> {
-                insertTitle("Verse", "");
-            });
+            insertTitle("Verse", "");
+        });
         for (int i = 1; i < 10; i++) {
             MenuItem mi = new MenuItem("", new ImageView(new Image("file:icons/verse" + i + ".png", 24, 24, false, true)));
             final int finalI = i;
@@ -432,36 +434,36 @@ public class BasicSongPanel extends BorderPane {
 
     /**
      * Insert a title in the lyrics
-     * 
+     *
      * @param title The name of the section title, e.g. "Chorus"
-     * @param number The number of the title as a string, e.g. (Verse) "2",
-     * and use "" if no number is wanted
+     * @param number The number of the title as a string, e.g. (Verse) "2", and
+     * use "" if no number is wanted
      */
     private void insertTitle(String title, String number) {
         int caretPos = lyricsArea.getArea().getCaretPosition();
-        String[] parts = lyricsArea.getText().split("\n");
+        String[] parts = lyricsArea.getTextAndChords().split("\n");
         if (parts.length == 0) {
             Platform.runLater(() -> {
                 lyricsArea.getArea().replaceText(0, 0, title + " " + number + "\n");
                 lyricsArea.getArea().refreshStyle();
             });
         } else {
-            if (caretPos == lyricsArea.getText().length() + 1) {
+            if (caretPos == lyricsArea.getTextAndChords().length() + 1) {
                 Platform.runLater(() -> {
                     lyricsArea.getArea().replaceText(caretPos, caretPos, title + " " + number + "\n");
                     lyricsArea.getArea().refreshStyle();
                 });
             } else {
-                int lineIndex = lineFromPos(lyricsArea.getText(), caretPos);
-                    String line = parts[lineIndex];
+                int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
+                String line = parts[lineIndex];
                 if (line.trim().isEmpty()) {
                     Platform.runLater(() -> {
-                        lyricsArea.getArea().replaceText(caretPos, caretPos, "\n"+ title + " " + number);
+                        lyricsArea.getArea().replaceText(caretPos, caretPos, "\n" + title + " " + number);
                         lyricsArea.getArea().refreshStyle();
                     });
                 } else {
-                    int nextLinePos = nextLinePos(lyricsArea.getText(), caretPos);
-                    if (nextLinePos >= lyricsArea.getText().length()) {
+                    int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
+                    if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
                         Platform.runLater(() -> {
                             lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "\n\n" + title + " " + number + "\n");
                             lyricsArea.getArea().refreshStyle();
