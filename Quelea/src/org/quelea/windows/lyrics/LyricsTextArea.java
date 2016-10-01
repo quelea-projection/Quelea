@@ -26,9 +26,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.undo.UndoManager;
 import org.fxmisc.undo.UndoManagerFactory;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.reactfx.EventStream;
@@ -38,8 +43,22 @@ import org.reactfx.EventStream;
  * @author Michael
  */
 public class LyricsTextArea extends InlineCssTextArea {
-    
+
     public LyricsTextArea() {
+        ContextMenu contextMenu = new ContextMenu();
+        Clipboard systemClipboard = Clipboard.getSystemClipboard();
+        MenuItem paste = new MenuItem(LabelGrabber.INSTANCE.getLabel("paste.label"));
+        contextMenu.setOnShown(e -> {
+            paste.setDisable(!systemClipboard.hasContent(DataFormat.PLAIN_TEXT));
+        });
+
+        paste.setOnAction(e -> {
+            String clipboardText = systemClipboard.getString();
+            this.insertText(this.getCaretPosition(), clipboardText);
+        });
+
+        contextMenu.getItems().add(paste);
+        this.setContextMenu(contextMenu);
         textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -134,28 +153,26 @@ public class LyricsTextArea extends InlineCssTextArea {
             }
         });
     }
-    
+
     public void refreshStyle() {
         clearStyle(0, getLength());
         setStyles(getText());
     }
-    
+
     private void setStyles(String text) {
         String[] lines = text.split("\n");
         int charPos = 0;
-        for(int i=0 ; i<lines.length ; i++) {
+        for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
-            if(new LineTypeChecker(line).getLineType()==Type.TITLE) {
-                setStyle(charPos, charPos+line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
+            if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
+                setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
+            } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
+                setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
+            } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
+                setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
             }
-            else if(new LineTypeChecker(line).getLineType()==Type.CHORDS) {
-                setStyle(charPos, charPos+line.length(), "-fx-fill: grey; -fx-font-style: italic;");
-            }
-            else if(new LineTypeChecker(line).getLineType()==Type.NONBREAK) {
-                setStyle(charPos, charPos+line.length(), "-fx-fill: red; -fx-font-weight: bold;");
-            }
-            charPos += line.length()+1;
+            charPos += line.length() + 1;
         }
     }
-    
+
 }

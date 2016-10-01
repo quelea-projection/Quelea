@@ -1168,6 +1168,15 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the URL to the Quelea feedback form.
+     * <p>
+     * @return the URL to the Quelea feedback form.
+     */
+    public String getFeedbackLocation() {
+        return getProperty("feedback.location", "https://quelea.org/feedback/");
+    }
+
+    /**
      * Get the URL used for checking the latest version.
      * <p>
      * @return the URL used for checking the latest version.
