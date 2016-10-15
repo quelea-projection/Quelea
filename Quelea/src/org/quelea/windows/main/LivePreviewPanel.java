@@ -251,6 +251,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.showDisplayable(null, 0);
         }
+        if (WEB_LABEL.equals(currentLabel)) {
+            webPanel.showDisplayable((WebDisplayable)null);
+        }
         for (Node panel : cardPanel) {
             if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).removeCurrentDisplayable();
@@ -397,6 +400,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
         if (VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.showDisplayable(null, 0);
+        }
+        if (WEB_LABEL.equals(currentLabel)) {
+            webPanel.showDisplayable((WebDisplayable)null);
         }
         if (displayable instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) displayable, index);

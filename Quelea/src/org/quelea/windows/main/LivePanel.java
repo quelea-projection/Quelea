@@ -583,7 +583,7 @@ public class LivePanel extends LivePreviewPanel {
             BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) webPreviewImage, null);
             SwingFXUtils.toFXImage(bi, webPreviewImage);
             WebView wv = getWebPanel().removeWebView();
-            if (!canvas.getChildren().contains(wv)) {
+            if (wv != null && !canvas.getChildren().contains(wv)) {
                 canvas.getChildren().add(wv);
             }
             return webPreviewImage;
