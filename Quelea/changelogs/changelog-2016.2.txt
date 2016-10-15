@@ -6,7 +6,7 @@ quelea (2016.2) stable; urgency=normal
   * Add native PowerPoint support
   * Aspect ratio fix
   * Fix for the projector not opening with the correct size on Linux
-  * Add more remote functionallity (move/remove schedule items, set/get theme)
+  * Add more remote functionality (move/remove schedule items, set/get theme)
   * Update record icon
   * Add option to adjust video volume
   * Add elapsed and total time on video playback
