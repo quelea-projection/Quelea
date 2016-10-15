@@ -1,0 +1,8 @@
+quelea (0.5.3) stable; urgency=normal
+ 
+  * Fixed bug with some schedules not opening
+  * Warn when there's a corrupt schedule, don't silently ignore
+  * Fix bugs with adding bibles
+  * Space for lyrics / projection split pane distributed more evenly
+ 
+ -- Michael Berry <michael@quelea.org>  Sunday, 27 Sep 2012 00:00:00 +0000

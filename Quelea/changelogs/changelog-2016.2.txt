@@ -1,0 +1,36 @@
+quelea (2016.2) stable; urgency=normal
+ 
+  * Add support for displaying PDF
+  * Add planning centre online import
+  * Added FreeWorship import
+  * Add native PowerPoint support
+  * Aspect ratio fix
+  * Fix for the projector not opening with the correct size on Linux
+  * Add more remote functionallity (move/remove schedule items, set/get theme)
+  * Update record icon
+  * Add option to adjust video volume
+  * Add elapsed and total time on video playback
+  * Fix canvas ratio to match projection window
+  * Add drag and drop support for presentations, PDF files, videos and images
+  * Merge add buttons to a drop-down menu
+  * Get song translations through Mobile Lyrics
+  * Add warning to save recording before exiting
+  * Add advanced option to automatically move projection window when new screens are connected
+  * Add Live Text feature to send non-projected text to Mobile Lyrics
+  * Add section title buttons to song dialog
+  * Add French translation
+  * Get presentation slide previews through Mobile Remote
+  * Add support for displaying websites
+  * Add support for displaying groups of images
+  * Fix import freeze when importing large presentations
+  * Added ability to change thumbnail size
+  * Add extended bible panel functionality and improved UI
+  * Fix bugs caused by passages imported from a schedule (not being able to switch translation nor extending the passage)
+  * Add support for audio files
+  * Added extra song title keywords "interlude" and "ending"
+  * Add basic support for undo/redo while editing songs
+  * Add right-click menu in song edit window with paste option
+  * Fix bug when trying to add a non-breaking line or a section title to a song with chords
+  * Fix Stage View alignment bug
+
+ -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
