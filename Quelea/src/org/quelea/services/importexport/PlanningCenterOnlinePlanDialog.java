@@ -126,6 +126,9 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         else if (itemType.equals("PlanItem") && (boolean)item.get("using_custom_slides") == true) {
             return PlanType.CUSTOM_SLIDES;
         }
+        else if (itemType.equals("PlanItem") && ((JSONArray)item.get("plan_item_medias")).size() > 0) {
+            return PlanType.MEDIA;
+        }
         
         return PlanType.UNKNOWN;
     }
@@ -271,9 +274,16 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 return;
             }
 
-            Long mediaId = (long)((JSONObject)itemMediaJSON.get(0)).get("media_id");
-            JSONObject mediaJSON = importDialog.getParser().media(mediaId);
-
+            // process each media item in the item media
+            for (int i = 0; i < itemMediaJSON.size(); ++i)
+            {
+                Long mediaId = (long)((JSONObject)itemMediaJSON.get(i)).get("media_id");
+                JSONObject mediaJSON = importDialog.getParser().media(mediaId);
+                prepare_PlanMedia_fromMediaJSON(mediaJSON);
+            }
+        }
+        
+        protected void prepare_PlanMedia_fromMediaJSON(JSONObject mediaJSON) {
             JSONArray attachmentsJSON = (JSONArray)mediaJSON.get("attachments");
             JSONObject firstAttachmentJSON = ((JSONObject)attachmentsJSON.get(0));
 
