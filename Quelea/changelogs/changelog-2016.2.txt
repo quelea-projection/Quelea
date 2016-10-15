@@ -33,4 +33,4 @@ quelea (2016.2) stable; urgency=normal
   * Fix bug when trying to add a non-breaking line or a section title to a song with chords
   * Fix Stage View alignment bug
 
- -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Saturday, 15 Oct 2016 00:00:00 +0000
