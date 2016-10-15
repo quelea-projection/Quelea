@@ -263,6 +263,9 @@ public class WebPanel extends AbstractPanel {
     public WebView removeWebView() {
         imagePane.getChildren().clear();
         imagePane.getChildren().add(imagePreview);
+        if (wd == null) {
+            return null;
+        }
         return wd.getWebView();
     }
 
