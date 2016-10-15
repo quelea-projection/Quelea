@@ -47,6 +47,9 @@ public class WebDrawer extends DisplayableDrawer {
     @Override
     public void draw(Displayable displayable) {
         clear();
+        if(displayable==null) {
+            return;
+        }
         d = (WebDisplayable) displayable;
         webView = d.getWebView();
         webEngine = d.getWebEngine();
