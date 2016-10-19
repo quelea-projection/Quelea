@@ -797,6 +797,7 @@ public final class Utils {
         ret.add("ogm");
         ret.add("mrl");
         ret.add("asx");
+        ret.add("m2ts");
         ret.add("vlcarg");
         return ret;
     }
