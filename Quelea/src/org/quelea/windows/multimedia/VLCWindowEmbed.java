@@ -37,6 +37,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -558,6 +559,9 @@ public class VLCWindowEmbed extends VLCWindow {
                         public void run() {
                             if (visible) {
                                 frame.toFront();
+                                Platform.runLater(() -> {
+                                    QueleaApp.get().getProjectionWindow().toFront();
+                                });
                             }
                             else {
                                 frame.toBack();
