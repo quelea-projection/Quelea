@@ -29,6 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
@@ -81,6 +82,9 @@ public class ToolsMenu extends Menu {
         liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image("file:icons/live_text.png", 20, 20, false, true)));
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
+        if(QueleaApp.get().getMobileLyricsServer()==null) {
+            liveTextItem.setDisable(true);
+        }
         getItems().add(liveTextItem);
 
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
