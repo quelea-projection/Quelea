@@ -44,8 +44,6 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
