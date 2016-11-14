@@ -63,7 +63,7 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineLoginDialog.fxml"));
             setScene(new Scene(root));
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Couldn't create planning center dialog", e);
+            LOGGER.log(Level.WARNING, "Couldn't create planning center login dialog", e);
         }
         
         centerOnScreen();
