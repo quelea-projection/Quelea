@@ -19,6 +19,8 @@ package org.quelea.services.importexport;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -38,6 +40,7 @@ import javafx.stage.Stage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  *
@@ -47,6 +50,7 @@ import org.quelea.services.languages.LabelGrabber;
 
 public class PlanningCenterOnlineImportDialog extends Stage{
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Map<TreeItem<String>, PlanningCenterOnlinePlanDialog> treeViewItemPlanDialogMap = new HashMap<TreeItem<String>, PlanningCenterOnlinePlanDialog>();
     private final PlanningCenterOnlineParser parser;
     private final PlanningCenterOnlineLoginDialog loginDialog;
@@ -55,7 +59,6 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     @FXML private Pane planPane;
     @FXML private Button okButton;
     
-    @SuppressWarnings("unchecked")
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
         loginDialog = new PlanningCenterOnlineLoginDialog(this);
@@ -83,7 +86,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             });
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);
         }
         
         centerOnScreen();

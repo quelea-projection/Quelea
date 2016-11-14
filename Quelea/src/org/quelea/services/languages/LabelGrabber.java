@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -119,20 +120,25 @@ public class LabelGrabber extends ResourceBundle {
         return ret;
     }
     
+    @Override
     public Enumeration<String> getKeys() {
         return Collections.enumeration(keySet());
     }
     
+    @Override
     public Object handleGetObject(String key) {
         return getLabel(key);
     }
     
     // Overrides handleKeySet() so that the getKeys() implementation
     // can rely on the keySet() value.
+    @Override
     protected Set<String> handleKeySet() {
         Set<String> result = labels.stringPropertyNames();
         Set<String> resultEng = engLabels.stringPropertyNames();
-        result.addAll(resultEng);
-        return result;
+        Set<String> ret = new HashSet<>();
+        ret.addAll(result);
+        ret.addAll(resultEng);
+        return ret;
     }
 }
