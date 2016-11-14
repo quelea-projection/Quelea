@@ -17,33 +17,29 @@
  */
 package org.quelea.services.importexport;
 
-import java.io.File;
-import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import static javafx.scene.input.DataFormat.URL;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  *
  * @author Bronson
  */
-
-
 public class PlanningCenterOnlineLoginDialog extends Stage {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean isLoggedIn = false;
     private final PlanningCenterOnlineImportDialog importDialog;
         
@@ -66,9 +62,8 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
             loader.setController(this);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineLoginDialog.fxml"));
             setScene(new Scene(root));
-        
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Couldn't create planning center dialog", e);
         }
         
         centerOnScreen();
