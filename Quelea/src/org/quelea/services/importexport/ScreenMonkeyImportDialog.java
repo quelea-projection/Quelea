@@ -22,19 +22,19 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 
 /**
- * An import dialog for Presentation Manager databases.
+ * An import dialog for Screen monkey databases.
  * <p>
  * @author Michael
  */
-public class PresentationManagerImportDialog extends ImportDialog {
+public class ScreenMonkeyImportDialog extends ImportDialog {
 
     /**
-     * Create a new Presentation Manager import dialog.
+     * Create a new Screen monkey import dialog.
      * <p>
      */
-    public PresentationManagerImportDialog() {
-        super(new String[]{LabelGrabber.INSTANCE.getLabel("pm.import.line1")
-        }, FileFilters.PM_SONG, new PresentationManagerParser(), false, true);
+    public ScreenMonkeyImportDialog() {
+        super(new String[]{LabelGrabber.INSTANCE.getLabel("smi.import.line1")
+        }, FileFilters.XML_GENERIC, new ScreenMonkeyParser(), false, true);
     }
 
 }
