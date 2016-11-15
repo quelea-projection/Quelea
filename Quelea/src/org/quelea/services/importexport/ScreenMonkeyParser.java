@@ -35,14 +35,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * A parser for parsing Presentation Manager databases.
+ * A parser for parsing Screen Monkey databases.
  * <p>
  * @author Michael
  */
-public class PresentationManagerParser implements SongParser {
+public class ScreenMonkeyParser implements SongParser {
 
     /**
-     * Get a list of the songs contained in the given Presentation Manager
+     * Get a list of the songs contained in the given Screen Monkey
      * database.
      * <p>
      * @throws IOException if something goes wrong.
@@ -50,26 +50,10 @@ public class PresentationManagerParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        String rawXML = Utils.getTextFromFile(location.getAbsolutePath(), "", "UTF-16LE");
-        String[] lines = rawXML.split("\n");
-        StringBuilder xmlText = new StringBuilder();
-        boolean first = true;
-        for (String line : lines) {
-            if (first) {
-                first = false;
-                continue;
-            }
-            if (!line.startsWith("<?xml")) {
-                xmlText.append(line.trim()).append("\n");
-            }
-        }
-        String xmlStr = xmlText.toString();
-        if (!xmlStr.trim().endsWith("</song>")) {
-            xmlStr += "</song>";
-        }
-        SongDisplayable song = getSongFromXML(xmlStr);
+        String rawXML = Utils.getTextFromFile(location.getAbsolutePath(), "", "UTF-8");
+        SongDisplayable song = getSongFromXML(rawXML);
         if (song != null) {
-            ret.add(song); //Format seems to miss out the end tag...
+            ret.add(song);
         }
         return ret;
     }
@@ -79,13 +63,19 @@ public class PresentationManagerParser implements SongParser {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes("UTF-8")));
-            Node root = doc.getElementsByTagName("song").item(0);
+            Node root = doc.getElementsByTagName("Song").item(0);
             StringBuilder lyrics = new StringBuilder();
-            String title = "Presentation Manager Song";
+            String title = "Screen Money Song";
             String author = "";
+            String capo = "";
+            String tempo = "";
+            String timesig = "";
+            String ccli = "";
+            String theme = "";
+            String comments = "";
             NodeList rootChildren = root.getChildNodes();
             for (int i = 0; i < rootChildren.getLength(); i++) {
-                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("verses")) {
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("Lyrics")) {
                     NodeList verses = rootChildren.item(i).getChildNodes();
                     for (int j = 0; j < verses.getLength(); j++) {
                         String verseText = verses.item(j).getTextContent().trim();
@@ -104,21 +94,35 @@ public class PresentationManagerParser implements SongParser {
                     }
                 }
 
-                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("attributes")) {
-                    NodeList attributes = rootChildren.item(i).getChildNodes();
-                    for (int j = 0; j < attributes.getLength(); j++) {
-                        String name = attributes.item(j).getNodeName();
-                        if (name.equalsIgnoreCase("Title")) {
-                            title = attributes.item(j).getTextContent();
-                        }
-                        if (name.equalsIgnoreCase("Author")) {
-                            author = attributes.item(j).getTextContent();
-                        }
-                    }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("Title")) {
+                    title = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("Author")) {
+                    author = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("Capo")) {
+                    capo = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("Tempo")) {
+                    tempo = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("timesig")) {
+                    timesig = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("ccli")) {
+                    ccli = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("theme")) {
+                    theme = rootChildren.item(i).getTextContent();
+                }
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("comments")) {
+                    comments = rootChildren.item(i).getTextContent();
                 }
             }
             SongDisplayable ret = new SongDisplayable(title, author);
-            ret.setLyrics(lyrics.toString().trim());
+            ret.setLyrics(lyrics.toString());
+            ret.setCapo(capo);
+            ret.setCcli(ccli);
             return ret;
         } catch (ParserConfigurationException | SAXException | IOException | DOMException ex) {
             return null;

@@ -51,6 +51,7 @@ import org.quelea.services.importexport.VideoPsalmImportDialog;
 import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
 import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
+import org.quelea.services.importexport.ScreenMonkeyImportDialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
@@ -81,6 +82,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
     private final ImportDialog presentationManagerImportDialog;
+    private final ImportDialog screenMonkeyImportDialog;
     private final ImportDialog sofImportDialog;
     private final PlanningCenterOnlineImportDialog planningCenterOnlineImportDialog;
     private final MenuItem qspItem;
@@ -96,6 +98,7 @@ public class ImportMenu extends Menu {
     private final MenuItem sofItem;
     private final MenuItem sourceItem;
     private final MenuItem pmItem;
+    private final MenuItem smItem;
     private final MenuItem mediaShoutItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
@@ -132,6 +135,7 @@ public class ImportMenu extends Menu {
         songBeamerImportDialog = new SongBeamerImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
         presentationManagerImportDialog = new PresentationManagerImportDialog();
+        screenMonkeyImportDialog = new ScreenMonkeyImportDialog();
         sofImportDialog = new SoFImportDialog();
         planningCenterOnlineImportDialog = new PlanningCenterOnlineImportDialog();
 
@@ -241,6 +245,11 @@ public class ImportMenu extends Menu {
             presentationManagerImportDialog.show();
         });
 
+        smItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sm.button"), new ImageView(new Image("file:icons/sm.png", 16, 16, false, true)));
+        smItem.setOnAction((ActionEvent t) -> {
+            screenMonkeyImportDialog.show();
+        });
+
         sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), new ImageView(new Image("file:icons/sof.png", 16, 16, false, true)));
         sofItem.setOnAction((ActionEvent t) -> {
             sofImportDialog.show();
@@ -264,6 +273,7 @@ public class ImportMenu extends Menu {
         getItems().add(plainTextItem);
         getItems().add(pmItem);
         getItems().add(qspItem);
+        getItems().add(smItem);
         getItems().add(sbItem);
         getItems().add(songproItem);
         getItems().add(songSelectItem);
