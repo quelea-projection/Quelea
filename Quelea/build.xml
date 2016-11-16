@@ -23,12 +23,14 @@
     <property name="dist.jar.dir" value="${basedir}/dist"/>
     
     <property name="CPInstallerName" value="quelea-${quelea.version}-crossplatform-install.jar"/>
-    <property name="WindowsInstallerName" value="quelea-${quelea.version}-windows-install.exe"/>
+    <property name="WindowsInstallerName" value="quelea-${quelea.version}-x86-windows-install.exe"/>
+    <property name="WindowsInstaller64Name" value="quelea-${quelea.version}-x64-windows-install.exe"/>
     <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
     <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
 
     <property name="CPInstaller" value="${dist.jar.dir}/standalone/${CPInstallerName}"/>
     <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
+    <property name="WindowsInstaller64" value="${dist.jar.dir}/standalone/${WindowsInstaller64Name}"/>
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
@@ -66,6 +68,7 @@
             <fileset dir="${basedir}/themes"/>
         </copy>
         <unzip src="bundlejre/winjre.zip" dest="${dist.jar.dir}"/>
+        <unzip src="bundlejre/winjre64.zip" dest="${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
@@ -110,6 +113,7 @@
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/Quelea.bat" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/quelea.iss" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/quelea64.iss" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt" quiet="yes"/>
         <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh" quiet="yes"/>
@@ -129,6 +133,7 @@
                 <exclude name="lib/**javadoc.jar"/>
                 <exclude name="standalone/**"/>
                 <exclude name="winjre/**"/>
+                <exclude name="winjre64/**"/>
                 <exclude name="Output/**"/>
                 <exclude name="web-files/**"/>
                 <exclude name="copyright"/>
@@ -195,6 +200,7 @@
             <arg value="/c build-install.bat"/>
         </exec>
         <move file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <move file="${dist.jar.dir}/Output/setup64.exe" tofile="${WindowsInstaller64}" failonerror="false"/>
         <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
     </target>
     
