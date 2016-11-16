@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Mon Nov 14 21:36:11 GMT 2016
+#Wed Nov 16 00:56:07 GMT 2016
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -155,6 +155,7 @@ add.live.video.button=Add Live Video
 translating.text.please.wait.text=Hang on a moment - grabbing a translation...
 options.title=Options
 rcs.song.search=Song
+smi.import.line1=Select the Screen Monkey songs to import.
 presentation.not.started.message=Unfortunately, your presentation couldn't be started with PowerPoint. Maybe the file is corrupt?
 sof.button=Songs of Fellowship
 general.options.heading=General
@@ -520,6 +521,7 @@ delete.video.confirmation=Really remove this video from the library? This action
 library.preview.song.text=Preview song
 chosen.fonts.explanation=Quelea only shows a selection of fonts in the theme window. Drag the fonts that you use from the left panel to the right panel, drag the ones you don't from the right to the left.
 confirm.remove.translation.title=Remove translation?
+sm.button=Screen Monkey
 quick.insert.text=Quick Insert
 new.song.button=New Song
 png.files.description=PNG image files
@@ -573,8 +575,8 @@ move.down.schedule.tooltip=Move down in schedule
 help.about.close=Close
 timer.theme.label=Theme settings
 theme.select.text=Select theme\:
-new.theme.text=New theme...
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
+new.theme.text=New theme...
 help.menu.discussion=Support / Discussion (ask questions here)
 filefilters.description.powerpoint.presentations=Powerpoint Presentations
 transpose.label=Transpose
