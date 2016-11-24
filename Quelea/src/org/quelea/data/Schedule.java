@@ -305,6 +305,7 @@ public class Schedule implements Iterable<Displayable> {
             String contents = contentsBuilder.toString();
             contents = contents.replace(new String(new byte[]{11}), "\n");
             contents = contents.replace(new String(new byte[]{-3}), " ");
+            contents = contents.replace(new String(new byte[]{0}), "");
             InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
             /*
              * End bodge.
