@@ -19,6 +19,7 @@
 package org.quelea.windows.main.widgets;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -37,6 +38,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class LoadingPane extends StackPane {
 
     private FadeTransition trans;
+    private ProgressBar bar;
 
     /**
      * Create the loading pane.
@@ -46,14 +48,24 @@ public class LoadingPane extends StackPane {
         VBox content = new VBox();
         content.setAlignment(Pos.CENTER);
         Text text = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        ProgressBar bar = new ProgressBar();
-        bar.setProgress(-1);
+        text.setStyle(" -fx-font: bold italic 20pt \"Arial\";");
+        FadeTransition textTransition = new FadeTransition(Duration.seconds(1.5), text);
+        textTransition.setAutoReverse(true);
+        textTransition.setFromValue(0);
+        textTransition.setToValue(1);
+        textTransition.setCycleCount(Transition.INDEFINITE);
+        textTransition.play();
         content.getChildren().add(text);
+        bar = new ProgressBar();
         content.getChildren().add(bar);
         getChildren().add(content);
         setOpacity(0);
         setStyle("-fx-background-color: #555555;");
         setVisible(false);
+    }
+    
+    public void setProgress(double progress) {
+        bar.setProgress(progress);
     }
 
     /**
@@ -61,6 +73,7 @@ public class LoadingPane extends StackPane {
      */
     public synchronized void show() {
         setVisible(true);
+        setProgress(-1);
         if(trans != null) {
             trans.stop();
         }
@@ -74,6 +87,7 @@ public class LoadingPane extends StackPane {
      * Hide (fade out) the loading pane.
      */
     public synchronized void hide() {
+        setVisible(false);
         if(trans != null) {
             trans.stop();
         }

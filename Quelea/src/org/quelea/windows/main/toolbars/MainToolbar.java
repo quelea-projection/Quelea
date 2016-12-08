@@ -195,15 +195,17 @@ public class MainToolbar extends ToolBar {
         addMultimediaButton.setOnAction(new AddVideoActionHandler());
         add.getItems().add(addMultimediaButton);
 
-        MenuItem addYoutubeButton;
-        if (Utils.isMac()) {
-            addYoutubeButton = getMenuItemFromImage("file:icons/youtube.png");
-        } else {
-            addYoutubeButton = getMenuItemFromImage("file:icons/youtube.png");
+        if (QueleaProperties.get().isYoutubeEnabled()) {
+            MenuItem addYoutubeButton;
+            if (Utils.isMac()) {
+                addYoutubeButton = getMenuItemFromImage("file:icons/youtube.png");
+            } else {
+                addYoutubeButton = getMenuItemFromImage("file:icons/youtube.png");
+            }
+            addYoutubeButton.setText(LabelGrabber.INSTANCE.getLabel("add.youtube.button"));
+            addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
+            add.getItems().add(addYoutubeButton);
         }
-        addYoutubeButton.setText(LabelGrabber.INSTANCE.getLabel("add.youtube.button"));
-        addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
-        add.getItems().add(addYoutubeButton);
 
         MenuItem addTimerButton;
         if (Utils.isMac()) {
@@ -368,7 +370,7 @@ public class MainToolbar extends ToolBar {
         iv.setFitHeight(24);
         return new Button("", iv);
     }
-    
+
     private MenuItem getMenuItemFromImage(String uri) {
         ImageView iv = new ImageView(new Image(uri));
         iv.setSmooth(true);
