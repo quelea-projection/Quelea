@@ -97,6 +97,14 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
+    
+    public boolean isDictionaryEnabled() {
+        return Boolean.parseBoolean(getProperty("enable.dict", "false"));
+    }
+    
+    public boolean isYoutubeEnabled() {
+        return Boolean.parseBoolean(getProperty("enable.youtube", "false"));
+    }
 
     /**
      * Get the languages file that should be used as specified in the properties

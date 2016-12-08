@@ -131,26 +131,27 @@ public class BasicSongPanel extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
-        dictSelector = new ComboBox<>();
-        dictSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            dictSelector.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
-        Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
-        for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
-            dictSelector.getItems().add(dict);
-        }
-        dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
-                lyricsArea.setDictionary(dictSelector.getValue());
+        if (QueleaProperties.get().isDictionaryEnabled()) {
+            dictSelector = new ComboBox<>();
+            Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
+            for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
+                dictSelector.getItems().add(dict);
             }
-        });
+            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
 
-        dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
-        lyricsToolbar.getItems().add(dictSelector);
-        lyricsToolbar.getItems().add(getDictButton());
+                @Override
+                public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
+                    lyricsArea.setDictionary(dictSelector.getValue());
+                }
+            });
+
+            dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
+            lyricsToolbar.getItems().add(dictSelector);
+            lyricsToolbar.getItems().add(getDictButton());
+        }
+        else {
+            dictSelector = null;
+        }
         VBox.setVgrow(mainPanel, Priority.ALWAYS);
         mainPanel.getChildren().add(lyricsToolbar);
         VBox.setVgrow(lyricsArea, Priority.ALWAYS);
@@ -217,6 +218,7 @@ public class BasicSongPanel extends BorderPane {
 
     /**
      * Get a title button
+     *
      * @param fileName Image file name
      * @param label Tooltip label
      * @param titleName Title name to be inserted
