@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.model.Song;
@@ -38,7 +38,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
  * Manage songs persistent operations.
@@ -107,21 +107,30 @@ public final class SongManager {
         }
     }
 
+    public synchronized SongDisplayable[] getSongs() {
+        return getSongs(null);
+    }
+
     /**
      * Get all the songs in the database.
      * <p/>
      * @return an array of all the songs in the database.
      */
-    public synchronized SongDisplayable[] getSongs() {
-//        if(Platform.isFxApplicationThread()) {
-//            LOGGER.log(Level.WARNING, "getSongs() should not be called on platform thread!", new RuntimeException("Debug exception"));
-//        }
+    public synchronized SongDisplayable[] getSongs(LoadingPane loadingPane) {
         if (cacheSongs.get() != null) {
             return cacheSongs.get();
         }
         final Set<SongDisplayable> songs = new TreeSet<>();
         HibernateUtil.execute((Session session) -> {
-            for (final Song song : new SongDao(session).getSongs()) {
+            List<Song> songsList = new SongDao(session).getSongs();
+            for (int si = 0; si < songsList.size(); si++) {
+                final int finalSi = si;
+                if (loadingPane != null) {
+                    Platform.runLater(() -> {
+                        loadingPane.setProgress((double) finalSi / songsList.size());
+                    });
+                }
+                Song song = songsList.get(si);
                 try {
                     song.getTitle();
                 } catch (Exception ex) {
@@ -137,27 +146,30 @@ public final class SongManager {
                 for (int i = 0; i < song.getTags().size(); i++) {
                     tags[i] = song.getTags().get(i);
                 }
-                Utils.fxRunAndWait(() -> {
-                    final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
-                            song.getAuthor())
-                            .lyrics(song.getLyrics())
-                            .ccli(song.getCcli())
-                            .year(song.getYear())
-                            .tags(tags)
-                            .publisher(song.getPublisher())
-                            .copyright(song.getCopyright())
-                            .key(song.getKey())
-                            .info(song.getInfo())
-                            .capo(song.getCapo())
-                            .translations(song.getTranslations())
-                            .id(song.getId()).get();
-                    final Theme theme = song.getTheme();
-                    final ThemeDTO themedto = ThemeDTO.getDTO(theme);
-                    for (TextSection section : songDisplayable.getSections()) {
-                        section.setTheme(themedto);
-                    }
-                    songDisplayable.setTheme(themedto);
-                    songs.add(songDisplayable);
+                final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
+                        song.getAuthor())
+                        .lyrics(song.getLyrics())
+                        .ccli(song.getCcli())
+                        .year(song.getYear())
+                        .tags(tags)
+                        .publisher(song.getPublisher())
+                        .copyright(song.getCopyright())
+                        .key(song.getKey())
+                        .info(song.getInfo())
+                        .capo(song.getCapo())
+                        .translations(song.getTranslations())
+                        .id(song.getId()).get();
+                final Theme theme = song.getTheme();
+                final ThemeDTO themedto = ThemeDTO.getDTO(theme);
+                for (TextSection section : songDisplayable.getSections()) {
+                    section.setTheme(themedto);
+                }
+                songDisplayable.setTheme(themedto);
+                songs.add(songDisplayable);
+            }
+            if (loadingPane != null) {
+                Platform.runLater(() -> {
+                    loadingPane.setProgress(-1);
                 });
             }
         });
