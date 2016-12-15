@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+    <info>
+        <appname>Quelea</appname>
+        <appversion>0.x</appversion>
+        <javaversion>1.7</javaversion>
+        <url>http://www.quelea.org/</url>
+        <run-privileged/>
+        <!--Uncomment the following line when going to production, drastically reduces size of the installer-->
+        <!--<pack200/>-->
+    </info>
+
+    <guiprefs width="640" height="480" resizable="no"/>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <!-- 
+        The resources section.
+        The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+    -->
+    <resources>
+        <res id="LicencePanel.licence" src="../licenses/gplv3.txt"/>
+        <res id="HTMLHelloPanel.welcome" src="../izpack/welcome.html"/>
+        <res src="../izpack/shortcutSpec.xml" id="shortcutSpec.xml"/>
+        <res src="../izpack/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
+    </resources>
+
+    <native type="izpack" name="ShellLink.dll"/>
+    <native type="izpack" name="ShellLink_x64.dll"/>
+    <native type="3rdparty" name="COIOSHelper.dll" stage="both">
+        <os family="windows"/>
+    </native>
+
+    <listeners>
+        <listener installer="RegistryInstallerListener" uninstaller="RegistryUninstallerListener">
+            <os family="windows"/>
+        </listener>
+    </listeners>
+
+    <panels>
+        <panel classname="HTMLHelloPanel" id="welcome"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+        <!--        <panel classname="PacksPanel"/>-->
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+        <pack name="base" required="yes" preselected="yes" hidden="true">
+            <description>Core components</description>
+            <file src="lib" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.vbs" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
+            <file src="scheduleformat.xsl" targetdir="$INSTALL_PATH"/>
+            <file src="songformat.xsl" targetdir="$INSTALL_PATH"/>
+            <!--<file src="Quelea.exe" targetdir="$INSTALL_PATH"/>-->
+            <file src="README.TXT" targetdir="$INSTALL_PATH"/>
+            <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
+            <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
+        </pack>
+        <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
+            <description>Dictionaries</description>
+            <file src="dictionaries" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="bibles" required="no" preselected="yes" hidden="true">
+            <description>Bibles</description>
+            <file src="bibles" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="languages" required="yes" preselected="yes" hidden="true">
+            <description>Language files</description>
+            <file src="languages" targetdir="$INSTALL_PATH" override="true"/>
+        </pack>
+        <pack name="server" required="yes" preselected="yes" hidden="true">
+            <description>Server files</description>
+            <file src="server" targetdir="$INSTALL_PATH" override="true"/>
+        </pack>
+        <pack name="source code" required="no" preselected="yes">
+            <description>Source code</description>
+            <file src="src" targetdir="$INSTALL_PATH"/>
+        </pack>
+<!--        <pack name="database" required="no" preselected="yes">
+            <description>Sample database of songs</description>
+            <file src="database" targetdir="$USER_HOME/.quelea/database" override="false"/>
+        </pack>-->
+        <pack name="themes" required="yes" preselected="yes">
+            <description>Sample themes</description>
+            <file src="themes" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="images" required="no" preselected="yes">
+            <description>Images and icons</description>
+            <file src="icons" targetdir="$INSTALL_PATH"/>
+            <file src="img" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="videos" required="no" preselected="yes">
+            <description>Background videos</description>
+            <file src="vid" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="licenses" required="no" preselected="yes">
+            <description>licenses</description>
+            <file src="licenses" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+    </packs>
+
+</installation>
