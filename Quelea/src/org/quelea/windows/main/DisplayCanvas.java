@@ -405,9 +405,17 @@ public class DisplayCanvas extends StackPane {
 
     public void makeClickable(boolean clickable) {
         // Make webview clickable
-        black.setMouseTransparent(clickable);
-        logoImage.setMouseTransparent(clickable);
-        background.setMouseTransparent(clickable);
-        noticeOverlay.setMouseTransparent(clickable);
+        if (black != null) {
+            black.setMouseTransparent(clickable);
+        }
+        if (logoImage != null) {
+            logoImage.setMouseTransparent(clickable);
+        }
+        if (background != null) {
+            background.setMouseTransparent(clickable);
+        }
+        if (noticeOverlay != null) {
+            noticeOverlay.setMouseTransparent(clickable);
+        }
     }
 }
