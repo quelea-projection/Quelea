@@ -28,6 +28,8 @@ import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.ProgressBar;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.Header;
@@ -47,6 +49,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
@@ -55,6 +58,7 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class PlanningCenterOnlineParser {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final DefaultHttpClient httpClient;
     private final BasicCookieStore cookieStore;
     private final HttpContext httpContext;
@@ -72,9 +76,11 @@ public class PlanningCenterOnlineParser {
     }
 
     public boolean login(String email, String password) {
+        LOGGER.log(Level.INFO, "Logging in");
         String args = String.format("email=%s&password=%s&submit=login", email, password);
         String url = "https://accounts.planningcenteronline.com/login";
         String result = post(url, args, email, password);
+        LOGGER.log(Level.INFO, "Login result: {0}", result);
         if (result == null) {
             return false;
         }
@@ -90,7 +96,7 @@ public class PlanningCenterOnlineParser {
     private String post(String urlString, String urlParameters, String email, String password) {
         try {
             HttpPost httpost = new HttpPost(urlString);
-            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            List<NameValuePair> nvps = new ArrayList<>();
             nvps.add(new BasicNameValuePair("email", email));
             nvps.add(new BasicNameValuePair("password", password));
             httpost.setEntity(new UrlEncodedFormEntity(nvps));
@@ -117,7 +123,7 @@ public class PlanningCenterOnlineParser {
             entity.consumeContent();
             return text;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -133,7 +139,7 @@ public class PlanningCenterOnlineParser {
             entity.consumeContent();
             return text;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -152,7 +158,7 @@ public class PlanningCenterOnlineParser {
             JSONObject json = (JSONObject) parser.parse(jsonStr);
             return json;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -242,7 +248,7 @@ public class PlanningCenterOnlineParser {
             }
             return file.getAbsolutePath();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return "";
