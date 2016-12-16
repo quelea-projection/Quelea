@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
@@ -52,6 +54,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -78,7 +81,8 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         UNKNOWN,
     }
     
-    private final Map<TreeItem<String>, JSONObject> treeViewItemMap = new HashMap<TreeItem<String>, JSONObject>();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private final Map<TreeItem<String>, JSONObject> treeViewItemMap = new HashMap<>();
     private final PlanningCenterOnlineImportDialog importDialog;
     private final Long planId;
     
@@ -107,11 +111,11 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             setCenter(root);
             planView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             enablePlanProgressBars(false);
-            
+            LOGGER.log(Level.INFO, "Initialised dialog, updating view");
             updateView();
         
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }       
     }
     
@@ -135,17 +139,18 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             
     @SuppressWarnings("unchecked")
     protected void updateView() {
+        LOGGER.log(Level.INFO, "Updating view with id {0}", planId);
         planJSON = importDialog.getParser().plan(planId);  
         
+        LOGGER.log(Level.INFO, "JSON is {0}", planJSON);
+        
         planView.setShowRoot(false);
-        TreeItem<String> rootTreeItem = new TreeItem<String>();
+        TreeItem<String> rootTreeItem = new TreeItem<>();
         planView.setRoot(rootTreeItem);
         
-        int itemIndex = 0;
         JSONArray items = (JSONArray)planJSON.get("items");
         for (Object itemObj : items) {
             JSONObject item = (JSONObject)itemObj;
-            ++itemIndex;
             
             PlanType planType = getItemPlanType(item);
             switch (planType)
@@ -170,21 +175,21 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     
     protected void addToView_PlanMedia(JSONObject item, TreeItem<String> parentTreeItem) {
         String title = "Media: " + (String)item.get("title");
-        TreeItem<String> treeItem = new TreeItem<String>(title);
+        TreeItem<String> treeItem = new TreeItem<>(title);
         parentTreeItem.getChildren().add(treeItem);
         treeViewItemMap.put(treeItem, item);
     }
     
     protected void addToView_PlanSong(JSONObject item, TreeItem<String> parentTreeItem) {
         String title = "Song: " + (String)item.get("title");
-        TreeItem<String> treeItem = new TreeItem<String>(title);
+        TreeItem<String> treeItem = new TreeItem<>(title);
         parentTreeItem.getChildren().add(treeItem);
         treeViewItemMap.put(treeItem, item);
     }
     
     protected void addToView_CustomSlides(JSONObject item, TreeItem<String> parentTreeItem) {
         String title = "Custom Slides: " + (String)item.get("title");
-        TreeItem<String> treeItem = new TreeItem<String>(title);
+        TreeItem<String> treeItem = new TreeItem<>(title);
         parentTreeItem.getChildren().add(treeItem);
         treeViewItemMap.put(treeItem, item);
     }
@@ -218,7 +223,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     class ImportTask extends Task<Void> {
 
         List<TreeItem<String> > selectedTreeItems;
-        List<Displayable>       importItems = new ArrayList<Displayable>();
+        List<Displayable>       importItems = new ArrayList<>();
 
         ImportTask(List<TreeItem<String> > selectedTreeItems) {
             this.selectedTreeItems = selectedTreeItems;
@@ -306,7 +311,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                     date = format.parse(stringDate);
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Error", e);
                 }
 
                 fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress, date);
@@ -320,7 +325,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                             displayable = new PresentationDisplayable(new File(fileName));                    
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.WARNING, "Error", e);
                         }
                         break;
                         
@@ -329,7 +334,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                             displayable = new PdfDisplayable(new File(fileName));                    
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.WARNING, "Error", e);
                         }
                         break;
 
@@ -503,7 +508,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 lastTitle = title;
             }
             catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Error", e);
             }
             
             lastMatchEnd = match.end();
