@@ -16,13 +16,10 @@
  */
 package org.quelea.services.importexport;
 
-import static com.neovisionaries.i18n.LanguageAlpha3Code.bis;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -42,6 +39,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -70,6 +68,19 @@ public class PlanningCenterOnlineParser {
         java.net.CookieHandler.setDefault(cm);
 
         httpClient = new DefaultHttpClient();
+        httpClient.setRedirectHandler(new DefaultRedirectHandler() {
+            @Override
+            public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+                boolean isRedirect = super.isRedirectRequested(response, context);
+                if (!isRedirect) {
+                    int responseCode = response.getStatusLine().getStatusCode();
+                    if (responseCode == 301 || responseCode == 302) {
+                        return true;
+                    }
+                }
+                return isRedirect;
+            }
+        });
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
@@ -77,9 +88,8 @@ public class PlanningCenterOnlineParser {
 
     public boolean login(String email, String password) {
         LOGGER.log(Level.INFO, "Logging in");
-        String args = String.format("email=%s&password=%s&submit=login", email, password);
         String url = "https://accounts.planningcenteronline.com/login";
-        String result = post(url, args, email, password);
+        String result = post(url, email, password);
         LOGGER.log(Level.INFO, "Login result: {0}", result);
         if (result == null) {
             return false;
@@ -93,7 +103,7 @@ public class PlanningCenterOnlineParser {
         return true;
     }
 
-    private String post(String urlString, String urlParameters, String email, String password) {
+    private String post(String urlString, String email, String password) {
         try {
             HttpPost httpost = new HttpPost(urlString);
             List<NameValuePair> nvps = new ArrayList<>();
@@ -102,6 +112,11 @@ public class PlanningCenterOnlineParser {
             httpost.setEntity(new UrlEncodedFormEntity(nvps));
 
             HttpResponse response = httpClient.execute(httpost, httpContext);
+
+            LOGGER.log(Level.INFO, "Response code " + response.getStatusLine().getStatusCode());
+            for (Header header : response.getAllHeaders()) {
+                LOGGER.log(Level.INFO, "Response header ({0}:{1})", new Object[]{header.getName(), header.getValue()});
+            }
 
             Header[] cookieList = response.getHeaders("Set-Cookie");
             for (Header cookieHeader : cookieList) {
