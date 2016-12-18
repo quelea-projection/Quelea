@@ -68,19 +68,19 @@ public class PlanningCenterOnlineParser {
         java.net.CookieHandler.setDefault(cm);
 
         httpClient = new DefaultHttpClient();
-        httpClient.setRedirectHandler(new DefaultRedirectHandler() {
-            @Override
-            public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
-                boolean isRedirect = super.isRedirectRequested(response, context);
-                if (!isRedirect) {
-                    int responseCode = response.getStatusLine().getStatusCode();
-                    if (responseCode == 301 || responseCode == 302) {
-                        return true;
-                    }
-                }
-                return isRedirect;
-            }
-        });
+//        httpClient.setRedirectHandler(new DefaultRedirectHandler() {
+//            @Override
+//            public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+//                boolean isRedirect = super.isRedirectRequested(response, context);
+//                if (!isRedirect) {
+//                    int responseCode = response.getStatusLine().getStatusCode();
+//                    if (responseCode == 301 || responseCode == 302) {
+//                        return true;
+//                    }
+//                }
+//                return isRedirect;
+//            }
+//        });
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
@@ -113,7 +113,7 @@ public class PlanningCenterOnlineParser {
 
             HttpResponse response = httpClient.execute(httpost, httpContext);
 
-            LOGGER.log(Level.INFO, "Response code " + response.getStatusLine().getStatusCode());
+            LOGGER.log(Level.INFO, "Response code {0}", response.getStatusLine().getStatusCode());
             for (Header header : response.getAllHeaders()) {
                 LOGGER.log(Level.INFO, "Response header ({0}:{1})", new Object[]{header.getName(), header.getValue()});
             }
