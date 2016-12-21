@@ -19,9 +19,6 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -71,7 +68,7 @@ public class MainPanel extends BorderPane {
                 bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
         previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(0.58);
         livePanel.getLyricsPanel().getSplitPane().setDividerPositions(0.58);
-        
+
         mainSplit = new SplitPane();
         mainSplit.setOrientation(Orientation.HORIZONTAL);
         mainSplit.getItems().add(scheduleAndLibrary);
@@ -87,39 +84,25 @@ public class MainPanel extends BorderPane {
      * Set the position of the dividers based on the properties file.
      */
     public void setSliderPos() {
-        Platform.runLater(new Runnable() {
+        double mainPos = QueleaProperties.get().getMainDivPos();
+        double prevLivePos = QueleaProperties.get().getPrevLiveDivPos();
+        double canvasPos = QueleaProperties.get().getCanvasDivPos();
+        double libraryPos = QueleaProperties.get().getLibraryDivPos();
+        if (prevLivePos != -1 && mainPos != -1) {
+            mainSplit.setDividerPositions(mainPos, prevLivePos);
+        } else {
+            mainSplit.setDividerPositions(0.2717, 0.6384);
+        }
 
-            @Override
-            public void run() {
-                double mainPos = QueleaProperties.get().getMainDivPos();
-                double prevLivePos = QueleaProperties.get().getPrevLiveDivPos();
-                double canvasPos = QueleaProperties.get().getCanvasDivPos();
-                double libraryPos = QueleaProperties.get().getLibraryDivPos();
-                if (prevLivePos != -1 && mainPos != -1) {
-                    mainSplit.setDividerPositions(mainPos, prevLivePos);
-                }
-                else {
-                    mainSplit.setDividerPositions(0.2717,0.6384);
-                }
-
-                if (canvasPos != -1) {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
-                            livePanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
-                            if (libraryPos != -1) {
-                                scheduleAndLibrary.setDividerPositions(libraryPos);
-                            }
-                            else {
-                                scheduleAndLibrary.setDividerPositions(0.5);
-                            }
-                        }
-                    });
-                }
+        if (canvasPos != -1) {
+            previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
+            livePanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
+            if (libraryPos != -1) {
+                scheduleAndLibrary.setDividerPositions(libraryPos);
+            } else {
+                scheduleAndLibrary.setDividerPositions(0.5);
             }
-        });
+        }
     }
 
     /**
@@ -139,7 +122,7 @@ public class MainPanel extends BorderPane {
     public double getPrevLiveDivPos() {
         return mainSplit.getDividerPositions()[1];
     }
-    
+
     /**
      * Get the library / schedule splitpane divider position.
      *
