@@ -80,6 +80,7 @@ public class MainPanel extends BorderPane {
         setCenter(mainSplit);
         statusPanelGroup = new StatusPanelGroup();
         setBottom(statusPanelGroup);
+        LOGGER.log(Level.INFO, "Created main panel");
     }
 
     /**
