@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.utils.Utils;
@@ -34,8 +35,8 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static AudioDisplayable parseXML(Node node) {
-        return new AudioDisplayable(new File(node.getTextContent()));
+    public static AudioDisplayable parseXML(Node node, Map<String, String> fileChanges) {
+        return new AudioDisplayable(Utils.getChangedFile(node, fileChanges));
     }
 
     /**

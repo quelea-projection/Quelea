@@ -103,6 +103,15 @@ public final class Utils {
     public static void beep() {
         Toolkit.getDefaultToolkit().beep();
     }
+    
+    public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
+        File file = new File(node.getTextContent());
+        String changedFile = fileChanges.get(file.getAbsolutePath());
+        if (!file.exists() && changedFile != null) {
+            file = new File(changedFile);
+        }
+        return file;
+    }
 
     /**
      * Get the debug log file, useful for debugging if something goes wrong (the
