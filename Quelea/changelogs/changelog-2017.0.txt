@@ -5,5 +5,7 @@ quelea (2017.0) stable; urgency=normal
   * Disable Youtube button / menu item by default
   * Improve startup time
   * Fix memory issues caused by lots of videos in the video panel
+  * Fix planning centre online import when using folders
+  * Fix embedding of some file types in schedule
 
  -- Michael Berry <michael@quelea.org>  Tuesday, 15 Nov 2016 00:00:00 +0000
