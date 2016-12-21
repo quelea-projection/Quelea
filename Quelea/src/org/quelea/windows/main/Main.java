@@ -239,13 +239,12 @@ public final class Main extends Application {
                             } catch (InterruptedException ex) {
                                 ex.printStackTrace();
                             }
-                            BibleManager.get().buildIndex();
+//                            BibleManager.get().buildIndex();
 
                             if (SongManager.get() == null) {
                                 Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                                 System.exit(1);
                             }
-                            SongManager.get().getSongs();
                             OOUtils.attemptInit();
                             try {
                                 bibleLoader.join(); //Make sure bibleloader has finished loading
