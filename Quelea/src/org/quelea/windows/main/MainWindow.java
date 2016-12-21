@@ -93,7 +93,9 @@ public class MainWindow extends Stage {
         bibleBrowseDialog = new BibleBrowseDialog();
 
         mainpanel = new MainPanel();
+        LOGGER.log(Level.INFO, "Creating song entry window");
         songEntryWindow = new SongEntryWindow();
+        LOGGER.log(Level.INFO, "Creating translation dialog");
         translationChoiceDialog = new TranslationChoiceDialog();
 
         menuBar = new MainMenuBar();
@@ -104,9 +106,11 @@ public class MainWindow extends Stage {
         toolbarPanel.getChildren().add(mainToolbar);
 
         if (Utils.isMac()) {
+            LOGGER.log(Level.INFO, "Is mac: true, using system menu bar");
             menuBar.setUseSystemMenuBar(true);
         }
 
+        LOGGER.log(Level.INFO, "Creating menu box");
         VBox menuBox = new VBox();
         menuBox.setFillWidth(true);
         menuBox.getChildren().add(menuBar);
@@ -115,6 +119,7 @@ public class MainWindow extends Stage {
 
         mainPane.setCenter(mainpanel);
         setScene(new Scene(menuBox));
+        LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
             Platform.runLater(new Runnable() {

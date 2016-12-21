@@ -67,7 +67,6 @@ public class LibrarySongList extends StackPane {
     private ListView<SongDisplayable> songList;
     private LoadingPane loadingOverlay;
     private AddSongPromptOverlay addSongOverlay;
-    private final boolean popup;
 
     /**
      * Create a new library song list.
@@ -97,7 +96,6 @@ public class LibrarySongList extends StackPane {
             }
         });
         getChildren().add(loadingOverlay);
-        this.popup = popup;
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
             public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
@@ -323,7 +321,7 @@ public class LibrarySongList extends StackPane {
                 setLoading(true);
             }
         });
-        final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs());
+        final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs(loadingOverlay));
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
