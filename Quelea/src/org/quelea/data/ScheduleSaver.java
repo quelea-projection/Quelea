@@ -18,7 +18,6 @@
 package org.quelea.data;
 
 import java.io.File;
-import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,7 +25,7 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
-import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -66,7 +65,7 @@ public class ScheduleSaver {
                 if (!selectedFile.getName().endsWith("." + extension)) {
                     selectedFile = new File(selectedFile.getAbsoluteFile() + "." + extension);
                 }
-                if (selectedFile.exists()) {
+                if (selectedFile.exists() && !Utils.isWindows()) {
                     yes = false;
                     Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), selectedFile.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
 
@@ -74,12 +73,7 @@ public class ScheduleSaver {
                         public void handle(ActionEvent t) {
                             yes = true;
                         }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                        }
-                    }).build();
+                    }).addNoButton(t -> {}).build();
                     confirm.showAndWait();
                     if (!yes) {
                         selectedFile = null;
