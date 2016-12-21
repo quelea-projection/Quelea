@@ -51,11 +51,11 @@ public class MainWindow extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private SongEntryWindow songEntryWindow;
-    private TranslationChoiceDialog translationChoiceDialog;
-    private NoticeDialog noticeDialog;
+    private final TranslationChoiceDialog translationChoiceDialog;
+    private final NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
-    private OptionsDialog optionsDialog;
+    private final OptionsDialog optionsDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
 
@@ -68,11 +68,9 @@ public class MainWindow extends Stage {
     public MainWindow(boolean setApplicationWindow) {
         setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
         Utils.addIconsToStage(this);
-
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
         noticeDialog = new NoticeDialog();
-
         LOGGER.log(Level.INFO, "Creating main window");
         if (setApplicationWindow) {
             QueleaApp.get().setMainWindow(this);
@@ -83,7 +81,6 @@ public class MainWindow extends Stage {
                 new ExitActionHandler().exit(t);
             }
         });
-
         LOGGER.log(Level.INFO, "Creating options dialog");
         optionsDialog = new OptionsDialog();
 
@@ -91,10 +88,7 @@ public class MainWindow extends Stage {
         bibleSearchDialog = new BibleSearchDialog();
         LOGGER.log(Level.INFO, "Creating bible browse dialog");
         bibleBrowseDialog = new BibleBrowseDialog();
-
         mainpanel = new MainPanel();
-        LOGGER.log(Level.INFO, "Creating song entry window");
-        songEntryWindow = new SongEntryWindow();
         LOGGER.log(Level.INFO, "Creating translation dialog");
         translationChoiceDialog = new TranslationChoiceDialog();
 
@@ -122,16 +116,11 @@ public class MainWindow extends Stage {
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
-            Platform.runLater(new Runnable() {
-                public void run() {
-                    setWidth(sceneInfo.getWidth());
-                    setHeight(sceneInfo.getHeight());
-                    setX(sceneInfo.getX());
-                    setY(sceneInfo.getY());
-                    setMaximized(sceneInfo.isMaximised());
-                }
-            });
-
+            setWidth(sceneInfo.getWidth());
+            setHeight(sceneInfo.getHeight());
+            setX(sceneInfo.getX());
+            setY(sceneInfo.getY());
+            setMaximized(sceneInfo.isMaximised());
         }
         LOGGER.log(Level.INFO, "Created main window.");
     }
@@ -205,6 +194,10 @@ public class MainWindow extends Stage {
      * @return the song entry window.
      */
     public SongEntryWindow getSongEntryWindow() {
+        if (songEntryWindow == null) {
+            LOGGER.log(Level.INFO, "Creating song entry window");
+            songEntryWindow = new SongEntryWindow();
+        }
         return songEntryWindow;
     }
 
