@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -85,8 +86,8 @@ public class PdfDisplayable implements Displayable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static PdfDisplayable parseXML(Node node) throws IOException {
-        return new PdfDisplayable(new File(node.getTextContent()));
+    public static PdfDisplayable parseXML(Node node, Map<String, String> fileChanges) throws IOException {
+        return new PdfDisplayable(Utils.getChangedFile(node, fileChanges));
     }
 
     /**

@@ -324,11 +324,11 @@ public class Schedule implements Iterable<Displayable> {
                 } else if (name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
                 } else if (name.equalsIgnoreCase("fileimage")) {
-                    newSchedule.add(ImageDisplayable.parseXML(node));
+                    newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filevideo")) {
-                    newSchedule.add(VideoDisplayable.parseXML(node));
+                    newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileaudio")) {
-                    newSchedule.add(AudioDisplayable.parseXML(node));
+                    newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
                     PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
                     if (disp != null) {
@@ -337,7 +337,7 @@ public class Schedule implements Iterable<Displayable> {
                 } else if (name.equalsIgnoreCase("timer")) {
                     newSchedule.add(TimerDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepdf")) {
-                    newSchedule.add(PdfDisplayable.parseXML(node));
+                    newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileimagegroup")) {
                     newSchedule.add(ImageGroupDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("url")) {

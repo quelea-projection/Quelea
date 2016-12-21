@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.YoutubeInfo;
@@ -117,14 +118,14 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static VideoDisplayable parseXML(Node node) {
+    public static VideoDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         if (node instanceof Element) {
             String youtubeTitle = ((Element) node).getAttribute("youtubetitle");
             if (youtubeTitle != null) {
                 return new VideoDisplayable(node.getTextContent(), YoutubeInfo.fromTitle(youtubeTitle));
             }
         }
-        return new VideoDisplayable(node.getTextContent());
+        return new VideoDisplayable(Utils.getChangedFile(node, fileChanges).getAbsolutePath());
     }
 
     /**
