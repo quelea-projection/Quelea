@@ -59,6 +59,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     @FXML private Pane planPane;
     @FXML private Button okButton;
     
+    @SuppressWarnings("unchecked")
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
         loginDialog = new PlanningCenterOnlineLoginDialog(this);
@@ -139,9 +140,34 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         @SuppressWarnings("unchecked")
         @Override 
         protected Void call() throws Exception {
+            JSONObject rootFolder = parser.organisation();
+            processServiceTypeFolder(rootFolder, serviceView.getRoot());
+            return null;
+        }
+        
+        @SuppressWarnings("unchecked")
+        protected void processServiceTypeFolder(JSONObject folder, TreeItem<String> parentItem)
+        {
+            String folderName = (String)folder.get("name");
+            TreeItem<String> folderItem = new TreeItem<String>(folderName);
             
-            JSONObject jsonMap = parser.organisation();
-            JSONArray serviceTypes = (JSONArray)jsonMap.get("service_types");
+            // iterate through any folders and dump them straight into serviceNames
+            JSONArray childServiceTypeFolders = (JSONArray)folder.get("service_type_folders");
+            for (Object childServiceTypeFolderObj : childServiceTypeFolders) {
+                JSONObject childServiceTypeFolder = (JSONObject)childServiceTypeFolderObj;
+                processServiceTypeFolder(childServiceTypeFolder, folderItem);
+            }
+            
+            JSONArray serviceTypes = (JSONArray)folder.get("service_types");
+            processServiceTypes(serviceTypes, folderItem);
+            
+            folderItem.setExpanded(true);
+            parentItem.getChildren().add(folderItem);
+        }
+        
+        @SuppressWarnings("unchecked")
+        protected void processServiceTypes(JSONArray serviceTypes, TreeItem<String> parentItem)
+        {
             for (Object serviceTypeObj : serviceTypes) {
                 JSONObject serviceType = (JSONObject)serviceTypeObj;
                 Long serviceTypeId = (Long)serviceType.get("id");
@@ -168,13 +194,9 @@ public class PlanningCenterOnlineImportDialog extends Stage{
                     treeViewItemPlanDialogMap.put(planItem, planDialog);
                 }
 
-                if (!serviceItem.getChildren().isEmpty()) {
-                    serviceItem.setExpanded(true);
-                    serviceView.getRoot().getChildren().add(serviceItem);
-                }
+                serviceItem.setExpanded(true);
+                parentItem.getChildren().add(serviceItem);
             }
-          
-            return null;
         }
     };
         
