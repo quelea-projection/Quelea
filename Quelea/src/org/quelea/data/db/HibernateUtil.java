@@ -31,6 +31,7 @@ public class HibernateUtil {
 
     public static boolean init() {
         try {
+            LOGGER.info("Initialising hibernate");
             final String location = new File(new File(QueleaProperties.getQueleaUserHome(), "database_new"), "database_new").getAbsolutePath();
             final Configuration cfg = new Configuration();
             cfg.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + location);
@@ -42,8 +43,11 @@ public class HibernateUtil {
             cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
             cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
+            LOGGER.info("Initialised hibernate properties");
             serviceRegistry = new ServiceRegistryBuilder().applySettings(cfg.getProperties()).buildServiceRegistry();
+            LOGGER.info("Initialised hibernate service registry");
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);
+            LOGGER.info("Initialised hibernate session factory");
             init = true;
             return true;
         } catch (Throwable ex) {
