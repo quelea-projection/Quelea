@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -56,6 +57,7 @@ public class ImageDisplayable implements Displayable {
         this.file = null;
         this.image = image;
     }
+
     /**
      * Get the displayable file.
      *
@@ -81,12 +83,14 @@ public class ImageDisplayable implements Displayable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static ImageDisplayable parseXML(Node node) {
+    public static ImageDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         File file = new File(node.getTextContent());
         File imgFile = new File(QueleaProperties.get().getImageDir(), file.getName());
-        if (!imgFile.exists())
-        {
+        if (!imgFile.exists()) {
             imgFile = new File(QueleaProperties.get().getDownloadPath(), file.getName());
+        }
+        if (!imgFile.exists()) {
+            imgFile = Utils.getChangedFile(node, fileChanges);
         }
         return new ImageDisplayable(imgFile);
     }
