@@ -52,7 +52,7 @@ public class PDFPrinter {
      */
     public void print(String xml, File xsltfile, File pdfFile) throws IOException {
         try {
-            InputStream stream = new ByteArrayInputStream(xml.replace("\n", "&#xA;").getBytes(StandardCharsets.UTF_8));
+            InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 
             StreamSource source = new StreamSource(stream);
             StreamSource transformSource = new StreamSource(xsltfile);
