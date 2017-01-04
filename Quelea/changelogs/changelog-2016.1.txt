@@ -1,0 +1,25 @@
+quelea (2016.1) stable; urgency=normal
+ 
+  * Fix "c" selecting pre-chorus
+  * Add missing labels
+  * Fix recording level bar
+  * Add song select import options for copyright & key
+  * Fix keyboard shortcuts for presentations
+  * Fix record button behaviour when no recording device is found
+  * New options dialog layout
+  * Add support for controlling recordings through the apps
+  * Add support for jumping to a schedule item from the apps
+  * Fix remote control play/pause functionality for timers
+  * Fix Mac recording conversions
+  * Add CCLI number to SongSelectParser
+  * Fix vlc arg option splitting for absolute paths on windows
+  * Add presentation manager import
+  * Add mission praise import
+  * Add video psalm import
+  * Reorder import options to be alphabetical
+  * Fix Opensong import to recognise chords and section titles
+  * Fix missing required attributes for openlyrics export
+  * Add "copy to schedule" option
+  * Add Bulgarian translation
+
+ -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
