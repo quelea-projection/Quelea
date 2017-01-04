@@ -37,6 +37,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -83,45 +84,50 @@ public class ScheduleMenu extends Menu {
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
 
         addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"));
-        if(!Utils.isMac()) {
+        if (!Utils.isMac()) {
             addPowerpointItem.setGraphic(new ImageView(new Image("file:icons/powerpoint.png", 20, 20, true, false)));
         }
         addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPowerpointItem);
 
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"));
-        if(!Utils.isMac()) {
+        if (!Utils.isMac()) {
             addVideoItem.setGraphic(new ImageView(new Image("file:icons/video file.png", 20, 20, true, false)));
         }
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
-        
-        addYoutubeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.youtube.button"), new ImageView(new Image("file:icons/youtube.png", 16, 16, false, true)));
-        addYoutubeItem.setOnAction(new AddYoutubeActionHandler());
-        getItems().add(addYoutubeItem);
+
+        if (QueleaProperties.get().isYoutubeEnabled()) {
+            addYoutubeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.youtube.button"), new ImageView(new Image("file:icons/youtube.png", 16, 16, false, true)));
+            addYoutubeItem.setOnAction(new AddYoutubeActionHandler());
+            getItems().add(addYoutubeItem);
+        }
+        else {
+            addYoutubeItem = null;
+        }
 
         addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
         addTimerItem.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerItem);
-        
+
         addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image("file:icons/add_pdf.png", 16, 16, false, true)));
         addPDFItem.setOnAction(new AddPdfActionHandler());
         getItems().add(addPDFItem);
-        
+
         dvdImageStack = new StackPane();
         dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
         addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDItem.setOnAction(new AddDVDActionHandler());
         getItems().add(addDVDItem);
-        
+
         addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image("file:icons/web-small.png", 16, 16, false, true)));
         addWebItem.setOnAction(new AddWebActionHandler());
         getItems().add(addWebItem);
-        
+
         addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/image.png", 16, 16, false, true)));
         addImageItem.setOnAction(new AddImageActionHandler());
         getItems().add(addImageItem);
-        
+
         getItems().add(new SeparatorMenuItem());
 
         manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image("file:icons/info.png", 16, 16, false, true)));
@@ -135,10 +141,9 @@ public class ScheduleMenu extends Menu {
             @Override
             public void onChanged(Change<? extends Displayable> change) {
                 Schedule schedule = scheduleList.getSchedule();
-                if(schedule == null || !schedule.iterator().hasNext()) {
+                if (schedule == null || !schedule.iterator().hasNext()) {
                     shareScheduleItem.setDisable(true);
-                }
-                else {
+                } else {
                     shareScheduleItem.setDisable(false);
                 }
             }
@@ -150,7 +155,7 @@ public class ScheduleMenu extends Menu {
             }
         });
         getItems().add(shareScheduleItem);
-        
+
         exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
         exportScheduleItem.setOnAction(new ExportPDFScheduleSongsActionHandler());
         getItems().add(exportScheduleItem);

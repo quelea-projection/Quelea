@@ -26,7 +26,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -63,6 +66,7 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class VideoListPanel extends BorderPane {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final String BORDER_STYLE_SELECTED = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane videoList;
@@ -135,36 +139,40 @@ public class VideoListPanel extends BorderPane {
         if (updateThread != null && updateThread.isAlive()) {
             return;
         }
+        ExecutorService previewService = Executors.newSingleThreadExecutor();
         updateThread = new Thread() {
             @Override
             public void run() {
-                for (final File file : files) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
                     if (Utils.fileIsVideo(file) && !file.isDirectory()) {
                         final ImageView view;
                         view = new ImageView();
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                try {
-                                    BufferedImage bi = FrameGrab.getFrame(file, 0);
-                                    BufferedImage resized = new BufferedImage(160, 90, bi.getType());
-                                    Graphics2D g = resized.createGraphics();
-                                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                                    g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
-                                    g.dispose();
-                                    bi.flush();
-                                    Platform.runLater(() -> {
-                                        view.setImage(SwingFXUtils.toFXImage(resized, null));
-                                    });
-                                    resized.flush();
-                                } catch (Exception e) {
-                                    LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image", e);
-                                    Platform.runLater(() -> {
-                                        view.setImage(BLANK);
-                                    });
-                                }
+                        previewService.submit(() -> {
+                            try {
+                                LOGGER.log(Level.INFO, "Grabbing frame for {0}", file);
+                                BufferedImage bi = FrameGrab.getFrame(file, 0);
+                                BufferedImage resized = new BufferedImage(160, 90, bi.getType());
+                                Graphics2D g = resized.createGraphics();
+                                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
+                                g.dispose();
+                                bi.flush();
+                                Platform.runLater(() -> {
+                                    view.setImage(SwingFXUtils.toFXImage(resized, null));
+                                });
+                                LOGGER.log(Level.INFO, "Grabbed frame for {0}", file);
+                                resized.flush();
+                            } catch (Exception e) {
+                                LOGGER.log(Level.INFO, "Could not resize library video image", e);
+                                Platform.runLater(() -> {
+                                    view.setImage(BLANK);
+                                });
                             }
-                        }.start();
+                        });
+                        if (i == files.length - 1) {
+                            previewService.shutdown();
+                        }
                         Platform.runLater(() -> {
                             final HBox viewBox = new HBox();
                             view.setPreserveRatio(true);
@@ -180,9 +188,9 @@ public class VideoListPanel extends BorderPane {
                                         final boolean[] reallyDelete = new boolean[]{false};
                                         Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.video.title"),
                                                 LabelGrabber.INSTANCE.getLabel("delete.video.confirmation")).addYesButton((ActionEvent t2) -> {
-                                                    reallyDelete[0] = true;
-                                                }).addNoButton((ActionEvent t3) -> {
-                                                }).build().showAndWait();
+                                            reallyDelete[0] = true;
+                                        }).addNoButton((ActionEvent t3) -> {
+                                        }).build().showAndWait();
                                         if (reallyDelete[0]) {
                                             file.delete();
                                             videoList.getChildren().remove(viewBox);

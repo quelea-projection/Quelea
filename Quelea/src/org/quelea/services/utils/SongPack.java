@@ -64,11 +64,11 @@ public class SongPack {
     public void addSong(SongDisplayable song) {
         songs.add(song);
     }
-    
+
     public void addSongs(Collection<SongDisplayable> songsToAdd) {
         songs.addAll(songsToAdd);
     }
-    
+
     /**
      * Create a new song pack from a file.
      *
@@ -81,10 +81,14 @@ public class SongPack {
             SongPack ret = new SongPack();
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                SongDisplayable song = SongDisplayable.parseXML(zipFile.getInputStream(entry));
-                if (song != null) {
-                    ret.addSong(song);
+                try {
+                    ZipEntry entry = entries.nextElement();
+                    SongDisplayable song = SongDisplayable.parseXML(zipFile.getInputStream(entry));
+                    if (song != null) {
+                        ret.addSong(song);
+                    }
+                } catch (Exception ex) {
+                    //Skipping malformed song...
                 }
             }
             return ret;
@@ -100,14 +104,14 @@ public class SongPack {
         if (file == null) {
             return;
         }
-        
+
         final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
         final List<SongDisplayable> songDisplayablesThreadSafe = new ArrayList<>(songs);
         new Thread() {
             public void run() {
                 final HashSet<String> names = new HashSet<>();
                 try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
-                    for(int i=0 ; i<songDisplayablesThreadSafe.size() ; i++) {
+                    for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
                         SongDisplayable song = songDisplayablesThreadSafe.get(i);
                         String name = song.getTitle() + ".xml";
                         while (names.contains(name)) {
@@ -125,7 +129,7 @@ public class SongPack {
                 }
             }
         }.start();
-        
+
     }
 
     /**

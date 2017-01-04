@@ -962,6 +962,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         });
         StringBuilder mainLyrics = new StringBuilder();
         for (TextSection section : sections) {
+            mainLyrics.append(section.getTitle()).append("\n");
             for (String line : section.getText(printChords, false)) {
                 mainLyrics.append(Utils.escapeXML(line)).append("\n");
             }
