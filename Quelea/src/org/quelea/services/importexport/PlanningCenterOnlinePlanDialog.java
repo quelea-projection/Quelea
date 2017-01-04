@@ -472,7 +472,11 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         Pattern removeExp = Pattern.compile("\\(\\d+X\\)|\\(REPEAT\\)", Pattern.CASE_INSENSITIVE);
         Matcher m = removeExp.matcher(lyrics);
         lyrics = m.replaceAll("");
-       
+        
+        // remove embedded choords (wrapped in brackets)
+        Pattern removeChoordsExp = Pattern.compile("(\\[|\\b)[A-G](m|sus|maj|min|aug|dim|#|b)?\\d?\\/?(\\]|(?!\\w)|$)");
+        Matcher m2 = removeChoordsExp.matcher(lyrics);
+        lyrics = m2.replaceAll("");
         
         int lastMatchEnd = -1;
         String lastTitle = "";
