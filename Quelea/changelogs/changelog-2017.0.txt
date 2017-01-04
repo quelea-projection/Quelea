@@ -2,5 +2,11 @@ quelea (2017.0) stable; urgency=normal
  
   * Add screenmonkey import
   * Add separate 64 bit and 32 bit windows installer
+  * Disable Youtube button / menu item by default
+  * Improve startup time
+  * Fix memory issues caused by lots of videos in the video panel
+  * Fix planning centre online import when using folders
+  * Fix embedding of some file types in schedule
+  * Fix section titles not appearing in PDF export
 
- -- Michael Berry <michael@quelea.org>  Tuesday, 15 Nov 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Tuesday, 03 Jan 2017 00:00:00 +0000

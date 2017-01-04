@@ -64,7 +64,11 @@ public class SpellTextArea extends StackPane {
     public SpellTextArea() {
         runSpellKey = KeyCode.F7;
         undoHandler = new UndoHandler();
-        speller = new Speller(QueleaProperties.get().getDictionary());
+        if (QueleaProperties.get().isDictionaryEnabled()) {
+            speller = new Speller(QueleaProperties.get().getDictionary());
+        } else {
+            speller = new Speller(null);
+        }
         area = new LyricsTextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
         getChildren().add(area);
