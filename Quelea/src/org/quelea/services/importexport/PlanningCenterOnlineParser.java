@@ -16,18 +16,17 @@
  */
 package org.quelea.services.importexport;
 
-import static com.neovisionaries.i18n.LanguageAlpha3Code.bis;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.ProgressBar;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.Header;
@@ -40,6 +39,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -47,6 +47,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
@@ -55,6 +56,7 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class PlanningCenterOnlineParser {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final DefaultHttpClient httpClient;
     private final BasicCookieStore cookieStore;
     private final HttpContext httpContext;
@@ -66,15 +68,29 @@ public class PlanningCenterOnlineParser {
         java.net.CookieHandler.setDefault(cm);
 
         httpClient = new DefaultHttpClient();
+//        httpClient.setRedirectHandler(new DefaultRedirectHandler() {
+//            @Override
+//            public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+//                boolean isRedirect = super.isRedirectRequested(response, context);
+//                if (!isRedirect) {
+//                    int responseCode = response.getStatusLine().getStatusCode();
+//                    if (responseCode == 301 || responseCode == 302) {
+//                        return true;
+//                    }
+//                }
+//                return isRedirect;
+//            }
+//        });
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
     public boolean login(String email, String password) {
-        String args = String.format("email=%s&password=%s&submit=login", email, password);
+        LOGGER.log(Level.INFO, "Logging in");
         String url = "https://accounts.planningcenteronline.com/login";
-        String result = post(url, args, email, password);
+        String result = post(url, email, password);
+        LOGGER.log(Level.INFO, "Login result: {0}", result);
         if (result == null) {
             return false;
         }
@@ -87,15 +103,20 @@ public class PlanningCenterOnlineParser {
         return true;
     }
 
-    private String post(String urlString, String urlParameters, String email, String password) {
+    private String post(String urlString, String email, String password) {
         try {
             HttpPost httpost = new HttpPost(urlString);
-            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            List<NameValuePair> nvps = new ArrayList<>();
             nvps.add(new BasicNameValuePair("email", email));
             nvps.add(new BasicNameValuePair("password", password));
             httpost.setEntity(new UrlEncodedFormEntity(nvps));
 
             HttpResponse response = httpClient.execute(httpost, httpContext);
+
+            LOGGER.log(Level.INFO, "Response code {0}", response.getStatusLine().getStatusCode());
+            for (Header header : response.getAllHeaders()) {
+                LOGGER.log(Level.INFO, "Response header ({0}:{1})", new Object[]{header.getName(), header.getValue()});
+            }
 
             Header[] cookieList = response.getHeaders("Set-Cookie");
             for (Header cookieHeader : cookieList) {
@@ -117,7 +138,7 @@ public class PlanningCenterOnlineParser {
             entity.consumeContent();
             return text;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -133,7 +154,7 @@ public class PlanningCenterOnlineParser {
             entity.consumeContent();
             return text;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -152,7 +173,7 @@ public class PlanningCenterOnlineParser {
             JSONObject json = (JSONObject) parser.parse(jsonStr);
             return json;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return null;
@@ -242,7 +263,7 @@ public class PlanningCenterOnlineParser {
             }
             return file.getAbsolutePath();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error", e);
         }
 
         return "";

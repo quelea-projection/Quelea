@@ -97,12 +97,7 @@ public class PresentationDisplayable implements Displayable {
      */
     public static PresentationDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         try {
-            File file = new File(node.getTextContent());
-            String changedFile = fileChanges.get(file.getAbsolutePath());
-            if(!file.exists() && changedFile != null) {
-                file = new File(changedFile);
-            }
-            return new PresentationDisplayable(file);
+            return new PresentationDisplayable(Utils.getChangedFile(node, fileChanges));
         }
         catch(IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't create presentation for schedule", ex);
