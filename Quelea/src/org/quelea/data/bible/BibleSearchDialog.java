@@ -41,6 +41,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
@@ -131,6 +132,11 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                 }
             }
         });
+        setOnShown((WindowEvent event) -> {
+            if (!BibleManager.get().isIndexInit()) {
+                BibleManager.get().refreshAndLoad();
+            }
+        });
 
         reset();
         setScene(new Scene(mainPane));
@@ -152,11 +158,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
             }
         });
         searchField.setDisable(true);
-        BibleManager.get().runOnIndexInit(new Runnable() {
-            @Override
-            public void run() {
-                searchField.setDisable(false);
-            }
+        BibleManager.get().runOnIndexInit(() -> {
+            searchField.setDisable(false);
         });
     }
 
