@@ -155,44 +155,32 @@ public class VLCWindowEmbed extends VLCWindow {
     
     private VLCWindowEmbed() {
 
-        runOnVLCThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            
-                            frame = new JFrame();
-                            frame.setBackground(Color.BLACK);
-                            frame.setType(JFrame.Type.UTILITY);
-                            frame.setTitle(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
-                            
-                            canvas = new Canvas();
-                            canvas.setBackground(Color.BLACK);
-                        }
-                    });
-
-                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0", "--no-xlib");
-                    videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-                    createMediaPlayer();
-
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            frame.add(canvas);
-                            setFullScreen(frame, false);
-                            frame.toBack();
-                            init = true;
-                        }
-                    });
-
-                    LOGGER.log(Level.INFO, "Video initialised ok");
-                } catch (Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
-                }
+        runOnVLCThread(() -> {
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    frame = new JFrame();
+                    frame.setBackground(Color.BLACK);
+                    frame.setType(JFrame.Type.UTILITY);
+                    frame.setTitle(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
+                    
+                    canvas = new Canvas();
+                    canvas.setBackground(Color.BLACK);
+                });
+                
+                mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0", "--no-xlib");
+                videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+                createMediaPlayer();
+                
+                SwingUtilities.invokeAndWait(() -> {
+                    frame.add(canvas);
+                    setFullScreen(frame, false);
+                    frame.toBack();
+                });
+                
+                init = true;
+                LOGGER.log(Level.INFO, "Video initialised ok");
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
             }
         });
         ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
