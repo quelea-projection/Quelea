@@ -1,5 +1,4 @@
 syntax: regexp
-Quelea/nbproject/*
 Quelea/build/*
 Quelea/dist/*
 \.orig\..*$
@@ -8,3 +7,5 @@ Quelea/dist/*
 \.rej$
 \.conflict\~$
 Thumbs.db
+syntax: glob
+Quelea/nbproject/*
