@@ -246,8 +246,10 @@ public final class Main extends Application {
                     });
 
                     if (SongManager.get() == null) {
-                        Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
-                        System.exit(1);
+                        Platform.runLater(() -> {
+                            Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
+                            System.exit(1);                            
+                        });
                     }
                     OOUtils.attemptInit();
                     Platform.runLater(() -> {
