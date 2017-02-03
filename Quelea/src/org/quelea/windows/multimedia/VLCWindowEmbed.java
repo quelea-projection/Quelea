@@ -771,16 +771,9 @@ public class VLCWindowEmbed extends VLCWindow {
      */
     private void runOnVLCThreadAndWait(Runnable r) {
         try {
-            Callable<Object> c = Executors.callable(r);            
-            List<Callable<Object>> tasks = new ArrayList<>();
-            tasks.add(c);
-            List<Future<Object>> futures = VLC_EXECUTOR.invokeAll(tasks, 1000, TimeUnit.MILLISECONDS);
-            if (futures.size() <= 0 && !futures.get(0).isDone()) {
-                LOGGER.log(Level.WARNING, "runOnVLCThreadAndWait Runnable was failed");
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "runOnVLCThreadAndWait exception", ex);
-            System.out.println("EXCEPTION, WOULD HAVE NORMALLY CRASHED!!!!!!");            
+            VLC_EXECUTOR.submit(r).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
         }
     }
 }
