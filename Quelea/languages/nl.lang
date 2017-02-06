@@ -658,3 +658,5 @@ website.dialog.content=Type de web pagina die je wilt tonen:
 paste.label=Plakken
 undo.label=Ongedaan maken
 redo.label=Herstellen
+smi.import.line1=Selecteer de Screen Monkey liederen voor importeren.
+sm.button=Screen Monkey
