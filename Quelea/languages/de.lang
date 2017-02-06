@@ -657,3 +657,5 @@ website.dialog.content=Eingabe der Webseite die angezeigt werden soll:
 paste.label=Einfügen
 undo.label=Rückgängig
 redo.label=Wiederherstellen
+smi.import.line1=Bitte wähle die zu importierenden Lieddaten von Screen Monkey aus. 
+sm.button=Screen Monkey
