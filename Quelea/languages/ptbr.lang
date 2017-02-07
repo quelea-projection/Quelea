@@ -607,3 +607,5 @@ presentation.options.heading=Apresentações
 recordings.options.heading=Gravações 
 copy.song.db.default=Copiar Música para a OC como padrão 
 mp.button=Mission Praise
+smi.import.line1=Seleccione as músicas do Screen Monkey para importar. 
+sm.button=Screen Monkey
