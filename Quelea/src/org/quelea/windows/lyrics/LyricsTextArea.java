@@ -155,24 +155,32 @@ public class LyricsTextArea extends InlineCssTextArea {
     }
 
     public void refreshStyle() {
-        clearStyle(0, getLength());
         setStyles(getText());
     }
+    
+    private String[] oldLines;
 
     private void setStyles(String text) {
         String[] lines = text.split("\n");
         int charPos = 0;
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
+            String oldLine = null;
+            if (oldLines != null && i < oldLines.length) {
+                oldLine = oldLines[i];
+            }
             if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
                 setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
             } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
                 setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
             } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
                 setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
+            } else if(new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
+                setStyle(charPos, charPos + line.length(), "");
             }
             charPos += line.length() + 1;
         }
+        oldLines = lines;
     }
 
 }
