@@ -8,5 +8,6 @@ quelea (2017.0) stable; urgency=normal
   * Fix planning centre online import when using folders
   * Fix embedding of some file types in schedule
   * Fix section titles not appearing in PDF export
+  * Fix scroll position of the lyrics area jumping around
 
- -- Michael Berry <michael@quelea.org>  Tuesday, 03 Jan 2017 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Tuesday, 07 Feb 2017 00:00:00 +0000

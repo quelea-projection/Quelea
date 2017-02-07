@@ -53,6 +53,9 @@ public class LineTypeChecker {
      * @return the type of the line.
      */
     public Type getLineType() {
+        if(line==null) {
+            return null;
+        }
         if (checkTitle()) {
             return Type.TITLE;
         } else if (checkChords()) {
