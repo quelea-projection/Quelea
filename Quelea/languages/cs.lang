@@ -657,3 +657,5 @@ website.dialog.content=Zadat adresu internetové stránky k zobrazení:
 paste.label=Vložit 
 undo.label=Zpět 
 redo.label=Znovu
+smi.import.line1=vyberete písně programu Screen Monkey k importu
+sm.button=Screen Monkey
