@@ -60,6 +60,7 @@
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
             <file src="scheduleformat.xsl" targetdir="$INSTALL_PATH"/>
+            <file src="fopcfg.xml" targetdir="$INSTALL_PATH"/>
             <file src="songformat.xsl" targetdir="$INSTALL_PATH"/>
             <!--<file src="Quelea.exe" targetdir="$INSTALL_PATH"/>-->
             <file src="README.TXT" targetdir="$INSTALL_PATH"/>
