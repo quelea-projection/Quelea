@@ -658,3 +658,6 @@ website.dialog.content=Skriv inn nettsiden du ønsker å vise:
 paste.label=Lim inn 
 undo.label=Angre 
 redo.label=Gjør om
+filefilters.description.multimedia.files=Multimediafiler 
+smi.import.line1=Velg Screen Monkey sangene som skal importeres. 
+sm.button=Screen Monkey
