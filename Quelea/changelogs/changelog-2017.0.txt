@@ -10,5 +10,6 @@ quelea (2017.0) stable; urgency=normal
   * Fix section titles not appearing in PDF export
   * Fix scroll position of the lyrics area jumping around
   * Fix windows asking twice about overwriting files
+  * Fix issue with non-ascii characters not being shown in PDF schedule export
 
- -- Michael Berry <michael@quelea.org>  Tuesday, 07 Feb 2017 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 08 Feb 2017 00:00:00 +0000
