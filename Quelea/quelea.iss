@@ -48,6 +48,7 @@ Name: "{app}"; Permissions: everyone-modify;
 [Files]
 Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
 Source: "scheduleformat.xsl"; DestDir: "{app}"; Flags: ignoreversion
