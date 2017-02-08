@@ -59,28 +59,23 @@ public class LyricsTextArea extends InlineCssTextArea {
 
         contextMenu.getItems().add(paste);
         this.setContextMenu(contextMenu);
-        textProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        refreshStyle();
-                    }
-                });
-            }
+        textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            Platform.runLater(this::refreshStyle);
         });
+        
         UndoManager blankManager = new UndoManager() {
 
             @Override
             public boolean undo() {
+                clearStyle(0, getText().length());
+                refreshStyle();
                 return false;
             }
 
             @Override
             public boolean redo() {
+                clearStyle(0, getText().length());
+                refreshStyle();
                 return false;
             }
 
@@ -170,12 +165,16 @@ public class LyricsTextArea extends InlineCssTextArea {
                 oldLine = oldLines[i];
             }
             if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
+                clearStyle(charPos, charPos + line.length());
                 setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
             } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
+                clearStyle(charPos, charPos + line.length());
                 setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
             } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
+                clearStyle(charPos, charPos + line.length());
                 setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
             } else if(new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
+                clearStyle(charPos, charPos + line.length());
                 setStyle(charPos, charPos + line.length(), "");
             }
             charPos += line.length() + 1;
