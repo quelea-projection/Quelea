@@ -110,6 +110,7 @@
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/scheduleformat.xsl" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/songformat.xsl" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/fopcfg.xml" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/Quelea.bat" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/quelea.iss" todir="${dist.jar.dir}" quiet="yes"/>

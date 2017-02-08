@@ -46,6 +46,8 @@ import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
+import org.quelea.services.print.PDFPrinter;
+import org.quelea.services.print.SchedulePDFPrinter;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -63,7 +65,6 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
  * @author Michael
  */
 public final class Main extends Application {
-
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
@@ -97,7 +98,7 @@ public final class Main extends Application {
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
         LOGGER.log(Level.INFO, "Started, version {0}", QueleaProperties.VERSION.getVersionString());
-        
+
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
         new Thread() {
@@ -248,19 +249,19 @@ public final class Main extends Application {
                     if (SongManager.get() == null) {
                         Platform.runLater(() -> {
                             Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
-                            System.exit(1);                            
+                            System.exit(1);
                         });
                     }
                     OOUtils.attemptInit();
                     Platform.runLater(() -> {
                         mainWindow = new MainWindow(true);
                     });
-                    
+
                     backgroundExecutor.submit(() -> {
                         new UpdateChecker().checkUpdate(false, false, false); //Check updates
                         PhoneHome.INSTANCE.phone(); //Phone home
                     });
-                    
+
                     LOGGER.log(Level.INFO, "Registering canvases");
                     Platform.runLater(() -> {
                         mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
@@ -279,7 +280,7 @@ public final class Main extends Application {
                             stageWindow.show();
                         }
                     });
-                    
+
                     LOGGER.log(Level.INFO, "Adding shortcuts.");
                     Platform.runLater(() -> {
                         new ShortcutManager().addShortcuts(mainWindow);
@@ -303,7 +304,7 @@ public final class Main extends Application {
                             }
                         });
                     }
-                    
+
                     Platform.runLater(() -> {
                         splashWindow.hide();
                         mainWindow.getMainPanel().setSliderPos();

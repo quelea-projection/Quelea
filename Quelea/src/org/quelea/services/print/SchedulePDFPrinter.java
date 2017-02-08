@@ -31,5 +31,5 @@ public class SchedulePDFPrinter extends PDFPrinter {
     public void print(Schedule schedule, File pdfFile) throws IOException {
         print(schedule.getPrintXML(), new File("scheduleformat.xsl"), pdfFile);
     }
-
+    
 }

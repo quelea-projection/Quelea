@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -31,10 +33,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.fop.apps.FOPException;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
+import org.xml.sax.SAXException;
 
 /**
  * Responsible for printing to PDF (using xml and xslt.)
@@ -45,6 +51,7 @@ public class PDFPrinter {
 
     /**
      * Print a PDF file.
+     *
      * @param xml the content to use for printing.
      * @param xsltfile the stylesheet to use for printing.
      * @param pdfFile the file to print to.
@@ -53,10 +60,11 @@ public class PDFPrinter {
     public void print(String xml, File xsltfile, File pdfFile) throws IOException {
         try {
             InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-
             StreamSource source = new StreamSource(stream);
             StreamSource transformSource = new StreamSource(xsltfile);
-            FopFactory fopFactory = FopFactory.newInstance();
+            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+            Configuration cfg = cfgBuilder.buildFromFile(new File("fopcfg.xml"));
+            FopFactory fopFactory = new FopFactoryBuilder(new URI(".")).setConfiguration(cfg).build();
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
@@ -72,7 +80,7 @@ public class PDFPrinter {
             str.write(outStream.toByteArray());
             str.close();
             out.close();
-        } catch (IOException | TransformerException | FOPException ex) {
+        } catch (IOException | URISyntaxException | TransformerException | ConfigurationException | SAXException ex) {
             throw new IOException("Error printing to PDF", ex);
         }
     }
