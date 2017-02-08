@@ -79,7 +79,7 @@ public class PDFPresentation implements Pdf {
         f.toFile().deleteOnExit();
         ArrayList<PdfSlide> ret = new ArrayList<>();
         PDFRenderer pdfRenderer = new PDFRenderer(document);
-        int totalPages = document.getPages().getCount();
+        int totalPages = document.getNumberOfPages();
         for (int i = 0; i < totalPages; i++) {
             ret.add(new PdfSlide(i + 1, pdfRenderer));
         }
