@@ -132,7 +132,7 @@ public class UndoHandler {
                         caretPos++;
                         j++;
                     }
-                    if (partsNew[i].length() > s.length()) {
+                    if (partsNew[i].length() > s.length() && j < s.length()) {
                         caretPos += (partsNew[i].length() - s.length());
                     }
                     break;
