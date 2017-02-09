@@ -47,11 +47,12 @@ import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
-import org.quelea.data.powerpoint.Presentation;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
@@ -329,6 +330,7 @@ public class RemoteControlServer {
         public void handle(HttpExchange t) throws IOException {
             if (RCHandler.isLoggedOn(t.getRemoteAddress().getAddress().toString())) {
                 byte[] byteArray = RCHandler.getPresentationSlides(t);
+                t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 t.sendResponseHeaders(200, byteArray.length);
                 OutputStream out = t.getResponseBody();
                 out.write(byteArray);
@@ -761,21 +763,35 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
-            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if (lp.getDisplayable() instanceof TextDisplayable) {
-                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+            Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+            if (d instanceof TextDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + d.getPreviewText() + "<br/>" + "</i>";
                 response += lyrics(false);
-            } else if (lp.getDisplayable() instanceof MultimediaDisplayable) {
-                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+            } else if (d instanceof MultimediaDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + d.getPreviewText() + "<br/>" + "</i>";
                 response += "<button type=\"button\" onclick=\"play();\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button><br/><br/>";
                 response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
-            } else if (lp.getDisplayable() instanceof PresentationDisplayable) {
+            } else if (d instanceof PresentationDisplayable || d instanceof PdfDisplayable || d instanceof ImageGroupDisplayable) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("\n<html><i>").append(LabelGrabber.INSTANCE.getLabel("currently.displaying.text")).append(": ").append(lp.getDisplayable().getPreviewText()).append("<br/>" + "</i>");
-                Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-                int numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
-                for (int i = 0; i < numberOfFiles; i++) {
-                    if (i == QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getCurrentIndex() - 1) {
+                sb.append("\n<html><i>").append(LabelGrabber.INSTANCE.getLabel("currently.displaying.text")).append(": ").append(d.getPreviewText()).append("<br/>" + "</i>");
+                int numberOfImages;
+                if (d instanceof PresentationDisplayable) {
+                    numberOfImages = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                } else if (d instanceof PdfDisplayable) {
+                    numberOfImages = ((PdfDisplayable) d).getPresentation().getSlides().length;
+                } else {
+                    numberOfImages = ((ImageGroupDisplayable) d).getPresentation().getSlides().length;
+                }
+                for (int i = 0; i < numberOfImages; i++) {
+                    int currentIndex;
+                    if (d instanceof PresentationDisplayable) {
+                        currentIndex = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getCurrentIndex() - 1;
+                    } else if (d instanceof PdfDisplayable) {
+                        currentIndex = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPdfPanel().getCurrentIndex() - 1;
+                    } else {
+                        currentIndex = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getImageGroupPanel().getCurrentIndex() - 1;
+                    }
+                    if (i == currentIndex) {
                         sb.append("<div class=\"inner current\">");
                     } else {
                         sb.append("<div class=\"inner\">");
@@ -784,8 +800,8 @@ public class RemoteControlServer {
                     sb.append("<br/>Slide ").append(i + 1).append("</p></div><br/><br/>");
                 }
                 response = sb.append("\n</html>").toString();
-            } else if (lp.getDisplayable() != null) {
-                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/><br/>" + "</i>";
+            } else if (d != null) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + d.getPreviewText() + "<br/><br/>" + "</i>";
                 response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
             }
             byte[] bytes = response.getBytes("UTF-8");
