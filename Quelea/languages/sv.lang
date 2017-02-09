@@ -658,3 +658,5 @@ website.dialog.content=Skriv in vilken hemsida du vill visa:
 paste.label=Klistra in
 undo.label=Ångra
 redo.label=Gör om
+smi.import.line1=Välj vilka Screen Monkey-sånger du vill importera.
+sm.button=Screen Monkey
