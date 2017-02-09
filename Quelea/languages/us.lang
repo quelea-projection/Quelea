@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Wed Nov 16 00:56:07 GMT 2016
+#Thu Feb 09 19:33:31 GMT 2017
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -265,7 +265,7 @@ add.youtube.button=Add Youtube Video
 edit.theme.text=Edit Theme
 use.shadow.label=Use Shadow?
 navigate.mob.url.label=Mobile Lyrics URL
-add.song.hint.text=There are no songs here yet, but don't panic\! To add a song, click the "New Song" button on the left.
+add.song.hint.text=No songs? No problem. To add a song, click the "New Song" button on the left.
 max.font.size.label=Maximum font size
 cant.save.schedule.title=Error saving schedule
 port.number.label=Port Number
