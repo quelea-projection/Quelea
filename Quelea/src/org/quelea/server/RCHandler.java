@@ -21,7 +21,6 @@ import com.sun.net.httpserver.HttpExchange;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -38,10 +37,11 @@ import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
-import org.quelea.data.powerpoint.Presentation;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
@@ -161,6 +161,10 @@ public class RCHandler {
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
             if (lp.getDisplayable() instanceof PresentationDisplayable) {
                 lp.getPresentationPanel().getPresentationPreview().select(num + 1);
+            } else if (lp.getDisplayable() instanceof PdfDisplayable) {
+                lp.getPdfPanel().getPresentationPreview().select(num + 1);
+            } else if (lp.getDisplayable() instanceof ImageGroupDisplayable) {
+                lp.getImageGroupPanel().getPresentationPreview().select(num + 1);
             } else {
                 lp.getLyricsPanel().select(num);
             }
@@ -468,12 +472,18 @@ public class RCHandler {
     public static byte[] getPresentationSlides(HttpExchange he) {
         String targetPath = he.getRequestURI().getPath().replace("/slides", "");
         Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-        if (d instanceof PresentationDisplayable) {
-            Presentation pres = ((PresentationDisplayable) d).getPresentation();
+        if (d instanceof PresentationDisplayable || d instanceof PdfDisplayable || d instanceof ImageGroupDisplayable) {
             if (targetPath.contains("/")) {
                 try {
+                    BufferedImage image;
                     int slide = Integer.parseInt(targetPath.replace("/slide", "").replace(".png", ""));
-                    BufferedImage image = SwingFXUtils.fromFXImage(pres.getSlide(slide - 1).getImage(), null);
+                    if (d instanceof PresentationDisplayable) {
+                        image = SwingFXUtils.fromFXImage(((PresentationDisplayable) d).getPresentation().getSlide(slide - 1).getImage(), null);
+                    } else if (d instanceof PdfDisplayable) {
+                        image = SwingFXUtils.fromFXImage(((PdfDisplayable) d).getPresentation().getSlide(slide - 1).getImage(), null);
+                    } else {
+                        image = SwingFXUtils.fromFXImage(((ImageGroupDisplayable) d).getPresentation().getSlide(slide - 1).getImage(), null);
+                    }
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     ImageIO.write(image, "png", output);
                     return output.toByteArray();
@@ -483,7 +493,7 @@ public class RCHandler {
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n<html>");
-                int numberOfFiles = pres.getSlides().length;
+                int numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
                 for (int i = 0; i < numberOfFiles; i++) {
                     if (currentLyricSection() == i) {
                         sb.append("<div class=\"inner current\">");
