@@ -670,3 +670,5 @@ website.dialog.content=Įveskite svetainę, kurią norėtumėte rodyti:
 paste.label=Įdėti
 undo.label=Atšaukti
 redo.label=Grąžinti
+smi.import.line1=Pasirinkite Screen Monkey giesmes, kurias importuoti.
+sm.button=Screen Monkey
