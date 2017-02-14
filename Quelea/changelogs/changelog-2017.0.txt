@@ -13,5 +13,6 @@ quelea (2017.0) stable; urgency=normal
   * Fix issue with non-ascii characters not being shown in PDF schedule export
   * Fix undo bug
   * Add PDF & Image Group slide preview in Mobile Remote
+  * Add Russian translation
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 08 Feb 2017 00:00:00 +0000
