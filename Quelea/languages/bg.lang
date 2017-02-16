@@ -1,5 +1,5 @@
 ######################################
-### Bulgarian 2017-02-15 Mediaworkshop
+### Bulgarian 2017-02-16 Mediaworkshop
 ######################################
 LANGUAGENAME=Български (BG)
 database.heading=Песни
@@ -11,13 +11,13 @@ olyrics.button=OpenLyrics
 zw.button=ZionWorx
 sp.button=Sunday Plus
 pco.button=Planning Center Online
-pco.login.import.heading=Planning Center Online Login
-pco.loginerror.title=Login Error
-pco.loginerror.warning=Failed to login, check email and password and try again
+pco.login.import.heading=Вход в Planning Center Online
+pco.loginerror.title=Грешка при влизане
+pco.loginerror.warning=Неуспешен вход. Моля, проверете адреса на е-поща и паролата и опитайте отново
 pco.import.heading=Planning Center Online
-password.text=Password
-emailaddress.text=Email
-login.text=Login
+password.text=Парола
+emailaddress.text=Е-поща
+login.text=Вход
 ss.button=Survivor Songbook
 projector.heading=Проектор
 controls.heading=Контроли
