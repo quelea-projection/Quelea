@@ -61,7 +61,9 @@ public class TitleProperty {
      * @param title
      */
     public void addTitle(Locale locale, String title) {
-        this.title.put(locale, title);
+        if (!this.title.containsKey(locale)) {
+            this.title.put(locale, title);
+        }
     }
 
 
