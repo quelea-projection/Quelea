@@ -490,7 +490,7 @@ public class VLCWindowEmbed extends VLCWindow {
             public void run() {
 //                System.out.println("show() start");                
                 if (init) {
-                    setWindowVisible(true);
+                    frame.setVisible(true);
                 }
 //                System.out.println("show() end");
             }
@@ -504,7 +504,7 @@ public class VLCWindowEmbed extends VLCWindow {
             public void run() {
 //                System.out.println("hide() start");
                 if (init) {
-                    setWindowVisible(false);
+                    frame.setVisible(false);
                 }
 //                System.out.println("hide() end");
             }
