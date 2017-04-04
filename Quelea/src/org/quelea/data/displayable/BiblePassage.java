@@ -118,13 +118,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 String verseText = verse.getText();
                 String[] verseWords = verseText.split(" ");
                 for (String verseWord : verseWords) {
-                    line.append(verseWord).append(" ");
-                    if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() > MAX_CHARS) {
+                    if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() + verseWord.length() > MAX_CHARS) {
                         line.append("\n");
                         section.append(line);
                         lines++;
                         line.setLength(0);
                     }
+                    line.append(verseWord).append(" ");
                 }
 //            section.append(line);
 //            line.setLength(0); //Empty
