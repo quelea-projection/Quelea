@@ -5,7 +5,7 @@
 #define MyAppVersion "2017.0"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
-#define MyAppExeName "quelea.exe"
+#define MyAppExeName "quelea64.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -34,7 +34,7 @@ ChangesAssociations=yes
 Root: HKCR; Subkey: ".qsch"; ValueType: string; ValueName: ""; ValueData: "Quelea Schedule"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "Quelea Schedule"; ValueType: string; ValueName: ""; ValueData: "Quelea Schedule"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "Quelea Schedule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\icons\logo.ico,0"
-Root: HKCR; Subkey: "Quelea Schedule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Quelea.exe"" ""%1"""
+Root: HKCR; Subkey: "Quelea Schedule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Quelea64.exe"" ""%1"""
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -47,7 +47,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Name: "{app}"; Permissions: everyone-modify;  
 
 [Files]
-Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Quelea64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
@@ -66,7 +66,7 @@ Source: "img\*"; DestDir: "{app}\img"; Flags: ignoreversion recursesubdirs creat
 Source: "vid\*"; DestDir: "{app}\vid"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "themes\*"; DestDir: "{app}\themes"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "winjre\*"; DestDir: "{app}\winjre"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "winjre64\*"; DestDir: "{app}\winjre64"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
