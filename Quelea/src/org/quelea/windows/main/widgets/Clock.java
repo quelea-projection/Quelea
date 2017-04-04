@@ -62,7 +62,7 @@ public class Clock extends Text {
                     String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
                     String text1 = hourString + ":" + minuteString;
             if (!s24h) {
-                text1 += (time.get(Calendar.AM_PM) == time.get(Calendar.AM)) ? " AM" : " PM";
+                text1 += (time.get(Calendar.AM_PM) == Calendar.AM) ? " AM" : " PM";
             }
             setText(text1);
         }),
