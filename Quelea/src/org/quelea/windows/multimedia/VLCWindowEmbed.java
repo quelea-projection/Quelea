@@ -76,8 +76,6 @@ public class VLCWindowEmbed extends VLCWindow {
     private MediaPlayerFactory mediaPlayerFactory;
     private EmbeddedMediaPlayer mediaPlayer = null;
     private CanvasVideoSurface videoSurface;
-    private volatile boolean hideButton;
-    private boolean show;
     private boolean paused;
     private volatile boolean init;
     private String location;
@@ -492,8 +490,7 @@ public class VLCWindowEmbed extends VLCWindow {
             public void run() {
 //                System.out.println("show() start");                
                 if (init) {
-                    show = true;
-                    updateState();
+                    frame.setVisible(true);
                 }
 //                System.out.println("show() end");
             }
@@ -507,8 +504,7 @@ public class VLCWindowEmbed extends VLCWindow {
             public void run() {
 //                System.out.println("hide() start");
                 if (init) {
-                    show = false;
-                    updateState();
+                    frame.setVisible(false);
                 }
 //                System.out.println("hide() end");
             }
@@ -521,10 +517,10 @@ public class VLCWindowEmbed extends VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setHideButton() start");
-                if (init) {
-                    hideButton = hide;
-                    updateState();
-                }
+//                if (init) {
+//                    hideButton = hide;
+//                    updateState();
+//                }
 //                System.out.println("setHideButton() end");
             }
         });
@@ -564,35 +560,6 @@ public class VLCWindowEmbed extends VLCWindow {
             
     }
     
-    // Redundant as this is now handled in setWindowVisible
-    private void updateState() {
-        /*
-        runOnVLCThread(new Runnable() {
-            @Override
-            public void run() {
-//                System.out.println("updateState() start");
-                if (init) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            //window.setVisible((!hideButton && show));
-                            //window.toBack();
-                            
-                            if ((!hideButton && show)) {
-                                setFullScreen(frame, false);
-                            }
-                            else {
-                                frame.setVisible(false);
-                            }
-                            frame.toBack();
-                        }
-                    });
-                }
-//                System.out.println("updateState() end");
-            }
-        });*/
-    }
-
     @Override
     public void setLocation(final int x, final int y) {
         runOnVLCThread(new Runnable() {
