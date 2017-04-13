@@ -284,7 +284,7 @@ public class OpenLyricsWriter {
         List<Locale> titleLocales = this.ol.getProperties().getTitleProperty().getTitleLocales();
         for (int i = 0; i < titleLocales.size(); i++) {
             Element authorElement = this.doc.createElement("author");
-            authorElement.appendChild(this.doc.createTextNode(this.ol.getProperties().getTitleProperty().getTitle(titleLocales.get(i))));
+            authorElement.appendChild(this.doc.createTextNode(this.ol.getProperties().getTitleProperty().getTitles(titleLocales.get(i)).get(0)));
             authorsElement.appendChild(authorElement);
         }
 
@@ -305,7 +305,7 @@ public class OpenLyricsWriter {
         for (int i = 0; i < titleLocales.size(); i++) {
             Element titleElement = this.doc.createElement("title");
             titleElement.setAttribute("lang", titleLocales.get(i).getLanguage());
-            titleElement.appendChild(this.doc.createTextNode(this.ol.getProperties().getTitleProperty().getTitle(titleLocales.get(i))));
+            titleElement.appendChild(this.doc.createTextNode(this.ol.getProperties().getTitleProperty().getTitles(titleLocales.get(i)).get(0)));
             titlesElement.appendChild(titleElement);
         }
 

@@ -47,12 +47,15 @@ import java.util.Map;
  * @author bo
  */
 public class TitleProperty {
-    private Map<Locale, String> title;
+    private Map<Locale, List<String>> title;
 
     public TitleProperty() {
-        this.title = new HashMap<Locale, String>();
+        this.title = new HashMap<>();
     }
-
+    
+    public List<String> getTitles(Locale locale) {
+        return title.get(locale);
+    }
 
     /**
      * Add title in locale.
@@ -62,8 +65,17 @@ public class TitleProperty {
      */
     public void addTitle(Locale locale, String title) {
         if (!this.title.containsKey(locale)) {
-            this.title.put(locale, title);
+            this.title.put(locale, new ArrayList<>());
         }
+        this.title.get(locale).add(title);
+    }
+    
+    public List<String> getAllTitles() {
+        List<String> ret = new ArrayList<>();
+        for(List<String> titles : title.values()) {
+            ret.addAll(titles);
+        }
+        return ret;
     }
 
 
@@ -73,20 +85,12 @@ public class TitleProperty {
      * @return
      */
     public String getDefaultTitle() {
-        return this.title.get(Locale.getDefault());
+        List<String> titles = this.title.get(Locale.getDefault());
+        if(titles!=null && !titles.isEmpty()) {
+            return titles.get(0);
+        }
+        return null;
     }
-
-
-    /**
-     * Get title in specific locale. If nothing happening, get title in default locale.
-     *
-     * @param locale
-     * @return
-     */
-    public String getTitle(Locale locale) {
-        return this.title.get(locale) != null ? this.title.get(locale) : this.getDefaultTitle();
-    }
-
 
     /**
      * Get available title locales.
@@ -94,7 +98,7 @@ public class TitleProperty {
      * @return
      */
     public List<Locale> getTitleLocales() {
-        List<Locale> locales = new ArrayList<Locale>();
+        List<Locale> locales = new ArrayList<>();
         Iterator<Locale> titleIterator = this.title.keySet().iterator();
         while (titleIterator.hasNext()) {
             locales.add(titleIterator.next());
