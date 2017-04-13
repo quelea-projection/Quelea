@@ -21,6 +21,7 @@ import de.suse.lib.openlyrics.OpenLyricsException;
 import de.suse.lib.openlyrics.OpenLyricsObject;
 import de.suse.lib.openlyrics.Verse;
 import de.suse.lib.openlyrics.VerseLine;
+import de.suse.lib.openlyrics.properties.TitleProperty;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class OpenLyricsParser implements SongParser {
                 }
                 OpenLyricsObject ol = new OpenLyricsObject(fileContents.toString());
                 String lyrics = getLyrics(ol);
-                String title = ol.getProperties().getTitleProperty().getDefaultTitle();
+                String title = getTitle(ol.getProperties().getTitleProperty());
                 String author = getAuthor(ol);
                 if (!lyrics.isEmpty()) {
                     SongDisplayable displayable = new SongDisplayable(title, author);
@@ -89,6 +90,25 @@ public class OpenLyricsParser implements SongParser {
             file.close();
         }
         return ret;
+    }
+    
+    private String getTitle(TitleProperty titleProp) {
+        StringBuilder ret = new StringBuilder();
+        List<String> titles = titleProp.getAllTitles();
+        for(int i=0 ; i<titles.size() ; i++) {
+            String title = titles.get(i);
+            if(title.matches("[0-9]+\\.")) { //Deal with "number" titles
+                title = title.substring(0,title.length()-1);
+                while(title.length()<4) {
+                    title = "0"+title;
+                }
+            }
+            ret.append(title);
+            if(i<titles.size()-1) {
+                ret.append(" - ");
+            }
+        }
+        return ret.toString();
     }
 
     private String getAuthor(OpenLyricsObject ol) {
