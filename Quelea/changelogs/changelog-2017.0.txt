@@ -1,0 +1,18 @@
+quelea (2017.0) stable; urgency=normal
+ 
+  * Add screenmonkey import
+  * Add separate 64 bit and 32 bit windows installer
+  * Disable Youtube button / menu item by default
+  * Improve startup time
+  * Fix memory issues caused by lots of videos in the video panel
+  * Fix planning centre online import when using folders
+  * Fix embedding of some file types in schedule
+  * Fix section titles not appearing in PDF export
+  * Fix scroll position of the lyrics area jumping around
+  * Fix windows asking twice about overwriting files
+  * Fix issue with non-ascii characters not being shown in PDF schedule export
+  * Fix undo bug
+  * Add PDF & Image Group slide preview in Mobile Remote
+  * Add Russian translation
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 08 Feb 2017 00:00:00 +0000
