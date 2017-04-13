@@ -2,8 +2,9 @@ package org.quelea.services.importexport;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.quelea.data.displayable.SongDisplayable;
@@ -18,15 +19,14 @@ public class PlainTextParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File dirLocation, StatusPanel statusPanel) throws IOException {
-        List<SongDisplayable> ret = new ArrayList<SongDisplayable>();
+        List<SongDisplayable> ret = new ArrayList<>();
         File[] listOfSongs = dirLocation.listFiles();
         for (int i = 0; i < listOfSongs.length; i++) {
 
             if (listOfSongs[i].isFile()) {
                 final String fileName = listOfSongs[i].getName();
                 if (fileName.substring(fileName.length() - 4, fileName.length()).equals(".txt")) {
-                    FileReader reader = new FileReader(listOfSongs[i]);
-                    BufferedReader bfr = new BufferedReader(reader);
+                    BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(listOfSongs[i]), "UTF-8"));
                     String line = "";
                     boolean titleRead = false;
                     String title = "";
