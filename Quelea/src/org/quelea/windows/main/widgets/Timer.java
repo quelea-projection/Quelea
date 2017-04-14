@@ -47,17 +47,6 @@ public class Timer extends Text {
     private Pos textPosition;
     private ThemeDTO theme;
 
-    public Timer(int minutes, int seconds, String pretext, String posttext) {
-        this.minutes = minutes;
-        this.seconds = seconds;
-        this.pretext = pretext;
-        this.posttext = posttext;
-        setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
-        bindToTime();
-        setOpacity(1);
-        paused = true;
-    }
-
     public Timer(int seconds, String pretext, String posttext) {
         this.minutes = (int) Math.floor(seconds / 60);
         this.seconds = seconds % 60;

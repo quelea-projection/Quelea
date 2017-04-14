@@ -19,6 +19,10 @@ package org.quelea.windows.timer;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
@@ -184,12 +188,18 @@ public class CreateTimerPanel extends Stage {
                     pretext = (s.length > 0) ? s[0] : "";
                     posttext = (s.length > 1) ? s[1] : "";
                 }
-                TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, tp.getTheme());
+
+                TimerDisplayable displayable;
+                if (durationTextField.getText().contains("am") || durationTextField.getText().contains("pm")) {
+                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parseTime(durationTextField.getText()), pretext, posttext, tp.getTheme());
+                } else {
+                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, tp.getTheme());
+                }
 
                 if (saveBox.isSelected()) {
                     String fileName = QueleaProperties.get().getTimerDir().getAbsolutePath() + "/" + nameTextField.getText().replace(" ", "_") + ".cdt";
                     File f = new File(fileName);
-                    if(f.exists()) {
+                    if (f.exists()) {
                         FileChooser fc = new FileChooser();
                         fc.setInitialDirectory(QueleaProperties.get().getTimerDir());
                         fc.getExtensionFilters().add(FileFilters.TIMERS);
@@ -224,7 +234,8 @@ public class CreateTimerPanel extends Stage {
     }
 
     private boolean parsable(String newValue) {
-        return parse(newValue) != -1;
+        Boolean b = (parse(newValue) != -1) || (parseTime(newValue) != null);
+        return b;
     }
 
     private int parse(String newValue) {
@@ -266,13 +277,33 @@ public class CreateTimerPanel extends Stage {
         }
     }
 
+    private Calendar parseTime(String text) {
+        try {
+            SimpleDateFormat ft = new SimpleDateFormat("hh:mmaa");
+            Calendar now = Calendar.getInstance();
+            Calendar time = Calendar.getInstance();
+            time.setTime(ft.parse(text.toLowerCase().replace(" ","")));
+            time.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
+            return time;
+        } catch (ParseException e) {
+            //Nothing
+        }
+        return null;
+    }
+
     private void setTimerTheme(ThemeDTO theme) {
         timerTheme = theme;
     }
 
     private void createEdit(TimerDisplayable td) {
-        durationTextField.setText(td.secondsToTime(td.getSeconds()));
+        int seconds = td.getSeconds();
+        if (seconds < 0) {
+            durationTextField.setText(td.getTimeToFinish().get(Calendar.HOUR) + ":" + (td.getTimeToFinish().get(Calendar.MINUTE) > 9 ? "" : "0") + td.getTimeToFinish().get(Calendar.MINUTE) + (td.getTimeToFinish().get(Calendar.AM_PM) == 0 ? "am" : "pm"));
+        } else {
+            durationTextField.setText(td.secondsToTime(td.getSeconds()));
+        }
         textTextArea.setText(td.getPretext() + "#" + td.getPosttext());
         nameTextField.setText(td.getName());
     }
+
 }
