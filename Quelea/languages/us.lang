@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Mon Mar 27 01:05:31 BST 2017
+#Fri Apr 14 00:58:37 BST 2017
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -233,7 +233,7 @@ none.text=None
 theme.button.tooltip=Set a global theme for the schedule
 new.notice.heading=New Notice
 no.chords.message=This song doesn't have any lines of chords to transpose.
-focus.switcher.message=Toogle window focus here if needed during the presentation.
+focus.switcher.message=Toggle window focus here if needed during the presentation.
 export.heading=Export
 go.live.text=Go Live
 pp.already.running.message=Another instance of PowerPoint was found. Please close all instances of PowerPoint before launching a presentation in Quelea to avoid data loss.

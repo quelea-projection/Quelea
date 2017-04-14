@@ -19,17 +19,23 @@ package org.quelea.data.displayable;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.timer.TimerDrawer;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -49,10 +55,12 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     private final String location = "";
     private TimerDrawer drawer;
     private String name = "";
+    private Calendar timeToFinish;
 
     /**
      * Create a new timer displayable.
      * <p>
+     * @param name
      * @param background The background of the timer
      * @param seconds the duration of the countdown timer
      * @param pretext any text to go before the timer
@@ -66,6 +74,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         this.pretext = pretext;
         this.posttext = posttext;
         this.theme = theme;
+        this.timeToFinish = null;
     }
 
     /**
@@ -78,6 +87,38 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     public TimerDisplayable(String name, int seconds, String pretext, String posttext, ThemeDTO theme) {
         this(name, theme.getBackground(), seconds, pretext, posttext, theme);
+    }
+
+    /**
+     * Create a new timer displayable.
+     * <p>
+     * @param name
+     * @param background The background of the timer
+     * @param timeToFinish The time to countdown to
+     * @param pretext any text to go before the timer
+     * @param posttext and text to go after the timer
+     * @param theme the theme to use for this displayable when displayed
+     */
+    public TimerDisplayable(String name, Background background, Calendar timeToFinish, String pretext, String posttext, ThemeDTO theme) {
+        this.name = name;
+        this.background = background;
+        this.seconds = -1;
+        this.pretext = pretext;
+        this.posttext = posttext;
+        this.theme = theme;
+        this.timeToFinish = timeToFinish;
+    }
+
+    /**
+     * Create a new timer displayable.
+     * <p/>
+     * @param seconds the duration of the countdown timer
+     * @param pretext any text to go before the timer
+     * @param posttext and text to go after the timer
+     * @param theme the theme to use for this displayable when displayed
+     */
+    public TimerDisplayable(String name, Calendar timeToFinish, String pretext, String posttext, ThemeDTO theme) {
+        this(name, theme.getBackground(), timeToFinish, pretext, posttext, theme);
     }
 
     /**
@@ -100,7 +141,12 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         if (name != null || !name.equals("")) {
             return name;
         } else {
-            return secondsToTime(seconds) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
+            if(seconds < 0) {
+                return timeToFinish.get(Calendar.HOUR) + ":" + (timeToFinish.get(Calendar.MINUTE) > 9 ? "" : "0") + timeToFinish.get(Calendar.AM_PM) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
+            }
+            else {
+                return secondsToTime(seconds) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
+            }
         }
     }
 
@@ -116,18 +162,37 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
         int i = 0;
         String name = "";
-        int duration = 0;
-        String pretext,posttext,theme;
+        int duration = -1;
+        Calendar timeToFinish = null;
+        String pretext, posttext, theme;
         if (list.getLength() == 5) {
             i = 1;
             name = list.item(0).getTextContent();
         }
-        duration = Integer.parseInt(list.item(i).getTextContent());
-        pretext = list.item(i+1).getTextContent();
-        posttext = list.item(i+2).getTextContent();
-        theme = list.item(i+3).getTextContent();
+
+        try {
+            duration = Integer.parseInt(list.item(i).getTextContent());
+        } catch (NumberFormatException e) {
+            try {
+                SimpleDateFormat ft = new SimpleDateFormat("HH:mm");
+                Calendar now = Calendar.getInstance();
+                Calendar time = Calendar.getInstance();
+                time.setTime(ft.parse(list.item(i).getTextContent()));
+                time.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
+                timeToFinish = time;
+            } catch (NumberFormatException | ParseException | DOMException ex) {
+                LoggerUtils.getLogger().log(Level.WARNING, "Could not parse datetime for timer");
+            }
+        }
+        pretext = list.item(i + 1).getTextContent();
+        posttext = list.item(i + 2).getTextContent();
+        theme = list.item(i + 3).getTextContent();
         ThemeDTO tempTheme = ThemeDTO.fromString(theme);
-        return new TimerDisplayable(name, duration, pretext, posttext, tempTheme);
+        if (duration != -1) {
+            return new TimerDisplayable(name, duration, pretext, posttext, tempTheme);
+        } else {
+            return new TimerDisplayable(name, timeToFinish, pretext, posttext, tempTheme);
+        }
     }
 
     /**
@@ -140,11 +205,17 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         StringBuilder ret = new StringBuilder();
         ret.append("<timer>");
         ret.append("<name>");
-        ret.append(Utils.escapeXML(name));
+        ret.append(Utils.escapeXML(getName()));
         ret.append("</name>");
-        ret.append("<duration>");
-        ret.append(seconds);
-        ret.append("</duration>");
+        if (seconds != -1) {
+            ret.append("<duration>");
+            ret.append(seconds);
+            ret.append("</duration>");
+        } else {
+            ret.append("<time>");
+            ret.append(timeToFinish.get(Calendar.HOUR_OF_DAY)).append(":").append(timeToFinish.get(Calendar.MINUTE));
+            ret.append("</time>");
+        }
         ret.append("<pretext>");
         ret.append(Utils.escapeXML(pretext));
         ret.append("</pretext>");
@@ -209,6 +280,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     public String secondsToTime(int seconds) {
+        if (seconds < 0) {
+            return "00:00";
+        }
         return (int) Math.floor(seconds / 60) + ":" + ((seconds % 60) > 9 ? "" : "0") + seconds % 60;
     }
 
@@ -249,5 +323,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Calendar getTimeToFinish() {
+        return this.timeToFinish;
     }
 }
