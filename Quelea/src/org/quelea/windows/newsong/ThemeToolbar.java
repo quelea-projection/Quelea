@@ -420,7 +420,8 @@ public class ThemeToolbar extends HBox {
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         
-        LOGGER.log(Level.INFO, "Selected font theme \"{0}\", font family is \"{1}\"", new Object[]{fontSelection.getSelectionModel().getSelectedItem(), font.getFamily()});
+        //Overly spammy
+        //LOGGER.log(Level.INFO, "Selected font theme \"{0}\", font family is \"{1}\"", new Object[]{fontSelection.getSelectionModel().getSelectedItem(), font.getFamily()});
 
         Background background = new ColourBackground(Color.BLACK);
         if (backTypeSelection.getSelectionModel().getSelectedItem() == null) {
