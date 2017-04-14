@@ -55,7 +55,7 @@ public class SplashStage extends Stage {
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Image splashImage;
-        if (QueleaProperties.VERSION.getUnstableName().equalsIgnoreCase("beta")) {
+        if (QueleaProperties.VERSION.getUnstableName().toLowerCase().startsWith("beta")) {
             splashImage = new Image("file:icons/splash-beta.png");
         } else {
             splashImage = new Image("file:icons/splash-bare.png");
