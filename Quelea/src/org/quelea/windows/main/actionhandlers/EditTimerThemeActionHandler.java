@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
+import java.util.Calendar;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -63,7 +64,16 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
         if(selectedDisplayable == null) {
             selectedDisplayable = (TimerDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
         }
-        wordsArea.replaceText(selectedDisplayable.getPretext() + selectedDisplayable.secondsToTime(selectedDisplayable.getSeconds()) + selectedDisplayable.getPosttext());
+        int seconds = selectedDisplayable.getSeconds();
+        if (seconds < 0) {
+            Calendar timer = selectedDisplayable.getTimeToFinish();
+            String text = timer.get(Calendar.HOUR) + ":" + (timer.get(Calendar.MINUTE) > 9 ? "" : "0") + timer.get(Calendar.MINUTE) + timer.get(Calendar.AM_PM);
+            System.out.println(text);
+            wordsArea.replaceText(selectedDisplayable.getPretext() + text + selectedDisplayable.getPosttext());
+        } else {
+            wordsArea.replaceText(selectedDisplayable.getPretext() + selectedDisplayable.secondsToTime(seconds) + selectedDisplayable.getPosttext());
+        }
+        
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();

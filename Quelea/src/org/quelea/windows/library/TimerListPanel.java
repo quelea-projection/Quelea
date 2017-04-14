@@ -35,7 +35,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -95,7 +94,7 @@ public class TimerListPanel extends BorderPane {
             final TextFieldListCell<TimerDisplayable> cell = new TextFieldListCell<>(new StringConverter<TimerDisplayable>() {
                 @Override
                 public String toString(TimerDisplayable timer) {
-                    return timer.getName() + " (" + timer.secondsToTime(timer.getSeconds()) + ")";
+                    return timer.getPreviewText();
                 }
 
                 @Override
