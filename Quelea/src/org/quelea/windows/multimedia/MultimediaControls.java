@@ -146,7 +146,6 @@ public class MultimediaControls extends StackPane {
         volSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
             Double vol1 = volSlider.getValue();
             vol = vol1.intValue();
-            System.out.println((double)vol/100);
             VLCWindow.INSTANCE.setVolume(vol);
         });
         muteButton.setTranslateY(30);
