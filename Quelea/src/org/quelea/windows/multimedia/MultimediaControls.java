@@ -124,7 +124,9 @@ public class MultimediaControls extends StackPane {
                 if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
                     VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
                     long time = (long) (VLCWindow.INSTANCE.getProgressPercent() * VLCWindow.INSTANCE.getTotal());
-                    elapsedTime.setText(getTime(time));
+                    if (VLCWindow.INSTANCE.getTotal() != 0) {
+                        elapsedTime.setText(getTime(time));
+                    }
                 }
             }
         });
@@ -144,6 +146,7 @@ public class MultimediaControls extends StackPane {
         volSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
             Double vol1 = volSlider.getValue();
             vol = vol1.intValue();
+            System.out.println((double)vol/100);
             VLCWindow.INSTANCE.setVolume(vol);
         });
         muteButton.setTranslateY(30);
@@ -200,8 +203,10 @@ public class MultimediaControls extends StackPane {
                         @Override
                         public void run() {
                             posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
-                            elapsedTime.setText(getTime(VLCWindow.INSTANCE.getTime()));
-                            totalTime.setText(getTime(VLCWindow.INSTANCE.getTotal()));
+                            if (VLCWindow.INSTANCE.getTotal() != 0) {
+                                elapsedTime.setText(getTime(VLCWindow.INSTANCE.getTime()));
+                                totalTime.setText(getTime(VLCWindow.INSTANCE.getTotal()));
+                            }
                         }
                     });
                 }
