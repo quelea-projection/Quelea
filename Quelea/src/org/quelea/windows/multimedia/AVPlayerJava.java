@@ -209,13 +209,13 @@ public class AVPlayerJava {
      *
      * @return The elapsed time
      */
-    public static native long getCurrentTime();
+    public static native long currentTime();
 
     /**
-     * Todo: Fix working code to get total time
+     * Todo: Untested code to return total time/duration.
      *
      * @return The total time
      */
-    public static native long getTotal();
+    public static native long duration();
 
 }

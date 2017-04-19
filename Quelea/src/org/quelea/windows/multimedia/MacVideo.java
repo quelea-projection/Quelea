@@ -620,38 +620,62 @@ public class MacVideo extends VLCWindow {
 
     /**
      * TODO: Get the elapsed time of the item, not yet tested.
-     * @return The elapsed time
+     *
+     * @return The elapsed time is not yet fully tested for Mac.
      */
     @Override
     public long getTime() {
-        return AVPlayerJava.getCurrentTime();
+        long time = 0;
+        try {
+            time = AVPlayerJava.currentTime();
+        } catch (Exception ignore) {
+        }
+        return time;
     }
 
     /**
      * TODO: Get the total time of the item, not yet tested.
-     * @return The total time
+     *
+     * @return The total time is not yet fully tested for Mac.
      */
     @Override
     public long getTotal() {
-        return AVPlayerJava.getCurrentTime()/(long)getProgressPercent();
+        long time = 0;
+        try {
+            time = AVPlayerJava.duration();
+        } catch (Exception ignore) {
+        }
+        return time;
     }
 
     /**
      * TODO: Get the current volume level of the item, not yet tested.
+     *
      * @return The volume level
      */
     @Override
     public int getVolume() {
-        return (new Double(AVPlayerJava.getVolume())).intValue();
+        int volume = 100;
+        try {
+            volume = (new Double(AVPlayerJava.getVolume() * 100)).intValue();
+        } catch (Exception e) {
+            LOGGER.log(Level.INFO, "Couldn't get volume level");
+        }
+        return volume;
     }
 
     /**
      * TODO: Set the volume level of the item, not yet tested.
+     *
      * @param volume Desired volume level
      */
     @Override
     public void setVolume(int volume) {
-        AVPlayerJava.setVolume(new Double(volume).intValue());
+        try {
+            AVPlayerJava.setVolume((double) volume / 100);
+        } catch (Exception e) {
+            LOGGER.log(Level.INFO, "Couldn't set volume level");
+        }
     }
 
     /**
@@ -687,7 +711,7 @@ public class MacVideo extends VLCWindow {
          */
 
     }
-    
-    public void setWindowVisible(boolean visible) { 
+
+    public void setWindowVisible(boolean visible) {
     }
 }
