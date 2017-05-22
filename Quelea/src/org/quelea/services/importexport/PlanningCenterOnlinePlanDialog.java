@@ -476,10 +476,10 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         // and (REPEAT) tags
         Pattern removeExp = Pattern.compile("\\(\\d+X\\)|\\(REPEAT\\)", Pattern.CASE_INSENSITIVE);
         Matcher m = removeExp.matcher(lyrics);
-        lyrics = m.replaceAll("");
+        lyrics = m.replaceAll("").trim();
         
         // remove embedded choords (wrapped in brackets)
-        Pattern removeChoordsExp = Pattern.compile("(\\[|\\b)[A-G](m|sus|maj|min|aug|dim|#|b)?\\d?\\/?(\\]|(?!\\w)|$)");
+        Pattern removeChoordsExp = Pattern.compile("(?m)(^| |\\[|\\b)([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\d?)?(\\/[A-G](##?|bb?)?)?)(\\]| (?!\\w)|$)");
         Matcher m2 = removeChoordsExp.matcher(lyrics);
         lyrics = m2.replaceAll("");
         
@@ -497,17 +497,25 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                         title = titleDict.get(title);
                     }
                 }
-
+				
                 String number =  (match.group(2) != null) ? match.group(2) : "";
                 number = (match.group(4) != null) ? match.group(4) : number;
 
                 title = title + " " + number;
                 title = title.trim();
 
+				int matchStart = match.start();
                 if (lastMatchEnd != -1) {
-                    String text = lyrics.substring(lastMatchEnd, match.start()).trim();
+                    String text = lyrics.substring(lastMatchEnd, matchStart).trim();
                     titleTextBlockList.add(new TitleTextBlock(lastTitle, text));
                 }
+				else {
+					// if the first title is malformed, at least this will pull down the text for the user to be able to fix it up
+					if (matchStart != 0) {
+						String text = lyrics.substring(0, matchStart).trim();
+						titleTextBlockList.add(new TitleTextBlock("Unknown", text));
+					}
+				}
                 
                 lastTitle = title;
             }
@@ -522,6 +530,11 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             String text = lyrics.substring(lastMatchEnd).trim();
             titleTextBlockList.add(new TitleTextBlock(lastTitle, text));
         }
+		else {
+			// the whole song is malformed, at least this will pull down the text for the user to be able to fix it up
+			String text = lyrics;
+			titleTextBlockList.add(new TitleTextBlock("Unknown", text));
+		}
         
         // now the song has been divided into titled text blocks, time to bring it together nicely
         // for Quelea
