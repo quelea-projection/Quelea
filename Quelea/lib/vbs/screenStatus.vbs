@@ -10,7 +10,9 @@ If Err.Number <> 0 Then
     WScript.Echo "PowerPoint is not running"
     Err.Clear             ' Clear the Error
 else
-	WScript.Echo pptAppl.SlideShowWindows(1).View.State ' Returns 2 for normal and 3 for black
+        dim state
+        state = pptAppl.ActivePresentation.View.State
+	WScript.Echo state 'Returns 2 for normal and 3 for black, blank if not started
 End If
 On Error Goto 0           ' Don't resume on Error
 

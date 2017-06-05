@@ -10,8 +10,12 @@ If Err.Number <> 0 Then
     WScript.Echo "PowerPoint is not running"
     Err.Clear             ' Clear the Error
 else
-	pptAppl.ActivePresentation.Slides.Range.SlideShowTransition.AdvanceOnTime = FALSE
-    pptAppl.ActivePresentation.SlideShowSettings.Run
-	WScript.Echo "Successfully stopped loop"
+        dim index
+        index = pptAppl.ActivePresentation.SlideShowWindow.View.Slide.SlideIndex
+        pptAppl.ActivePresentation.SlideShowWindow.View.Exit
+	pptAppl.ActivePresentation.SlideShowSettings.LoopUntilStopped = FALSE
+        pptAppl.ActivePresentation.SlideShowSettings.Run
+        pptAppl.SlideShowWindows(1).View.GotoSlide index
+	WScript.Echo "Successfully stopped looping"
 End If
 On Error Goto 0           ' Don't resume on Error
