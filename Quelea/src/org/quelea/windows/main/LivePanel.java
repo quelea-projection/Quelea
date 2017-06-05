@@ -104,6 +104,13 @@ public class LivePanel extends LivePreviewPanel {
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
+        loop.setOnMouseClicked(e -> {
+            if (isLoopSelected()) {
+                PowerPointHandler.loopPresentation();
+            } else {
+                PowerPointHandler.stopLoop();
+            }
+        });
         loopDuration = new TextField("10");
         loopDuration.setMaxWidth(40);
         loopDuration.setMinWidth(40);
@@ -166,6 +173,7 @@ public class LivePanel extends LivePreviewPanel {
                         updateLogo();
                     }
                 }
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
             }
         });
         logo.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -193,6 +201,7 @@ public class LivePanel extends LivePreviewPanel {
                 for (DisplayCanvas canvas : canvases) {
                     canvas.setBlacked(black.isSelected());
                 }
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
             }
         });
         header.getItems().add(black);
@@ -212,6 +221,7 @@ public class LivePanel extends LivePreviewPanel {
                     canvas.setCleared(clear.isSelected());
                 }
             }
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(clear);
         ImageView hideIV = new ImageView(new Image("file:icons/cross.png"));
@@ -588,13 +598,14 @@ public class LivePanel extends LivePreviewPanel {
             }
             return webPreviewImage;
         } else {
-            getWebPanel().addWebView((WebDisplayable)getDisplayable());
+            getWebPanel().addWebView((WebDisplayable) getDisplayable());
             return new Image("file:icons/web preview.png");
         }
     }
 
     /**
      * Start native PowerPoint service.
+     *
      * @param d a Presentation displayable to show in PowerPoint
      */
     private void startPowerPoint(Displayable d) {

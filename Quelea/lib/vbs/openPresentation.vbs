@@ -53,9 +53,6 @@ FUNCTION openPPTDocument()
     pptAppl.Visible = TRUE                    ' first set ppt to visible
     Set objPresentation = pptAppl.Presentations.Open(oArgs(0))   ' now open the file 
 	'objPresentation.SlideShowSettings.ShowType = 3	' start slide show
-        
-        ' Make sure the presentation won't be closed before we want it to
-	objPresentation.SlideShowSettings.LoopUntilStopped = TRUE
 	objPresentation.SlideShowSettings.Run ' apply changes
 	
 	

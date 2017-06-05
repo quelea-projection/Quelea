@@ -64,25 +64,24 @@ public class PowerPointHandler {
         String ppPath = QueleaProperties.get().getPPPath();
         if (QueleaProperties.get().getUsePP()) {
             if (Utils.isMac()) {
-                String ret = "";
+                String ret;
                 if (path.contains(" ")) {
                     path = path.replaceFirst("/", "").replaceAll("/", ":");
                     ret = loadAppleScript(getAppleScript("open2").replace("filepath", path));
                 } else {
                     ret = loadAppleScript(getAppleScript("open").replace("filepath", path));
                 }
-//                returnFocusToQuelea();
                 return ret;
             } else if (Utils.isWindows() && new File(ppPath).exists()) {
-                String ret = "";
+                String ret;
                 if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
                     ret = pptViewOpen(ppPath, path);
                 } else {
                     ret = sendVBSSignal(getVBScriptPath("openPresentation.vbs") + " " + path);
                     returnFocusToQuelea();
                     focusPowerPoint();
-                    return ret;
                 }
+                return ret;
             }
         } else {
             return "PowerPoint was not found";
@@ -124,7 +123,6 @@ public class PowerPointHandler {
                 ret = pptViewNext();
             } else {
                 ret = sendVBSSignal(getVBScriptPath("gotoNext.vbs"));
-                focusPowerPoint();
             }
         }
         return ret;
@@ -144,7 +142,6 @@ public class PowerPointHandler {
                 ret = pptViewPrevious();
             } else {
                 ret = sendVBSSignal(getVBScriptPath("gotoPrevious.vbs"));
-                focusPowerPoint();
             }
         }
         return ret;
@@ -165,8 +162,11 @@ public class PowerPointHandler {
             if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
                 pptViewGoToSlide(slideNumber);
             } else {
-                ret = sendVBSSignal(getVBScriptPath("gotoSlide.vbs") + " " + slideNumber);
-                focusPowerPoint();
+                if (screenStatus().equals("")) {
+                    ret = sendVBSSignal(getVBScriptPath("startPresentation.vbs") + " " + slideNumber);
+                } else {
+                    ret = sendVBSSignal(getVBScriptPath("gotoSlide.vbs") + " " + slideNumber);
+                }
             }
         }
         return ret;
@@ -211,27 +211,20 @@ public class PowerPointHandler {
     }
 
     /**
-     * Start looping the active presentation. This is suggested not to be used
-     * but rather to use the native loop in Quelea along with the next signal.
+     * Allow looping of the active presentation. This won't work with PowerPoint
+     * Viewer, so that must be manually activated.
      *
-     * @param seconds The desired interval between each slide
      * @return Message whether the command was successful
      */
-    public static String loopPresentation(int seconds) {
+    public static String loopPresentation() {
         String ret = "";
         if (Utils.isMac()) {
-            // No method yet
+            ret = loadAppleScript(getAppleScript("loopOn")); // TODO: Not yet tested
         } else if (Utils.isWindows()) {
             if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
-                /* 
-                 Cannot be done with PowerPoint Viewer in a good way as far as I know
-                 The method below will shift focus to the presentation at the set
-                 interval, which might lead to a buggy expericene for the user.
-                 */
-                ret = "Note: This is an unstable feature";
-                pptViewLoop(seconds);
+                // No method yet
             } else {
-                return sendVBSSignal(getVBScriptPath("startLoop.vbs") + " " + seconds);
+                return sendVBSSignal(getVBScriptPath("startLoop.vbs"));
             }
         }
         return ret;
@@ -245,11 +238,10 @@ public class PowerPointHandler {
     public static String stopLoop() {
         String ret = "";
         if (Utils.isMac()) {
-            // No method yet
+            ret = loadAppleScript(getAppleScript("loopOff")); // TODO: Not yet tested
         } else if (Utils.isWindows()) {
             if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
-                ret = "Note: This is an unstable feature";
-                setLoop(false);
+                // No method yet
             } else {
                 return sendVBSSignal(getVBScriptPath("stopLoop.vbs"));
             }
@@ -446,14 +438,15 @@ public class PowerPointHandler {
      * Send next signal through key event
      */
     private static String pptViewNext() {
-        return sendPPTViewSignals(KeyEvent.VK_DOWN);
+        System.out.println("Next");
+        return sendPPTViewSignals(KeyEvent.VK_RIGHT);
     }
 
     /**
      * Send previous signal through key event
      */
     private static String pptViewPrevious() {
-        return sendPPTViewSignals(KeyEvent.VK_UP);
+        return sendPPTViewSignals(KeyEvent.VK_LEFT);
     }
 
     /**
@@ -494,43 +487,7 @@ public class PowerPointHandler {
             } catch (AWTException e) {
                 LOGGER.log(Level.INFO, "Failed going to slide {0} in PowerPoint Viewer", num);
             }
-            returnFocusToQuelea();
         }
-    }
-
-    /**
-     * Experimental loop feature for PowerPoint Viewer through key event
-     *
-     * @param seconds Interval for slide progression
-     */
-    private static void pptViewLoop(int seconds) {
-        // Set focus to PowerPoint presentation and send key signal "down"
-        Thread thread = new Thread(() -> {
-            while (isLoop()) {
-                HWND hwnd = User32.INSTANCE.FindWindow(null,
-                        title); // window title
-                if (hwnd == null) {
-                    LOGGER.log(Level.INFO, "PowerPoint Viewer is not running");
-                    // Manually restart presentation?
-//                    openPresentation(filePath);
-                } else {
-                    User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
-                    User32.INSTANCE.SetForegroundWindow(hwnd); // bring to front
-                    Robot robot;
-                    try {
-                        robot = new Robot();
-                        robot.keyPress(KeyEvent.VK_RIGHT);
-                        robot.delay(seconds * 1000);
-                    } catch (AWTException ex) {
-                        LOGGER.log(Level.INFO, "Failed looping in PowerPoint Viewer");
-                    }
-                }
-                returnFocusToQuelea();
-            }
-
-        });
-        thread.setDaemon(true);
-        thread.start();
     }
 
     /**
@@ -601,7 +558,7 @@ public class PowerPointHandler {
     private static String sendPPTViewSignals(int keyEvent) {
         // Set focus to PowerPoint presentation and send key signals
         String ret;
-        if (focusPowerPoint().contains("successfully")) {
+        if (focusPowerPoint().contains("Successfully")) {
             Robot robot;
             try {
                 robot = new Robot();
@@ -610,7 +567,6 @@ public class PowerPointHandler {
             } catch (AWTException e) {
                 LOGGER.log(Level.INFO, "Failed sendng key event to PowerPoint Viewer");
             }
-            returnFocusToQuelea();
             ret = "Signal sending was successful";
         } else {
             ret = "PowerPoint Viewer is not running";
@@ -695,7 +651,6 @@ public class PowerPointHandler {
                         + "	\n"
                         + "	set theSlideShowSet to slide show settings of active presentation\n"
                         + "     try\n"
-                        + "         set loop until stopped of theSlideShowSet to true\n"
                         + "         set show type of theSlideShowSet to slide show type presenter\n"
                         + "     on error errorMessage number errorNumber\n"
                         + "         return errorMessage\n"
@@ -823,6 +778,34 @@ public class PowerPointHandler {
                         + "else\n"
                         + "    return \"Not running\"\n"
                         + "end if";
+            case "loopOn":
+                return "if application \"Microsoft PowerPoint\" is running then\n"
+                        + "  tell application \"Microsoft PowerPoint\"\n"
+                        + "	set curSlide to (slide number of slide of slide show view of slide show window of active presentation)\n"
+                        + "	exit slide show of slide show view of slide show window 1\n"
+                        + "	try\n"
+                        + "		set theSlideShowSet to active presentation's slide show settings\n"
+                        + "		set theSlideShowSet's starting slide to curSlide\n"
+                        + "		set loop until stopped of theSlideShowSet to true\n"
+                        + "	on error errorMessage number errorNumber\n"
+                        + "		return errorMessage\n"
+                        + "	end try\n"
+                        + "	run slide show theSlideShowSet\n"
+                        + "end tell";
+            case "loopOff":
+                return "if application \"Microsoft PowerPoint\" is running then\n"
+                        + "  tell application \"Microsoft PowerPoint\"\n"
+                        + "	set curSlide to (slide number of slide of slide show view of slide show window of active presentation)\n"
+                        + "	exit slide show of slide show view of slide show window 1\n"
+                        + "	try\n"
+                        + "		set theSlideShowSet to active presentation's slide show settings\n"
+                        + "		set theSlideShowSet's starting slide to curSlide\n"
+                        + "		set loop until stopped of theSlideShowSet to false\n"
+                        + "	on error errorMessage number errorNumber\n"
+                        + "		return errorMessage\n"
+                        + "	end try\n"
+                        + "	run slide show theSlideShowSet\n"
+                        + "end tell";
             default:
                 return null;
         }
