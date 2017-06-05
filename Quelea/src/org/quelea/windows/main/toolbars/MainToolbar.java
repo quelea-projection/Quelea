@@ -164,6 +164,7 @@ public class MainToolbar extends ToolBar {
         add.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
         getItems().add(add);
         add.setOnMouseEntered(evt -> {
+            QueleaApp.get().getMainWindow().requestFocus();
             add.show();
             openTime = new Date().getTime();
         });
@@ -348,19 +349,11 @@ public class MainToolbar extends ToolBar {
     }
 
     private Button getButtonFromImage(String uri) {
-        ImageView iv = new ImageView(new Image(uri));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return new Button("", iv);
+        return new Button("", getImageViewForButton(uri));
     }
 
     private ToggleButton getToggleButtonFromImage(String uri) {
-        ImageView iv = new ImageView(new Image(uri));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return new ToggleButton("", iv);
+        return new ToggleButton("", getImageViewForButton(uri));
     }
 
     private Button getButtonFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
@@ -372,11 +365,7 @@ public class MainToolbar extends ToolBar {
     }
 
     private MenuItem getMenuItemFromImage(String uri) {
-        ImageView iv = new ImageView(new Image(uri));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return new MenuItem("", iv);
+        return new MenuItem("", getImageViewForButton(uri));
     }
 
     private MenuItem getMenuItemFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
@@ -385,6 +374,14 @@ public class MainToolbar extends ToolBar {
         iv.setFitWidth(24);
         iv.setFitHeight(24);
         return new MenuItem("", iv);
+    }
+
+    private ImageView getImageViewForButton(String uri) {
+        ImageView iv = new ImageView(new Image(uri));
+        iv.setSmooth(true);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        return iv;
     }
 
     /**
