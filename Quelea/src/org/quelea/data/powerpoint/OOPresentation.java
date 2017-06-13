@@ -57,6 +57,7 @@ import java.util.logging.Logger;
 import ooo.connector.BootstrapSocketConnector;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A presentation to be displayed using the openoffice API. This requries
@@ -161,7 +162,8 @@ public class OOPresentation implements XEventListener {
      *
      * @param listener the listener to add.
      */
-    public void addSlideListener(SlideChangedListener listener) {
+    public void setSlideListener(SlideChangedListener listener) {
+        slideListeners.clear();
         slideListeners.add(listener);
     }
 
@@ -180,6 +182,7 @@ public class OOPresentation implements XEventListener {
         try {
             xPresentation.setPropertyValue("Display", display);
             xPresentation.setPropertyValue("IsAutomatic", true);
+            xPresentation.setPropertyValue("StartWithNavigator", true);
             if (QueleaProperties.get().getOOPresOnTop()) {
                 xPresentation.setPropertyValue("IsAlwaysOnTop", true);
             }
@@ -282,7 +285,12 @@ public class OOPresentation implements XEventListener {
      */
     public void goForward() {
         if (controller != null && controller.getNextSlideIndex() != -1) {
+            int idx = controller.getCurrentSlideIndex();
             controller.gotoNextEffect();
+            Utils.sleep(50);
+            if(controller.getCurrentSlideIndex()!=idx) {
+                controller.gotoSlideIndex(controller.getCurrentSlideIndex());
+            }
             Utils.sleep(50);
         }
     }
@@ -377,7 +385,7 @@ public class OOPresentation implements XEventListener {
      * Helper methods for doing openoffice specific stuff.
      */
     private static class Helper {
-        
+
         private static XComponent bridgeComponent;
         private static XBridge bridge;
         private static XConnection connection;
@@ -399,7 +407,7 @@ public class OOPresentation implements XEventListener {
             XMultiComponentFactory localServiceManager = localContext.getServiceManager();
             XConnector connector = UnoRuntime.queryInterface(XConnector.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector",
-                    localContext));
+                            localContext));
             connection = connector.connect(RUN_ARGS);
             XBridgeFactory bridgeFactory = UnoRuntime.queryInterface(XBridgeFactory.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
@@ -422,7 +430,7 @@ public class OOPresentation implements XEventListener {
                     bridgeComponent.dispose();
                     bridgeComponent = null;
                     try {
-                        Process p = Runtime.getRuntime().exec("taskkill /F /IM soffice.bin"); 
+                        Process p = Runtime.getRuntime().exec("taskkill /F /IM soffice.bin");
                         //@todo the only way to kill this process. to be added other system support
                     } catch (IOException e) {
                     }
