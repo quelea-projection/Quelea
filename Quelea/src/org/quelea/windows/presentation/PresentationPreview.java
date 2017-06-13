@@ -26,8 +26,6 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import org.quelea.data.powerpoint.PresentationSlide;
@@ -79,23 +77,23 @@ public class PresentationPreview extends ScrollPane {
                 }
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCode() == KeyCode.RIGHT) {
-                    t.consume();
-                    if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
-                        select(selectedIndex + 1);
-                    }
-                }
-                if (t.getCode() == KeyCode.LEFT) {
-                    t.consume();
-                    if (selectedIndex >= 2) {
-                        select(selectedIndex - 1);
-                    }
-                }
-            }
-        });
+//        setOnKeyPressed(new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent t) {
+//                if (t.getCode() == KeyCode.RIGHT) {
+//                    t.consume();
+//                    if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
+//                        select(selectedIndex + 1);
+//                    }
+//                }
+//                if (t.getCode() == KeyCode.LEFT) {
+//                    t.consume();
+//                    if (selectedIndex >= 2) {
+//                        select(selectedIndex - 1);
+//                    }
+//                }
+//            }
+//        });
         focusedProperty().addListener(new ChangeListener<Boolean>() {
 
             @Override
