@@ -65,6 +65,7 @@ public class MultimediaControls extends StackPane {
     private ImageView playButton;
     private ImageView stopButton;
     private Slider posSlider;
+    private boolean disablePosSliderListener;
     private boolean disableControls;
     private Label elapsedTime;
     private Label totalTime;
@@ -121,6 +122,9 @@ public class MultimediaControls extends StackPane {
         posSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                if(disablePosSliderListener) {
+                    return;
+                }
                 if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
                     VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
                     long time = (long) (VLCWindow.INSTANCE.getProgressPercent() * VLCWindow.INSTANCE.getTotal());
@@ -291,8 +295,10 @@ public class MultimediaControls extends StackPane {
             playButton.setImage(PLAY_IMAGE);
         }
         playpause = false;
+        disablePosSliderListener = true;
         posSlider.setValue(0);
         posSlider.setDisable(true);
+        disablePosSliderListener = false;
         muteButton.setDisable(true);
         Platform.runLater(() -> {
             elapsedTime.setText("");
