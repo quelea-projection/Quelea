@@ -172,12 +172,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         rows++;
 
         advanceOnLiveCheckBox.selectedProperty().addListener((ObservableValue<? extends Boolean> a, Boolean b, Boolean c) -> {
-            if (advanceOnLiveCheckBox.isSelected()) {
-                overflowSongCheckBox.setDisable(false);
-            } else {
-                overflowSongCheckBox.setDisable(true);
-                overflowSongCheckBox.setSelected(false);
-            }
+            checkOverflowEnable();
         });
 
         Label previewOnImageChangeLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"));
@@ -439,6 +434,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public boolean hasLanguageChanged() {
         return !languageFileComboBox.getValue().equals(currentLanguageFile);
     }
+    
+    private void checkOverflowEnable() {
+        if (advanceOnLiveCheckBox.isSelected()) {
+            overflowSongCheckBox.setDisable(false);
+        } else {
+            overflowSongCheckBox.setDisable(true);
+            overflowSongCheckBox.setSelected(false);
+        }
+    }
 
     /**
      * @inheritDoc
@@ -473,6 +477,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         thumbnailSizeSlider.setValue(props.getThumbnailSize());
+        checkOverflowEnable();
     }
 
     /**
