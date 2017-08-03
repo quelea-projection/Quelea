@@ -2011,4 +2011,8 @@ public final class QueleaProperties extends Properties {
     public String getWebProxyPassword() {
         return getProperty("web.proxy.password", null);
     }
+    
+    public String getChurchCcliNum() {
+        return getProperty("church.ccli.num", null);
+    }
 }
