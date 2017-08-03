@@ -150,7 +150,6 @@ public class LegacyDB {
                 }
                 ThemeDTO theme = ThemeDTO.fromString(rs.getString("background"));
                 SongDisplayable song = new SongDisplayable.Builder(rs.getString("title"), rs.getString("author"))
-                        .lyrics(rs.getString("lyrics"))
                         .ccli(rs.getString("ccli"))
                         .year(rs.getString("year"))
                         .publisher(rs.getString("publisher"))
@@ -159,6 +158,7 @@ public class LegacyDB {
                         .capo(rs.getString("capo"))
                         .info(rs.getString("info"))
                         .tags(rs.getString("tags"))
+                        .lyrics(rs.getString("lyrics"))
                         .theme(theme).get();
                 songs.add(song);
             }

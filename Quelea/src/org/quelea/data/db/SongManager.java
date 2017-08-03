@@ -148,7 +148,6 @@ public final class SongManager {
                 }
                 final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
                         song.getAuthor())
-                        .lyrics(song.getLyrics())
                         .ccli(song.getCcli())
                         .year(song.getYear())
                         .tags(tags)
@@ -158,6 +157,7 @@ public final class SongManager {
                         .info(song.getInfo())
                         .capo(song.getCapo())
                         .translations(song.getTranslations())
+                        .lyrics(song.getLyrics())
                         .id(song.getId()).get();
                 final Theme theme = song.getTheme();
                 final ThemeDTO themedto = ThemeDTO.getDTO(theme);
