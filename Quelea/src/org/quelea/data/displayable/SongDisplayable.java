@@ -45,6 +45,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -484,6 +485,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setTitle(String title) {
         this.title = title;
+        setLyrics(getLyrics(true, true));
     }
 
     public void setTranslations(HashMap<String, String> translations) {
@@ -506,6 +508,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setAuthor(String author) {
         this.author = author;
+        setLyrics(getLyrics(true, true));
     }
 
     /**
@@ -707,6 +710,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setCopyright(String copyright) {
         this.copyright = copyright;
+        setLyrics(getLyrics(true, true));
     }
 
     /**
@@ -772,10 +776,31 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     }
                 }
             }
-            String[] smallLines = new String[]{
-                title,
-                author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
-            };
+            String churchCcliNum = QueleaProperties.get().getChurchCcliNum();
+            String[] smallLines;
+            if(churchCcliNum==null) {
+                smallLines = new String[]{
+                    title,
+                    author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
+                };
+            }
+            else {
+                String cpText = copyright.trim();
+                if(cpText!=null && !cpText.trim().isEmpty() && !cpText.startsWith("©")) {
+                    cpText = "©" + cpText;
+                }
+                String firstLine = "\"" + title + "\"";
+                if(author!=null && !author.trim().isEmpty()) {
+                    firstLine += " by " + author;
+                }
+                List<String> smallLinesList = new ArrayList<>();
+                smallLinesList.add(firstLine);
+                if(cpText!=null && !cpText.isEmpty()) {
+                    smallLinesList.add(cpText);
+                }
+                smallLinesList.add("CCLI License #" + churchCcliNum);
+                smallLines = smallLinesList.toArray(new String[smallLinesList.size()]);
+            }
             sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
         }
     }
