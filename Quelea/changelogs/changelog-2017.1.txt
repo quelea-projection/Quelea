@@ -1,0 +1,6 @@
+quelea (2017.1) stable; urgency=normal
+ 
+  * Fix bug with themes not saving
+  
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 06 Sep 2017 00:00:00 +0000
