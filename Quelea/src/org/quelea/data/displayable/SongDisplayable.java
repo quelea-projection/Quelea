@@ -485,7 +485,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setTitle(String title) {
         this.title = title;
-        setLyrics(getLyrics(true, true));
+        refreshLyrics();
     }
 
     public void setTranslations(HashMap<String, String> translations) {
@@ -508,7 +508,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setAuthor(String author) {
         this.author = author;
-        setLyrics(getLyrics(true, true));
+        refreshLyrics();
     }
 
     /**
@@ -710,7 +710,18 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setCopyright(String copyright) {
         this.copyright = copyright;
+        refreshLyrics();
+    }
+    
+    private void refreshLyrics() {
+        ThemeDTO theme = ThemeDTO.DEFAULT_THEME;
+        for(TextSection section : sections) {
+            theme = section.getTheme();
+        }
         setLyrics(getLyrics(true, true));
+        for (TextSection section : sections) {
+            section.setTheme(theme);
+        }
     }
 
     /**
