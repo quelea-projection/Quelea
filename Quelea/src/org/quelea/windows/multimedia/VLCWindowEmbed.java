@@ -550,6 +550,7 @@ public class VLCWindowEmbed extends VLCWindow {
                                 frame.toFront();
                                 Platform.runLater(() -> {
                                     QueleaApp.get().getProjectionWindow().toFront();
+                                    QueleaApp.get().getMainWindow().requestFocus();
                                 });
                             }
                             else {
