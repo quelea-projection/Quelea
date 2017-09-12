@@ -23,29 +23,23 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -68,7 +62,18 @@ public class VLCWindowEmbed extends VLCWindow {
      * Use this thread for all VLC media player stuff to keep this class thread
      * safe.
      */
-    private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ExecutorService VLC_EXECUTOR;
+    
+    //Easier for debugging
+    static {
+        VLC_EXECUTOR = Executors.newSingleThreadExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "VLC-exec");
+            }
+        });
+    }
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     protected static final VLCWindow EMBED_INSTANCE = new VLCWindowEmbed();
     private JFrame frame;
@@ -542,20 +547,16 @@ public class VLCWindowEmbed extends VLCWindow {
             public void run() {
                 
                 try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (visible) {
-                                frame.toFront();
-                                Platform.runLater(() -> {
-                                    QueleaApp.get().getProjectionWindow().toFront();
-                                    QueleaApp.get().getMainWindow().requestFocus();
-                                });
-                            }
-                            else {
-                                frame.toBack();
-                            }
+                    SwingUtilities.invokeLater(() -> {
+                        if (visible) {
+                            frame.toFront();
+                            Platform.runLater(() -> {
+                                QueleaApp.get().getProjectionWindow().toFront();
+                                QueleaApp.get().getMainWindow().requestFocus();
+                            });
+                        }
+                        else {
+                            frame.toBack();
                         }
                     });
                 } catch (Exception ex) {
@@ -622,26 +623,26 @@ public class VLCWindowEmbed extends VLCWindow {
         });
         
 //      System.out.println("refreshPosition() start");
-        if (init) {
-            if (showing) {
-                show();
-                setLocation(tempX, tempY);
-                setSize(tempWidth, tempHeight);
-            } else {
-                hide();
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if (init) {
+                    if (showing) {
+                        show();
+                        setLocation(tempX, tempY);
+                        setSize(tempWidth, tempHeight);
+                    } else {
+                        hide();
+                    }
+                }
             }
-        }
+        });
 //      System.out.println("refreshPosition() end");
     }
     
     @Override
     public void refreshPosition() {
-        runOnVLCThread(new Runnable() {
-            @Override
-            public void run() {
-                refreshPositionImmediate();
-            }
-        });
+        refreshPositionImmediate();
     }
 
     private FadeThread fadeThread;
