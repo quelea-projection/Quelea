@@ -443,6 +443,31 @@ static BOOL is1 = false;
 }
 
 
+/**
+ Gets the current Time
+ 
+ @return a long representing the time in ms
+ */
+-(long) getCurrentTime{
+    
+    
+    return 1000 * (double)CMTimeGetSeconds([_player.currentItem currentTime]);
+}
+
+/**
+ Gets the current duration
+ 
+ @return a long representing the current duration in ms
+ */
+-(long) getCurrentDuration{
+    
+    
+    return 1000 * (double)CMTimeGetSeconds([_player.currentItem duration]);
+    
+    
+    
+}
+
 
 /**
  Set the progress percent of the current video.
@@ -869,6 +894,14 @@ extern "C" {
         
     }
     
+    static long getDuration(JNIEnv *env, jobject obj){
+        return [currentInstance getCurrentDuration];
+    }
+    
+    static long getTime(JNIEnv *env, jobject obj){
+        return [currentInstance getCurrentTime];
+    }
+    
     
     static JNINativeMethod Main_methods[] =
     {
@@ -896,6 +929,8 @@ extern "C" {
         { "setHue", "(D)V", (void*)setHue },
         { "setFadeSpeed", "(D)V", (void*)setFadeSpeed },
         { "getHue", "()D", (double*)getHue},
+        { "getDuration", "()J", (long*)getDuration},
+        { "getTime", "()J", (long*)getTime},
     };
     
     
