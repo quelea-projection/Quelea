@@ -205,17 +205,17 @@ public class AVPlayerJava {
     public static native double getHue();
 
     /**
-     * Todo: Untested code to return current time
+     * Return current time
      *
      * @return The elapsed time
      */
-    public static native long currentTime();
+    public static native long getTime();
 
     /**
-     * Todo: Untested code to return total time/duration.
+     * Return total time/duration.
      *
      * @return The total time
      */
-    public static native long duration();
+    public static native long getDuration();
 
 }
