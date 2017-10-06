@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Fri Apr 14 00:58:37 BST 2017
+#Thu Sep 21 21:13:23 BST 2017
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -369,7 +369,7 @@ timer.name.label=Name
 confirm.remove.timer=Really remove $1 from the timer list? This action cannot be undone.
 presentation.changed.label=Presentation Settings Changed
 ok.button=OK
-use.oo.label=Use OpenOffice for presentations
+use.oo.label=Use OpenOffice for presentations (experimental)
 songs.heading=Songs
 notice.times.text=Times to Show
 filefilters.description.plain.text.song=Plain text song
@@ -527,7 +527,7 @@ new.song.button=New Song
 png.files.description=PNG image files
 pm.button=Presentation Manager
 help.menu.download=Download
-duration.tooltip.label=\#\:\#\# or \#\#m\#\#s
+duration.tooltip.label=\#\:\#\# or \#\#m\#\#s or \#\#\:\#\#am
 new.schedule.tooltip=New Schedule
 auto.translate.label=Attempt to auto-translate songs
 cant.save.schedule.text=Sorry, an error occurred and the schedule couldn't be saved.
