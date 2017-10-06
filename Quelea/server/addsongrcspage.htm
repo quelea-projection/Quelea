@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quelea Remote Control</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <style type="text/css">
+
+        </style>
+        <script>
+            function addSong() {
+                window.location.href = '/search/' + document.songselect.song.value;
+            }
+        </script>
+    </head>
+    <body>
+        <form name="songselect" onsubmit="addSong()">
+            <input name="song" />
+            <button type="submit" form="songselect" value="Submit" onclick="addSong()">$1</button>
+        </form>
+
+    </body>
+</html>

@@ -1,0 +1,40 @@
+
+<launch4jConfig>
+    <headerType>gui</headerType>
+    <jar>Quelea.jar</jar>
+    <singleInstance>
+        <mutexName>queleamutex</mutexName>
+    </singleInstance> 
+    <jre>
+        <path>winjre</path>
+        <opt>-Xms1200m -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -Dglass.accessible.force=false</opt>
+    </jre>
+    <outfile>..\dist\quelea.exe</outfile>
+    <chdir>.</chdir>
+    <errTitle>Error</errTitle>
+    <priority>normal</priority>
+    <downloadUrl>http://www.oracle.com/technetwork/java/javase/downloads/index.html</downloadUrl>
+    <supportUrl>https://groups.google.com/group/quelea-discuss</supportUrl>
+    <customProcName>false</customProcName>
+    <stayAlive>false</stayAlive>
+    <manifest></manifest>
+    <icon>../icons/logo.ico</icon>
+    <messages>
+        <startupErr>Sorry, there was an error starting the program.</startupErr>
+        <bundledJreErr>Sorry, there was an error with the bundled JRE.</bundledJreErr>
+        <jreVersionErr>You're running a version of Java that's too old - you need at least version 7.</jreVersionErr>
+        <launcherErr>Sorry, there was an error launching Quelea.</launcherErr>
+    </messages>
+    <versionInfo>
+        <fileVersion>2017.1.0.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <productVersion>2017.1.0.0</productVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <txtProductVersion>2017.1</txtProductVersion>
+        <txtFileVersion>2017.1</txtFileVersion>
+        <productName>Quelea</productName>
+        <copyright>GPLv3</copyright>
+        <originalFilename>Quelea.exe</originalFilename>
+        <companyName>Michael Berry</companyName>
+        <fileDescription>Quelea executable</fileDescription>
+        <internalName>Quelea</internalName>
+    </versionInfo>
+</launch4jConfig>
