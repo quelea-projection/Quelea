@@ -168,6 +168,20 @@
  */
 -(double) getProgressPercent;
 
+/**
+ Gets the current Time
+ 
+ @return a long representing the time in ms
+ */
+-(long) getCurrentTime;
+
+
+/**
+ Gets the current duration
+ 
+ @return a long representing the current duration in ms
+ */
+-(long) getCurrentDuration;
 
 
 /**

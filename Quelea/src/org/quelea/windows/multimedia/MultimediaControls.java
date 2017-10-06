@@ -279,6 +279,7 @@ public class MultimediaControls extends StackPane {
             VLCWindow.INSTANCE.setRepeat(false);
             VLCWindow.INSTANCE.setHue(0);
             VLCWindow.INSTANCE.play();
+            VLCWindow.INSTANCE.setHue(0);
             posSlider.setDisable(false);
             muteButton.setDisable(false);
         } else {
@@ -289,6 +290,7 @@ public class MultimediaControls extends StackPane {
 
     public void reset() {
         VLCWindow.INSTANCE.stop();
+        VLCWindow.INSTANCE.setHue(0);
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {

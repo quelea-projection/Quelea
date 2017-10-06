@@ -159,6 +159,7 @@ public class TimerControls extends StackPane {
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.setHue(0);
                 VLCWindow.INSTANCE.play();
+                VLCWindow.INSTANCE.setHue(0);
                 if (stageTimer != null && timer != null && sync) {
                     timer.synchronise(stageTimer);
                     sync = false;
