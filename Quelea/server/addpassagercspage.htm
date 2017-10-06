@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quelea Remote Control</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <style type="text/css">
+
+        </style>
+        <script>
+            function setup() {
+                document.passageselect.translations.options.length = 0
+
+                var request = new XMLHttpRequest();
+                request.open('GET', '/translations', true);
+                request.onload = function () {
+                    if (request.status >= 200 && request.status < 400) {
+                        var resp = request.responseText;
+                        var list = resp.split("\n");
+                        for (i = 0; i < list.length; i++) {
+                            if (list[i] !== "") {
+                                if (list[i][0] === '*') {
+                                    var item = list[i].substring(1);
+                                    document.passageselect.translations.options[i] = new Option(item, item, true, true);
+                                }
+                                else {
+                                    document.passageselect.translations.options[i] = new Option(list[i], list[i]);
+                                }
+                            }
+                        }
+                    }
+                    bookLoad();
+                };
+                request.send();
+
+            }
+
+            function bookLoad() {
+                document.passageselect.books.options.length = 0
+                var selected = document.passageselect.translations.options[document.passageselect.translations.options.selectedIndex].value;
+                var request = new XMLHttpRequest();
+                request.open('GET', '/books/' + selected, true);
+                request.onload = function () {
+                    if (request.status >= 200 && request.status < 400) {
+                        var resp = request.responseText;
+                        var list = resp.split("\n");
+                        for (i = 0; i < list.length; i++) {
+                            if (list[i] !== "") {
+                                document.passageselect.books.options[i] = new Option(list[i], list[i]);
+                            }
+                        }
+                    }
+                };
+                request.send();
+            }
+
+            function addPassage() {
+                var translation = document.passageselect.translations.options[document.passageselect.translations.options.selectedIndex].value;
+                var book = document.passageselect.books.options[document.passageselect.books.options.selectedIndex].value;
+                var verses = document.passageselect.verses.value;
+
+                window.location.href = '/addbible/' + translation + '/' + book + '/' + verses;
+            }
+
+
+            window.onload = setup;
+        </script>
+    </head>
+    <body>
+        <form name="passageselect" onsubmit="addPassage()" >
+            <select name="translations" onchange="bookLoad()">
+
+            </select>
+            <select name="books">
+
+            </select>
+            <input name="verses" placeholder="$2" />
+            <button type="submit" form="passageselect" value="Submit" onclick="addPassage()">$1</button>
+        </form>
+
+    </body>
+</html>
