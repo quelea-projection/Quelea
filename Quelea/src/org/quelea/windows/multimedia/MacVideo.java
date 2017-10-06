@@ -627,14 +627,18 @@ public class MacVideo extends VLCWindow {
     public long getTime() {
         long time = 0;
         try {
-            time = AVPlayerJava.currentTime();
+            time = AVPlayerJava.getTime();
+            if(time < 0){
+                return 0;
+            }
         } catch (Exception ignore) {
+            LOGGER.log(Level.INFO, "Couldn't get the current time, Mac Video");
         }
         return time;
     }
 
     /**
-     * TODO: Get the total time of the item, not yet tested.
+     * Get the total time of the item, not yet tested.
      *
      * @return The total time is not yet fully tested for Mac.
      */
@@ -642,14 +646,18 @@ public class MacVideo extends VLCWindow {
     public long getTotal() {
         long time = 0;
         try {
-            time = AVPlayerJava.duration();
+            time = AVPlayerJava.getDuration();
+            if(time < 0){
+                return 0;
+            }
         } catch (Exception ignore) {
+            LOGGER.log(Level.INFO, "Couldn't get the total time, Mac Video");
         }
         return time;
     }
 
     /**
-     * TODO: Get the current volume level of the item, not yet tested.
+     * Get the current volume level of the item, not yet tested.
      *
      * @return The volume level
      */
