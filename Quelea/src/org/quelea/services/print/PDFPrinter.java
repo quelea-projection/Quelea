@@ -49,6 +49,16 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PDFPrinter {
 
+    private static Object fopFactory;
+    private static Object fopFactoryBuilderObj;
+    private static Object foUserAgent;
+    private static TransformerFactory tranFactory;
+    private static Class fopFactoryBuilderCls;
+    private static Class fopFactoryCls;
+    private static Class fopCls;
+    private static Class foUserAgentCls;
+    private static Class configurationCls;
+
     /**
      * Print a PDF file.
      *
@@ -64,34 +74,35 @@ public class PDFPrinter {
             StreamSource transformSource = new StreamSource(xsltfile);
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
             Configuration cfg = cfgBuilder.buildFromFile(new File("fopcfg.xml"));
-            
+
             /*
             Yuk, I know. The issue is here that Apache FOP hasn't been updated to use PDFBox 2.x, it's stuck on 1.8.
             We can't include both by default because that causes all sorts of classloader issues, so exclude 1.8
             from the default classpath, load it manually and then reflect around it here.
-            */
+             */
 
-            CustomClassLoader clsLoader = new CustomClassLoader(new java.net.URL[]{
-                new java.net.URL("file:lib/fop-2.1.jar"),
-                new java.net.URL("file:lib/pdfbox-app-1.8.13.jar")
-            });
-            Class fopFactoryBuilderCls = clsLoader.loadClass("org.apache.fop.apps.FopFactoryBuilder");
-            Class fopFactoryCls = clsLoader.loadClass("org.apache.fop.apps.FopFactory");
-            Class fopCls = clsLoader.loadClass("org.apache.fop.apps.Fop");
-            Class foUserAgentCls = clsLoader.loadClass("org.apache.fop.apps.FOUserAgent");
-            Class configurationCls = clsLoader.loadClass("org.apache.avalon.framework.configuration.Configuration");
-
-            Object fopFactoryBuilderObj = fopFactoryBuilderCls.getConstructor(URI.class).newInstance(new URI("."));
-            fopFactoryBuilderObj = fopFactoryBuilderCls.getMethod("setConfiguration", configurationCls).invoke(fopFactoryBuilderObj, cfg);
-            Object fopFactory = fopFactoryBuilderCls.getMethod("build").invoke(fopFactoryBuilderObj);
-            Object foUserAgent = fopFactoryCls.getMethod("newFOUserAgent").invoke(fopFactory);
+            if (fopFactoryBuilderObj == null) {
+                CustomClassLoader clsLoader = new CustomClassLoader(new java.net.URL[]{
+                    new java.net.URL("file:lib/fop-2.1.jar"),
+                    new java.net.URL("file:lib/pdfbox-app-1.8.13.jar")
+                });
+                fopFactoryBuilderCls = clsLoader.loadClass("org.apache.fop.apps.FopFactoryBuilder");
+                fopFactoryCls = clsLoader.loadClass("org.apache.fop.apps.FopFactory");
+                fopCls = clsLoader.loadClass("org.apache.fop.apps.Fop");
+                foUserAgentCls = clsLoader.loadClass("org.apache.fop.apps.FOUserAgent");
+                configurationCls = clsLoader.loadClass("org.apache.avalon.framework.configuration.Configuration");
+                fopFactoryBuilderObj = fopFactoryBuilderCls.getConstructor(URI.class).newInstance(new URI("."));
+                fopFactoryBuilderObj = fopFactoryBuilderCls.getMethod("setConfiguration", configurationCls).invoke(fopFactoryBuilderObj, cfg);
+                fopFactory = fopFactoryBuilderCls.getMethod("build").invoke(fopFactoryBuilderObj);
+                foUserAgent = fopFactoryCls.getMethod("newFOUserAgent").invoke(fopFactory);
+                tranFactory = TransformerFactory.newInstance();
+            }
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            TransformerFactory tranFactory = TransformerFactory.newInstance();
             Transformer xslfoTransformer = tranFactory.newTransformer(transformSource);
 
             Object fop = fopFactoryCls.getMethod("newFop", String.class, foUserAgentCls, OutputStream.class).invoke(fopFactory, "application/pdf", foUserAgent, outStream);
-            Result res = new SAXResult((DefaultHandler)fopCls.getMethod("getDefaultHandler").invoke(fop));
+            Result res = new SAXResult((DefaultHandler) fopCls.getMethod("getDefaultHandler").invoke(fop));
             xslfoTransformer.transform(source, res);
 
             OutputStream out = new java.io.FileOutputStream(pdfFile);
