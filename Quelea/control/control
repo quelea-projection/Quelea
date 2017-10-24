@@ -1,5 +1,5 @@
 Package: quelea
-Version: 2017.1
+Version: 2017.2
 Section: misc
 Priority: optional
 Depends: oracle-java8-installer
