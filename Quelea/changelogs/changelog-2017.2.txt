@@ -1,0 +1,6 @@
+quelea (2017.2) stable; urgency=normal
+ 
+  * Fix bug with PDF export
+  * Fix remote mobile view HTML to be more accessible  
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 24 Oct 2017 00:00:00 +0000
