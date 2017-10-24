@@ -98,14 +98,18 @@ public final class BibleVerse implements BibleInterface, Serializable {
         if (node.getAttributes().getNamedItem("cnumber") != null) {
             ret.setChapterNum(Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getTextContent()));
             ret.setChapter(BibleChapter.parseXML(node, ret.getChapterNum()));
-        } 
-        if (node.getAttributes().getNamedItem("vnumber") == null) {
-            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
-        } else {
-            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
         }
-        ret.verse = node.getTextContent();
-        return ret;
+        try {
+            if (node.getAttributes().getNamedItem("vnumber") == null) {
+                ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
+            } else {
+                ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
+            }
+            ret.verse = node.getTextContent();
+            return ret;
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
     }
 
     /**
