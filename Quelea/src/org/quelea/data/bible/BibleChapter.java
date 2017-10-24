@@ -125,8 +125,10 @@ public final class BibleChapter implements BibleInterface, Serializable {
             if (list.item(i).getNodeName().equalsIgnoreCase("vers")
                     || list.item(i).getNodeName().equalsIgnoreCase("v")) {
                 BibleVerse verse = BibleVerse.parseXML(list.item(i));
-                verse.setChapter(ret);
-                ret.addVerse(verse);
+                if (verse != null) {
+                    verse.setChapter(ret);
+                    ret.addVerse(verse);
+                }
             }
         }
         return ret;

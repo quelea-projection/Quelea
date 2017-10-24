@@ -288,17 +288,19 @@ public class BiblePassage implements TextDisplayable, Serializable {
             Node node = list.item(i);
             if (node.getNodeName().equals("vers")) {
                 BibleVerse bv = BibleVerse.parseXML(node);
-                for (Bible b : BibleManager.get().getBibles()) {
-                    if (b.getBibleName().equals(bibleSummary)) {
-                        int ii = 1;
-                        for (BibleBook bb : b.getBooks()) {
-                            String p = passageSummary.split(" \\d")[0];
-                            if (bb.getBookName().equals(p)) {
-                                bv.getChapter().setBook(BibleBook.parseXML(node, ii));
-                                bv.getChapter().getBook().setBible(b);
-                                verses.add(bv);
+                if (bv != null) {
+                    for (Bible b : BibleManager.get().getBibles()) {
+                        if (b.getBibleName().equals(bibleSummary)) {
+                            int ii = 1;
+                            for (BibleBook bb : b.getBooks()) {
+                                String p = passageSummary.split(" \\d")[0];
+                                if (bb.getBookName().equals(p)) {
+                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii));
+                                    bv.getChapter().getBook().setBible(b);
+                                    verses.add(bv);
+                                }
+                                ii++;
                             }
-                            ii++;
                         }
                     }
                 }
