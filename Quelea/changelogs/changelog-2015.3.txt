@@ -1,0 +1,33 @@
+quelea (2015.3) stable; urgency=normal
+ 
+  * Add new Spanish and Slovakian translations
+  * Add ability to change the percentage size of the small bible/song text 
+  * Add ability to select overflow traversal through whole schedule using up/down keys
+  * Add more features to Remote Control, include schedule list and add bible or song
+  * Add ability to display multiple chapter/verses from the same bible book on a single slide using a comma
+  * IPv6 addresses only show as a last resort
+  * Top / Bottom for notices now the correct way around
+  * Auto-play now works
+  * Improve bible passage text layout
+  * Add songpro importer
+  * Add SoF importer
+  * Kingsway importer now pulls translations out and adds them to the imported song correctly
+  * Additional Remote Control features for use in Quelea Android App
+  * Fix search behaviour to ignore non-alphanumeric characters in index and search string
+  * Fix long search time when searching for a non-indexed (non-alphanumeric) character
+  * Songs matching search in titles now appear before other results
+  * Option to use 12H or 12H clock
+  * Bible book selection box is now filterable with key presses
+  * Video tab can be shown in the library panel using an option in the settings
+  * Hovering over videos in the video library tab now shows a pop-up with filename
+  * Fix changing the bible passage theme by right clicking
+  * Fix "switch versions" functionality on bible passages
+  * Fix live videos restarting when song in schedule is edited
+  * Fix search index not working with non-ascii characters
+  * Fix behaviour where empty bible passages could be added to schedule
+  * Fix issue with schedule not opening when a presentation it refers to is missing.
+  * Fix issue with Quelea not loading if some songs in database are corrupted
+  * Fix Remote Control to work more reliably on Internet Explorer.
+  * Fix issue with using special XML characters in timer file names
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 16 May 2015 00:00:00 +0000
