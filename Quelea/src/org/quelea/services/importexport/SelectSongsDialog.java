@@ -18,8 +18,10 @@
 package org.quelea.services.importexport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -42,7 +44,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 
@@ -129,8 +130,7 @@ public class SelectSongsDialog extends Stage {
      * @param defaultVal the default value to use for the checkbox if checkList
      * is null or smaller than the songs list.
      */
-    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkList, final boolean defaultVal) {
-        Collections.sort(songs);
+    public void setSongs(final List<SongDisplayable> songs, final Map<SongDisplayable, Boolean> checkList, final boolean defaultVal) {
         this.songs = songs;
         gridPane.getChildren().clear();
         checkBoxes.clear();
@@ -161,8 +161,11 @@ public class SelectSongsDialog extends Stage {
                     checkEnableButton();
                 }
             });
-            if(checkList != null && i < checkList.length) {
-                checkBox.setSelected(checkList[i]);
+            if(checkList != null) {
+                final Boolean result = checkList.get(song);
+                if(result!=null) {
+                    checkBox.setSelected(!result);
+                }
             }
             checkBoxes.add(checkBox);
             gridPane.add(checkBox, 0, i + 1);
