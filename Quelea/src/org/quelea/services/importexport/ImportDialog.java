@@ -22,7 +22,10 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -48,14 +51,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SongDuplicateChecker;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
@@ -194,13 +195,14 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 setActive();
                 Thread worker = new Thread() {
                     private List<SongDisplayable> localSongs;
-                    private boolean[] localSongsDuplicate;
+                    private Map<SongDisplayable, Boolean> localSongsDuplicate;
                     private final ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
                     @Override
                     public void run() {
                         try {
                             localSongs = new ArrayList<>();
+                            localSongsDuplicate = new HashMap<>();
                             if (files == null || files.isEmpty()) {
                                 //Assume Kingsway Import!
                                 localSongs.addAll(parser.getSongs(null, statusPanel));
@@ -212,24 +214,28 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                             if (halt) {
                                 localSongs = null;
                             }
+                            Collections.sort(localSongs);
                             statusPanel.setProgress(0);
                             if (checkDuplicates.isSelected()) {
-//                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
                                 for (int i = 0; i < (localSongs == null ? 0 : localSongs.size()); i++) {
                                     final int finali = i;
-                                    checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
+                                    checkerService.submit(new Runnable() {
                                         @Override
                                         public void run() {
-                                            if (!halt) {
-                                                final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
-                                                localSongsDuplicate[finali] = result;
-                                                final double progress = ((double) finali / localSongs.size());
-                                                if (statusPanel.getProgress() < progress) {
-                                                    statusPanel.setProgress(progress);
+                                            try {
+                                                if (!halt) {
+                                                    final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
+                                                    localSongsDuplicate.put(localSongs.get(finali), result);
+                                                    final double progress = ((double) finali / localSongs.size());
+                                                    if (statusPanel.getProgress() < progress) {
+                                                        statusPanel.setProgress(progress);
+                                                    }
                                                 }
+                                            } catch (Throwable ex) {
+                                                ex.printStackTrace();
                                             }
                                         }
-                                    }));
+                                    });
                                 }
                                 try {
                                     checkerService.shutdown();
@@ -244,7 +250,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                     if ((localSongs == null || localSongs.isEmpty()) && !halt) {
                                         Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
                                     } else if (!(localSongs == null || localSongs.isEmpty())) {
-
                                         getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
                                         getImportedDialog().show();
                                     }
