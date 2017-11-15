@@ -19,6 +19,7 @@ package org.quelea.services.importexport;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,7 +28,6 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after
@@ -48,7 +48,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
         }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.songpack.question"));
 
-        setSongs(songs, null, false);
+        setSongs(songs, (Map<SongDisplayable, Boolean>)null, false);
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
