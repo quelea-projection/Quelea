@@ -58,6 +58,7 @@ import org.xml.sax.SAXException;
  * @author Michael
  */
 public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Serializable {
+
     public int count = 0;
 
     /**
@@ -282,7 +283,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.title = song.title;
         this.author = song.author;
         this.sections = new ArrayList<>();
-        for(TextSection section : song.getSections()) {
+        for (TextSection section : song.getSections()) {
             this.sections.add(new TextSection(section));
         }
         this.theme = song.theme;
@@ -326,16 +327,17 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.theme = theme;
         sections = new ArrayList<>();
     }
-    
+
     /**
      * Ensure changes to this song are not updated in the database.
      */
     public void setNoDBUpdate() {
         updateInDB = false;
     }
-    
+
     /**
      * Check whether changes to this song should be persisted to the database.
+     *
      * @return true if changes should be persisted, false otherwise.
      */
     public boolean checkDBUpdate() {
@@ -712,10 +714,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.copyright = copyright;
         refreshLyrics();
     }
-    
+
     private void refreshLyrics() {
         ThemeDTO theme = ThemeDTO.DEFAULT_THEME;
-        for(TextSection section : sections) {
+        for (TextSection section : sections) {
             theme = section.getTheme();
         }
         setLyrics(getLyrics(true, true));
@@ -789,24 +791,23 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             String churchCcliNum = QueleaProperties.get().getChurchCcliNum();
             String[] smallLines;
-            if(churchCcliNum==null) {
+            if (churchCcliNum == null) {
                 smallLines = new String[]{
                     title,
                     author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
                 };
-            }
-            else {
+            } else {
                 String cpText = copyright.trim();
-                if(cpText!=null && !cpText.trim().isEmpty() && !cpText.startsWith("©")) {
+                if (cpText != null && !cpText.trim().isEmpty() && !cpText.startsWith("©")) {
                     cpText = "©" + cpText;
                 }
                 String firstLine = "\"" + title + "\"";
-                if(author!=null && !author.trim().isEmpty()) {
+                if (author != null && !author.trim().isEmpty()) {
                     firstLine += " by " + author;
                 }
                 List<String> smallLinesList = new ArrayList<>();
                 smallLinesList.add(firstLine);
-                if(cpText!=null && !cpText.isEmpty()) {
+                if (cpText != null && !cpText.isEmpty()) {
                     smallLinesList.add(cpText);
                 }
                 smallLinesList.add("CCLI License #" + churchCcliNum);
@@ -974,6 +975,22 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             xml.append("");
         }
         xml.append("</translation>");
+
+        xml.append("<translationoptions>");
+        if (translations != null) {
+            for (Entry<String, String> translation : translations.entrySet()) {
+                String translationLang = translation.getKey();
+                String translationLyrics = translation.getValue();
+                xml.append("<lang>");
+                xml.append(Utils.escapeXML(translationLang));
+                xml.append("</lang>");
+                xml.append("<lyrics>");
+                xml.append(Utils.escapeXML(translationLyrics));
+                xml.append("</lyrics>");
+            }
+        }
+        xml.append("</translationoptions>");
+
         xml.append("</song>");
         return xml.toString();
     }
@@ -1084,12 +1101,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String notes = "";
         String currentTranslation = "";
         String translationLyrics = "";
+        HashMap<String, String> translationOpts = new HashMap<>();
         boolean updateInDB = true;
         List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("updateInDB")) {
-                if(node.getTextContent().equals("false")) {
+                if (node.getTextContent().equals("false")) {
                     updateInDB = false;
                 }
             }
@@ -1136,11 +1154,28 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     translationLyrics = nl.item(1).getTextContent();
                 }
             }
+            if (node.getNodeName().equals("translationoptions")) {
+                NodeList translations = node.getChildNodes();
+                String translationOptLang = null;
+                String translationOptLyrics = null;
+                for (int j = 0; j < translations.getLength(); j++) {
+                    Node translationNode = translations.item(j);
+                    if (translationNode.getNodeName().equals("lang")) {
+                        translationOptLang = translationNode.getTextContent();
+                    }
+                    if (translationNode.getNodeName().equals("lyrics")) {
+                        translationOptLyrics = translationNode.getTextContent();
+                    }
+                }
+                if (translationOptLang != null && translationOptLyrics != null) {
+                    translationOpts.put(translationOptLang, translationOptLyrics);
+                }
+            }
         }
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                         ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0));
-        if(!updateInDB) {
+        if (!updateInDB) {
             ret.setNoDBUpdate();
         }
         for (TextSection section : songSections) {
@@ -1153,6 +1188,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         ret.setKey(key);
         ret.setCapo(capo);
         ret.setInfo(notes);
+        ret.setTranslations(translationOpts);
         if (!currentTranslation.equals("")) {
             ret.setCurrentTranslationLyrics(currentTranslation);
             ret.addTranslation(currentTranslation, translationLyrics);
@@ -1245,10 +1281,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public ImageView getPreviewIcon() {
-        if(getID()<0) {
+        if (getID() < 0) {
             return new ImageView(new Image("file:icons/lyricscopy.png"));
-        }
-        else if (hasChords()) {
+        } else if (hasChords()) {
             return new ImageView(new Image("file:icons/lyricsandchords.png"));
         } else {
             return new ImageView(new Image("file:icons/lyrics.png"));
