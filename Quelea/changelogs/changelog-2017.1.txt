@@ -1,0 +1,8 @@
+quelea (2017.1) stable; urgency=normal
+ 
+  * Fix bug with themes not saving
+  * Fix potential deadlock bug when editing a song as a video background is playing
+  * Fix focusing bug when video backgrounds are playing
+  
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 06 Sep 2017 00:00:00 +0000
