@@ -18,10 +18,9 @@
  */
 package org.quelea.services.importexport;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -31,6 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.text.Document;
+import javax.swing.text.rtf.RTFEditorKit;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.StatusPanel;
@@ -50,60 +51,77 @@ public class SundayPlusParser implements SongParser {
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             final Enumeration<? extends ZipEntry> entries = file.entries();
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 String title = new File(entry.getName()).getName();
-                if(title.contains(".")) {
+                LOGGER.log(Level.INFO, "Found {0}", title);
+                if (title.contains(".")) {
                     String[] parts = title.split("\\.");
                     StringBuilder titleBuilder = new StringBuilder();
-                    for(int i = 0; i < parts.length - 1; i++) {
+                    for (int i = 0; i < parts.length - 1; i++) {
                         titleBuilder.append(parts[i]);
-                        if(i < parts.length - 2) {
+                        if (i < parts.length - 2) {
                             titleBuilder.append(".");
                         }
                     }
                     title = titleBuilder.toString().replace("_", " ");
-                    if(title.endsWith("[1]")) {
+                    if (title.endsWith("[1]")) {
                         title = title.substring(0, title.length() - 3);
                     }
                 }
-                StringBuilder fileContents = new StringBuilder();
-                try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(entry)))) {
-                    String line;
-                    while((line = reader.readLine()) != null) {
-                        fileContents.append(line);
+
+                try (java.util.Scanner s = new java.util.Scanner(file.getInputStream(entry))) {
+                    //This gets the string from the inputstream without messing up line endings...
+                    String fileContents = s.useDelimiter("\\A").hasNext() ? s.next() : "";
+                    //And this replaces all "pard" RTF control words with "par" control words, so Swing's RTF parser can understand it and extract the plain text.
+                    fileContents = fileContents.replaceAll("\\\\pard", "\\\\par");
+                    String lyrics = getLyrics(fileContents);
+                    if (!lyrics.isEmpty()) {
+                        LOGGER.log(Level.INFO, "Adding song");
+                        SongDisplayable displayable = new SongDisplayable(title, "");
+                        displayable.setLyrics(lyrics);
+                        ret.add(displayable);
                     }
                 }
-                String lyrics = getLyrics(fileContents.toString());
-                if(!lyrics.isEmpty()) {
-                    SongDisplayable displayable = new SongDisplayable(title, "");
-                    displayable.setLyrics(lyrics);
-                    ret.add(displayable);
-                }
             }
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Error importing sunday plus", ex);
-        }
-        finally {
+        } finally {
             file.close();
         }
         return ret;
     }
 
     private String getLyrics(String raw) {
+        try {
+            RTFEditorKit rtfParser = new RTFEditorKit();
+            Document document = rtfParser.createDefaultDocument();
+            rtfParser.read(new ByteArrayInputStream(raw.getBytes()), document, 0);
+            String text = document.getText(0, document.getLength());
+            StringBuilder textBuilder = new StringBuilder();
+            for (String line : text.split("\n")) {
+                textBuilder.append(line.trim()).append("\n");
+            }
+            return textBuilder.toString().replaceAll("[\n]{2,}", "\n\n").replace("^", "'").trim();
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Invalid RTF string, trying old method");
+            return getLyricsOld(raw);
+        }
+    }
+
+    private String getLyricsOld(String raw) {
         Pattern p = Pattern.compile("\\{\\\\pard.+?\\}", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(raw);
         StringBuilder sections = new StringBuilder();
-        while(m.find()) {
+        while (m.find()) {
             String verse = m.group();
-            if(verse.contains("\\qc")) {
+            if (verse.contains("\\qc")) {
                 verse = verse.substring(verse.indexOf("\\qc") + "\\qc".length(), verse.length() - 1);
             }
             verse = verse.replace("\\par", "\n");
             verse = verse.replace("^", "'");
             verse = verse.trim();
-            if(!verse.isEmpty()) {
+            if (!verse.isEmpty()) {
                 sections.append(verse).append("\n\n");
             }
         }
