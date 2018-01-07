@@ -45,6 +45,7 @@ import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 import utils.BigDecimalSpinner;
 
@@ -70,6 +71,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox defaultSongDBUpdateCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final Slider thumbnailSizeSlider;
+    private final CheckBox showExtraLivePanelToolbarOptionsCheckBox;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
@@ -295,7 +297,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         thumbnailSizeSlider.setMinorTickCount(0);
         thumbnailSizeSlider.setShowTickMarks(true);
         thumbnailSizeSlider.setSnapToTicks(true); 
-        thumbnailSizeSlider.setBlockIncrement(50);
+        thumbnailSizeSlider.setBlockIncrement(50);      
         
         GridPane.setConstraints(thumbnailSizeSlider, 2, rows);
         getChildren().add(thumbnailSizeSlider);
@@ -310,6 +312,17 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 thumbnailSizeValue.setText(Integer.toString((int) thumbnailSizeSlider.getValue()));
             }
         });
+        rows++;
+        
+        
+        Label showExtraLivePanelToolbarOptionsLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"));
+        GridPane.setConstraints(showExtraLivePanelToolbarOptionsLabel, 1, rows);
+        getChildren().add(showExtraLivePanelToolbarOptionsLabel);
+        
+        showExtraLivePanelToolbarOptionsCheckBox = new CheckBox();
+        GridPane.setConstraints(showExtraLivePanelToolbarOptionsCheckBox, 2, rows);
+        getChildren().add(showExtraLivePanelToolbarOptionsCheckBox);
+        showExtraLivePanelToolbarOptionsLabel.setLabelFor(showExtraLivePanelToolbarOptionsCheckBox);
         rows++;
 
         Label spacer1 = new Label("");
@@ -477,6 +490,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         thumbnailSizeSlider.setValue(props.getThumbnailSize());
+        showExtraLivePanelToolbarOptionsCheckBox.setSelected(props.getShowExtraLivePanelToolbarOptions());
         checkOverflowEnable();
     }
 
@@ -541,7 +555,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         props.setThumbnailSize((int)thumbnailSizeSlider.getValue());
+        props.setShowExtraLivePanelToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
         
+        // apply some properties so we don't need to restart 
+        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+        lp.showExtraToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
+                
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();
