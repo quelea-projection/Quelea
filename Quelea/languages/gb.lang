@@ -662,3 +662,4 @@ website.dialog.content=Enter the web page you would like to display:
 paste.label=Paste
 undo.label=Undo
 redo.label=Redo
+show.extra.live.panel.toolbar.options.label=Show extra live panel toolbar options
