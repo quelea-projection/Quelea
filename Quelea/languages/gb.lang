@@ -199,6 +199,7 @@ zw.import.line1=Select the location of the ZionWorx "MainTable.dat" file below.
 zw.import.line2=It can usually be found in "C:\\ProgramData\\ZionWorx\\2.6\\Data".
 olp.import.line1=Select the location of the OpenLP database below.
 sundayplus.import.line1=Select the location of the Sunday Plus database below.
+sundayplus.import.line2=(The importer expects the PTF files to be in the root of the zip file.)
 source.import.line1=Select the location of the ymns directory on the source CD.
 survivor.import.line1=Select the location of the Survivor Songbook PDF below.
 survivor.import.line2=This must be the acetates.pdf file, not the guitar chords or the sheet music.
