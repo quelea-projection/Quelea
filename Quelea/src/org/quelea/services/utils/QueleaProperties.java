@@ -640,6 +640,24 @@ public final class QueleaProperties extends Properties {
     }
     
     /**
+     * Get the show extra live panel toolbar options setting.
+     * <p>
+     * @return the true to show extra toolbar options.
+     */
+    public boolean getShowExtraLivePanelToolbarOptions() {
+        return Boolean.parseBoolean(getProperty("show.extra.live.panel.toolbar.options", "false"));
+    }
+
+    /**
+     * Set the show extra live panel toolbar options setting.
+     * <p>
+     * @param show the extra options or leave them hidden.
+     */
+    public void setShowExtraLivePanelToolbarOptions(boolean show) {
+        setProperty("show.extra.live.panel.toolbar.options", Boolean.toString(show));
+    }
+    
+    /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
      * until something replaces it.
