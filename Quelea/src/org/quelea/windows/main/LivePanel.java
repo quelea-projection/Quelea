@@ -272,7 +272,8 @@ public class LivePanel extends LivePreviewPanel {
 //                VLCWindow.INSTANCE.setHideButton(hide.isSelected());
             }
         });
-//        header.getItems().add(hide);
+        //header.getItems().add(hide);
+        showExtraToolbarOptions(QueleaProperties.get().getShowExtraLivePanelToolbarOptions());
         setTop(header);
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
@@ -390,6 +391,19 @@ public class LivePanel extends LivePreviewPanel {
         });
     }
 
+    /**
+     * Show/hide extra toolbar options.
+     * <p/>
+     * @param show display the extra options.
+     */
+    public void showExtraToolbarOptions(boolean show) {
+        if (show) {
+            header.getItems().add(hide);
+        } else {
+            header.getItems().remove(hide);
+        }
+    }
+    
     /**
      * Set the displayable to be shown on this live panel.
      * <p/>
