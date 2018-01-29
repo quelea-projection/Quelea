@@ -653,6 +653,7 @@ public class LivePanel extends LivePreviewPanel {
             focusDialog.setY(20);
             focusDialog.setX(20);
             focusDialog.show();
+            QueleaApp.get().getMainWindow().requestFocus();
         }
     }
 }
