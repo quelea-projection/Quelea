@@ -51,31 +51,32 @@ public class OpensongParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        ZipFile file = new ZipFile(location, Charset.forName("Cp437"));
-        List<SongDisplayable> ret = new ArrayList<>();
-        try {
+        try (ZipFile file = new ZipFile(location, Charset.forName("Cp437"))) {
+            List<SongDisplayable> ret = new ArrayList<>();
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(new InputSource(new UnicodeReader(file.getInputStream(entry), "UTF-8")));
-                NodeList list = doc.getChildNodes();
-                for (int i = 0; i < list.getLength(); i++) {
-                    if (list.item(i).getNodeName().equalsIgnoreCase("song")) {
-                        SongDisplayable displayable = getDisplayable(list.item(i));
-                        if (displayable != null) {
-                            ret.add(displayable);
+                String fileName = null;
+                try {
+                    final ZipEntry entry = entries.nextElement();
+                    fileName = entry.getName();
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(new InputSource(new UnicodeReader(file.getInputStream(entry), "UTF-8")));
+                    NodeList list = doc.getChildNodes();
+                    for (int i = 0; i < list.getLength(); i++) {
+                        if (list.item(i).getNodeName().equalsIgnoreCase("song")) {
+                            SongDisplayable displayable = getDisplayable(list.item(i));
+                            if (displayable != null) {
+                                ret.add(displayable);
+                            }
                         }
                     }
+                } catch (IOException | ParserConfigurationException | SAXException ex) {
+                    LOGGER.log(Level.WARNING, "Error importing opensong: " + fileName, ex);
                 }
             }
-        } catch (IOException | ParserConfigurationException | SAXException ex) {
-            LOGGER.log(Level.WARNING, "Error importing opensong", ex);
-        } finally {
-            file.close();
+            return ret;
         }
-        return ret;
     }
 
     /**
@@ -162,14 +163,14 @@ public class OpensongParser implements SongParser {
             } else if (line.startsWith(".")) {
                 line = line.substring(1);
             } else if (line.endsWith("||")) {
-                line = line.substring(0, line.length()-2) + "\n";
+                line = line.substring(0, line.length() - 2) + "\n";
             } else if (line.equals("---")) {
                 line = "";
             } else if (line.startsWith(";")) {
                 ignoreVerse = true;
             }
             line = line.replace("|", "\n");
-            
+
             if (!ignoreVerse) {
                 ret.append(line).append("\n");
             }
