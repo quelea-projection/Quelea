@@ -98,6 +98,7 @@ public final class Main extends Application {
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
         LOGGER.log(Level.INFO, "Started, version {0}", QueleaProperties.VERSION.getVersionString());
+        LOGGER.log(Level.INFO, "Using JAVA version {0}", System.getProperty("java.version"));
 
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
