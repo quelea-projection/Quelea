@@ -94,8 +94,10 @@ public class VideoPsalmParser implements SongParser {
             SongDisplayable song = new SongDisplayable(title, author);
             StringBuilder lyrics = new StringBuilder();
             for (JsonElement verseObj : obj.getAsJsonObject().getAsJsonArray("Verses")) {
-                lyrics.append(verseObj.getAsJsonObject().get("Text").getAsString());
-                lyrics.append("\n\n");
+                if (verseObj.getAsJsonObject().has("Text")) {                
+                    lyrics.append(verseObj.getAsJsonObject().get("Text").getAsString());
+                    lyrics.append("\n\n");
+                }
             }
             song.setLyrics(lyrics.toString().trim());
             ret.add(song);
