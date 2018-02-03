@@ -1,6 +1,7 @@
 quelea (2018.1) stable; urgency=normal
  
   * Fix bug with Sunday Plus importer
+  * Fix bug with VideoPsalm importer
   * Fix bug with OpenSong importer only showing one song when exported on Mac
   * Use new logo in about dialog
 
