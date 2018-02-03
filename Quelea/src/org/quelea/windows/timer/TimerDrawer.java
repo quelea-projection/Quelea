@@ -3,7 +3,6 @@ package org.quelea.windows.timer;
 import java.util.Calendar;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
-import static java.lang.Math.abs;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
@@ -20,6 +19,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.Timer;
 import org.quelea.windows.multimedia.VLCWindow;
+import utils.FontMetricsWrapper;
 
 /**
  *
@@ -109,7 +109,7 @@ public class TimerDrawer extends DisplayableDrawer {
     }
 
     private double pickFontSize(Font font, Timer timer, DisplayCanvas canvas) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         String text = timer.toString();
         String[] splitText = text.split("\n");
         double lineSpacing = QueleaProperties.get().getAdditionalLineSpacing() * canvas.getHeight() / 1000.0;
@@ -120,7 +120,7 @@ public class TimerDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalHeight = (metrics.getLineHeight() + lineSpacing * splitText.length);
         }
 
@@ -131,7 +131,7 @@ public class TimerDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalWidth = metrics.computeStringWidth(longestLine);
         }
 
@@ -139,7 +139,7 @@ public class TimerDrawer extends DisplayableDrawer {
     }
 
     private String longestLine(Font font, String[] text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         double longestWidth = -1;
         String longestStr = null;
         for (String line : text) {
