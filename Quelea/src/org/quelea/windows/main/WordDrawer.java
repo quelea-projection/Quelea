@@ -35,6 +35,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.lyrics.FormattedText;
+import utils.FontMetricsWrapper;
 
 /**
  *
@@ -79,14 +80,14 @@ public abstract class WordDrawer extends DisplayableDrawer {
      * width and height provided.
      */
     protected double pickFontSize(Font font, List<LyricLine> text, double width, double height) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
         while (totalHeight > height) {
             font = new Font(font.getName(), font.getSize() - 0.5);
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
         }
 
@@ -97,7 +98,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalWidth = metrics.computeStringWidth(longestLine);
         }
         return font.getSize();
@@ -117,7 +118,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
 
     protected String longestLine(Font font, List<LyricLine> text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         double longestWidth = -1;
         String longestStr = null;
         for (LyricLine line : text) {
@@ -132,7 +133,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
 
     protected String longestLine(Font font, ArrayList<String> text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         double longestWidth = -1;
         String longestStr = null;
         for (String line : text) {
@@ -202,7 +203,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
     
     protected double pickSmallFontSize(Font font, String[] text, double width, double height) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
         ArrayList<String> al = new ArrayList<>();
         for (String te : text) {
             if (al.contains("\n")) {
@@ -218,7 +219,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalHeight = (metrics.getLineHeight() + getLineSpacing()) * al.size();
         }
 
@@ -229,7 +230,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
             totalWidth = metrics.computeStringWidth(longestLine);
         }
 
