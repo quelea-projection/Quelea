@@ -17,7 +17,6 @@
  */
 package org.quelea.services.notice;
 
-import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,14 +30,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
+import utils.FontMetricsWrapper;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
@@ -117,7 +115,7 @@ public class NoticeDrawer {
                 noticeText.setFont(notice.getFont().getFont());
                 textGroup.getChildren().add(noticeText);
             }
-            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(oldNotices.get(0).getFont().getFont());
+            FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(oldNotices.get(0).getFont().getFont()));
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
             if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
