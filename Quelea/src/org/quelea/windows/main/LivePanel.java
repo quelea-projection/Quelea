@@ -159,7 +159,7 @@ public class LivePanel extends LivePreviewPanel {
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if (t.getButton().equals(MouseButton.SECONDARY)) {
+                if (t.getButton().equals(MouseButton.SECONDARY) || t.isControlDown()) {
                     FileChooser chooser = new FileChooser();
                     if (QueleaProperties.get().getLastDirectory() != null) {
                         chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
