@@ -51,13 +51,7 @@ public class PhoneHome {
      * If phoning home is enabled, then go for it.
      */
     public void phone() {
-        if(!QueleaProperties.get().getPhoneHome()) {
-            LOGGER.log(Level.INFO, "Phone home disabled");
-            return;
-        }
-
         String os = System.getProperty("os.name") + " : " + System.getProperty("os.version");
-
         final StringBuilder urlStrBuilder = new StringBuilder("http://quelea.org/phonehome/store.php?os=");
         urlStrBuilder.append(os);
         urlStrBuilder.append("&version=");
