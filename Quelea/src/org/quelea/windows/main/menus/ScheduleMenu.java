@@ -118,7 +118,9 @@ public class ScheduleMenu extends Menu {
         dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
         addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDItem.setOnAction(new AddDVDActionHandler());
-        getItems().add(addDVDItem);
+        if(!Utils.isMac()) {
+            getItems().add(addDVDItem);
+        }
 
         addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image("file:icons/web-small.png", 16, 16, false, true)));
         addWebItem.setOnAction(new AddWebActionHandler());
