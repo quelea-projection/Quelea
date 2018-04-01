@@ -238,7 +238,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addDVDButton = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDButton.setOnAction(new AddDVDActionHandler());
-        add.getItems().add(addDVDButton);
+        if(!Utils.isMac()) {
+            add.getItems().add(addDVDButton);
+        }
 
         MenuItem addPdfButton;
         if (Utils.isMac()) {
