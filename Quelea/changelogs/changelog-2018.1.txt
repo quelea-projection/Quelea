@@ -7,5 +7,6 @@ quelea (2018.1) stable; urgency=normal
   * Use new logo in about dialog
   * Fix drag / drop bug in Linux
   * Fix EasyWorship parser to use CP1252
+  * Don't show option to add DVD on a Mac
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 06 Jan 2018 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 01 Apr 2018 00:00:00 +0000
