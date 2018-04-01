@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -140,7 +141,8 @@ public class EasyWorshipParser implements SongParser {
         Matcher matcher = Pattern.compile("(\\\\\\'([0-9a-f][0-9a-f]))").matcher(songContent);
         while(matcher.find()) {
             String num = matcher.group(2);
-            char val = (char) Integer.parseInt(num, 16);
+            int b = Integer.parseInt(num, 16);
+            char val = new String(new byte[]{(byte) b}, Charset.forName("windows-1252")).charAt(0);
             songContent = songContent.replace(matcher.group(1), Character.toString(val));
         }
         songContent = songContent.replace("{", "");
