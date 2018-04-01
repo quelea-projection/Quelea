@@ -8,5 +8,6 @@ quelea (2018.1) stable; urgency=normal
   * Fix drag / drop bug in Linux
   * Fix EasyWorship parser to use CP1252
   * Don't show option to add DVD on a Mac
+  * Add ctrl+click option to set logo image on Mac
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 01 Apr 2018 00:00:00 +0000
