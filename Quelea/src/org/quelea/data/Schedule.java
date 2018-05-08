@@ -153,9 +153,10 @@ public class Schedule implements Iterable<Displayable> {
                     for (Displayable displayable : displayables) {
                         for (File displayableFile : displayable.getResources()) {
                             if (displayableFile.exists()) {
-                                String base = ".";
-                                String path = displayableFile.getAbsolutePath();
-                                String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+//                                String path = displayableFile.getAbsolutePath();
+//                                String base = ".";
+//                                String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+                                String relative = displayableFile.getName();
                                 String zipPath = "resources/" + relative;
                                 if (!entries.contains(zipPath)) {
                                     entries.add(zipPath);
