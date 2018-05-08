@@ -19,10 +19,8 @@
 package org.quelea.windows.main.actionhandlers;
 
 import java.io.File;
-import java.util.logging.Level;
 import javafx.stage.FileChooser;
 import org.quelea.services.utils.FileFilters;
-import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
