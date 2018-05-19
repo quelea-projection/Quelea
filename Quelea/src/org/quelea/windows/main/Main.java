@@ -65,6 +65,7 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
  * @author Michael
  */
 public final class Main extends Application {
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
@@ -309,7 +310,9 @@ public final class Main extends Application {
                     Platform.runLater(() -> {
                         splashWindow.hide();
                         mainWindow.getMainPanel().setSliderPos();
-                        mainWindow.show();
+                        if (!Utils.isLinux()) {
+                            mainWindow.show();
+                        }
                         showMonitorWarning(monitorNumber);
                         CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getRecordingSettingsPanel().getConvertRecordingsCheckBox();
                         if (VLC_OK && VLC_INIT) {
@@ -349,8 +352,9 @@ public final class Main extends Application {
                                 });
                             }
                             vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
-                            vlcWarningDialog.show();
+                            vlcWarningDialog.showAndWait();
                         }
+                        mainWindow.show();
                         QueleaApp.get().doneLoading();
                     });
                 } catch (Throwable ex) {
