@@ -46,8 +46,6 @@ import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
-import org.quelea.services.print.PDFPrinter;
-import org.quelea.services.print.SchedulePDFPrinter;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -57,7 +55,7 @@ import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import utils.VLCDiscovery;
 
 /**
  * The main class, sets everything in motion...
@@ -109,7 +107,7 @@ public final class Main extends Application {
                 try {
                     boolean vlcOk = false;
                     try {
-                        vlcOk = new NativeDiscovery().discover();
+                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
                     } catch (Throwable ex) {
                         LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
                     }
