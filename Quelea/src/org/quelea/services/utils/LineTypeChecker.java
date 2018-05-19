@@ -46,6 +46,10 @@ public class LineTypeChecker {
     public LineTypeChecker(String line) {
         this.line = line;
     }
+    
+    public static void main(String[] args) {
+        System.out.println(new LineTypeChecker("his face is").getLineType());
+    }
 
     /**
      * Get the line type.
@@ -97,7 +101,7 @@ public class LineTypeChecker {
             if (s.trim().isEmpty()) {
                 continue;
             }
-            if (!s.matches("^(\\s*(((([a-hA-H](#|b|♯|♭|(is))?[0-9]*)|\\/)*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b|♯|♭|(is))?[0-9]*)\\s*)+)$")) {
+            if (!s.matches("^(\\s*(((([a-hA-H](#|b|♯|♭?)[0-9]*)|\\/)*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b|♯|♭)?[0-9]*)\\s*)+)$")) {
                 return false;
             }
         }
