@@ -137,6 +137,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter MISSION_PRAISE_RTF = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.missionpraise") + " (*.rtf)", "*.rtf", "*.rtf'");
     /**
+     * The file filter used for the Worshiphymn  importer.
+     */
+    public static final FileChooser.ExtensionFilter WORSHIP_HYMN_MDB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.worshiphim") + " (*.mdb)", "*.mdb");
+    /**
      * The file filter used for *.epc (the epicworship songpack.)
      */
     public static final FileChooser.ExtensionFilter EPC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.epc") + " (*.epc)", "*.epc");
