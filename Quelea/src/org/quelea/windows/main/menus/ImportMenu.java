@@ -52,6 +52,7 @@ import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
 import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
 import org.quelea.services.importexport.ScreenMonkeyImportDialog;
+import org.quelea.services.importexport.WorshipHimImportDialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
@@ -79,6 +80,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog songproImportDialog;
     private final ImportDialog videoPsalmImportDialog;
     private final ImportDialog mediaShoutImportDialog;
+    private final ImportDialog worshipHimImportDialog;
     private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
     private final ImportDialog presentationManagerImportDialog;
@@ -100,6 +102,7 @@ public class ImportMenu extends Menu {
     private final MenuItem pmItem;
     private final MenuItem smItem;
     private final MenuItem mediaShoutItem;
+    private final MenuItem worshipHimItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
@@ -132,6 +135,7 @@ public class ImportMenu extends Menu {
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
+        worshipHimImportDialog = new WorshipHimImportDialog();
         songBeamerImportDialog = new SongBeamerImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
         presentationManagerImportDialog = new PresentationManagerImportDialog();
@@ -197,6 +201,11 @@ public class ImportMenu extends Menu {
         mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
         mediaShoutItem.setOnAction((ActionEvent t) -> {
             mediaShoutImportDialog.show();
+        });
+
+        worshipHimItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("worshiphim.button"), new ImageView(new Image("file:icons/worshiphim.png", 16, 16, false, true)));
+        worshipHimItem.setOnAction((ActionEvent t) -> {
+            worshipHimImportDialog.show();
         });
 
         sbItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songbeamer.button"), new ImageView(new Image("file:icons/songbeamer.png", 16, 16, false, true)));
@@ -282,6 +291,7 @@ public class ImportMenu extends Menu {
         getItems().add(ssItem);
         getItems().add(sourceItem);
         getItems().add(vsItem);
+        getItems().add(worshipHimItem);
         if (Utils.isWindows()) {
             getItems().add(zwItem);
         }
