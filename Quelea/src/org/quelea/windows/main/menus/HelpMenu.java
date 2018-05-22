@@ -36,6 +36,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.windows.help.AboutDialog;
+import utils.ThreadedDesktop;
 
 /**
  * Quelea's help menu.
@@ -122,16 +123,12 @@ public class HelpMenu extends Menu {
         });
         getItems().add(about);
     }
-    
+
     private void launchPage(String page) {
-        new Thread(() -> {
-            try {
-                Desktop.getDesktop().browse(new URI(page));
-            } catch (IOException | URISyntaxException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
-                showError(page);
-            }
-        }).start();
+        ThreadedDesktop.browse(page, (ex) -> {
+            LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
+            showError(page);
+        });
     }
 
     /**
