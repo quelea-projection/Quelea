@@ -241,7 +241,6 @@ help.menu.feedback=Palaute
 help.menu.download=Lataa
 help.menu.update=Tarkasta päivitykset
 help.menu.about=Tietoja...
-help.menu.error.text=Pahoittelen. Tapahtui virhe, ja haluttua sivua ei voitu ladata.
 help.menu.error.title=Virhe
 help.about.title=Tietoja
 help.about.version=Versio
