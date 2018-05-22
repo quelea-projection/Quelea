@@ -902,9 +902,13 @@ public final class Utils {
      * @return the image.
      */
     public static Image getImageFromColour(final Color color) {
-        WritableImage image = new WritableImage(1, 1);
+        WritableImage image = new WritableImage(2, 2);
         PixelWriter writer = image.getPixelWriter();
-        writer.setColor(0, 0, color);
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                writer.setColor(i, j, color);
+            }
+        }
         return image;
     }
     private static final Map<File, WritableImage> videoPreviewCache = new SoftHashMap<>();
