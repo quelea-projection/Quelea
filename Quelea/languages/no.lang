@@ -203,7 +203,6 @@ help.menu.discussion=Support / Diskusjon (still spørsmål her) - på engelsk
 help.menu.download=Last ned
 help.menu.update=Søk etter oppdateringer
 help.menu.about=Om...
-help.menu.error.text=Dessverre, en feil inntraff og vi kunne ikke laste inn den ønskede siden.
 help.menu.error.title=Feil
 help.about.title=Om
 help.about.version=Versjon

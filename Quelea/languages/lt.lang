@@ -487,7 +487,6 @@ songs.heading=Giesmės
 help.about.version=Versija
 overwrite.lyrics.text=Mes jums automatiškai išvertėme giesmės žodžius - ar norite juos naudoti?\nJūsų esamas vertimas bus pakeistas.
 more.font.options.label=Daugiau šrifto parinkčių
-help.menu.error.text=Atsiprašome, įvyko klaida ir mums nepavyko įkelti nurodyto puslapio.
 click.select.file.text=Spustelėkite, kad pasirinktumėte failą
 copyright.label=Autorių teisės
 advanced.label=Išplėstinis
