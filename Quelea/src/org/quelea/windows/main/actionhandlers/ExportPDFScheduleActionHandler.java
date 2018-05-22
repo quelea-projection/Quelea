@@ -22,15 +22,17 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.quelea.data.Schedule;
-import static org.quelea.services.importexport.OpenLyricsExporter.LOGGER;
 import org.quelea.services.print.SchedulePDFPrinter;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import utils.ThreadedDesktop;
 
 /**
  * An event handler that exports the current schedule to a PDF file.
@@ -38,6 +40,8 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class ExportPDFScheduleActionHandler implements EventHandler<ActionEvent> {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     @Override
     public void handle(ActionEvent t) {
@@ -55,8 +59,11 @@ public class ExportPDFScheduleActionHandler implements EventHandler<ActionEvent>
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
                 new SchedulePDFPrinter().print(schedule, file);
+                String path = file.getAbsolutePath();
                 if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(file);
+                    ThreadedDesktop.open(file, (ex) -> {
+                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", path);
+                    });
                 }
             }
         } catch (IOException ex) {

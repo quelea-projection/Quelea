@@ -68,6 +68,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import utils.ThreadedDesktop;
 
 /**
  * The panel that shows the mobile lyrics and remote control options.
@@ -158,11 +159,9 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
             mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(getMLURL()));
-                } catch (IOException | URISyntaxException ex) {
+                ThreadedDesktop.browse(getMLURL(), (ex) -> {
                     LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getMLURL());
-                }
+                });
             });
         }
         mobBox.getChildren().add(mobUrlLabel);
@@ -275,11 +274,9 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             rcUrlLabel.setFill(Color.BLUE);
             rcUrlLabel.setStyle("-fx-underline: true;");
             rcUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(getRCURL()));
-                } catch (IOException | URISyntaxException ex) {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getRCURL());
-                }
+                ThreadedDesktop.browse(getRCURL(), (ex) -> {
+                    LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getMLURL());
+                });
             });
         }
         rcBox.getChildren().add(rcUrlLabel);
