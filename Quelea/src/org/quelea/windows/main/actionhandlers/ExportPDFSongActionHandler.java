@@ -22,19 +22,21 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
-import static org.quelea.services.importexport.OpenLyricsExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
+import utils.ThreadedDesktop;
 
 /**
  * An event handler that exports the currently selected song to a PDF file.
@@ -42,6 +44,8 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     
     private boolean exportTranslations;
 
@@ -98,7 +102,10 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
                 }
                 SongPDFPrinter.INSTANCE.print(song, file, exportTranslations);
                 if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(file);
+                    String path = file.getAbsolutePath();
+                    ThreadedDesktop.open(file, (ex) -> {
+                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", path);
+                    });
                 }
             }
         } catch (IOException ex) {
