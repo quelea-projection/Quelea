@@ -42,7 +42,9 @@ public class VLCDiscovery {
         @Override
         protected void onGetDirectoryNames(List<String> directoryNames) {
             directoryNames.add("/usr/lib");
+            directoryNames.add("/usr/lib64");
             directoryNames.add("/usr/local/lib");
+            directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
         }
 
