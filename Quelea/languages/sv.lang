@@ -203,7 +203,6 @@ help.menu.discussion=Support / Diskussion (ställ frågor här) - på engelska
 help.menu.download=Ladda hem
 help.menu.update=Sök efter uppdateringar
 help.menu.about=Om...
-help.menu.error.text=Tyvärr, ett fel inträffade och vi kunde inte ladda den önskade sidan.
 help.menu.error.title=Fel
 help.about.title=Om
 help.about.version=Version
