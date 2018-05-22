@@ -55,6 +55,7 @@ import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
+import utils.ThreadedDesktop;
 import utils.VLCDiscovery;
 
 /**
@@ -342,11 +343,9 @@ public final class Main extends Application {
                                 vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent t) {
-                                        try {
-                                            java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
-                                        } catch (URISyntaxException | IOException ex) {
+                                        ThreadedDesktop.browse("http://www.videolan.org/vlc/index.html", (ex) -> {
                                             LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                        }
+                                        });
                                         vlcWarningDialog.hide();
                                     }
                                 });

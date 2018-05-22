@@ -36,6 +36,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import utils.ThreadedDesktop;
 
 /**
  * A singleton class used for sending off a schedule using the default email
@@ -119,7 +120,10 @@ public class Mailer {
                 msg.writeTo(stream);
             }
             try {
-                Desktop.getDesktop().open(temp);
+                String path = temp.getAbsolutePath();
+                ThreadedDesktop.open(temp, (ex) -> {
+                    LOGGER.log(Level.WARNING, "Couldn't open file: {0}", path);
+                });
             }
             catch(Throwable ex) {
                 LOGGER.log(Level.WARNING, "Error with mailer", ex);

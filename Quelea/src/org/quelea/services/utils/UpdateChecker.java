@@ -18,15 +18,18 @@
 package org.quelea.services.utils;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import utils.ThreadedDesktop;
 
 /**
  * Checks for any updates to Quelea.
@@ -61,16 +64,12 @@ public class UpdateChecker {
 
                         @Override
                         public void handle(ActionEvent t) {
-                            try {
-                                Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
-                            }
-                            catch(URISyntaxException | IOException ex) {
-                                LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                if(showIfError) {
+                            ThreadedDesktop.browse(QueleaProperties.get().getDownloadLocation(), (ex) -> {
+                                LOGGER.log(Level.WARNING, "Couldn't open file: {0}", LoggerUtils.getHandlerFileLocation());
+                                if (showIfError) {
                                     showUpdateError();
                                 }
-                                return;
-                            }
+                            });
                         }
                     }).addNoButton(new EventHandler<ActionEvent>() {
 
@@ -97,8 +96,8 @@ public class UpdateChecker {
      * Show a message saying there was an error checking for updates.
      */
     private void showUpdateError() {
-        Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
-                LabelGrabber.INSTANCE.getLabel("error.checking.updates.text"));
+        Platform.runLater(() -> {Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
+                    LabelGrabber.INSTANCE.getLabel("error.checking.updates.text"));});
     }
 
 }

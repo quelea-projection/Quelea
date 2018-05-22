@@ -20,7 +20,8 @@ package org.quelea.windows.help;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,10 +42,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import utils.ThreadedDesktop;
 
 /**
  * Quelea's about Dialog, displaying general features about the program and the
@@ -54,6 +55,8 @@ import org.quelea.services.utils.QueleaProperties;
  * @author Michael
  */
 public class AboutDialog extends Stage {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new about dialog.
@@ -88,12 +91,9 @@ public class AboutDialog extends Stage {
 
                 @Override
                 public void handle(MouseEvent t) {
-                    try {
-                        Desktop.getDesktop().open(new File(LoggerUtils.getHandlerFileLocation()));
-                    }
-                    catch(IOException ex) {
-                        //Never mind
-                    }
+                    ThreadedDesktop.open(new File(LoggerUtils.getHandlerFileLocation()), (ex) -> {
+                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", LoggerUtils.getHandlerFileLocation());
+                    });
                 }
             });
         }
