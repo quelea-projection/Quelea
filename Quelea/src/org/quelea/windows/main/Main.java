@@ -97,7 +97,9 @@ public final class Main extends Application {
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
         LOGGER.log(Level.INFO, "Started, version {0}", QueleaProperties.VERSION.getVersionString());
+        LOGGER.log(Level.INFO, "OS name: {0}", System.getProperty("os.name"));
         LOGGER.log(Level.INFO, "Using JAVA version {0}", System.getProperty("java.version"));
+        LOGGER.log(Level.INFO, "64-bit: {0}", Utils.is64Bit());
 
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
