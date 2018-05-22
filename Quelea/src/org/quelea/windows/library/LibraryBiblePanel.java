@@ -203,6 +203,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     // Should be on FX thread at all times
     private void refreshMaster() {
+        if (bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
+            return;
+        }
         master = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
     }
 
