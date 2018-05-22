@@ -499,7 +499,6 @@ songselect.import.line1=Select the SongSelect files below.
 projection.window.title=Projection Window
 confirm.overwrite.text=This file already exists. Would you like to replace it or continue without copying?
 open.schedule.text=Open Schedule
-help.menu.error.text=Sorry, an error occurred and we couldn't load the specified page.
 songpro.button=SongPro
 no.newer.version.available=You are running the latest version of Quelea
 trim.lines.tooltip=Trim lines

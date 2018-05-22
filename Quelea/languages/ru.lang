@@ -241,7 +241,6 @@ help.menu.feedback=Обратная связь
 help.menu.download=Скачать
 help.menu.update=Проверить обновления
 help.menu.about=О программе...
-help.menu.error.text=Извините, возникла ошибка и мы не смогли загрузить указанную страницу.
 help.menu.error.title=Ошибка
 help.about.title=О программе
 help.about.version=Версия
