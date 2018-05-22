@@ -1,0 +1,17 @@
+quelea (2018.1) stable; urgency=normal
+ 
+  * Fix bug with Sunday Plus importer
+  * Fix bug with VideoPsalm importer
+  * Fix bug with OpenSong importer only showing one song when exported on Mac
+  * Fix Java 9 compatibility
+  * Fix "is" being recognised as chords
+  * Fix resize bug on some Linux distributions
+  * Fix VLC bug in Linux
+  * Fix drag / drop bug in Linux
+  * Fix EasyWorship parser to use CP1252
+  * Use new logo in about dialog
+  * Don't show option to add DVD on a Mac
+  * Add ctrl+click option to set logo image on Mac
+  * Add Worship Him importer
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 01 Apr 2018 00:00:00 +0000

@@ -1,0 +1,10 @@
+<fop version="2.0"> 
+    <base>.</base>
+    <renderers> 
+        <renderer mime="application/pdf"> 
+            <fonts>
+                <directory>icons/bundledfonts</directory>
+            </fonts>
+        </renderer> 
+    </renderers> 
+</fop> 
