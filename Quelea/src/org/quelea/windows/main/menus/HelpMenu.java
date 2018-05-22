@@ -48,7 +48,6 @@ public class HelpMenu extends Menu {
     private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
-    private final MenuItem queleaFeedback;
     private final MenuItem queleaWiki;
     private final MenuItem updateCheck;
     private final MenuItem about;
@@ -67,18 +66,12 @@ public class HelpMenu extends Menu {
             }
         });
 
-        if(Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported()) {
             queleaManual = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.manual"), new ImageView(new Image("file:icons/manual.png", 16, 16, false, true)));
             queleaManual.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI("http://quelea.org/manuals/get.php?lang="+QueleaProperties.get().getLanguageFile().getName()));
-                    }
-                    catch(Exception ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't open Quelea manual page", ex);
-                        showError();
-                    }
+                    launchPage("http://quelea.org/manuals/get.php?lang=" + QueleaProperties.get().getLanguageFile().getName());
                 }
             });
             getItems().add(queleaManual);
@@ -86,13 +79,7 @@ public class HelpMenu extends Menu {
             queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFacebookPageLocation()));
-                    }
-                    catch(Exception ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
-                        showError();
-                    }
+                    launchPage(QueleaProperties.get().getFacebookPageLocation());
                 }
             });
             getItems().add(queleaFacebook);
@@ -100,48 +87,20 @@ public class HelpMenu extends Menu {
             queleaDiscuss.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDiscussLocation()));
-                    }
-                    catch(Exception ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea discuss", ex);
-                        showError();
-                    }
+                    launchPage(QueleaProperties.get().getDiscussLocation());
                 }
             });
             getItems().add(queleaDiscuss);
-            queleaFeedback = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.feedback"), new ImageView(new Image("file:icons/feedback.png", 16, 16, false, true)));
-            queleaFeedback.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFeedbackLocation()));
-                    }
-                    catch(Exception ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea feedback", ex);
-                        showError();
-                    }
-                }
-            });
-            getItems().add(queleaFeedback);
             queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
             queleaWiki.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWikiPageLocation()));
-                    }
-                    catch(Exception ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea Wiki", ex);
-                        showError();
-                    }
+                    launchPage(QueleaProperties.get().getWikiPageLocation());
                 }
             });
             getItems().add(queleaWiki);
-        }
-        else {
+        } else {
             queleaDiscuss = null;
-            queleaFeedback = null;
             queleaFacebook = null;
             queleaWiki = null;
             queleaManual = null;
@@ -163,13 +122,26 @@ public class HelpMenu extends Menu {
         });
         getItems().add(about);
     }
+    
+    private void launchPage(String page) {
+        new Thread(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI(page));
+            } catch (IOException | URISyntaxException ex) {
+                LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
+                showError(page);
+            }
+        }).start();
+    }
 
     /**
      * Show a dialog saying we couldn't open the given location.
      * <p/>
      * @param location the location that failed to open.
      */
-    private void showError() {
-        Dialog.showError(LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), LabelGrabber.INSTANCE.getLabel("help.menu.error.text"));
+    private void showError(String page) {
+        Platform.runLater(() -> {
+            Dialog.showError(LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), LabelGrabber.INSTANCE.getLabel("help.menu.error.text").replace("$1", page));
+        });
     }
 }
