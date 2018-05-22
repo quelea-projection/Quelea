@@ -1,0 +1,9 @@
+quelea (2018.0) stable; urgency=normal
+ 
+  * Fix bug with PDF export
+  * Fix remote mobile view HTML to be more accessible
+  * Ignore verses with invalid numbers rather than throwing an exception (it seems footnotes are sometimes specified with an invalid number)
+  * Fix bug with check duplicates feature
+  * Fix bug with translations not being included in schedule
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 25 Nov 2017 00:00:00 +0000
