@@ -198,7 +198,6 @@ help.menu.discussion=Hilfestellung/Diskussion (Fragen direkt hier stellen)
 help.menu.download=Herunterladen
 help.menu.update=Nach Programmaktualisierungen suchen (Updates)
 help.menu.about=Über...
-help.menu.error.text=Leider ist ein Fehler aufgetreten, und wir konnten die gewünschte Seite nicht öffnen.
 help.menu.error.title=Fehler
 help.about.title=Programminfos
 help.about.version=Version
