@@ -1,6 +1,10 @@
 # Contributing to Quelea
 
-Contributions are always welcome! There's two main ways you can contribute to Quelea - the first is [maintaining and adding our translations](https://quelea.org/lang/), and the second is contributing to the code directly.
+Contributions are always welcome! There's three main ways you can contribute to Quelea - you can report issues, [maintain and add translations](https://quelea.org/lang/), and contribute to the code directly.
+
+## Reporting issues
+
+No qualms here - any issues you find, or anything you feel should be included, just create an issue and we'll get to it. Don't worry if you're not sure if it's something that's already been added, if so we'll just point it out to you and then close it off.
 
 ## Translations
 
