@@ -9,7 +9,7 @@
         <path>winjre64</path>
         <opt>-Xms1200m -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -Dglass.accessible.force=false</opt>
     </jre>
-    <outfile>..\dist\quelea64.exe</outfile>
+    <outfile>quelea64.exe</outfile>
     <chdir>.</chdir>
     <errTitle>Error</errTitle>
     <priority>normal</priority>

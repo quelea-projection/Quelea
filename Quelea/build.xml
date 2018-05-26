@@ -200,7 +200,9 @@
     <target name="windows-specific-dist">
         <copy file="${dist.jar.dir}/Quelea.jar" todir="launch4j" quiet="true"/>
         <launch4j configFile="launch4j/config.xml"/>  
+        <copy file="launch4j/quelea.exe" tofile="dist/Quelea.exe" overwrite="true"/>
         <launch4j configFile="launch4j/config64.xml"/>  
+        <copy file="launch4j/quelea64.exe" tofile="dist/Quelea64.exe" overwrite="true"/>
         <delete file="launch4j/Quelea.jar"/>
         
         <echo message="Generating windows installer using inno setup."/>
