@@ -213,10 +213,10 @@
     </target>
     
     <target name="windows-specific-dist-linux" if="is_linux">
-        <copy file="${dist.jar.dir}/Quelea.jar" todir="launch4j" quiet="true"/>
+        <copy file="${dist.jar.dir}/Quelea.jar" todir="launch4j-lin" quiet="true"/>
         <launch4j-lin configFile="launch4j/config.xml"/>  
         <launch4j-lin configFile="launch4j/config64.xml"/>  
-        <delete file="launch4j/Quelea.jar"/>
+        <delete file="launch4j-lin/Quelea.jar"/>
         
         <echo message="Generating windows installer using inno setup (on linux)."/>
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
