@@ -18,6 +18,7 @@
     <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar"
              classname="com.izforge.izpack.ant.IzPackTask"/>
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
+    <taskdef name="launch4j-lin" classpath="launch4j-lin/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
     <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="lib/appbundler-1.0.jar" />
     <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
              classname="com.googlecode.ant_deb_task.DesktopEntry"/>
@@ -213,8 +214,8 @@
     
     <target name="windows-specific-dist-linux" if="is_linux">
         <copy file="${dist.jar.dir}/Quelea.jar" todir="launch4j" quiet="true"/>
-        <launch4j configFile="launch4j/config.xml"/>  
-        <launch4j configFile="launch4j/config64.xml"/>  
+        <launch4j-lin configFile="launch4j/config.xml"/>  
+        <launch4j-lin configFile="launch4j/config64.xml"/>  
         <delete file="launch4j/Quelea.jar"/>
         
         <echo message="Generating windows installer using inno setup (on linux)."/>
