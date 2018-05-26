@@ -215,8 +215,8 @@
     </target>
     
     <target name="windows-specific-dist-linsh" if="is_linux">
-        <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
-            <arg value="/c build-install.bat"/>
+        <exec dir="${dist.jar.dir}" executable="/bin/bash" failifexecutionfails="false" failonerror="false">
+            <arg value="build-install.sh"/>
         </exec>
     </target>
     
