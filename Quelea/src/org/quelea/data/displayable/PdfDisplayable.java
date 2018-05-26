@@ -28,6 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.pdf.*;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -74,7 +75,11 @@ public class PdfDisplayable implements Displayable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<filepdf>");
-        ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+            ret.append(Utils.escapeXML(file.getName()));
+        } else {
+            ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        }
         ret.append("</filepdf>");
         return ret.toString();
     }
