@@ -77,7 +77,13 @@ public class ImageGroupDisplayable implements Displayable {
         StringBuilder ret = new StringBuilder();
         ret.append("<fileimagegroup>");
         for (File f : files) {
-            ret.append(Utils.escapeXML(f.getAbsolutePath())).append(";");
+            String loc;
+            if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+                loc = f.getName();
+            } else {
+                loc = f.getAbsolutePath();
+            }
+            ret.append(Utils.escapeXML(loc)).append(";");
         }
         ret.append("</fileimagegroup>");
         return ret.toString();

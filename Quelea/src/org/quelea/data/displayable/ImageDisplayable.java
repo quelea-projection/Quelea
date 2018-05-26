@@ -104,7 +104,11 @@ public class ImageDisplayable implements Displayable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<fileimage>");
-        ret.append(Utils.escapeXML(file.getName()));
+        if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+            ret.append(Utils.escapeXML(file.getName()));
+        } else {
+            ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        }
         ret.append("</fileimage>");
         return ret.toString();
     }

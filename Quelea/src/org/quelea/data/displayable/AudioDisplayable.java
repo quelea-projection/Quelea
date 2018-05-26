@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -78,7 +79,11 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<fileaudio>");
-        ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+            ret.append(Utils.escapeXML(file.getName()));
+        } else {
+            ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        }
         ret.append("</fileaudio>");
         return ret.toString();
     }
