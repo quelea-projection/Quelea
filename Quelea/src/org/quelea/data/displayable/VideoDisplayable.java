@@ -26,6 +26,7 @@ import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.YoutubeInfo;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -138,10 +139,15 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
         StringBuilder ret = new StringBuilder();
         if (youtubeinfo != null && youtubeinfo.getLocation() != null) {
             ret.append("<filevideo youtubetitle=\"").append(Utils.escapeXML(youtubeinfo.getTitle())).append("\">");
+            ret.append(Utils.escapeXML(location));
         } else {
             ret.append("<filevideo>");
+            if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+                ret.append(Utils.escapeXML(new File(location).getName()));
+            } else {
+                ret.append(Utils.escapeXML(location));
+            }
         }
-        ret.append(Utils.escapeXML(location));
         ret.append("</filevideo>");
         return ret.toString();
     }
