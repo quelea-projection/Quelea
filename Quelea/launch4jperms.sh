@@ -1,3 +1,3 @@
 #!/bin/sh
-chmod +x launch4j/ld
-chmod +x launch4j/windres
+chmod +x launch4j/bin/ld
+chmod +x launch4j/bin/windres
