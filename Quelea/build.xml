@@ -56,8 +56,15 @@
         <antcall target="nightly-image-change"/>
     </target>
     
+    <target name="launch4jperms" if="is_linux">
+        <exec executable="/bin/bash">
+            <arg value="launch4jperms.sh"/>
+        </exec>
+    </target>
+    
     <target name="build-dist" depends="jar">
         <property name="FXClasspath" value="lib/jfxrt.jar"/>
+        <antcall target="launch4jperms"/>
         
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${run.classpath};${FXClasspath};${basedir}/build/classes" failonerror="false"/>
