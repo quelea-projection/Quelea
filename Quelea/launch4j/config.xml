@@ -9,7 +9,7 @@
         <path>winjre</path>
         <opt>-Xms1200m -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -Dglass.accessible.force=false</opt>
     </jre>
-    <outfile>..\dist\quelea.exe</outfile>
+    <outfile>quelea.exe</outfile>
     <chdir>.</chdir>
     <errTitle>Error</errTitle>
     <priority>normal</priority>
