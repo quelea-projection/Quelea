@@ -31,6 +31,11 @@
     <property name="CPInstallerName" value="quelea-${quelea.version}-crossplatform-install.jar"/>
     <property name="WindowsInstallerName" value="quelea-${quelea.version}-x86-windows-install.exe"/>
     <property name="WindowsInstaller64Name" value="quelea-${quelea.version}-x64-windows-install.exe"/>
+    <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
+    <property name="WindowsInstaller64" value="${dist.jar.dir}/standalone/${WindowsInstaller64Name}"/>
+    <property name="WindowsInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x86-windows-install.exe"/>
+    <property name="WindowsInstaller64Nightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x64-windows-install.exe"/>
+    
     <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
     <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
 
@@ -181,8 +186,6 @@
         <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         
-        <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
-        <property name="WindowsInstaller64" value="${dist.jar.dir}/standalone/${WindowsInstaller64Name}"/>
     </target>
     
     <!--Only execute this if we're a nightly!-->
@@ -197,9 +200,6 @@
         
         <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstallerNightly}" basedir="${dist.jar.dir}"/>
-        
-        <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x86-windows-install.exe"/>
-        <property name="WindowsInstaller64" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x64-windows-install.exe"/>
     </target>
     <target name="nightly-image-change" if="is.nightly">
         <copy file="icons/splash-alpha-nightly.png" tofile="icons/splash-alpha.png" overwrite="true" failonerror="false" />
@@ -218,11 +218,24 @@
         
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat (windows) or build-install.sh (linux). Linux will need an install of inno setup under wine to work."/>
+        
         <antcall target="windows-specific-dist-winbat"/>
         <antcall target="windows-specific-dist-linsh"/>
+        
+        <antcall target="movewin-normal"/>
+        <antcall target="movewin-nightly"/> 
+        
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
+    </target>
+    
+    <target name="movewin-normal" unless="is.nightly">
         <move file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstaller}" failonerror="false"/>
         <move file="${dist.jar.dir}/Output/setup64.exe" tofile="${WindowsInstaller64}" failonerror="false"/>
-        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
+    </target>
+    
+    <target name="movewin-nightly" if="is.nightly">
+        <move file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstallerNightly}" failonerror="false"/>
+        <move file="${dist.jar.dir}/Output/setup64.exe" tofile="${WindowsInstaller64Nightly}" failonerror="false"/>
     </target>
     
     <target name="windows-specific-dist-linsh" if="is_linux">
