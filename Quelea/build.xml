@@ -33,8 +33,6 @@
     <property name="WindowsInstaller64Name" value="quelea-${quelea.version}-x64-windows-install.exe"/>
     <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
     <property name="WindowsInstaller64" value="${dist.jar.dir}/standalone/${WindowsInstaller64Name}"/>
-    <property name="WindowsInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x86-windows-install.exe"/>
-    <property name="WindowsInstaller64Nightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x64-windows-install.exe"/>
     
     <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
     <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
@@ -46,6 +44,8 @@
     <tstamp>
         <format property="touch.time" pattern="dd.MM.yyyy-HH:mm"/>
     </tstamp>
+    <property name="WindowsInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x86-windows-install.exe"/>
+    <property name="WindowsInstaller64Nightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-x64-windows-install.exe"/>
     <property name="CPInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
     <property name="DebInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-deb-install.deb"/>
     <property name="PortableNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
@@ -222,8 +222,8 @@
         <antcall target="windows-specific-dist-winbat"/>
         <antcall target="windows-specific-dist-linsh"/>
         
-        <antcall target="movewin-normal"/>
-        <antcall target="movewin-nightly"/> 
+        <antcall target="movewin-normal"/> 
+       <antcall target="movewin-nightly"/> 
         
         <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
     </target>
