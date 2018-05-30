@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.YoutubeInfo;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Element;
@@ -38,6 +40,7 @@ import org.w3c.dom.Node;
  */
 public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final String location;
     private YoutubeInfo youtubeinfo;
     private final boolean youtubeFlag;
@@ -122,7 +125,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public static VideoDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         if (node instanceof Element) {
             String youtubeTitle = ((Element) node).getAttribute("youtubetitle");
-            if (youtubeTitle != null) {
+            if (youtubeTitle != null && !youtubeTitle.trim().isEmpty()) {
                 return new VideoDisplayable(node.getTextContent(), YoutubeInfo.fromTitle(youtubeTitle));
             }
         }

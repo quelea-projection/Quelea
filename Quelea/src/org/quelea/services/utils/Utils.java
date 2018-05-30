@@ -108,6 +108,7 @@ public final class Utils {
         File file = new File(node.getTextContent());
         String changedFile = fileChanges.get(file.getAbsolutePath());
         if (!file.exists() && changedFile != null) {
+            LOGGER.log(Level.INFO, "Changing {0} to {1}", new Object[]{file.getAbsolutePath(), changedFile});
             file = new File(changedFile);
         }
         return file;

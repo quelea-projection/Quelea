@@ -127,8 +127,10 @@ public class Schedule implements Iterable<Displayable> {
      * @param displayable the displayable to add.
      */
     public void add(Displayable displayable) {
-        displayables.add(displayable);
-        modified = true;
+        if(displayable!=null) {
+            displayables.add(displayable);
+            modified = true;
+        }
     }
 
     /**
@@ -213,6 +215,7 @@ public class Schedule implements Iterable<Displayable> {
                             File tempWriteFile = File.createTempFile("resource", "." + extension);
                             tempWriteFile = Files.move(tempWriteFile.toPath(), Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), writeFile.getName()), StandardCopyOption.REPLACE_EXISTING).toFile();
                             tempWriteFile.deleteOnExit();
+                            LOGGER.log(Level.INFO, "Writing out " + writeFile.getAbsolutePath() + " to " + tempWriteFile.getAbsolutePath());
                             fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
                             writeFile = tempWriteFile;
                         }
@@ -223,6 +226,7 @@ public class Schedule implements Iterable<Displayable> {
                             }
                             dest.flush();
                         }
+                        LOGGER.info("Opening schedule - written file " + writeFile.getAbsolutePath());
                     }
                 }
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
