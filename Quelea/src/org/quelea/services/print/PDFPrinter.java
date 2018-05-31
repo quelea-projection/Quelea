@@ -67,6 +67,7 @@ public class PDFPrinter {
      * @param pdfFile the file to print to.
      * @throws IOException if anything goes wrong.
      */
+    @SuppressWarnings("unchecked") 
     public void print(String xml, File xsltfile, File pdfFile) throws IOException {
         try {
             InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
