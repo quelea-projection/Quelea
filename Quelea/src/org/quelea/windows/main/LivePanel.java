@@ -398,9 +398,13 @@ public class LivePanel extends LivePreviewPanel {
      */
     public void showExtraToolbarOptions(boolean show) {
         if (show) {
-            header.getItems().add(hide);
+            if(!header.getItems().contains(hide)) {
+                header.getItems().add(hide);
+            }
         } else {
-            header.getItems().remove(hide);
+            if(header.getItems().contains(hide)) {
+                header.getItems().remove(hide);
+            }
         }
     }
     
