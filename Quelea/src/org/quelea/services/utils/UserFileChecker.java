@@ -58,6 +58,7 @@ public class UserFileChecker {
         checkDir("bibles");
         checkDir("dictionaries");
         checkDir("timer");
+        checkDir("notices");
     }
 
     /**

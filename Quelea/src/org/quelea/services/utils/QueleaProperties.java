@@ -97,11 +97,11 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
-    
+
     public boolean isDictionaryEnabled() {
         return Boolean.parseBoolean(getProperty("enable.dict", "false"));
     }
-    
+
     public boolean isYoutubeEnabled() {
         return Boolean.parseBoolean(getProperty("enable.youtube", "false"));
     }
@@ -133,7 +133,7 @@ public final class QueleaProperties extends Properties {
         setProperty("language.file", file);
         write();
     }
-    
+
     /**
      * Get the english languages file that should be present on all
      * installations. We can default to this if labels are missing in other
@@ -638,7 +638,7 @@ public final class QueleaProperties extends Properties {
     public void setThumbnailSize(int thumbnailSize) {
         setProperty("thumbnail.size", Integer.toString(thumbnailSize));
     }
-    
+
     /**
      * Get the show extra live panel toolbar options setting.
      * <p>
@@ -656,7 +656,7 @@ public final class QueleaProperties extends Properties {
     public void setShowExtraLivePanelToolbarOptions(boolean show) {
         setProperty("show.extra.live.panel.toolbar.options", Boolean.toString(show));
     }
-    
+
     /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
@@ -845,7 +845,7 @@ public final class QueleaProperties extends Properties {
     public File getVidDir() {
         return new File(getQueleaUserHome(), "vid");
     }
-    
+
     /**
      * Get the directory used for storing temporary recordings.
      * <p>
@@ -950,7 +950,7 @@ public final class QueleaProperties extends Properties {
         setProperty("projector.screen", Integer.toString(screen));
         write();
     }
-    
+
     /**
      * Determine whether the projection screen automatically should be moved to
      * a recently inserted monitor.
@@ -1543,7 +1543,7 @@ public final class QueleaProperties extends Properties {
         setProperty("oo.path", path);
         write();
     }
-    
+
     /**
      * Get whether to use PowerPoint for presentations.
      * <p/>
@@ -1583,8 +1583,8 @@ public final class QueleaProperties extends Properties {
         setProperty("pp.path", path);
         write();
     }
-    
-     /**
+
+    /**
      * Get the path to the desired direcotry for recordings.
      * <p>
      * @return the path to the desired direcotry for recordings.
@@ -1602,7 +1602,7 @@ public final class QueleaProperties extends Properties {
         setProperty("rec.path", path);
         write();
     }
-    
+
     /**
      * Get the path to the desired directory for downloading.
      * <p/>
@@ -1621,7 +1621,7 @@ public final class QueleaProperties extends Properties {
         setProperty("download.path", path);
         write();
     }
-    
+
     /**
      * Determine if the recordings should be converted to MP3 files.
      * <p>
@@ -1630,7 +1630,7 @@ public final class QueleaProperties extends Properties {
     public boolean getConvertRecordings() {
         return Boolean.parseBoolean(getProperty("convert.mp3", "false"));
     }
-    
+
     /**
      * Set whether to automatically convert the recordings to MP3 files.
      * <p>
@@ -2000,37 +2000,46 @@ public final class QueleaProperties extends Properties {
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
-    
+
     public boolean getDefaultSongDBUpdate() {
         return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
     }
-    
+
     public void setDefaultSongDBUpdate(boolean updateInDB) {
         setProperty("default.song.db.update", Boolean.toString(updateInDB));
         write();
     }
-    
+
     public int getWebDisplayableRefreshRate() {
         return Integer.parseInt(getProperty("web.refresh.rate", "500"));
     }
-    
+
     public String getWebProxyHost() {
         return getProperty("web.proxy.host", null);
     }
-    
+
     public String getWebProxyPort() {
         return getProperty("web.proxy.port", null);
     }
-    
+
     public String getWebProxyUser() {
         return getProperty("web.proxy.user", null);
     }
-    
+
     public String getWebProxyPassword() {
         return getProperty("web.proxy.password", null);
     }
-    
+
     public String getChurchCcliNum() {
         return getProperty("church.ccli.num", null);
+    }
+
+    /**
+     * Get the directory used for storing notices.
+     * <p>
+     * @return the notice directory
+     */
+    public File getNoticeDir() {
+        return new File(getQueleaUserHome(), "notices");
     }
 }
