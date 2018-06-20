@@ -667,3 +667,5 @@ paste.label=Paste
 undo.label=Undo
 redo.label=Redo
 show.extra.live.panel.toolbar.options.label=Show extra live panel toolbar options
+schedule.items.skipped.text=Some schedule items don't have their media embedded, so they weren't added.
+schedule.items.skipped.header=Schedule items skipped

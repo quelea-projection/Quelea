@@ -43,9 +43,11 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
@@ -126,11 +128,13 @@ public class Schedule implements Iterable<Displayable> {
      *
      * @param displayable the displayable to add.
      */
-    public void add(Displayable displayable) {
-        if(displayable!=null) {
+    public boolean add(Displayable displayable) {
+        if (displayable != null) {
             displayables.add(displayable);
             modified = true;
+            return true;
         }
+        return false;
     }
 
     /**
@@ -317,33 +321,37 @@ public class Schedule implements Iterable<Displayable> {
             Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
             NodeList nodes = doc.getFirstChild().getChildNodes();
             Schedule newSchedule = new Schedule();
+            boolean skipped = false;
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 String name = node.getNodeName();
                 if (name.equalsIgnoreCase("song")) {
-                    newSchedule.add(SongDisplayable.parseXML(node));
+                    skipped = skipped || !newSchedule.add(SongDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("passage")) {
-                    newSchedule.add(BiblePassage.parseXML(node));
+                    skipped = skipped || !newSchedule.add(BiblePassage.parseXML(node));
                 } else if (name.equalsIgnoreCase("fileimage")) {
-                    newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped || !newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filevideo")) {
-                    newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped || !newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileaudio")) {
-                    newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped || !newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
                     PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
-                    if (disp != null) {
-                        newSchedule.add(disp);
-                    }
+                    skipped = skipped || !newSchedule.add(disp);
                 } else if (name.equalsIgnoreCase("timer")) {
-                    newSchedule.add(TimerDisplayable.parseXML(node));
+                    skipped = skipped || !newSchedule.add(TimerDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepdf")) {
-                    newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped || !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileimagegroup")) {
-                    newSchedule.add(ImageGroupDisplayable.parseXML(node));
+                    skipped = skipped || !newSchedule.add(ImageGroupDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("url")) {
-                    newSchedule.add(WebDisplayable.parseXML(node));
+                    skipped = skipped || !newSchedule.add(WebDisplayable.parseXML(node));
                 }
+            }
+            if(skipped) {
+                Platform.runLater(() -> {
+                    Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.header"), LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.text"));
+                });
             }
             newSchedule.modified = false;
             return newSchedule;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -129,7 +130,12 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
                 return new VideoDisplayable(node.getTextContent(), YoutubeInfo.fromTitle(youtubeTitle));
             }
         }
-        return new VideoDisplayable(Utils.getChangedFile(node, fileChanges).getAbsolutePath());
+        File file = Utils.getChangedFile(node, fileChanges);
+        if(!file.exists()) {
+            LOGGER.log(Level.WARNING, "Video file {0} doesn''t exist.", file.getAbsolutePath());
+            return null;
+        }
+        return new VideoDisplayable(file.getAbsolutePath());
     }
 
     /**

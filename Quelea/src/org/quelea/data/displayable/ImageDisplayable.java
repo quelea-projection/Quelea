@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -91,6 +92,10 @@ public class ImageDisplayable implements Displayable {
         }
         if (!imgFile.exists()) {
             imgFile = Utils.getChangedFile(node, fileChanges);
+        }
+        if (!imgFile.exists()) {
+            LOGGER.log(Level.WARNING, "Image file {0} doesn''t exist.", imgFile.getAbsolutePath());
+            return null;
         }
         return new ImageDisplayable(imgFile);
     }
