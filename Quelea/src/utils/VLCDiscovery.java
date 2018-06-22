@@ -46,6 +46,7 @@ public class VLCDiscovery {
             directoryNames.add("/usr/local/lib");
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
+            directoryNames.add("/usr/lib/i386-linux-gnu");
         }
 
     }
