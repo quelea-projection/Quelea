@@ -58,7 +58,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * Responsible for drawing lyrics and their background.

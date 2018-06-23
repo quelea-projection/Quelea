@@ -45,7 +45,7 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * Quelea's about Dialog, displaying general features about the program and the

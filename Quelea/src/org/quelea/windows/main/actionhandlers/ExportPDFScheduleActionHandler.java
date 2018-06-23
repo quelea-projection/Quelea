@@ -32,7 +32,7 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * An event handler that exports the current schedule to a PDF file.

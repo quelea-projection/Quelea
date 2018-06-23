@@ -37,7 +37,7 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * The splash screen to display when the program starts.

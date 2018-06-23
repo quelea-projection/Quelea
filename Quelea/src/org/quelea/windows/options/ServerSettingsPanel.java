@@ -68,7 +68,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * The panel that shows the mobile lyrics and remote control options.

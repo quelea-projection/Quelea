@@ -29,7 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * Checks for any updates to Quelea.

@@ -36,7 +36,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * A singleton class used for sending off a schedule using the default email

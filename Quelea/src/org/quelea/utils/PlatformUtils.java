@@ -1,4 +1,4 @@
-package utils;
+package org.quelea.utils;
 
 import com.sun.javafx.tk.TKStage;
 import com.sun.jna.Native;

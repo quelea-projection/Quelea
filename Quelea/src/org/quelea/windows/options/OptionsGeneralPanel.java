@@ -47,7 +47,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
-import utils.BigDecimalSpinner;
+import org.quelea.utils.BigDecimalSpinner;
 
 /**
  * A panel where the general options in the program are set.

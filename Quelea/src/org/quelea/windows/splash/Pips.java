@@ -23,7 +23,7 @@ import javafx.scene.Group;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * A group of text that's just "..." - makes it more extensible if we wish to

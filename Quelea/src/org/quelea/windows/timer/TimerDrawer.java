@@ -19,7 +19,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.Timer;
 import org.quelea.windows.multimedia.VLCWindow;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  *

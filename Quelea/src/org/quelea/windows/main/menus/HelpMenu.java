@@ -36,7 +36,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.windows.help.AboutDialog;
-import utils.ThreadedDesktop;
+import org.quelea.utils.ThreadedDesktop;
 
 /**
  * Quelea's help menu.

@@ -55,8 +55,8 @@ import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
-import utils.ThreadedDesktop;
-import utils.VLCDiscovery;
+import org.quelea.utils.ThreadedDesktop;
+import org.quelea.utils.VLCDiscovery;
 
 /**
  * The main class, sets everything in motion...

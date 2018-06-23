@@ -30,7 +30,7 @@
  */
 
 
-package utils;
+package org.quelea.utils;
 
 /**
  *

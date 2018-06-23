@@ -36,7 +36,7 @@ import javafx.util.Duration;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.

@@ -30,7 +30,7 @@
  */
 
 
-package utils;
+package org.quelea.utils;
 
 import de.suse.lib.openlyrics.Chord;
 import de.suse.lib.openlyrics.OpenLyricsObject;

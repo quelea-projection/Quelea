@@ -35,7 +35,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.lyrics.FormattedText;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  *

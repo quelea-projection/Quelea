@@ -35,7 +35,7 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
 import org.quelea.windows.main.widgets.TestImage;
 import org.quelea.windows.multimedia.VLCWindow;
-import utils.PlatformUtils;
+import org.quelea.utils.PlatformUtils;
 
 /**
  * The full screen window used for displaying the projection.

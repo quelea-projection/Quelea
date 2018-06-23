@@ -53,7 +53,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.multimedia.VLCWindow;
-import utils.FontMetricsWrapper;
+import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * Draw items onto a stage canvas

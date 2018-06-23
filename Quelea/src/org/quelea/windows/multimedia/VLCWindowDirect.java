@@ -51,7 +51,7 @@ import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.RenderCallback;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
-import utils.PlatformUtils;
+import org.quelea.utils.PlatformUtils;
 
 /**
  * A JavaFX rendered VLC window which is responsible for moving where it's told,
