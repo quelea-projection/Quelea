@@ -36,7 +36,6 @@ import org.quelea.services.importexport.MissionPraiseImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
 import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
-import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.PresentationManagerImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
@@ -230,7 +229,6 @@ public class ImportMenu extends Menu {
 
         easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
         easyWorshipItem.setOnAction((ActionEvent t) -> {
-            new ParadoxJDBCChecker().runChecks();
             easyWorshipImportDialog.show();
         });
 

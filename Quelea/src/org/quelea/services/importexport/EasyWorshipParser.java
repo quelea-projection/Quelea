@@ -36,10 +36,8 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
- * A parser for parsing the easyworship Songs.MB database. This is in a
- * binary-ish format with the song text in plaintext - so we use this to extract
- * the song text without using a third party library. It's not foolproof and is
- * a bit of a hack but does the job for most songs ok it seems...!
+ * A parser for parsing the Easyworship database. Easyworship uses the Paradox
+ * database format.
  * <p>
  * @author Michael
  */
