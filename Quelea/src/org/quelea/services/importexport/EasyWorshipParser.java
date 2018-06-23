@@ -18,32 +18,21 @@
  */
 package org.quelea.services.importexport;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -70,24 +59,13 @@ public class EasyWorshipParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        URL u = null;
         try {
-            File jarFile = new File(QueleaProperties.getQueleaUserHome().getAbsolutePath(), "Paradox_JDBC41.jar");
-            u = new URL("jar:file:" + jarFile.getAbsolutePath() + "!/");
-            String classname = "com.hxtt.sql.paradox.ParadoxDriver";
-            URLClassLoader ucl = new URLClassLoader(new URL[]{u});
-            Driver d = (Driver) Class.forName(classname, true, ucl).newInstance();
-            DriverManager.registerDriver(new DriverShim(d));
-            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent() + "?useUnicode=true&characterEncoding=UTF-8");
+            Class.forName("com.googlecode.paradox.Driver");
+            LOGGER.log(Level.INFO, "Easyworship importer from {0}", file.getParent());
+            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
             ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM \"Songs.DB\"");
             while(rs.next()) {
-                byte[] arr = rs.getBytes("Title");
-                StringBuilder titleBuilder = new StringBuilder();
-                for(byte b : arr) {
-                    char c = (char)(b&0xff);
-                    titleBuilder.append(c);
-                }
-                String title = titleBuilder.toString();
+                String title = rs.getString("Title");
                 String author = rs.getString("Author");
                 if(author == null) {
                     author = "";
@@ -99,29 +77,8 @@ public class EasyWorshipParser implements SongParser {
             }
 
         }
-        catch(ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException | SQLException ex) {
-            LOGGER.log(Level.INFO, "Couldn't import using SQL from " + u, ex);
-            ret.clear();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
-            StringBuilder songContent = new StringBuilder();
-            boolean inSong = false;
-            while((line = reader.readLine()) != null) {
-                if(!inSong && line.contains(FNT)) {
-                    inSong = true;
-                }
-                if(inSong) {
-                    songContent.append(line).append("\n");
-                }
-                if(inSong && line.contains("}")) {
-                    inSong = false;
-                    SongDisplayable song = getSong("", "", songContent.toString(), "", "");
-                    if(song != null) {
-                        ret.add(song);
-                    }
-                    songContent = new StringBuilder();
-                }
-            }
+        catch(ClassNotFoundException | SQLException ex) {
+            LOGGER.log(Level.INFO, "Couldn't import using SQL from " + file.getParent(), ex);
         }
         return ret;
     }
@@ -166,41 +123,4 @@ public class EasyWorshipParser implements SongParser {
         return ret.toString().trim();
     }
 
-}
-
-class DriverShim implements Driver {
-
-    private Driver driver;
-
-    DriverShim(Driver d) {
-        this.driver = d;
-    }
-
-    public boolean acceptsURL(String u) throws SQLException {
-        return this.driver.acceptsURL(u);
-    }
-
-    public Connection connect(String u, Properties p) throws SQLException {
-        return this.driver.connect(u, p);
-    }
-
-    public int getMajorVersion() {
-        return this.driver.getMajorVersion();
-    }
-
-    public int getMinorVersion() {
-        return this.driver.getMinorVersion();
-    }
-
-    public DriverPropertyInfo[] getPropertyInfo(String u, Properties p) throws SQLException {
-        return this.driver.getPropertyInfo(u, p);
-    }
-
-    public boolean jdbcCompliant() {
-        return this.driver.jdbcCompliant();
-    }
-
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return this.driver.getParentLogger();
-    }
 }
