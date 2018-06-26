@@ -1,12 +1,17 @@
 language: java
 install: true
-
 before_install:
-  - cd Quelea
-  - chmod +x gradlew
-
+- cd Quelea
+- chmod +x gradlew
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 script:
-  - ./gradlew dist --scan
+- "./gradlew dist --scan"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: PZtR3N5c1HwACDqnpB5COq2fDUPwxr0RaWjBNt/hdkuUUs3ej09wl9UP1hB5VSzfYCQGaSFvw7yEaUof6KWCKNNyXtFhCtndj9ctfcErQ6VVxi9yUGk9wrYr0h47+XV6xvvIhVge+qRF2jR+Jae9h8tA6TZuMDIm1+tHB+HyZnke0mh7QZSJIWkJr8uKqZpZunXsaZHW/PxRO0l9o7O7zHnjHa8LQvlh1JeTCOWP9wiFEOthJLkabUjxfyK3EiOqoDQp9Ti8+NxvQVL3hBN7gajbLlAemvs770KgRdl26FtAvypaqr60/riKr7RoLiUqk606zZgO2E9mpX6W4Ip2wh9dCmuYENS7m0cS2MH64I7NfIfxuB9hgRGaS43TgDmtabN7tE5cfpI3CbnnokI4xdBx22QXX7qJgKt+MISL9icHCQ09jkPqKMBNhn6b7p1/hUiqJ7TdxV7OGGbNlDbWZZTCycvcMjt6R4AT4pZ4grlFTsiA7khTvB1Py/aaaMB9W0HQcOFnnDhgCPH2e8SC59lb7z1XVCLY5Sv8H4IkhWnJSxf8wP/WwCREmr5BuYRJAblGr7w+zYaH/ZF2PhyWMI/oMQ3bk0syKv4OkBMWGbTQvr/SykbAWVb3/q3Sbh3SxA/YZhuZDZm32N6674EL7dh12EcczfM1d7+gmXclKHs=
+  file_glob: true
+  file: 'Quelea/dist/standalone/*'
+  skip_cleanup: true
