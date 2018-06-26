@@ -1,6 +1,6 @@
 language: java
 sudo: false
-before_install:
- - chmod +x gradlew
+jdk:
+  - oraclejdk8 
 
-script: ./gradlew :myproject:test
+script: gradle dist
