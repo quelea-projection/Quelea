@@ -4,13 +4,13 @@
 
 **Are you here to download the latest version? Great! You want one of these:**
 
-[2018.1 - Windows x64](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-x64-windows-install.exe)
+[**2018.1 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-x64-windows-install.exe)
 
-[2018.1 - Windows x86](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-x86-windows-install.exe)
+[**2018.1 - Windows x86**](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-x86-windows-install.exe)
 
-[2018.1 - Cross platform (requires Java)](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-crossplatform-install.jar)
+[**2018.1 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-crossplatform-install.jar)
 
-[2018.1 - Linux (Debian based)](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-deb-install.deb)
+[**2018.1 - Linux (Debian based)**](https://github.com/quelea-projection/Quelea/releases/download/v2018.1/quelea-2018.1-deb-install.deb)
 
 ![screenshot](screenshot.png)
 
