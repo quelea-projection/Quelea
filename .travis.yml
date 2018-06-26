@@ -3,6 +3,7 @@ install: true
 
 before_install:
   - cd Quelea
+  - chmod +x /.gradlew
 
 jdk:
   - oraclejdk8
