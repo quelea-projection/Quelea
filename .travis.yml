@@ -1,6 +1,9 @@
 language: java
 install: true
 
+before_install:
+  - cd Quelea
+
 jdk:
   - oraclejdk8
 
