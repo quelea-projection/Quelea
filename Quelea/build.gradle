@@ -1,0 +1,177 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.4'
+        classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.20.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'edu.sc.seis.launch4j' version '2.4.4'
+    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'com.bmuschko.izpack' version '2.1'
+}
+
+ext {
+    CPInstallerName="quelea-" + project.queleaversion + "-crossplatform-install.jar"
+    WindowsInstallerName="quelea-" + project.queleaversion + "-x86-windows-install.exe"
+    WindowsInstaller64Name="quelea-" + project.queleaversion + "-x64-windows-install.exe"
+    DebInstallerName ="quelea-" + project.queleaversion + "-deb-install.deb"
+    
+    CPInstaller ="dist/standalone/" + CPInstallerName
+    DebInstaller ="dist/standalone/" + DebInstallerName
+    WindowsInstaller="dist/standalone/" + ext.WindowsInstallerName
+    WindowsInstaller64="dist/standalone/" + ext.WindowsInstaller64Name
+}
+
+tasks.withType(JavaCompile) {
+    configure(options) {
+        options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+    }
+}
+
+task removeDist(type: Delete) {
+    delete "dist"
+}
+clean.finalizedBy(removeDist)
+compileJava.finalizedBy(dependencyUpdates)
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+ext.mainClass = 'org.quelea.windows.main.Main'
+
+createExe { //Launch4j
+    mainClassName = 'org.quelea.windows.main.Main'
+    mutexName = "queleamutex"
+    supportUrl = "https://groups.google.com/group/quelea-discuss"
+    icon = "../../icons/logo.ico"
+    copyright = "GPLv3"
+    bundledJrePath = "winjre"
+    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+}
+
+task copyToDist {
+    dependsOn 'createExe'
+    doLast {
+        copy {from configurations.runtime into project.distdir + "/lib"} //libraries
+        copy {from "themes" into project.distdir + "/themes"}
+        copy {from "icons" into project.distdir + "/icons"}
+        copy {from "bibles" into project.distdir + "/bibles"}
+        copy {from "server" into project.distdir + "/server"}
+        copy {from "vid" into project.distdir + "/vid"}
+        copy {from "licenses" into project.distdir + "/licenses"}
+        copy {from "languages" into project.distdir + "/languages"}
+        copy {from "dictionaries" into project.distdir + "/dictionaries"}
+        copy {from "img" into project.distdir + "/img"}
+        copy {from "timer" into project.distdir + "/timer"}
+        copy {from "src" into project.distdir + "/src"}
+        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
+        copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
+        copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
+        copy {from file("build/launch4j/Quelea.exe") into file(project.distdir)}
+        copy {from file("README.TXT") into file(project.distdir)}
+        copy {from file("quelea.properties") into file(project.distdir)}
+        copy {from file("scheduleformat.xsl") into file(project.distdir)}
+        copy {from file("songformat.xsl") into file(project.distdir)}
+        copy {from file("fopcfg.xml") into file(project.distdir)}
+        copy {from file("Quelea.vbs") into file(project.distdir)}
+        copy {from file("Quelea.bat") into file(project.distdir)}
+        copy {from file("quelea.iss") into file(project.distdir)}
+        copy {from file("quelea64.iss") into file(project.distdir)}
+        copy {from file("build-install.bat") into file(project.distdir)}
+        copy {from file("build-install.sh") into file(project.distdir)}
+        copy {from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt"}}
+        copy {from file("launch.sh") into file(project.distdir)}
+        copy {from file("licenses/copyright") into file(project.distdir + "/queleadoc")}
+        //        ant.gzip(src="changelogs/changelog-" + project.queleaversion + ".txt", zipFile="queleadoc/changelog.gz")
+    }
+}
+
+task useNightlySplash {
+    onlyIf {
+        project.nightly="true"
+    }
+    doLast {
+        println("Nightly flag set, using nightly splash screens")
+        copy {from file("icons/splash-alpha-nightly.png") into file("dist/icons") rename { String filename -> return "splash-alpha.png"}}
+        copy {from file("icons/splash-beta-nightly.png") into file("dist/icons") rename { String filename -> return "splash-beta.png"}}
+        copy {from file("icons/splash-bare-nightly.png") into file("dist/icons") rename { String filename -> return "splash-bare.png"}}
+    }
+}
+copyToDist.finalizedBy(useNightlySplash)
+
+izpack {
+    installFile = file("izpack/config.xml")
+    outputFile = file(ext.CPInstaller)
+    baseDir = file("dist")
+}
+
+task dist(type: GradleBuild) {
+    tasks = ['copyToDist', 'izpack']
+}
+build.finalizedBy(dist)
+
+
+
+repositories {
+    maven { //Until richtextfx 1.0 is released
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven { //Until PR is accepted and new release issued
+        url 'https://dl.bintray.com/berry120/paradoxdriver'
+    }
+    jcenter()
+}
+
+dependencies {
+    izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
+    
+    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4'
+    compile 'de.suse.lib:jopenlyricslib:1.0'
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
+    compile group: 'com.yuvimasory', name: 'orange-extensions', version: '1.3.0'
+    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.17'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.23.1'
+    compile group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
+    compile group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
+    compile group: 'org.jcodec', name: 'jcodec', version: '0.2.3'
+    compile group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.3'
+    compile group: 'uk.co.caprica', name: 'vlcj', version: '3.10.1'
+    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+    compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '2.1.11'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '7.4.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '7.4.0'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.10'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.5'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '1.0.0-SNAPSHOT'
+    //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
+    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
+    compile group: 'com.google.zxing', name: 'core', version: '3.3.3'
+    compile group: 'com.google.zxing', name: 'javase', version: '3.3.3'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
+    compile group: 'org.openoffice', name: 'jurt', version: '4.1.2'
+    compile group: 'org.openoffice', name: 'juh', version: '4.1.2'
+
+    compile group: 'org.openoffice', name: 'unoil', version: '4.1.2'
+    compile group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
+
+    compile group: 'com.aparapi', name: 'aparapi', version: '1.9.0'
+
+    compile group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
+    compile group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
+    
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
