@@ -9,4 +9,4 @@ jdk:
   - oraclejdk8
 
 script:
-  - ./gradlew dist
+  - ./gradlew dist --scan
