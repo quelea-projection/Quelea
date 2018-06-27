@@ -13,6 +13,7 @@ before_deploy:
 - git config --global user.name "Travis CI"
 - export DATE_STR=`date "+%Y-%m-%d_%H-%M-%S"`
 - export GIT_TAG=CI-RELEASE.$DATE_STR.$TRAVIS_BUILD_NUMBER
+- git tag -d $(git tag -l "CI-RELEASE*")
 - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
 - git push -q https://${GH_TOKEN}@github.com/quelea-projection/Quelea --tags
 - ls -R
