@@ -121,8 +121,6 @@ task dist(type: GradleBuild) {
 }
 build.finalizedBy(dist)
 
-
-
 repositories {
     maven { //Until richtextfx 1.0 is released
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
