@@ -9,12 +9,12 @@ jdk:
 script:
 - "./gradlew dist --scan"
 before_deploy:
-  - git config --global user.email "builds@travis-ci.com"
-  - git config --global user.name "Travis CI"
-  - export GIT_TAG=$TRAVIS_BRANCH-0.1.$TRAVIS_BUILD_NUMBER
-  - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
-  - git push -q https://berry120@github.com/quelea-projection/Quelea --tags
-  - ls -R
+- git config --global user.email "builds@travis-ci.com"
+- git config --global user.name "Travis CI"
+- export GIT_TAG=$TRAVIS_BRANCH-0.1.$TRAVIS_BUILD_NUMBER
+- git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
+- git push -q https://${GH_TOKEN}@github.com/quelea-projection/Quelea --tags
+- ls -R
 deploy:
   provider: releases
   api_key:
@@ -23,3 +23,6 @@ deploy:
   file: dist/standalone/*
   skip_cleanup: true
   prerelease: true
+env:
+  global:
+    secure: B2CmIfRyqbeM0xDmxsKqfhvbx4Gr2sSrG9ZtkGWs0HkwmPtoWqqF6bibdj4nSArqTxaNGoHvlGuv2Psw7YK3cbGErHhAlDBzf9QiHkSYXN0NlYw3kH9k+O2h5lR7H8RwTXFxrTaoQSaXXpKQTytYDFh/fJEakIj7+tWTHa6WPDN0FmOjEvcij50WQfItW1/G3evQ5/AvbKF8DI6U9jNu66PEyDMVoTE4aLedoL7CTZRiA+tllttmIgy5z9ONzCr/hqamNfVz71/t+H7UkY2Z0WhRYydpp+6ck53uNzMwwBcPB4hz4Z1bvA7py78wewRTo+8TGWjRG5qr6DWY10sm9s60FU4E8m53gpA+rTPOTMckULFDZ9A7rYyFNTnKWf+3tvO98VoFt5XI9c329rC3stu1guhjTiPNE+tMJ/q762tVBFh9C9o/77HqyJDNbZo4rifDus2Sb4JlJEQdFlhb6oVJ2nz/Z+6qPbGbvjjvUwoul3lREc2D5VSssgdVJ7gTP9UwQhOqCGaYqhJiW6lKTuIDyzZz+Twp3WDTqbmTnu/Yxx6ieHkSDFFGjWtJrrA2qjrwwqjcUnzt2G76GfWiRNVXdRWd8FkCcY/pykWd4ZQZHSSdcKgANYYcTnbVFfrrODYS2yRWX7c2O4ysnyH3B3KY4P7Csq0Eg36RcNTysPE=
