@@ -19,5 +19,7 @@ hs_err_pid*
 Quelea/build/*
 Quelea/dist/*
 Quelea/nbproject/*
+.gradle
+.nb-gradle
 
 Thumbs.db
