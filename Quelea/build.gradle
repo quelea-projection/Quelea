@@ -93,9 +93,16 @@ task copyToDist {
         copy {from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt"}}
         copy {from file("launch.sh") into file(project.distdir)}
         copy {from file("licenses/copyright") into file(project.distdir + "/queleadoc")}
-        //        ant.gzip(src="changelogs/changelog-" + project.queleaversion + ".txt", zipFile="queleadoc/changelog.gz")
     }
 }
+
+task grabNative {
+    doLast {
+        def f = project.file(project.distdir + '/lib/libAVPlayerJava.jnilib')
+        new URL('https://github.com/quelea-projection/libAVPlayerJava/releases/download/v1.0/libAVPlayerJava.jnilib').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}
+copyToDist.finalizedBy(grabNative)
 
 task useNightlySplash {
     onlyIf {
@@ -108,7 +115,7 @@ task useNightlySplash {
         copy {from file("icons/splash-bare-nightly.png") into file("dist/icons") rename { String filename -> return "splash-bare.png"}}
     }
 }
-copyToDist.finalizedBy(useNightlySplash)
+grabNative.finalizedBy(useNightlySplash)
 
 izpack {
     installFile = file("izpack/config.xml")
