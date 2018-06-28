@@ -107,14 +107,10 @@ task grabNative {
 copyToDist.finalizedBy(grabNative)
 
 task useNightlySplash {
-    onlyIf {
-        project.nightly="true"
-    }
     doLast {
-        println("Nightly flag set, using nightly splash screens")
-        copy {from file("icons/splash-alpha-nightly.png") into file("dist/icons") rename { String filename -> return "splash-alpha.png"}}
-        copy {from file("icons/splash-beta-nightly.png") into file("dist/icons") rename { String filename -> return "splash-beta.png"}}
-        copy {from file("icons/splash-bare-nightly.png") into file("dist/icons") rename { String filename -> return "splash-bare.png"}}
+        copy {from file("icons/splash-alpha-nightly.png") into file("dist/icons") rename { String filename -> return System.properties["nightly"]==null ? "splash-alpha-nightly.png" : "splash-alpha.png"}}
+        copy {from file("icons/splash-beta-nightly.png") into file("dist/icons") rename { String filename -> return System.properties["nightly"]==null ? "splash-beta-nightly.png" : "splash-beta.png"}}
+        copy {from file("icons/splash-bare-nightly.png") into file("dist/icons") rename { String filename -> return System.properties["nightly"]==null ? "splash-bare-nightly.png" : "splash-bare.png"}}
     }
 }
 grabNative.finalizedBy(useNightlySplash)
