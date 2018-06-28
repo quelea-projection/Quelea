@@ -14,7 +14,7 @@ before_install:
 jdk:
   - oraclejdk8
 script:
-  - "./gradlew dist --scan"
+  - "./gradlew -Dnightly=true -Dversionsuffix=`date '+%Y-%m-%d_%H-%M-%S'` dist --scan"
 before_deploy:
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
