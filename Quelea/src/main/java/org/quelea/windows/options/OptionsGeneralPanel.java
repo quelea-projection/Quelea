@@ -87,6 +87,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final BigDecimalSpinner smallBibleSizeSpinner;
     private final CheckBox overflowSongCheckBox;
     private final CheckBox showVideoPanelCheckBox;
+    private final CheckBox slideTransitionCheckBox;
 
     /**
      * Create a new general panel.
@@ -354,6 +355,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(uniformFontSizeCheckBox);
         rows++;
 
+        Label slideTransitionLabel = new Label(LabelGrabber.INSTANCE.getLabel("slide.transition.label"));
+        GridPane.setConstraints(slideTransitionLabel, 1, rows);
+        getChildren().add(slideTransitionLabel);
+        slideTransitionCheckBox = new CheckBox();
+        startupLabel.setLabelFor(slideTransitionCheckBox);
+        GridPane.setConstraints(slideTransitionCheckBox, 2, rows);
+        getChildren().add(slideTransitionCheckBox);
+        rows++;
+
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -491,6 +501,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         thumbnailSizeSlider.setValue(props.getThumbnailSize());
         showExtraLivePanelToolbarOptionsCheckBox.setSelected(props.getShowExtraLivePanelToolbarOptions());
+        slideTransitionCheckBox.setSelected(props.getUseSlideTransition());
         checkOverflowEnable();
     }
 
@@ -556,6 +567,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         props.setThumbnailSize((int)thumbnailSizeSlider.getValue());
         props.setShowExtraLivePanelToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
+        boolean useSlideTransition = slideTransitionCheckBox.isSelected();
+        props.setUseSlideTransition(useSlideTransition);
         
         // apply some properties so we don't need to restart 
         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();

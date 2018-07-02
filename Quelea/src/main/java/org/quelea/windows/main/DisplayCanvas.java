@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -44,6 +45,7 @@ import org.quelea.windows.main.widgets.LogoImage;
 /**
  * The canvas where the lyrics / images / media are drawn.
  * <p/>
+ *
  * @author Michael
  */
 public class DisplayCanvas extends StackPane {
@@ -51,6 +53,7 @@ public class DisplayCanvas extends StackPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean cleared;
     private boolean blacked;
+    private boolean logoUsed;
     private final NoticeDrawer noticeDrawer;
     private final boolean stageView;
     private Node background;
@@ -67,7 +70,9 @@ public class DisplayCanvas extends StackPane {
         STAGE,
         PREVIEW,
         FULLSCREEN
-    };
+    }
+
+    ;
 
     public enum Priority {
 
@@ -83,20 +88,23 @@ public class DisplayCanvas extends StackPane {
         public int getPriority() {
             return priority;
         }
-    };
+    }
+
+    ;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
      * <p/>
-     * @param showBorder true if the border should be shown around any text
-     * (only if the options say so) false otherwise.
-     * @param stageView true if this canvas is on a stage view, false if it's on
-     * a main projection view.
-     * @param playVideo true if this canvas should play video. (At present, only
-     * one canvas can do this due to VLC limitations.)
-     * @param updater the updater that will update this canvas.
+     *
+     * @param showBorder      true if the border should be shown around any text
+     *                        (only if the options say so) false otherwise.
+     * @param stageView       true if this canvas is on a stage view, false if it's on
+     *                        a main projection view.
+     * @param playVideo       true if this canvas should play video. (At present, only
+     *                        one canvas can do this due to VLC limitations.)
+     * @param updater         the updater that will update this canvas.
      * @param dravingPriority the drawing priority of this canvas when it's
-     * updating.
+     *                        updating.
      */
     public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
         setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
@@ -289,6 +297,7 @@ public class DisplayCanvas extends StackPane {
     /**
      * Determine if this canvas is part of a stage view.
      * <p/>
+     *
      * @return true if its a stage view, false otherwise.
      */
     public boolean isStageView() {
@@ -306,8 +315,9 @@ public class DisplayCanvas extends StackPane {
      * background image in place but remove all the text. Otherwise display as
      * normal.
      * <p>
+     *
      * @param cleared cleared if the text on this canvas should be cleared,
-     * false otherwise.
+     *                false otherwise.
      */
     public void setCleared(boolean cleared) {
         if (this.cleared == cleared) {
@@ -322,6 +332,7 @@ public class DisplayCanvas extends StackPane {
     /**
      * Determine whether this canvas is cleared.
      * <p/>
+     *
      * @return true if the canvas is cleared, false otherwise.
      */
     public boolean isCleared() {
@@ -329,12 +340,23 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
+     * Determine whether this canvas is hidden by logo.
+     * <p/>
+     *
+     * @return true if the canvas is behind logo, false otherwise.
+     */
+    public boolean isShowingLogo() {
+        return logoUsed;
+    }
+
+    /**
      * Toggle the blacking of this canvas - if blacked, remove the text and
      * background image (if any) just displaying a black screen. Otherwise
      * display as normal.
      * <p>
+     *
      * @param blacked true if this canvas should be set blacked, false
-     * otherwise.
+     *                otherwise.
      */
     public void setBlacked(boolean blacked) {
         this.blacked = blacked;
@@ -353,6 +375,7 @@ public class DisplayCanvas extends StackPane {
     /**
      * Determine whether this canvas is blacked.
      * <p/>
+     *
      * @return true if the canvas is blacked, false otherwise.
      */
     public boolean isBlacked() {
@@ -362,6 +385,7 @@ public class DisplayCanvas extends StackPane {
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics canvas.
      * <p/>
+     *
      * @return the notice drawer.
      */
     public NoticeDrawer getNoticeDrawer() {
@@ -376,6 +400,7 @@ public class DisplayCanvas extends StackPane {
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
+        logoUsed = selected;
         if (selected) {
             logoImage.toFront();
             FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getLogoFadeDuration()), logoImage);

@@ -667,3 +667,4 @@ redo.label=Redo
 show.extra.live.panel.toolbar.options.label=Show extra live panel toolbar options
 schedule.items.skipped.text=Some schedule items don't have their media embedded, so they weren't added.
 schedule.items.skipped.header=Schedule items skipped
+slide.transition.label=Use fade transition between slides

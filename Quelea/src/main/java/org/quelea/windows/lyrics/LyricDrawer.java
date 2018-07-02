@@ -55,6 +55,7 @@ import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -76,6 +77,9 @@ public class LyricDrawer extends WordDrawer {
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
     private String[] smallText;
+    private Group oldTextGroup;
+    private String[] oldText;
+    private boolean newItem;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -98,6 +102,14 @@ public class LyricDrawer extends WordDrawer {
                 getCanvas().getChildren().add(smallTextGroup);
             }
         }
+
+        if (getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+            newItem = oldText != null && !Arrays.deepEquals(getText(), oldText) && textGroup != null;
+            oldText = getText();
+        } else {
+            oldTextGroup = textGroup;
+        }
+
         Font font = Font.font(theme.getFont().getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -319,6 +331,28 @@ public class LyricDrawer extends WordDrawer {
             t2.setFromValue(0);
             t2.setToValue(1);
             t2.play();
+        } else if (QueleaProperties.get().getUseSlideTransition()) {
+            if (!getCanvas().isBlacked() && !getCanvas().isCleared() && !getCanvas().isShowingLogo() && getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+                if (oldTextGroup != null) {
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionOutDuration()), oldTextGroup);
+                    fadeOut.setFromValue(1.0);
+                    fadeOut.setToValue(0.0);
+                    fadeOut.setOnFinished(e -> {
+                        if (getCanvas().getChildren().contains(oldTextGroup)) {
+                            getCanvas().getChildren().remove(oldTextGroup);
+                            oldTextGroup = null;
+                        }
+                    });
+                    getCanvas().getChildren().add(oldTextGroup);
+                    fadeOut.play();
+                }
+                if (oldTextGroup == null && Arrays.deepToString(oldText).equals("[]") || newItem) {
+                    FadeTransition fadeIn = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionInDuration()), textGroup);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                }
+            }
         }
     }
 
