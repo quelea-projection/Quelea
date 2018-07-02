@@ -1,0 +1,7 @@
+quelea (2019.0) stable; urgency=normal
+ 
+  * Display warning if items are skipped when parsing schedule
+  * Display CCLI number in schedule PDF export
+  * Removed paradox requirement when importing Easyworship databases
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 20 June 2018 00:00:00 +0000

@@ -13,8 +13,19 @@
                         <xsl:value-of select="title"/>
                     </fo:block>
                     <xsl:for-each select="song">
-                        <fo:block space-after="6pt">
-                            <xsl:value-of select="position()"/>. <xsl:value-of select="title"/> - <xsl:value-of select="author"/>
+                        <fo:block space-after="10pt">
+                            <xsl:value-of select="position()"/>.
+                            <xsl:value-of select="title"/>
+                            <xsl:choose>
+                                <xsl:when test="author != ''">
+                                    - <xsl:value-of select="author"/> 
+                                </xsl:when>
+                            </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="ccli != ''">
+                                    (CCLI <xsl:value-of select="ccli"/>)
+                                </xsl:when>
+                            </xsl:choose>
                         </fo:block>
                     </xsl:for-each>
                 </fo:flow>
