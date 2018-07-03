@@ -13,7 +13,7 @@ apps:
     command: java -jar Quelea.jar
 
 parts:
-  freeplane:
+  quelea:
     plugin: gradle
     source: .
     build: |
