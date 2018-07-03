@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -72,6 +73,7 @@ import org.quelea.windows.presentation.PowerPointHandler;
  * The panel displaying the live lyrics selection - changes made on this panel
  * are reflected on the live projection.
  * <p/>
+ *
  * @author Michael
  */
 public class LivePanel extends LivePreviewPanel {
@@ -103,6 +105,10 @@ public class LivePanel extends LivePreviewPanel {
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
+        ImageView liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
+        liveIcon.setFitHeight(10);
+        liveIcon.setFitWidth(10);
+        header.getItems().add(liveIcon);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
         loop.setOnMouseClicked(e -> {
             if (isLoopSelected()) {
@@ -394,24 +400,26 @@ public class LivePanel extends LivePreviewPanel {
     /**
      * Show/hide extra toolbar options.
      * <p/>
+     *
      * @param show display the extra options.
      */
     public void showExtraToolbarOptions(boolean show) {
         if (show) {
-            if(!header.getItems().contains(hide)) {
+            if (!header.getItems().contains(hide)) {
                 header.getItems().add(hide);
             }
         } else {
-            if(header.getItems().contains(hide)) {
+            if (header.getItems().contains(hide)) {
                 header.getItems().remove(hide);
             }
         }
     }
-    
+
     /**
      * Set the displayable to be shown on this live panel.
      * <p/>
-     * @param d the displayable to show.
+     *
+     * @param d     the displayable to show.
      * @param index the index to use for the displayable, if relevant.
      */
     @Override
@@ -523,6 +531,7 @@ public class LivePanel extends LivePreviewPanel {
     /**
      * Determine if the loop button is selected.
      * <p>
+     *
      * @return true if it's selected, false otherwise.
      */
     public boolean isLoopSelected() {
@@ -536,6 +545,7 @@ public class LivePanel extends LivePreviewPanel {
     /**
      * Get the hide button.
      * <p>
+     *
      * @return the hide button.
      */
     public ToggleButton getHide() {
@@ -565,6 +575,7 @@ public class LivePanel extends LivePreviewPanel {
      * Determine if content is currently being shown on this panel, if not it
      * may be showing the logo, cleared, blacked or hidden.
      * <p>
+     *
      * @return true if content is showing, false otherwise.
      */
     public boolean isContentShowing() {
@@ -602,7 +613,8 @@ public class LivePanel extends LivePreviewPanel {
         if (QueleaApp.get().getProjectionWindow().isShowing() && isContentShowing()) {
             Double d = canvas.getBoundsInLocal().getHeight();
             int h = d.intValue();
-            Double d2 = canvas.getBoundsInLocal().getWidth();;
+            Double d2 = canvas.getBoundsInLocal().getWidth();
+            ;
             int w = d2.intValue();
             webPreviewImage = new WritableImage(w, h);
             SnapshotParameters params = new SnapshotParameters();

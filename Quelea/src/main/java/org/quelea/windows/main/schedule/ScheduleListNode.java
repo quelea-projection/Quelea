@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,28 +35,32 @@ import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
 
 /**
- *
  * @author Michael
  */
 public class ScheduleListNode extends HBox {
 
     private FadeTransition fade;
     private Button themeButton;
+    private ImageView liveIcon;
 
     public ScheduleListNode(Displayable displayable) {
         super(10);
         setAlignment(Pos.CENTER_LEFT);
         ImageView icon = displayable.getPreviewIcon();
+        liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
+        liveIcon.setFitHeight(10);
+        liveIcon.setFitWidth(10);
+        liveIcon.setVisible(false);
         getChildren().add(icon);
         getChildren().add(new Label(displayable.getPreviewText()));
+        getChildren().add(liveIcon);
 
         if (displayable instanceof TextDisplayable || displayable instanceof TimerDisplayable) {
             themeButton = new Button("", new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-            if(displayable instanceof TextDisplayable) {
-                themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable)displayable));
-            }
-            else {
-                themeButton.setOnAction(new EditTimerThemeActionHandler((TimerDisplayable)displayable));
+            if (displayable instanceof TextDisplayable) {
+                themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable) displayable));
+            } else {
+                themeButton.setOnAction(new EditTimerThemeActionHandler((TimerDisplayable) displayable));
             }
             Utils.setToolbarButtonStyle(themeButton);
             Region spacer = new Region();
@@ -75,6 +79,12 @@ public class ScheduleListNode extends HBox {
                 fade.setToValue(0);
                 fade.play();
             });
+        }
+    }
+
+    public void setLive(boolean live) {
+        if (liveIcon != null) {
+            liveIcon.setVisible(live);
         }
     }
 
