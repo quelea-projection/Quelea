@@ -18,6 +18,8 @@ parts:
     source: .
     build: |
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+      gradle tasks
+      pwd
       gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
     install: |
       unzip dist/quelea-snap.zip -d $SNAPCRAFT_PART_INSTALL/
