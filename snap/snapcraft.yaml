@@ -1,21 +1,18 @@
-name: freeplane
-version: '1.6.10' 
-summary: Application for Mind Mapping, Knowledge and Project Management
+name: quelea
+version: '0.1' 
+summary: Church projection
 description: |
-  Freeplane is a free and open source software application that supports
-  thinking, sharing information and getting things done at work, in school
-  and at home. The core of the software is tools for mind mapping (also
-  known as concept mapping or information mapping) and using mapped
-  information.
+  Quelea is a free and open source software application that projects
+  multimedia content in your church service.
 
 confinement: devmode
 
 apps:
-  freeplane:
+  quelea:
     command: desktop-launch $SNAP/freeplane-1.6.10/freeplane.sh
 
 parts:
-  freeplane:
+  quelea:
     after: [desktop-glib-only]
     plugin: gradle
     source: .
@@ -23,7 +20,7 @@ parts:
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
       gradle release -x test -x createGitTag
     install: |
-      unzip DIST/freeplane_bin-*.zip -d $SNAPCRAFT_PART_INSTALL/
+      unzip dist/quelea-snap.zip -d $SNAPCRAFT_PART_INSTALL/
     build-packages:
       - unzip
       - openjdk-8-jdk
