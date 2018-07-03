@@ -33,13 +33,14 @@ public class Song {
     private String info;
     private Theme theme;
     private HashMap<String, String> translations;
+    private String sequence;
 
     public Song() {
     }
 
     public Song(String title, String author, String lyrics, String ccli, String copyright,
-            String year, String publisher, String key, String capo, String info,
-            Theme theme, HashMap<String, String> translations) {
+                String year, String publisher, String key, String capo, String info,
+                Theme theme, HashMap<String, String> translations, String sequence) {
         this.title = title;
         this.author = author;
         this.lyrics = lyrics;
@@ -52,6 +53,7 @@ public class Song {
         this.info = info;
         this.theme = theme;
         this.translations = translations;
+        this.sequence = sequence;
     }
 
     /**
@@ -245,5 +247,21 @@ public class Song {
     public void setTranslations(HashMap<String, String> translations) {
         this.translations = translations;
     }
-    
+
+    /**
+     * @return the sequence
+     */
+    @Column(name = "songsequence", length = STRING_LENGTH)
+    public String getSequence() {
+        return sequence;
+    }
+
+    /**
+     * @param sequence the sequence to set
+     */
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
+
 }

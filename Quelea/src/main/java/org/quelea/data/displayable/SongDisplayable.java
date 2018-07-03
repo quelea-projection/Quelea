@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -215,6 +215,20 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         }
 
         /**
+         * Set the song sequence of this song.
+         * <p/>
+         * @param sequence the song's sequence order.
+         * @return this builder.
+         */
+        public Builder sequence(String sequence) {
+            if (sequence == null) {
+                sequence = "";
+            }
+            song.sequence = sequence;
+            return this;
+        }
+
+        /**
          * Get the song from this builder with all the fields set appropriately.
          * <p/>
          * @return the song.
@@ -243,6 +257,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private long id = 0;
     private boolean printChords;
     private String lastSearch = "";
+    private String sequence = "";
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -268,6 +283,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.lastSearch = song.lastSearch;
         this.translations = song.translations;
         this.count = song.count++;
+        this.sequence = song.sequence;
     }
 
     /**
@@ -295,6 +311,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.author = author;
         this.theme = theme;
         sections = new ArrayList<>();
+        sequence = "";
     }
 
     /**
@@ -638,6 +655,24 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         refreshLyrics();
     }
 
+    /**
+     * Set the sequence order of this song.
+     * <p/>
+     * @param sequence the copyright field of this song.
+     */
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
+    /**
+     * Get the sequence order of this song.
+     * <p/>
+     * @return the song sequence order
+     */
+    public String getSequence() {
+        return sequence;
+    }
+
     private void refreshLyrics() {
         ThemeDTO theme = ThemeDTO.DEFAULT_THEME;
         for (TextSection section : sections) {
@@ -716,8 +751,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             String[] smallLines;
             if (churchCcliNum == null) {
                 smallLines = new String[]{
-                    title,
-                    author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
+                        title,
+                        author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
                 };
             } else {
                 String cpText = copyright.trim();
@@ -737,6 +772,26 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 smallLines = smallLinesList.toArray(new String[smallLinesList.size()]);
             }
             sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
+            List<TextSection> temp = new ArrayList<>();
+            if (sequence != null && !sequence.equals("")) {
+                for (String s : sequence.split(" ")) {
+                    for (TextSection ts : sections) {
+                        if (ts.getTitle() != null && !ts.getTitle().equals("")) {
+                            String[] title = ts.getTitle().split(" ");
+                            StringBuilder sb = new StringBuilder();
+                            for (String t : title) {
+                                sb.append(t.charAt(0));
+                            }
+                            if (sb.toString().equals(s)) {
+                                if ((temp.size() > 0 && !temp.get(temp.size() - 1).equals(ts) || temp.isEmpty())) {
+                                    temp.add(ts);
+                                }
+                            }
+                        }
+                    }
+                }
+                sections = temp;
+            }
         }
     }
 
@@ -880,6 +935,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("<notes>");
         xml.append(Utils.escapeXML(info));
         xml.append("</notes>");
+        xml.append("<sequence>");
+        xml.append(Utils.escapeXML(sequence));
+        xml.append("</sequence>");
         xml.append("<lyrics>");
         for (TextSection section : sections) {
             xml.append(section.getXML());
@@ -918,7 +976,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         return xml.toString();
     }
 
-    /**
+    /** TODO: Add sequence
      * Get the XML used to print the song (will be transferred via XSLT.)
      *
      * @param includeTranslations true if translations should be included in the
@@ -1024,6 +1082,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String notes = "";
         String currentTranslation = "";
         String translationLyrics = "";
+        String sequence = "";
         HashMap<String, String> translationOpts = new HashMap<>();
         boolean updateInDB = true;
         List<TextSection> songSections = new ArrayList<>();
@@ -1094,6 +1153,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     translationOpts.put(translationOptLang, translationOptLyrics);
                 }
             }
+            if (node.getNodeName().equals("sequence")) {
+                sequence = node.getTextContent();
+            }
         }
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
@@ -1116,6 +1178,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             ret.setCurrentTranslationLyrics(currentTranslation);
             ret.addTranslation(currentTranslation, translationLyrics);
         }
+        ret.setSequence(sequence);
         return ret;
     }
 
