@@ -18,15 +18,15 @@ before_install:
   - cd Quelea
   - chmod +x gradlew
   - chmod +x build-install.sh
-  - wget http://files.jrsoftware.org/is/5/innosetup-5.5.9.exe
+  - wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
   - wineboot --update
   - Xvfb :0 -screen 0 1024x768x16 &
-  - DISPLAY=:0.0 wine innosetup-5.5.9.exe /VERYSILENT /SUPPRESSMSGBOXES
+  - DISPLAY=:0.0 wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
   - ls -l /home/travis/.wine/
   - ls -l /home/travis/.wine/drive_c
   - ls -l "/home/travis/.wine/drive_c/Program Files"
   - ls -l "/home/travis/.wine/drive_c/Program Files (x86)"
-  - ls -l "/home/travis/.wine/drive_c/Program Files/Inno Setup 5/"
+  - ls -l "/home/travis/.wine/drive_c/Program Files (x86)/Inno Setup 5/"
 jdk:
   - oraclejdk8
 script:
