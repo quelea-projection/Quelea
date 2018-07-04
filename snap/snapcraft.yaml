@@ -9,7 +9,7 @@ confinement: devmode
 
 apps:
   quelea:
-    command: desktop-launch $SNAP/freeplane-1.6.10/freeplane.sh
+    command: desktop-launch $SNAP/quelea/launch.sh
 
 parts:
   quelea:
