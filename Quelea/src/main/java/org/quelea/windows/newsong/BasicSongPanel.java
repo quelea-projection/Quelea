@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@
 package org.quelea.windows.newsong;
 
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -60,6 +61,7 @@ import org.quelea.windows.main.QueleaApp;
  * The panel that manages the basic input of song information - the title,
  * author and lyrics.
  * <p/>
+ *
  * @author Michael
  */
 public class BasicSongPanel extends BorderPane {
@@ -148,8 +150,7 @@ public class BasicSongPanel extends BorderPane {
             dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
             lyricsToolbar.getItems().add(dictSelector);
             lyricsToolbar.getItems().add(getDictButton());
-        }
-        else {
+        } else {
             dictSelector = null;
         }
         VBox.setVgrow(mainPanel, Priority.ALWAYS);
@@ -219,8 +220,8 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get a title button
      *
-     * @param fileName Image file name
-     * @param label Tooltip label
+     * @param fileName  Image file name
+     * @param label     Tooltip label
      * @param titleName Title name to be inserted
      * @return the title button
      */
@@ -257,6 +258,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the button used for transposing the chords.
      * <p/>
+     *
      * @return the button used for transposing the chords.
      */
     private Button getTransposeButton() {
@@ -274,25 +276,7 @@ public class BasicSongPanel extends BorderPane {
                 transposeDialog.showAndWait();
                 int semitones = transposeDialog.getSemitones();
 
-                TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
-                if (!keyField.getText().isEmpty()) {
-                    keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
-                }
-
-                String key = getKey(semitones);
-
-                StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-                for (String line : getLyricsField().getText().split("\n")) {
-                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
-                        newText.append(new ChordLineTransposer(line).transpose(semitones, key));
-                    } else {
-                        newText.append(line);
-                    }
-                    newText.append('\n');
-                }
-                int pos = getLyricsField().getCaretPosition();
-                getLyricsField().replaceText(newText.toString());
-                getLyricsField().moveTo(pos);
+                transposeSong(semitones);
             }
         });
         Utils.setToolbarButtonStyle(ret);
@@ -303,6 +287,7 @@ public class BasicSongPanel extends BorderPane {
      * Get the given key of the song (or as best we can work out if it's not
      * specified) transposed by the given number of semitones.
      * <p/>
+     *
      * @param semitones the number of semitones to transpose the key.
      * @return the key, transposed.
      */
@@ -342,6 +327,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the spell checker button.
      * <p/>
+     *
      * @return the spell checker button.
      */
     private Button getDictButton() {
@@ -372,6 +358,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Reset this panel so an existing song can be edited.
      * <p/>
+     *
      * @param song the song to edit.
      */
     public void resetEditSong(SongDisplayable song) {
@@ -387,6 +374,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the lyrics field.
      * <p/>
+     *
      * @return the lyrics field.
      */
     public LyricsTextArea getLyricsField() {
@@ -396,6 +384,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the title field.
      * <p/>
+     *
      * @return the title field.
      */
     public TextField getTitleField() {
@@ -405,6 +394,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the author field.
      * <p/>
+     *
      * @return the author field.
      */
     public TextField getAuthorField() {
@@ -437,9 +427,9 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Insert a title in the lyrics
      *
-     * @param title The name of the section title, e.g. "Chorus"
+     * @param title  The name of the section title, e.g. "Chorus"
      * @param number The number of the title as a string, e.g. (Verse) "2", and
-     * use "" if no number is wanted
+     *               use "" if no number is wanted
      */
     private void insertTitle(String title, String number) {
         int caretPos = lyricsArea.getArea().getCaretPosition();
@@ -479,6 +469,28 @@ public class BasicSongPanel extends BorderPane {
                 }
             }
         }
+    }
+
+    public void transposeSong(int semitones) {
+        TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+        if (!keyField.getText().isEmpty()) {
+            keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
+        }
+
+        String key = getKey(semitones);
+
+        StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
+        for (String line : getLyricsField().getText().split("\n")) {
+            if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                newText.append(new ChordLineTransposer(line).transpose(semitones, key));
+            } else {
+                newText.append(line);
+            }
+            newText.append('\n');
+        }
+        int pos = getLyricsField().getCaretPosition();
+        getLyricsField().replaceText(newText.toString());
+        getLyricsField().moveTo(pos);
     }
 
 }
