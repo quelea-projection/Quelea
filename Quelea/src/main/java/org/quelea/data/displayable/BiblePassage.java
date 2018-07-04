@@ -103,6 +103,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         int lines = 0;
         int count = 0;
         boolean verseError = false;
+        if (QueleaProperties.get().getUseBibleTitleSlide()) {
+            textSections.add(new TextSection("", new String[]{getPreviewText().replaceAll("\n", ", ").trim()}, smallText, false));
+        }
         for (BibleVerse verse : verses) {
             if (verse == null) {
                 verseError = true;

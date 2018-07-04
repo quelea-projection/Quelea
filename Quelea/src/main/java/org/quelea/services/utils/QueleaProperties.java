@@ -1989,6 +1989,10 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    public boolean getUseBibleTitleSlide() {
+        return Boolean.parseBoolean(getProperty("use.bible.title.slide", "false"));
+    }
+
     public double getLyricWidthBounds() {
         return Double.parseDouble(getProperty("lyric.width.bound", "0.92"));
     }
