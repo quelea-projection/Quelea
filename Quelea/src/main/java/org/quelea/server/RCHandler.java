@@ -371,7 +371,7 @@ public class RCHandler {
                 response.append("<head><meta charset=\"UTF-8\"></head>");
                 response.append(sd.getTitle()).append("<br/>");
                 response.append(sd.getAuthor()).append("<br/><br/>");
-                response.append(sd.getLyrics(false, false).replaceAll("\n", "<br/>")).append("<br/><br/>");
+                response.append(sd.getLyrics(false, false, true).replaceAll("\n", "<br/>")).append("<br/><br/>");
                 response.append("<a href=\"/add/").append(songID).append("\">").append(LabelGrabber.INSTANCE.getLabel("rcs.add.song")).append("</a>");
                 response.append("</html>");
                 return response.toString();

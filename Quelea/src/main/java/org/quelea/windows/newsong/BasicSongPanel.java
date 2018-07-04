@@ -423,7 +423,7 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().setText(song.getAuthor());
         getSequenceField().setText(song.getSequence());
         getLyricsField().clear();
-        String lyrics = song.getLyrics(true, true);
+        String lyrics = song.getLyrics(true, true, false);
         if (!song.getSequence().equals("")) {
             ArrayList<String> sList = new ArrayList<>();
             StringBuilder sb = new StringBuilder();

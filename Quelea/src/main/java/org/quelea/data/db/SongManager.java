@@ -200,7 +200,7 @@ public final class SongManager {
         clearIndex();
         final List<SongDisplayable> adjustedSongs = new ArrayList<>();
         for (SongDisplayable song : songs) {
-            if (song.getSections().length > 0) {
+            if (song.getSectionsWithoutSequence().length > 0) {
                 adjustedSongs.add(song);
             }
         }
@@ -213,7 +213,7 @@ public final class SongManager {
                     final boolean nullTheme = song.getSections()[0].getTheme() == null;
                     Song newSong = new Song(song.getTitle(),
                             song.getAuthor(),
-                            song.getLyrics(true, true),
+                            song.getLyrics(true, true, false),
                             song.getCcli(),
                             song.getCopyright(),
                             song.getYear(),
@@ -270,7 +270,7 @@ public final class SongManager {
                     updatedSong.setCopyright(song.getCopyright());
                     updatedSong.setInfo(song.getInfo());
                     updatedSong.setSequence(song.getSequence());
-                    updatedSong.setLyrics(song.getLyrics(true, true));
+                    updatedSong.setLyrics(song.getLyrics(true, true, false));
                     updatedSong.setKey(song.getKey());
                     updatedSong.setPublisher(song.getPublisher());
                     updatedSong.setTitle(song.getTitle());
