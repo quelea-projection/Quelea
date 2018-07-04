@@ -127,7 +127,7 @@ task innosetup (type:Exec) {
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
             commandLine = ['cmd', '/C', 'build-install.bat']
         } else {
-            commandLine ['bash', './build-install.sh']
+            commandLine = ['sh', './build-install.sh']
         }
     }
     
