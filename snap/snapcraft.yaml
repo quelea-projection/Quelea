@@ -1,0 +1,30 @@
+name: quelea
+version: '0.1' 
+summary: Church projection
+description: |
+  Quelea is a free and open source software application that projects
+  multimedia content in your church service.
+
+confinement: devmode
+
+apps:
+  quelea:
+    command: desktop-launch $SNAP/quelea/launch.sh
+
+parts:
+  quelea:
+    after: [desktop-glib-only]
+    plugin: gradle
+    source: .
+    build: |
+      export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+      cd Quelea
+      gradle tasks
+      pwd
+      ls -l
+      gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+    install: |
+      unzip dist/quelea-snap.zip -d $SNAPCRAFT_PART_INSTALL/
+    build-packages:
+      - unzip
+      - openjdk-8-jdk
