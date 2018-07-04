@@ -121,8 +121,25 @@ izpack {
     baseDir = file("dist")
 }
 
+task innosetup (type:Exec) {
+    doFirst {
+        workingDir = project.file('.')
+        if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+            commandLine = ['cmd', '/C', 'build-install.bat']
+        } else {
+            commandLine './build-install.sh'
+        }
+    }
+    
+    doLast {
+        copy {from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName}}
+        copy {from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name}}
+        delete (file("Output"))
+    }
+}
+
 task dist(type: GradleBuild) {
-    tasks = ['copyToDist', 'izpack']
+    tasks = ['copyToDist', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 
