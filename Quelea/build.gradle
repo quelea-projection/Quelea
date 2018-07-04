@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '1.14'
+    id 'com.gradle.build-scan' version '1.15'
     id 'java'
     id 'edu.sc.seis.launch4j' version '2.4.4'
     id 'com.github.ben-manes.versions' version '0.20.0'
@@ -176,7 +176,7 @@ dependencies {
     compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '2.1.12'
     compile group: 'org.apache.lucene', name: 'lucene-core', version: '7.4.0'
     compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '7.4.0'
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.10'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.11'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.5'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '1.0.0-SNAPSHOT'
