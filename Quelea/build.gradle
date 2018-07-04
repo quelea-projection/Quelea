@@ -52,7 +52,19 @@ sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ext.mainClass = 'org.quelea.windows.main.Main'
 
-createExe { //Launch4j
+task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
+    mainClassName = 'org.quelea.windows.main.Main'
+    mutexName = "queleamutex"
+    supportUrl = "https://groups.google.com/group/quelea-discuss"
+    icon = "../../icons/logo.ico"
+    copyright = "GPLv3"
+    bundledJrePath = "winjre64"
+    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+    bundledJre64Bit = true
+    outfile = "Quelea64.exe"
+}
+
+task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
     mainClassName = 'org.quelea.windows.main.Main'
     mutexName = "queleamutex"
     supportUrl = "https://groups.google.com/group/quelea-discuss"
@@ -60,10 +72,12 @@ createExe { //Launch4j
     copyright = "GPLv3"
     bundledJrePath = "winjre"
     jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+    outfile = "Quelea.exe"
 }
+createQueleaExe.dependsOn createQueleaExe64
 
 task copyToDist {
-    dependsOn 'createExe'
+    dependsOn 'createQueleaExe'
     doLast {
         copy {from configurations.runtime into project.distdir + "/lib"} //libraries
         copy {from "themes" into project.distdir + "/themes"}
@@ -80,7 +94,6 @@ task copyToDist {
         copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
         copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
         copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
-        copy {from file("build/launch4j/Quelea.exe") into file(project.distdir)}
         copy {from file("README.TXT") into file(project.distdir)}
         copy {from file("quelea.properties") into file(project.distdir)}
         copy {from file("scheduleformat.xsl") into file(project.distdir)}

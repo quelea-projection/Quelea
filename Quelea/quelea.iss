@@ -46,7 +46,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Name: "{app}"; Permissions: everyone-modify;  
 
 [Files]
-Source: "launch4j/Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build/launch4j/Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist/Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
