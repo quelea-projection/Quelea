@@ -59,7 +59,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,
- * author and lyrics.
+ * author, lyrics and sequence.
  * <p/>
  * @author Michael
  */
@@ -423,21 +423,7 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().setText(song.getAuthor());
         getSequenceField().setText(song.getSequence());
         getLyricsField().clear();
-        String lyrics = song.getLyrics(true, true, false);
-        if (!song.getSequence().equals("")) {
-            ArrayList<String> sList = new ArrayList<>();
-            StringBuilder sb = new StringBuilder();
-            for (String s : lyrics.split("\n\n")) {
-                if (!sList.contains(s)) {
-                    sList.add(s);
-                }
-            }
-            for (String s : sList) {
-                sb.append(s).append("\n\n");
-            }
-            lyrics = sb.toString();
-        }
-        getLyricsField().insertText(0, lyrics);
+        getLyricsField().insertText(0, song.getLyrics(true, true, false));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
         lyricsArea.clearUndo();

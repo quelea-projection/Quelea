@@ -673,6 +673,6 @@ chosen.sequence.explanation=Drag items from left to right or double click to cre
 available.sections.label=Available sections in this song
 remove.sequence.tooltip=Remove section from sequence order
 move.up.sequence.tooltip=Move section up in sequence order
-move.up.sequence.tooltip=Move section down in sequence order
+move.down.sequence.tooltip=Move section down in sequence order
 chosen.sequence.label=Chosen sequence order
 sequence.tooltip=Song sequence dialog
