@@ -19,7 +19,7 @@ before_install:
   - chmod +x gradlew
   - chmod +x build-install.sh
   - wget http://files.jrsoftware.org/is/5/innosetup-5.5.9.exe
-  - wineboot --update
+#  - wineboot --update
   - Xvfb :0 -screen 0 1024x768x16 &
   - DISPLAY=:0.0 wine innosetup-5.5.9.exe /VERYSILENT /SUPPRESSMSGBOXES
   - ls -l /home/travis/.wine/
