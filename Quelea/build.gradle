@@ -23,7 +23,7 @@ buildScan {
 }
 
 ext {
-    versionsuffix = System.properties["versionsuffix"]!=null ? "-" + System.properties["versionsuffix"] : project.queleaversion
+    versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
     
     CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
     WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
