@@ -21,6 +21,7 @@ hs_err_pid*
 Quelea/build/*
 Quelea/dist/*
 Quelea/nbproject/*
+Quelea/.idea/*
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
 
