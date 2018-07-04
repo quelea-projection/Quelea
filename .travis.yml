@@ -1,6 +1,12 @@
+sudo: required
 if: tag IS blank
 language: java
 install: true
+addons:
+  apt:
+    packages:
+    - wine
+    - xvfb
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -11,6 +17,8 @@ cache:
 before_install:
   - cd Quelea
   - chmod +x gradlew
+  - wget http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe
+  - xvfb-run -a wine innosetup-qsp-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
 jdk:
   - oraclejdk8
 script:
@@ -19,7 +27,7 @@ before_deploy:
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
   - export GIT_TAG=CI-RELEASE
-  - git tag -f $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
+  - git tag -f $GIT_TAG -a -m "Build $TRAVIS_BUILD_NUMBER - this is a continuous integration release for testing the latest bleeding edge features, and is not suitable for production use."
   - git push --delete https://${GH_TOKEN}@github.com/quelea-projection/Quelea CI-RELEASE
   - git push -q https://${GH_TOKEN}@github.com/quelea-projection/Quelea --tags
 deploy:
