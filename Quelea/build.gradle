@@ -23,12 +23,12 @@ buildScan {
 }
 
 ext {
-    versionsuffix = System.properties["versionsuffix"]!=null ? "-" + System.properties["versionsuffix"] : ""
+    versionsuffix = System.properties["versionsuffix"]!=null ? "-" + System.properties["versionsuffix"] : project.queleaversion
     
-    CPInstallerName="quelea-" + project.queleaversion + versionsuffix + "-crossplatform-install.jar"
-    WindowsInstallerName="quelea-" + project.queleaversion + versionsuffix + "-x86-windows-install.exe"
-    WindowsInstaller64Name="quelea-" + project.queleaversion + versionsuffix + "-x64-windows-install.exe"
-    DebInstallerName ="quelea-" + project.queleaversion + versionsuffix + "-deb-install.deb"
+    CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
+    WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
+    WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
+    DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
     
     CPInstaller ="dist/standalone/" + CPInstallerName
     DebInstaller ="dist/standalone/" + DebInstallerName
