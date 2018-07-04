@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -29,18 +30,27 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SerializableColor;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.main.DisplayCanvas;
 
 /**
  * The dialog used to manage the notices.
  * <p/>
+ *
  * @author Michael
  */
 public class NoticeDialog extends Stage implements NoticesChangedListener {
@@ -66,9 +76,9 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = NoticeEntryDialog.getNotice(null);
-                if(notice != null) {
+                if (notice != null) {
                     noticeList.getItems().add(notice);
-                    for(NoticeDrawer drawer : noticeDrawers) {
+                    for (NoticeDrawer drawer : noticeDrawers) {
                         drawer.addNotice(notice);
                     }
                 }
@@ -81,9 +91,9 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
-                if(notice != null) {
+                if (notice != null) {
                     noticeList.getItems().add(notice);
-                    for(NoticeDrawer drawer : noticeDrawers) {
+                    for (NoticeDrawer drawer : noticeDrawers) {
                         drawer.addNotice(notice);
                     }
                 }
@@ -97,7 +107,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = noticeList.getSelectionModel().getSelectedItem();
                 noticeList.getItems().remove(noticeList.getSelectionModel().getSelectedIndex());
-                for(NoticeDrawer drawer : noticeDrawers) {
+                for (NoticeDrawer drawer : noticeDrawers) {
                     drawer.removeNotice(notice);
                 }
             }
@@ -119,7 +129,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
             @Override
             public void changed(ObservableValue<? extends Notice> ov, Notice t, Notice t1) {
                 boolean disable = noticeList.getSelectionModel().getSelectedItem() == null;
-                if(!noticeList.getItems().contains(noticeList.getSelectionModel().getSelectedItem())) {
+                if (!noticeList.getItems().contains(noticeList.getSelectionModel().getSelectedItem())) {
                     disable = true;
                 }
                 editNoticeButton.setDisable(disable);
@@ -132,7 +142,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
                 boolean disable = noticeList.getSelectionModel().getSelectedItem() == null;
                 editNoticeButton.setDisable(disable);
                 removeNoticeButton.setDisable(disable);
-                if(disable) {
+                if (disable) {
                     noticeList.getSelectionModel().clearSelection();
                 }
             }
@@ -162,10 +172,10 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         Notice selected = noticeList.getSelectionModel().getSelectedItem();
         noticeList.getItems().clear();
         Set<Notice> noticesSet = new HashSet<>();
-        for(NoticeDrawer drawer : noticeDrawers) {
+        for (NoticeDrawer drawer : noticeDrawers) {
             noticesSet.addAll(drawer.getNotices());
         }
-        for(Notice notice : noticesSet) {
+        for (Notice notice : noticesSet) {
             noticeList.getItems().add(notice);
         }
         NoticeEntryDialog.noticesUpdated(noticesSet);
@@ -175,10 +185,26 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
     /**
      * Register a canvas to be updated using this notice dialog.
      * <p/>
+     *
      * @param canvas the canvas to register.
      */
     public void registerCanvas(DisplayCanvas canvas) {
         noticeDrawers.add(canvas.getNoticeDrawer());
         canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }
+
+    /**
+     * Add a notice from a remote location with the default layout.
+     *
+     * @param message     the message to be displayed
+     * @param numberTimes the number of times for the notice to repeat
+     */
+    public void quickAddNotice(String message, int numberTimes) {
+        Notice notice = new Notice(message, numberTimes, new SerializableColor(new ColorPicker(Color.WHITE).getValue()), new SerializableFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, QueleaProperties.get().getNoticeFontSize())));
+        noticeList.getItems().add(notice);
+        for (NoticeDrawer drawer : noticeDrawers) {
+            drawer.addNotice(notice);
+        }
+    }
+
 }

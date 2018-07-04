@@ -1,23 +1,24 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.server;
 
 import com.sun.net.httpserver.HttpExchange;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,9 +30,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+
 import javax.imageio.ImageIO;
+
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
@@ -579,5 +583,18 @@ public class RCHandler {
             }
         }
         return ret.toString();
+    }
+
+    public static String showNotice(HttpExchange he) throws UnsupportedEncodingException {
+        if (he.getRequestURI().toString().contains("/notice/")) {
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            String message = uri.split("/notice/", 2)[1];
+
+            Utils.fxRunAndWait(() -> {
+                QueleaApp.get().getMainWindow().getNoticeDialog().quickAddNotice(message.replaceAll("%20", " "), 1);
+            });
+            return LabelGrabber.INSTANCE.getLabel("rcs.add.success");
+        }
+        return LabelGrabber.INSTANCE.getLabel("rcs.add.failed");
     }
 }
