@@ -157,9 +157,6 @@ task dist(type: GradleBuild) {
 build.finalizedBy(dist)
 
 repositories {
-    maven { //Until richtextfx 1.0 is released
-        url 'https://oss.sonatype.org/content/repositories/snapshots/'
-    }
     maven { //Until PR is accepted and new release issued
         url 'https://dl.bintray.com/berry120/paradoxdriver'
     }
@@ -192,7 +189,7 @@ dependencies {
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.11'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.5'
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '1.0.0-SNAPSHOT'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.0'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.3'

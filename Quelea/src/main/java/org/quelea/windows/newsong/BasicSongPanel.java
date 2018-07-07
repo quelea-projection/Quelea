@@ -378,6 +378,7 @@ public class BasicSongPanel extends BorderPane {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().clear();
+        getLyricsField().refreshStyle();
         getLyricsField().insertText(0, song.getLyrics(true, true));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
