@@ -17,7 +17,6 @@ parts:
     plugs: [gradle, network]
     source: .
     build: |
-      wget plugins.gradle.org
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
       cd Quelea
       gradle tasks
