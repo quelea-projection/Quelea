@@ -13,9 +13,8 @@ apps:
 
 parts:
   quelea:
-    after: [desktop-glib-only]
-    plugs: [gradle, network]
-    source: .
+    plugin: gradle
+    source: Quelea
     build: |
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
       cd Quelea
@@ -28,3 +27,4 @@ parts:
     build-packages:
       - unzip
       - openjdk-8-jdk
+      - gradle
