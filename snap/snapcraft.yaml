@@ -18,8 +18,7 @@ parts:
     source: Quelea
     build: |
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-      cd Quelea
-      gradle tasks
+      gradle task
       pwd
       ls -l
       gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
