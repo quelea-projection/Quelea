@@ -14,6 +14,7 @@ apps:
 parts:
   quelea:
     plugin: gradle
+    gradle-options: [--debug]
     source: Quelea
     build: |
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
