@@ -14,7 +14,7 @@ apps:
 parts:
   quelea:
     after: [desktop-glib-only]
-    plugin: gradle
+    plugs: [gradle, network]
     source: .
     build: |
       wget plugins.gradle.org
