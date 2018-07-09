@@ -17,7 +17,7 @@ parts:
     plugin: gradle
     source: .
     build: |
-      ping -c 3 plugins.gradle.org
+      wget plugins.gradle.org
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
       cd Quelea
       gradle tasks
