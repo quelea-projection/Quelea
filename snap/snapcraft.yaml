@@ -14,19 +14,7 @@ apps:
 parts:
   quelea:
     plugin: gradle
-    gradle-options: [--debug]
     source: Quelea
-    build: |
-      wget plugins.gradle.org
-      export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-      gradle task
-      pwd
-      ls -l
-      gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
-    install: |
-      unzip dist/quelea-snap.zip -d $SNAPCRAFT_PART_INSTALL/
-    build-packages:
-      - unzip
-      - openjdk-8-jdk
-      - gradle
-      - wget
+    stage-packages: [default-jre, openjfx]
+    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, dist]
+    gradle-output-dir: 'build/releases'
