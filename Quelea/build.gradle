@@ -52,6 +52,12 @@ sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ext.mainClass = 'org.quelea.windows.main.Main'
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.quelea.windows.main.Main'
+    }
+}
+
 task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
     mainClassName = 'org.quelea.windows.main.Main'
     mutexName = "queleamutex"
