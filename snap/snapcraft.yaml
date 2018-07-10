@@ -17,6 +17,7 @@ parts:
     gradle-options: [--debug]
     source: Quelea
     build: |
+      wget plugins.gradle.org
       export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
       gradle task
       pwd
@@ -28,3 +29,4 @@ parts:
       - unzip
       - openjdk-8-jdk
       - gradle
+      - wget
