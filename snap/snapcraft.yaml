@@ -1,5 +1,5 @@
 name: quelea
-version: '0.1' 
+version: '2019.0' 
 summary: Church projection
 description: |
   Quelea is a free and open source software application that projects
@@ -15,16 +15,6 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
-    build: |
-      export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-      cd Quelea
-      gradle tasks
-      pwd
-      ls -l
-      gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
-    install: |
-      unzip dist/quelea-snap.zip -d $SNAPCRAFT_PART_INSTALL/
-    build-packages:
-      - unzip
-      - openjdk-8-jdk
-      - gradle
+    stage-packages: [default-jre, openjfx]
+    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar]
+    gradle-output-dir: 'build'
