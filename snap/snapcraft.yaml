@@ -9,7 +9,7 @@ confinement: devmode
 
 apps:
   quelea:
-    command: sh $SNAP/launch.sh
+    command: sh $SNAP/jar/launch.sh
 
 parts:
   quelea:
