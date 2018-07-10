@@ -51,6 +51,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -205,6 +207,19 @@ public final class Utils {
             }
         }
         return true;
+    }
+    
+    public static String incrementExtension(String name, String ext) {
+        name = name.substring(0, name.length() - 4).trim();
+        Pattern p = Pattern.compile(".*\\(([0-9]+)\\)");
+        Matcher matcher = p.matcher(name);
+        if (matcher.matches()) {
+            int suffixLength = matcher.group(1).length() + 2;
+            int nextNum = Integer.parseInt(matcher.group(1)) + 1;
+            return name.substring(0, name.length() - suffixLength) + "(" + nextNum + ")." + ext;
+        } else {
+            return name + "(2)." + ext;
+        }
     }
 
     /**

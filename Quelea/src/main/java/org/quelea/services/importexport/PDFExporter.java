@@ -27,8 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javafx.event.ActionEvent;
@@ -40,6 +38,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
@@ -96,7 +95,7 @@ public class PDFExporter implements Exporter {
                         SongDisplayable song = songDisplayablesThreadSafe.get(i);
                         String name = sanitise(song.getTitle()) + ".pdf";
                         while (names.contains(name)) {
-                            name = incrementExtension(name);
+                            name = Utils.incrementExtension(name, "pdf");
                         }
                         names.add(name);
                         out.putNextEntry(new ZipEntry(name));
@@ -111,19 +110,6 @@ public class PDFExporter implements Exporter {
         }.start();
     }
 
-    public static String incrementExtension(String name) {
-        name = name.substring(0, name.length() - 4).trim();
-        Pattern p = Pattern.compile(".*\\(([0-9]+)\\)");
-        Matcher matcher = p.matcher(name);
-        if (matcher.matches()) {
-            int suffixLength = matcher.group(1).length() + 2;
-            int nextNum = Integer.parseInt(matcher.group(1)) + 1;
-            return name.substring(0, name.length() - suffixLength) + "(" + nextNum + ").pdf";
-        } else {
-            return name + "(2).pdf";
-        }
-    }
-    
     public static String sanitise(String name) {
         name = name.replace(":", "");
         name = name.replace("/", "");

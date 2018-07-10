@@ -40,6 +40,7 @@ import static org.quelea.services.importexport.PDFExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
@@ -96,7 +97,7 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
                             SongDisplayable song = (SongDisplayable) d;
                             String name = PDFExporter.sanitise(song.getTitle()) + ".pdf";
                             while (names.contains(name)) {
-                                name = PDFExporter.incrementExtension(name);
+                                name = Utils.incrementExtension(name, "pdf");
                             }
                             names.add(name);
                             out.putNextEntry(new ZipEntry(name));

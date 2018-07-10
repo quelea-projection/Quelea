@@ -43,6 +43,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 import org.w3c.dom.DOMException;
@@ -89,7 +90,7 @@ public class OpenLyricsExporter implements Exporter {
                             SongDisplayable song = songDisplayablesThreadSafe.get(i);
                             String name = song.getTitle() + ".xml";
                             while (names.contains(name)) {
-                                name = PDFExporter.incrementExtension(name);
+                                name = Utils.incrementExtension(name, "xml");
                             }
                             names.add(name);
                             out.putNextEntry(new ZipEntry(name));
