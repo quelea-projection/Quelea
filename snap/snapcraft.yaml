@@ -7,6 +7,11 @@ description: |
 
 confinement: devmode
 
+environment:
+    JAVA_HOME: $SNAP/usr/lib/jvm/default-java
+    CLASSPATH: $SNAP/jar/SnapTest.jar
+    PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
+
 apps:
   quelea:
     command: sh $SNAP/jar/launch.sh
