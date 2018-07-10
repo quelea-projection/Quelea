@@ -16,5 +16,5 @@ parts:
     plugin: gradle
     source: Quelea
     stage-packages: [default-jre, openjfx]
-    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar]
-    gradle-output-dir: 'build'
+    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
+    gradle-output-dir: 'dist'
