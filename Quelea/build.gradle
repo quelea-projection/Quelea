@@ -140,7 +140,6 @@ izpack {
 }
 
 task innosetup (type:Exec) {
-    dependsOn 'createQueleaExe'
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
@@ -158,7 +157,7 @@ task innosetup (type:Exec) {
 }
 
 task dist(type: GradleBuild) {
-    tasks = ['copyToDist', 'izpack', 'innosetup']
+    tasks = ['copyToDist', 'createQueleaExe', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 
