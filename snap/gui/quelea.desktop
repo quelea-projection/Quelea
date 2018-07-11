@@ -1,10 +1,9 @@
 [Desktop Entry]
-Version=2018.1
+Version=2019.0
 Terminal=false
-Path=/usr/share/quelea
 Categories=AudioVideo;
+Keywords=church;projection;media;multimedia;video;song;hymn;lyrics
 Type=Application
 Name=Quelea
-Icon=/usr/share/quelea/icons/logo64.png
+Icon=Icon=${SNAP}/jar/icons/logo64.png
 Comment=Projection software for churches
-Exec=/usr/share/quelea/launch.sh
