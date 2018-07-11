@@ -5,7 +5,7 @@ description: |
   Quelea is a free and open source software application that projects
   multimedia content in your church service.
 
-confinement: devmode
+confinement: classic
 
 environment:
     JAVA_HOME: $SNAP/usr/lib/jvm/default-java
