@@ -83,7 +83,6 @@ task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //L
 createQueleaExe.dependsOn createQueleaExe64
 
 task copyToDist {
-    dependsOn 'createQueleaExe'
     doLast {
         copy {from configurations.runtime into project.distdir + "/lib"} //libraries
         copy {from "themes" into project.distdir + "/themes"}
@@ -141,6 +140,7 @@ izpack {
 }
 
 task innosetup (type:Exec) {
+    dependsOn 'createQueleaExe'
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
