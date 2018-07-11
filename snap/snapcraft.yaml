@@ -13,7 +13,7 @@ environment:
 
 apps:
   quelea:
-    command: cd $SNAP/jar && sh launch.sh
+    command: java -Xms1200m -Duser.dir=$SNAP/jar -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -jar Quelea.jar
 
 parts:
   quelea:
