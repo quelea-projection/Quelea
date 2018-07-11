@@ -7,3 +7,4 @@ Type=Application
 Name=Quelea
 Icon=Icon=${SNAP}/jar/icons/logo64.png
 Comment=Projection software for churches
+Exec=quelea
