@@ -11,7 +11,9 @@ environment:
     JAVA_HOME: $SNAP/usr/lib/jvm/default-java
     PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
     
-architectures: [amd64, i386]
+architectures:
+  - build-on: amd64
+  - build-on: i386
 
 apps:
   quelea:
