@@ -10,6 +10,8 @@ confinement: devmode
 environment:
     JAVA_HOME: $SNAP/usr/lib/jvm/default-java
     PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
+    
+architectures: [amd64, i386]
 
 apps:
   quelea:
