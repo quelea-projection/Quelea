@@ -83,7 +83,6 @@ task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //L
 createQueleaExe.dependsOn createQueleaExe64
 
 task copyToDist {
-    dependsOn 'createQueleaExe'
     doLast {
         copy {from configurations.runtime into project.distdir + "/lib"} //libraries
         copy {from "themes" into project.distdir + "/themes"}
@@ -158,7 +157,7 @@ task innosetup (type:Exec) {
 }
 
 task dist(type: GradleBuild) {
-    tasks = ['copyToDist', 'izpack', 'innosetup']
+    tasks = ['createQueleaExe', 'copyToDist', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 
