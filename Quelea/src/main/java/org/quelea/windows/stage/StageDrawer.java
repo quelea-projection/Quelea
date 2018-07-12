@@ -53,7 +53,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.multimedia.VLCWindow;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  * Draw items onto a stage canvas
@@ -126,8 +126,8 @@ public class StageDrawer extends WordDrawer {
         smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
-        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
-        FontMetricsWrapper smallTextMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont));
+        FXFontMetrics metrics = new FXFontMetrics(font);
+        FXFontMetrics smallTextMetrics = new FXFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
         shadow.setOffsetX(metrics.getLineHeight() * shadow.getOffsetX() * 0.003);
         shadow.setOffsetY(metrics.getLineHeight() * shadow.getOffsetY() * 0.003);
@@ -150,7 +150,7 @@ public class StageDrawer extends WordDrawer {
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
         for (LyricLine line : newText) {
-            FontMetricsWrapper loopMetrics;
+            FXFontMetrics loopMetrics;
             loopMetrics = metrics;
             FormattedText t;
             t = new FormattedText(line.getLine());
@@ -219,7 +219,7 @@ public class StageDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetricsWrapper metrics, String line, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FXFontMetrics metrics, String line, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);

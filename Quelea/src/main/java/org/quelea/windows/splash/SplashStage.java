@@ -37,7 +37,7 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  * The splash screen to display when the program starts.
@@ -63,7 +63,7 @@ public class SplashStage extends Stage {
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
-        FontMetricsWrapper loadingMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont));
+        FXFontMetrics loadingMetrics = new FXFontMetrics(loadingFont);
         LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#ffffff")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);

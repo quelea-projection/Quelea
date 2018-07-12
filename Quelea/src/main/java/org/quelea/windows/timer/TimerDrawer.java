@@ -19,7 +19,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.Timer;
 import org.quelea.windows.multimedia.VLCWindow;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  *
@@ -109,7 +109,7 @@ public class TimerDrawer extends DisplayableDrawer {
     }
 
     private double pickFontSize(Font font, Timer timer, DisplayCanvas canvas) {
-        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
+        FXFontMetrics metrics = new FXFontMetrics(font);
         String text = timer.toString();
         String[] splitText = text.split("\n");
         double lineSpacing = QueleaProperties.get().getAdditionalLineSpacing() * canvas.getHeight() / 1000.0;
@@ -120,7 +120,7 @@ public class TimerDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
+            metrics = new FXFontMetrics(font);
             totalHeight = (metrics.getLineHeight() + lineSpacing * splitText.length);
         }
 
@@ -131,7 +131,7 @@ public class TimerDrawer extends DisplayableDrawer {
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
+            metrics = new FXFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
 
@@ -139,7 +139,7 @@ public class TimerDrawer extends DisplayableDrawer {
     }
 
     private String longestLine(Font font, String[] text) {
-        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
+        FXFontMetrics metrics = new FXFontMetrics(font);
         double longestWidth = -1;
         String longestStr = null;
         for (String line : text) {

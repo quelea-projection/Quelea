@@ -36,7 +36,7 @@ import javafx.util.Duration;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
@@ -115,7 +115,7 @@ public class NoticeDrawer {
                 noticeText.setFont(notice.getFont().getFont());
                 textGroup.getChildren().add(noticeText);
             }
-            FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(oldNotices.get(0).getFont().getFont()));
+            FXFontMetrics metrics = new FXFontMetrics(oldNotices.get(0).getFont().getFont());
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
             if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {

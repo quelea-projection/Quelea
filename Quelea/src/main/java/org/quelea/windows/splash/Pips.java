@@ -23,7 +23,7 @@ import javafx.scene.Group;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  * A group of text that's just "..." - makes it more extensible if we wish to
@@ -34,7 +34,7 @@ import org.quelea.utils.FontMetricsWrapper;
 public class Pips extends Group {
 
     public Pips(Font font, Paint paint) {
-        double width = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font)).computeStringWidth(".");
+        double width = new FXFontMetrics(font).computeStringWidth(".");
         for(int i = 0; i < 3; i++) {
             Text pip = new Text(".");
             pip.setFill(paint);
