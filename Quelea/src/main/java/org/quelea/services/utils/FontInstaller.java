@@ -23,6 +23,9 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,25 +43,29 @@ public class FontInstaller {
      */
     public void setupBundledFonts() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for(File file : new File("icons/bundledfonts").listFiles()) {
-            if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
-                try {
-                    javafx.scene.text.Font fxFont;
-                    try(FileInputStream fis = new FileInputStream(file)) {
-                        fxFont = javafx.scene.text.Font.loadFont(fis, 72);                        
-                    }
-                    if(fxFont == null) {
-                        LOGGER.log(Level.WARNING, "Couldn't load font {0}", file.getAbsolutePath());
-                    }
-                    boolean geSuccess = ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
-                    if(geSuccess && fxFont != null) {
-                        LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
+        try {
+            Files.list(Paths.get("icons", "bundledfonts")).forEach((Path path) -> {
+                File file = path.toFile();
+                if (file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
+                    try {
+                        javafx.scene.text.Font fxFont;
+                        try (FileInputStream fis = new FileInputStream(file)) {
+                            fxFont = javafx.scene.text.Font.loadFont(fis, 72);
+                        }
+                        if (fxFont == null) {
+                            LOGGER.log(Level.WARNING, "Couldn't load font {0}", file.getAbsolutePath());
+                        }
+                        boolean geSuccess = ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
+                        if (geSuccess && fxFont != null) {
+                            LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
+                        }
+                    } catch (FontFormatException | IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
                     }
                 }
-                catch(FontFormatException | IOException ex) {
-                    LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
-                }
-            }
+            });
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't load fonts", ex);
         }
     }
 
