@@ -197,6 +197,7 @@ dependencies {
     compile group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
     compile group: 'org.openoffice', name: 'jurt', version: '4.1.2'
     compile group: 'org.openoffice', name: 'juh', version: '4.1.2'
+    compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
 
     compile group: 'org.openoffice', name: 'unoil', version: '4.1.2'
     compile group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
