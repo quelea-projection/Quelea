@@ -14,8 +14,14 @@
 
 ![screenshot](screenshot.png)
 
-## Other resources
-You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). These are automatically built from this repository, so should not be used in production settings.
+## CI releases
+You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows installers are provided (both 32 and 64 bit) in addition to a cross platform installer that requires Java to already be installed on your system.
+
+If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea --devmode` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
+
+CI releases are automatically built from the latest code in this repository, and thus are not fully tested. **They should not be used in production settings.**
+
+## Documentation
 
 If you're interested in learning more about how to use Quelea, the manual can be found [here](https://quelea.org/wiki/index.php/Main_Page).
 
