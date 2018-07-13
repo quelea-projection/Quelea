@@ -17,7 +17,7 @@ architectures:
 
 apps:
   quelea:
-    command: cd $SNAP/jar && desktop-launch java -Xms1200m -Duser.dir=$SNAP/jar -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -jar $SNAP/jar/Quelea.jar
+    command: sh $SNAP/jar/launch.sh
     plugs: [home, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media]
 
 parts:
