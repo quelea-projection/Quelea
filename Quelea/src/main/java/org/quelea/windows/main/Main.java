@@ -59,12 +59,12 @@ import org.quelea.utils.VLCDiscovery;
  */
 public final class Main extends Application {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static Logger LOGGER;
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
-
+    
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -77,7 +77,8 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        QueleaProperties.setUserHome(getParameters().getNamed().get("userhome"));
+        QueleaProperties.init(getParameters().getNamed().get("userhome"));
+        LOGGER = LoggerUtils.getLogger();
         System.setProperty("glass.accessible.force", "false");
         if (Utils.isMac()) {
             BufferedImage img = null;
@@ -117,7 +118,7 @@ public final class Main extends Application {
                         VLC_INIT = false;
                     }
                     new FontInstaller().setupBundledFonts();
-                    new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
+                    new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
                     LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());

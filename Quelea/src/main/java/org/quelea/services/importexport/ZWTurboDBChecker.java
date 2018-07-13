@@ -41,13 +41,13 @@ public class ZWTurboDBChecker {
      * @return true if the exe is present and ok, false otherwise.
      */
     public boolean runChecks() {
-        if(QueleaProperties.getTurboDBExe().exists()) {
+        if(QueleaProperties.get().getTurboDBExe().exists()) {
             return true;
         }
         else {
             warningDialog = new Dialog.Builder().create()
                     .setWarningIcon()
-                    .setMessage(LabelGrabber.INSTANCE.getLabel("no.tdb.message").replace("$1", "\""+QueleaProperties.getQueleaUserHome().getAbsolutePath()+"\""))
+                    .setMessage(LabelGrabber.INSTANCE.getLabel("no.tdb.message").replace("$1", "\""+QueleaProperties.get().getQueleaUserHome().getAbsolutePath()+"\""))
                     .setTitle(LabelGrabber.INSTANCE.getLabel("no.tdb.heading"))
                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
                         @Override

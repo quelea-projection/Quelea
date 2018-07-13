@@ -128,7 +128,7 @@ public final class Utils {
      * @return the debug log file.
      */
     public static File getDebugLog() {
-        return new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+        return new File(QueleaProperties.get().getQueleaUserHome(), "quelea-debuglog.txt");
     }
 
     /**

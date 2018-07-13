@@ -211,7 +211,7 @@ public class ScheduleThemeNode extends BorderPane {
      */
     public List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
-        File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
+        File themeDir = new File(QueleaProperties.get().getQueleaUserHome(), "themes");
         if (!themeDir.exists()) {
             themeDir.mkdir();
         }

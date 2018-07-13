@@ -42,27 +42,31 @@ import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 public final class QueleaProperties extends Properties {
 
     public static final Version VERSION = new Version("2018.1", "");
-    private static final QueleaProperties INSTANCE = new QueleaProperties();
-    private static String userHome = System.getProperty("user.home");
+    private static QueleaProperties INSTANCE;
+    private String userHome;
 
-    /**
-     * Load the properties from the properties file.
-     */
-    private QueleaProperties() {
+    public static void init(String userHome) {
+        INSTANCE = new QueleaProperties(userHome);
         try {
-            if (!getPropFile().exists()) {
-                getPropFile().createNewFile();
+            if (!get().getPropFile().exists()) {
+                get().getPropFile().createNewFile();
             }
-            try (StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
-                load(reader);
+            try (StringReader reader = new StringReader(Utils.getTextFromFile(get().getPropFile().getAbsolutePath(), ""))) {
+                get().load(reader);
             }
         } catch (IOException ex) { //Never mind.
         }
     }
 
-    public static void setUserHome(String home) {
-        if (home != null && !home.isEmpty()) {
-            userHome = home;
+    /**
+     * Load the properties from the properties file.
+     */
+    private QueleaProperties(String userHome) {
+        if (userHome != null && !userHome.isEmpty()) {
+            this.userHome = userHome;
+        }
+        else {
+            this.userHome = System.getProperty("user.home");
         }
     }
 
@@ -705,7 +709,7 @@ public final class QueleaProperties extends Properties {
      * <p>
      * @return the Quelea home directory.
      */
-    public static File getQueleaUserHome() {
+    public File getQueleaUserHome() {
         File ret = new File(new File(userHome), ".quelea");
         if (!ret.exists()) {
             ret.mkdir();
@@ -718,27 +722,8 @@ public final class QueleaProperties extends Properties {
      * <p>
      * @return the user's turbo db exe converter.
      */
-    public static File getTurboDBExe() {
-        return new File(QueleaProperties.getQueleaUserHome(), "TdbDataX.exe");
-    }
-
-    /**
-     * Get the number of the next kingsway song that should be imported.
-     * <p>
-     * @return the number of the next song.
-     */
-    public int getNextKingswaySong() {
-        return Integer.parseInt(getProperty("next.kingsway.song", "1"));
-    }
-
-    /**
-     * Set the number of the next kingsway song that should be imported.
-     * <p>
-     * @param num the number of the next song.
-     */
-    public void setNextKingswaySong(int num) {
-        setProperty("next.kingsway.song", Integer.toString(num));
-        write();
+    public File getTurboDBExe() {
+        return new File(getQueleaUserHome(), "TdbDataX.exe");
     }
 
     public int getTranslationFontSizeOffset() {

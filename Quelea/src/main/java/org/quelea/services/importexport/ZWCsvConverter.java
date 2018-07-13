@@ -39,7 +39,7 @@ public class ZWCsvConverter {
      */
     public ZWCsvConverter(File mainTable) {
         this.mainTable = mainTable;
-        tdbExe = QueleaProperties.getTurboDBExe();
+        tdbExe = QueleaProperties.get().getTurboDBExe();
     }
 
     /**
