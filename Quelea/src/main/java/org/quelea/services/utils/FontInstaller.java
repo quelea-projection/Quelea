@@ -49,7 +49,7 @@ public class FontInstaller {
                 if (file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                     try {
                         javafx.scene.text.Font fxFont;
-                        try (FileInputStream fis = new FileInputStream(file)) {
+                        try (FileInputStream fis = new FileInputStream(file.getAbsoluteFile())) {
                             fxFont = javafx.scene.text.Font.loadFont(fis, 72);
                         }
                         if (fxFont == null) {
