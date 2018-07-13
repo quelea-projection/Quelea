@@ -15,7 +15,7 @@
 ![screenshot](screenshot.png)
 
 ## Other resources
-You can see the latest CI releases [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). These are automatically built from this repository, so should not be used in production settings.
+You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). These are automatically built from this repository, so should not be used in production settings.
 
 If you're interested in learning more about how to use Quelea, the manual can be found [here](https://quelea.org/wiki/index.php/Main_Page).
 
