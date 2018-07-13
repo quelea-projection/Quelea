@@ -77,6 +77,7 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        QueleaProperties.setUserHome(getParameters().getNamed().get("userhome"));
         System.setProperty("glass.accessible.force", "false");
         if (Utils.isMac()) {
             BufferedImage img = null;
