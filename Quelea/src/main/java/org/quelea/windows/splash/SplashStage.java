@@ -18,6 +18,7 @@
 package org.quelea.windows.splash;
 
 import com.sun.javafx.tk.Toolkit;
+import java.io.File;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -56,9 +57,9 @@ public class SplashStage extends Stage {
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Image splashImage;
         if (QueleaProperties.VERSION.getUnstableName().toLowerCase().startsWith("beta")) {
-            splashImage = new Image("file:icons/splash-beta.png");
+            splashImage = new Image(new File("icons/splash-beta.png").getAbsoluteFile().toURI().toString());
         } else {
-            splashImage = new Image("file:icons/splash-bare.png");
+            splashImage = new Image(new File("icons/splash-bare.png").getAbsoluteFile().toURI().toString());
         }
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
