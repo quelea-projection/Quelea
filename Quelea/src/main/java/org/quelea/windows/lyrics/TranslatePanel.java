@@ -217,9 +217,9 @@ public class TranslatePanel extends BorderPane implements Cancellable {
         try {
             Language newLang = LanguageNameMap.INSTANCE.getLanguage(langName);
             if (newLang != null) {
-                Language origLang = Detect.execute(defaultLyricsArea.getText());
+                Language origLang = Detect.execute(defaultLyricsArea.getTextArea().getText());
                 if (origLang != null) {
-                    String[] origArr = LineTypeChecker.encodeSpecials(defaultLyricsArea.getText().split("\n"));
+                    String[] origArr = LineTypeChecker.encodeSpecials(defaultLyricsArea.getTextArea().getText().split("\n"));
                     ArrayList<String> translatedList = new ArrayList<>();
                     for (String str : LineTypeChecker.decodeSpecials(Translate.execute(origArr, origLang, newLang))) {
                         translatedList.add(str);

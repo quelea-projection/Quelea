@@ -177,7 +177,7 @@ public class BasicSongPanel extends BorderPane {
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
         ret.setOnAction((event) -> {
-            int caretPos = lyricsArea.getArea().getCaretPosition();
+            int caretPos = lyricsArea.getArea().getTextArea().getCaretPosition();
             String[] parts = lyricsArea.getTextAndChords().split("\n");
             int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
             String line = parts[lineIndex];
@@ -186,7 +186,7 @@ public class BasicSongPanel extends BorderPane {
 
                     @Override
                     public void run() {
-                        lyricsArea.getArea().replaceText(caretPos, caretPos, "<>");
+                        lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
                         lyricsArea.getArea().refreshStyle();
                     }
                 });
@@ -197,7 +197,7 @@ public class BasicSongPanel extends BorderPane {
 
                         @Override
                         public void run() {
-                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
+                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
                             lyricsArea.getArea().refreshStyle();
                         }
                     });
@@ -206,7 +206,7 @@ public class BasicSongPanel extends BorderPane {
 
                         @Override
                         public void run() {
-                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "<>\n");
+                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
                             lyricsArea.getArea().refreshStyle();
                         }
                     });
@@ -281,8 +281,8 @@ public class BasicSongPanel extends BorderPane {
 
                 String key = getKey(semitones);
 
-                StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-                for (String line : getLyricsField().getText().split("\n")) {
+                StringBuilder newText = new StringBuilder(getLyricsField().getTextArea().getText().length());
+                for (String line : getLyricsField().getTextArea().getText().split("\n")) {
                     if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         newText.append(new ChordLineTransposer(line).transpose(semitones, key));
                     } else {
@@ -290,9 +290,9 @@ public class BasicSongPanel extends BorderPane {
                     }
                     newText.append('\n');
                 }
-                int pos = getLyricsField().getCaretPosition();
-                getLyricsField().replaceText(newText.toString());
-                getLyricsField().moveTo(pos);
+                int pos = getLyricsField().getTextArea().getCaretPosition();
+                getLyricsField().getTextArea().replaceText(newText.toString());
+                getLyricsField().getTextArea().moveTo(pos);
             }
         });
         Utils.setToolbarButtonStyle(ret);
@@ -310,7 +310,7 @@ public class BasicSongPanel extends BorderPane {
         TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
         if (key == null || key.isEmpty()) {
-            for (String line : getLyricsField().getText().split("\n")) {
+            for (String line : getLyricsField().getTextArea().getText().split("\n")) {
                 if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     String first;
                     int i = 0;
@@ -364,7 +364,7 @@ public class BasicSongPanel extends BorderPane {
     public void resetNewSong() {
         getTitleField().clear();
         getAuthorField().clear();
-        getLyricsField().replaceText("");
+        getLyricsField().getTextArea().replaceText("");
         getTitleField().requestFocus();
         lyricsArea.clearUndo();
     }
@@ -377,9 +377,9 @@ public class BasicSongPanel extends BorderPane {
     public void resetEditSong(SongDisplayable song) {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
-        getLyricsField().clear();
+        getLyricsField().getTextArea().clear();
         getLyricsField().refreshStyle();
-        getLyricsField().insertText(0, song.getLyrics(true, true));
+        getLyricsField().getTextArea().insertText(0, song.getLyrics(true, true));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
         lyricsArea.clearUndo();
@@ -443,17 +443,17 @@ public class BasicSongPanel extends BorderPane {
      * use "" if no number is wanted
      */
     private void insertTitle(String title, String number) {
-        int caretPos = lyricsArea.getArea().getCaretPosition();
+        int caretPos = lyricsArea.getArea().getTextArea().getCaretPosition();
         String[] parts = lyricsArea.getTextAndChords().split("\n");
         if (parts.length == 0) {
             Platform.runLater(() -> {
-                lyricsArea.getArea().replaceText(0, 0, title + " " + number + "\n");
+                lyricsArea.getArea().getTextArea().replaceText(0, 0, title + " " + number + "\n");
                 lyricsArea.getArea().refreshStyle();
             });
         } else {
             if (caretPos == lyricsArea.getTextAndChords().length() + 1) {
                 Platform.runLater(() -> {
-                    lyricsArea.getArea().replaceText(caretPos, caretPos, title + " " + number + "\n");
+                    lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, title + " " + number + "\n");
                     lyricsArea.getArea().refreshStyle();
                 });
             } else {
@@ -461,19 +461,19 @@ public class BasicSongPanel extends BorderPane {
                 String line = parts[lineIndex];
                 if (line.trim().isEmpty()) {
                     Platform.runLater(() -> {
-                        lyricsArea.getArea().replaceText(caretPos, caretPos, "\n" + title + " " + number);
+                        lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "\n" + title + " " + number);
                         lyricsArea.getArea().refreshStyle();
                     });
                 } else {
                     int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
                     if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
                         Platform.runLater(() -> {
-                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "\n\n" + title + " " + number + "\n");
+                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n\n" + title + " " + number + "\n");
                             lyricsArea.getArea().refreshStyle();
                         });
                     } else {
                         Platform.runLater(() -> {
-                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, title + " " + number + "\n");
+                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, title + " " + number + "\n");
                             lyricsArea.getArea().refreshStyle();
                         });
                     }
