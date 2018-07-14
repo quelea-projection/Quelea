@@ -42,7 +42,9 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.utils.Chord;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
@@ -77,6 +79,7 @@ public class MobileLyricsServer {
         server.createContext("/", new RootHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/chords", new ChordsHandler());
+        server.createContext("/chordsv2", new ChordsHandlerv2());
         server.createContext("/title", new TitleHandler());
         server.createContext("/songtranslations", new SongTranslationsHandler());
         server.createContext("/gettranslation", new SongTranslationsHandler());
@@ -194,6 +197,60 @@ public class MobileLyricsServer {
         }
     }
 
+    private class ChordsHandlerv2 implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String[] arr = getRawLiveLyrics();
+            List<Chord> chords = new ArrayList<>();
+            StringBuilder html = new StringBuilder();
+            for (int i = 0; i < arr.length; i++) {
+                String line = arr[i];
+                if (new LineTypeChecker(line).getLineType() == Type.CHORDS && i < arr.length - 1) {
+                    chords = Chord.getChordsFromLine(line);
+                } else {
+                    html.append(mergeChords(line, chords));
+                    html.append("\n");
+                    chords = null;
+                }
+            }
+            
+            byte[] bytes = html.toString().getBytes("UTF-8");
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+        
+        private String mergeChords(String line, List<Chord> chords) {
+            if (chords == null || chords.isEmpty()) {
+                return line;
+            }
+
+            String ret = "<div class=\"line\">";
+            int chordidx = 0;
+            Chord chord = chords.get(chordidx);
+            for (int i = 0; i < line.length(); i++) {
+                if (chord != null && i == chord.getIdx()) {
+                    ret += "<span class=\"chord\">" + chord.getChord() + "</span>";
+                    chordidx++;
+                    if (chordidx < chords.size()) {
+                        chord = chords.get(chordidx);
+                    } else {
+                        chord = null;
+                    }
+                }
+                ret += line.charAt(i);
+            }
+            while (chordidx < chords.size()) {
+                ret += "<span class=\"chord\">" + chords.get(chordidx++).getChord() + "</span>";
+            }
+            ret += "</div>";
+            return ret;
+        }
+    }
+
     private class ChordsHandler implements HttpHandler {
 
         @Override
@@ -257,6 +314,24 @@ public class MobileLyricsServer {
             OutputStream os = he.getResponseBody();
             os.write(response.getBytes(Charset.forName("UTF-8")));
             os.close();
+        }
+    }
+    
+    private String[] getRawLiveLyrics() {
+        try {
+            if (!checkInitialised()) {
+                return new String[0];
+            }
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+                TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
+                return currentSection.getText(true, false);
+            } else {
+                return new String[0];
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
+            return new String[0];
         }
     }
 

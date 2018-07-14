@@ -6,6 +6,20 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
         <style type="text/css">
+            #child {
+                white-space: nowrap;
+            }
+            
+            .line {
+                line-height: 3;
+            }
+
+            .chord {
+                display: inline-block;
+                transform: translateY(-33%);
+                position: absolute;
+            }
+            
             .button {
                 display: block;
                 width: 10px;
@@ -90,7 +104,7 @@
             var translationhttp;
             var translations;
             var translations = "";
-			var currentText = "";
+            var currentText = "";
             function setup()
             {
                 setInterval(function () {
@@ -106,12 +120,11 @@
                         if (xmlhttp.responseText !== "")
                         {
                             if (currentText != xmlhttp.responseText) {
-								document.getElementById("child").innerHTML = xmlhttp.responseText;
-								currentText = xmlhttp.responseText;
-							}
+                                document.getElementById("child").innerHTML = xmlhttp.responseText;
+                                currentText = xmlhttp.responseText;
+                            }
 
-                        }
-                        else
+                        } else
                         {
                             getLiveText();
                         }
@@ -144,8 +157,7 @@
                                     x.options.add(c, 1);
                                 }
                             }
-                        }
-                        else
+                        } else
                         {
                             document.getElementById("translationButton").style.visibility = "hidden";
                         }
@@ -173,8 +185,8 @@
                 var textDiv = document.getElementById("dynamicDiv");
                 textDiv.style.fontSize = "200px";
                 var size = 200;
-                var style = window.getComputedStyle(textDiv, null).getPropertyValue('font-size');
-                var fontSize = parseFloat(style);
+//                var style = window.getComputedStyle(textDiv, null).getPropertyValue('font-size');
+//                var fontSize = parseFloat(style);
                 while (document.body.clientHeight > window.innerHeight)
                 {
                     size = size - 5;
@@ -193,13 +205,11 @@
                 if ((!translation) || (translation === "default"))
                 {
                     if (document.getElementById("chords").checked) {
-                        xmlhttp.open("GET", "/chords", true);
-                    }
-                    else {
+                        xmlhttp.open("GET", "/chordsv2", true);
+                    } else {
                         xmlhttp.open("GET", "/lyrics", true);
                     }
-                }
-                else
+                } else
                 {
                     xmlhttp.open("GET", "/gettranslation/" + translation, true);
                 }
@@ -236,9 +246,9 @@
                 {
                     if (livetext.readyState === 4 && livetext.status === 200)
                     {
-						if (livetext.responseText != currentText) {
-							document.getElementById("child").innerHTML = livetext.responseText;
-						}
+                        if (livetext.responseText != currentText) {
+                            document.getElementById("child").innerHTML = livetext.responseText;
+                        }
 
                     }
                 }
@@ -276,7 +286,7 @@
     </head>
     <body>
         <div id="dynamicDiv" aria-live="assertive"><div id="child">[loading.text]...</div></div>
-		<div style="position: absolute; top: 10px; right: 10px;">
+        <div style="position: absolute; top: 10px; right: 10px;">
             <a style="" class="button" href="#openModal" aria-hidden="true"></a>
             <a href="#openModal" aria-hidden="true"><img style="font-family: 'DejaVu Sans',sans-serif;position: absolute; top: 5px; right: 5px;font-size:30px;text-decoration:none;" src="gear.png" alt="&#9881;" height="20" width="20"/></a>
         </div>
