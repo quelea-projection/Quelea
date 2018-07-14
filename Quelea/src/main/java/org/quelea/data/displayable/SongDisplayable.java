@@ -668,7 +668,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             ret.append("\n");
         }
-        return ret.toString().trim().replace(" ", "<>");
+        return ret.toString().replaceAll("\\s+$", "").replace(" ", "<>");
     }
 
     public void addTranslation(String translationName, String translationText) {
