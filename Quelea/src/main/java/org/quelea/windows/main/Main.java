@@ -277,12 +277,15 @@ public final class Main extends Application {
                     });
                     LOGGER.log(Level.INFO, "Loaded everything.");
 
-                    if (!getParameters().getRaw().isEmpty()) {
-                        String schedulePath = getParameters().getRaw().get(0);
-                        LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
-                        Platform.runLater(() -> {
-                            QueleaApp.get().openSchedule(new File(schedulePath));
-                        });
+                    List<String> cmdParams = getParameters().getRaw();
+                    if (!cmdParams.isEmpty()) {
+                        String schedulePath = cmdParams.get(cmdParams.size()-1);
+                        if(!schedulePath.contains("--userhome=")) {
+                            LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
+                            Platform.runLater(() -> {
+                                QueleaApp.get().openSchedule(new File(schedulePath));
+                            });
+                        }
                     }
                     if (Utils.isMac()) {
                         com.apple.eawt.Application.getApplication().setOpenFileHandler((com.apple.eawt.AppEvent.OpenFilesEvent ofe) -> {
