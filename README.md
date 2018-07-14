@@ -1,4 +1,5 @@
-![Github Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/latest/total.svg) [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Github All Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/total.svg)
+ [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # Quelea
 
