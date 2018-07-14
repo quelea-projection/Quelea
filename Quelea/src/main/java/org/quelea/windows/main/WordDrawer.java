@@ -17,23 +17,24 @@
  */
 package org.quelea.windows.main;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.Chord;
 import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.utils.FXFontMetrics;
 
@@ -91,15 +92,13 @@ public abstract class WordDrawer extends DisplayableDrawer {
             totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
         }
 
-        String longestLine = longestLine(font, text);
-        double totalWidth = metrics.computeStringWidth(longestLine);
+        double totalWidth = longestLine(font, text);
         while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
             if (font.getSize() < 1) {
                 return 1;
             }
-            metrics = new FXFontMetrics(font);
-            totalWidth = metrics.computeStringWidth(longestLine);
+            totalWidth = longestLine(font, text);
         }
         return font.getSize();
     }
@@ -117,19 +116,38 @@ public abstract class WordDrawer extends DisplayableDrawer {
         return space * factor;
     }
 
-    protected String longestLine(Font font, List<LyricLine> text) {
+    protected int longestLine(Font font, List<LyricLine> text) {
         FXFontMetrics metrics = new FXFontMetrics(font);
-        double longestWidth = -1;
-        String longestStr = null;
-        for (LyricLine line : text) {
-            line = new LyricLine(false, FormattedText.stripFormatTags(line.getLine()));
-            double width = metrics.computeStringWidth(line.getLine());
-            if (width > longestWidth) {
-                longestWidth = width;
-                longestStr = line.getLine();
+        int longestLine = 0;
+        for (int i = 0; i < text.size(); i++) {
+            LyricLine line = text.get(i);
+            if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS && i < text.size() - 1) {
+                List<Chord> chords = Chord.getChordsFromLine(line.getLine());
+                String nextLine = text.get(i + 1).getLine();
+
+                while (nextLine.length() < line.getLine().length()) {
+                    nextLine += " ";
+                }
+
+                int maxX = 0;
+                for (Chord chord : chords) {
+                    int x = (int) metrics.computeStringWidth(nextLine.substring(0, chord.getIdx())) + (int) metrics.computeStringWidth(chord.getChord());
+                    if (x > maxX) {
+                        maxX = x;
+                    }
+                }
+                if (maxX > longestLine) {
+                    longestLine = maxX;
+                }
+
+            } else {
+                int lineWidth = (int)metrics.computeStringWidth(line.getLine());
+                if(lineWidth>longestLine) {
+                    longestLine = lineWidth;
+                }
             }
         }
-        return longestStr;
+        return longestLine;
     }
 
     protected String longestLine(Font font, ArrayList<String> text) {
@@ -185,7 +203,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
 
     protected abstract void drawText(double defaultFontSize, boolean dumbWrap);
-    
+
     @Override
     public void draw(Displayable displayable) {
         draw(displayable, -1);
@@ -201,7 +219,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             LOGGER.log(Level.WARNING, "BUG: Unrecognised image background - " + getCanvas().getCanvasBackground().getClass(), new RuntimeException("DEBUG EXCEPTION"));
         }
     }
-    
+
     protected double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FXFontMetrics metrics = new FXFontMetrics(font);
         ArrayList<String> al = new ArrayList<>();

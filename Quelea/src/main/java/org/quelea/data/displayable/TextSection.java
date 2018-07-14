@@ -44,7 +44,7 @@ public class TextSection implements Serializable {
     private ThemeDTO theme;
     private ThemeDTO tempTheme;
     private final boolean capitaliseFirst;
-    
+
     public TextSection(TextSection orig) {
         this.title = orig.title;
         this.lines = orig.lines;
@@ -214,20 +214,25 @@ public class TextSection implements Serializable {
     public String[] getText(boolean chords, boolean comments) {
         List<String> ret = new ArrayList<>(lines.length);
         for (String str : lines) {
+            String toAdd = null;
             if (chords) {
                 if (comments) {
-                    ret.add(str);
+                    toAdd = str;
                 } else {
-                    ret.add(removeComments(str));
+                    toAdd = removeComments(str);
                 }
             } else {
                 if (new LineTypeChecker(str).getLineType() != LineTypeChecker.Type.CHORDS) {
                     if (comments) {
-                        ret.add(str);
+                        toAdd = str;
                     } else {
-                        ret.add(removeComments(str));
+                        toAdd = removeComments(str);
                     }
+                    toAdd = toAdd.replace("_", "");
                 }
+            }
+            if (toAdd != null) {
+                ret.add(toAdd);
             }
         }
         return ret.toArray(new String[ret.size()]);
