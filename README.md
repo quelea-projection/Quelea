@@ -1,4 +1,4 @@
-![Github Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/latest/total.svg) [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea)
+![Github Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/latest/total.svg) [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # Quelea
 
@@ -17,7 +17,7 @@
 ## CI releases
 You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows installers are provided (both 32 and 64 bit) in addition to a cross platform installer that requires Java to already be installed on your system.
 
-If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea --devmode` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
+If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
 
 CI releases are automatically built from the latest code in this repository, and thus are not fully tested. **They should not be used in production settings.**
 
