@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
