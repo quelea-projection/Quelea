@@ -5,6 +5,6 @@ Categories=AudioVideo;
 Keywords=church;projection;media;multimedia;video;song;hymn;lyrics
 Type=Application
 Name=Quelea
-Icon=Icon=${SNAP}/jar/icons/logo64.png
+Icon=${SNAP}/jar/icons/logo64.png
 Comment=Projection software for churches
 Exec=quelea
