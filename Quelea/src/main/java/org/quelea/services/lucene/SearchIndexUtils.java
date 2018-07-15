@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -50,7 +51,7 @@ public class SearchIndexUtils {
      * @param index the index to clear.
      */
     public static void clearIndex(Directory index) {
-        try(IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(new StandardAnalyzer()))) {
+        try(IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(new StandardAnalyzer(CharArraySet.EMPTY_SET)))) {
             writer.deleteAll();
             writer.commit();
         }

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -63,7 +64,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
      */
     public BibleSearchIndex() {
         chapters = new HashMap<>();
-        analyzer = new StandardAnalyzer();
+        analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
         index = new RAMDirectory();
     }
     
