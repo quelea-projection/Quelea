@@ -28,12 +28,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -65,7 +65,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     public SongSearchIndex() {
         songs = new HashMap<>();
-        analyzer = new StandardAnalyzer();
+        analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
         index = new RAMDirectory();
     }
 
@@ -182,7 +182,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         try (DirectoryReader dr = DirectoryReader.open(index)) {
             IndexSearcher searcher = new IndexSearcher(dr);
             Query q = new ComplexPhraseQueryParser(typeStr, analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(10000);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(100);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();
