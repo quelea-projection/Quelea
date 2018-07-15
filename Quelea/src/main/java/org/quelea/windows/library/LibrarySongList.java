@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.library;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -35,16 +34,16 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
@@ -99,18 +98,34 @@ public class LibrarySongList extends StackPane {
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
             public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
-                final TextFieldListCell<SongDisplayable> cell = new TextFieldListCell<>(new StringConverter<SongDisplayable>() {
+                final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
                     @Override
-                    public String toString(SongDisplayable song) {
-                        return song.getListHTML();
+                    protected void updateItem(SongDisplayable item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            HBox textBox = new HBox();
+                            if (item.getLastSearch() == null) {
+                                textBox.getChildren().add(new Text(item.getTitle()));
+                            } else {
+                                int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
+                                if (startIndex == -1) {
+                                    textBox.getChildren().add(new Text(item.getTitle()));
+                                }
+                                else {
+                                    textBox.getChildren().add(new Text(item.getTitle().substring(0, startIndex)));
+                                    String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
+                                    Text boldText = new Text(boldTextStr);
+                                    boldText.setStyle("-fx-font-weight:bold;");
+                                    textBox.getChildren().add(boldText);
+                                    textBox.getChildren().add(new Text(item.getTitle().substring(startIndex + item.getLastSearch().length())));
+                                }
+                            }
+                            setGraphic(textBox);
+                        }
                     }
-
-                    @Override
-                    public SongDisplayable fromString(String string) {
-                        //Implementation not needed.
-                        return null;
-                    }
-                });
+                };
                 cell.setOnDragDetected(new EventHandler<MouseEvent>() {
 
                     @Override
@@ -219,6 +234,7 @@ public class LibrarySongList extends StackPane {
 
             Platform.runLater(() -> {
                 LOGGER.log(Level.INFO, "Setting song list");
+                songList.setItems(FXCollections.observableArrayList()); //Force search display update
                 songList.setItems(songs);
                 if (!songs.isEmpty()) {
                     LOGGER.log(Level.INFO, "Selecting first song");

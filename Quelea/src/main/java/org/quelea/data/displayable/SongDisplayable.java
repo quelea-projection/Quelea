@@ -813,32 +813,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public void setLastSearch(String lastSearch) {
         this.lastSearch = lastSearch;
     }
-
-    /**
-     * Get the HTML that should be displayed in the library song list. This
-     * depends on what was searched for last, it bolds the search term in the
-     * title (if it appears as such.)
-     * <p/>
-     * @return the appropriate HTML to display the song in the list.
-     */
-    public String getListHTML() {//@todo wrong method name
-        return getTitle();
-//        if(lastSearch == null) {
-//            return getTitle();
-//        }
-//        int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
-//        if(startIndex == -1) {
-//            return getTitle();
-//        }
-//        StringBuilder ret = new StringBuilder();
-//        ret.append("<html>");
-//        ret.append(getTitle().substring(0, startIndex));
-//        ret.append("<b>");
-//        ret.append(getTitle().substring(startIndex, startIndex + lastSearch.length()));
-//        ret.append("</b>");
-//        ret.append(getTitle().substring(startIndex + lastSearch.length()));
-//        ret.append("</html>");
-//        return ret.toString();
+    
+    public String getLastSearch() {
+        return lastSearch;
     }
 
     /**
