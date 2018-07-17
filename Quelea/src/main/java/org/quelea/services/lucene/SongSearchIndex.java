@@ -182,7 +182,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         try (DirectoryReader dr = DirectoryReader.open(index)) {
             IndexSearcher searcher = new IndexSearcher(dr);
             Query q = new ComplexPhraseQueryParser(typeStr, analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(100);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(1000);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();
