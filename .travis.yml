@@ -23,7 +23,7 @@ before_install:
   - Xvfb :0 -screen 0 1024x768x16 &
   - DISPLAY=:0.0 wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
 jdk:
-  - oraclejdk8
+  - oraclejdk10
 script:
   - "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan"
 before_deploy:

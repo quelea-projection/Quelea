@@ -48,7 +48,7 @@ task removeDist(type: Delete) {
 clean.finalizedBy(removeDist)
 compileJava.finalizedBy(dependencyUpdates)
 
-sourceCompatibility = '1.8'
+sourceCompatibility = '10'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ext.mainClass = 'org.quelea.windows.main.Main'
 
