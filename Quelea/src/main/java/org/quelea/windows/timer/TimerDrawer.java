@@ -1,8 +1,6 @@
 package org.quelea.windows.timer;
 
 import java.util.Calendar;
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;

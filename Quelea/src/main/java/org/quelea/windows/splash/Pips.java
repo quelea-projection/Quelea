@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.splash;
 
-import com.sun.javafx.tk.Toolkit;
 import javafx.scene.Group;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;

@@ -108,7 +108,7 @@ public class NumberTextField extends TextField {
                 return;
             }
             Number parsedNumber = nf.parse(input);
-            Integer newValue = new Integer(parsedNumber.toString());
+            Integer newValue = Integer.valueOf(parsedNumber.toString());
             setNumber(newValue);
             selectAll();
         }

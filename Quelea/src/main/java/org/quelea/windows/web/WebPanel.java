@@ -17,7 +17,8 @@
  */
 package org.quelea.windows.web;
 
-import com.sun.glass.ui.Robot;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,20 +121,24 @@ public class WebPanel extends AbstractPanel {
         });
         imagePreview.setOnScroll(e -> {
             if (wd != null) {
-                Robot r = com.sun.glass.ui.Application.GetApplication().createRobot();
-                QueleaApp.get().getProjectionWindow().requestFocus();
-                if (e.getDeltaY() < 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_DOWN);
-                } else if (e.getDeltaY() > 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_UP);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_UP);
-                } else if (e.getDeltaX() < 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
-                } else if (e.getDeltaX() > 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_LEFT);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
+                try {
+                    Robot r = new Robot();
+                    QueleaApp.get().getProjectionWindow().requestFocus();
+                    if (e.getDeltaY() < 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_DOWN);
+                    } else if (e.getDeltaY() > 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_UP);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_UP);
+                    } else if (e.getDeltaX() < 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
+                    } else if (e.getDeltaX() > 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_LEFT);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
+                    }
+                } catch (AWTException ex) {
+                    LOGGER.log(Level.WARNING, "Error with robot", ex);
                 }
             }
         });
@@ -227,8 +232,8 @@ public class WebPanel extends AbstractPanel {
         try {
             java.awt.Robot robot = new java.awt.Robot();
             robot.mouseMove((int) x, (int) y);
-            robot.mousePress(InputEvent.BUTTON1_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_MASK);
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             robot.mouseMove((int) originalLocation.getX(), (int) originalLocation.getY());
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed clicking the web view", e);

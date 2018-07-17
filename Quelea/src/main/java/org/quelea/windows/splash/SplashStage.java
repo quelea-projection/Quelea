@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.splash;
 
-import com.sun.javafx.tk.Toolkit;
 import java.io.File;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;

@@ -17,7 +17,6 @@
  */
 package org.quelea.services.notice;
 
-import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
