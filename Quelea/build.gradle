@@ -98,7 +98,6 @@ task copyToDist {
         copy {from file("scheduleformat.xsl") into file(project.distdir)}
         copy {from file("songformat.xsl") into file(project.distdir)}
         copy {from file("fopcfg.xml") into file(project.distdir)}
-        copy {from file("Quelea.vbs") into file(project.distdir)}
         copy {from file("Quelea.bat") into file(project.distdir)}
         copy {from file("quelea.iss") into file(project.distdir)}
         copy {from file("quelea64.iss") into file(project.distdir)}
@@ -137,9 +136,9 @@ task innosetup (type:Exec) {
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-            commandLine = ['cmd', '/C', 'build-install.bat']
+            commandLine = ['cmd', '/C', 'build-install.bat', project.queleaversion]
         } else {
-            commandLine = ['sh', './build-install.sh']
+            commandLine = ['sh', './build-install.sh', project.queleaversion]
         }
     }
     

@@ -1,1 +1,1 @@
-java -Dfile.encoding=UTF-8 -Xms1024m -jar Quelea.jar
+java -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -jar Quelea.jar
