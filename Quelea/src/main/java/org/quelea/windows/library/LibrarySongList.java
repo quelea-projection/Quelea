@@ -34,6 +34,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -162,13 +163,15 @@ public class LibrarySongList extends StackPane {
                 new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
             } else if (t.getClickCount() == 1 && t.isControlDown()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
-            } else if (t.getClickCount() == 1) {
-                SongDisplayable song = songList.getSelectionModel().getSelectedItem();
+            }
+        });
+        songList.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
+            @Override
+            public void changed(ObservableValue<? extends SongDisplayable> observable, SongDisplayable oldSong, SongDisplayable song) {
                 previewCanvas.setSong(song);
-                if(song==null) {
+                if (song == null) {
                     previewCanvas.hide();
-                }
-                else {
+                } else {
                     previewCanvas.show();
                 }
             }
