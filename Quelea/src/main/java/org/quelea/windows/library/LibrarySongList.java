@@ -30,6 +30,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -64,6 +65,7 @@ public class LibrarySongList extends StackPane {
     private final LibraryPopupMenu popupMenu;
     private ListView<SongDisplayable> songList;
     private LoadingPane loadingOverlay;
+    private LibrarySongPreviewCanvas previewCanvas;
     private AddSongPromptOverlay addSongOverlay;
 
     /**
@@ -94,6 +96,18 @@ public class LibrarySongList extends StackPane {
             }
         });
         getChildren().add(loadingOverlay);
+        previewCanvas = new LibrarySongPreviewCanvas();
+        StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(previewCanvas, new Insets(10));
+        getChildren().add(previewCanvas);
+        songList.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue && songList.getSelectionModel().getSelectedItem()!=null) {
+                previewCanvas.show();
+            }
+            else {
+                previewCanvas.hide();
+            }
+        });
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
             public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
@@ -148,6 +162,15 @@ public class LibrarySongList extends StackPane {
                 new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
             } else if (t.getClickCount() == 1 && t.isControlDown()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
+            } else if (t.getClickCount() == 1) {
+                SongDisplayable song = songList.getSelectionModel().getSelectedItem();
+                previewCanvas.setSong(song);
+                if(song==null) {
+                    previewCanvas.hide();
+                }
+                else {
+                    previewCanvas.show();
+                }
             }
         });
         songList.setOnKeyPressed((KeyEvent t) -> {
