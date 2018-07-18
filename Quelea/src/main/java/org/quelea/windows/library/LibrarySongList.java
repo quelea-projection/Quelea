@@ -25,16 +25,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -85,15 +81,11 @@ public class LibrarySongList extends StackPane {
         getChildren().add(songList);
         getChildren().add(addSongOverlay);
         addSongOverlay.show();
-        songList.itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
-
-            @Override
-            public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
-                if (songList.getItems().isEmpty()) {
-                    addSongOverlay.show();
-                } else {
-                    addSongOverlay.hide();
-                }
+        songList.itemsProperty().addListener((val, oldList, newList) -> {
+            if (songList.getItems().isEmpty()) {
+                addSongOverlay.show();
+            } else {
+                addSongOverlay.hide();
             }
         });
         getChildren().add(loadingOverlay);
@@ -102,60 +94,53 @@ public class LibrarySongList extends StackPane {
             StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
             StackPane.setMargin(previewCanvas, new Insets(10));
             getChildren().add(previewCanvas);
-            songList.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if (newValue && songList.getSelectionModel().getSelectedItem() != null) {
+            songList.focusedProperty().addListener((observable, oldFocused, focused) -> {
+                if (focused && songList.getSelectionModel().getSelectedItem() != null) {
                     previewCanvas.show();
                 } else {
                     previewCanvas.hide();
                 }
             });
         }
-        Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
-            @Override
-            public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
-                final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
-                    @Override
-                    protected void updateItem(SongDisplayable item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
+        Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = (lv) -> {
+            final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
+                @Override
+                protected void updateItem(SongDisplayable item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        HBox textBox = new HBox();
+                        if (item.getLastSearch() == null) {
+                            textBox.getChildren().add(new Text(item.getTitle()));
                         } else {
-                            HBox textBox = new HBox();
-                            if (item.getLastSearch() == null) {
+                            int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
+                            if (startIndex == -1) {
                                 textBox.getChildren().add(new Text(item.getTitle()));
                             } else {
-                                int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
-                                if (startIndex == -1) {
-                                    textBox.getChildren().add(new Text(item.getTitle()));
-                                } else {
-                                    textBox.getChildren().add(new Text(item.getTitle().substring(0, startIndex)));
-                                    String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
-                                    Text boldText = new Text(boldTextStr);
-                                    boldText.setStyle("-fx-font-weight:bold;");
-                                    textBox.getChildren().add(boldText);
-                                    textBox.getChildren().add(new Text(item.getTitle().substring(startIndex + item.getLastSearch().length())));
-                                }
+                                textBox.getChildren().add(new Text(item.getTitle().substring(0, startIndex)));
+                                String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
+                                Text boldText = new Text(boldTextStr);
+                                boldText.setStyle("-fx-font-weight:bold;");
+                                textBox.getChildren().add(boldText);
+                                textBox.getChildren().add(new Text(item.getTitle().substring(startIndex + item.getLastSearch().length())));
                             }
-                            setGraphic(textBox);
                         }
+                        setGraphic(textBox);
                     }
-                };
-                cell.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        SongDisplayable displayable = cell.getItem();
-                        if (displayable != null) {
-                            Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-                            ClipboardContent content = new ClipboardContent();
-                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
-                            db.setContent(content);
-                        }
-                        event.consume();
-                    }
-                });
-                return cell;
-            }
+                }
+            };
+            cell.setOnDragDetected((event) -> {
+                SongDisplayable displayable = cell.getItem();
+                if (displayable != null) {
+                    Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
+                    db.setContent(content);
+                }
+                event.consume();
+            });
+            return cell;
         };
         popupMenu = new LibraryPopupMenu();
         songList.setOnMouseClicked((MouseEvent t) -> {
@@ -165,16 +150,13 @@ public class LibrarySongList extends StackPane {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
-        songList.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
-            @Override
-            public void changed(ObservableValue<? extends SongDisplayable> observable, SongDisplayable oldSong, SongDisplayable song) {
-                if (previewCanvas != null) {
-                    previewCanvas.setSong(song);
-                    if (song == null) {
-                        previewCanvas.hide();
-                    } else {
-                        previewCanvas.show();
-                    }
+        songList.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldSong, song) -> {
+            if (previewCanvas != null) {
+                previewCanvas.setSong(song);
+                if (song == null) {
+                    previewCanvas.hide();
+                } else {
+                    previewCanvas.show();
                 }
             }
         });
@@ -303,11 +285,8 @@ public class LibrarySongList extends StackPane {
     }
 
     private void refresh() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setLoading(true);
-            }
+        Platform.runLater(() -> {
+            setLoading(true);
         });
         final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs(loadingOverlay));
         Platform.runLater(new Runnable() {
