@@ -16,6 +16,9 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.Desktop;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +57,7 @@ import org.quelea.utils.VLCDiscovery;
 
 /**
  * The main class, sets everything in motion...
- * 
+ *
  * @author Michael
  */
 public final class Main extends Application {
@@ -64,7 +67,7 @@ public final class Main extends Application {
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
-    
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -80,15 +83,6 @@ public final class Main extends Application {
         QueleaProperties.init(getParameters().getNamed().get("userhome"));
         LOGGER = LoggerUtils.getLogger();
         System.setProperty("glass.accessible.force", "false");
-        if (Utils.isMac()) {
-            BufferedImage img = null;
-            try {
-                img = ImageIO.read(new File("icons/logo64.png"));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            com.apple.eawt.Application.getApplication().setDockIconImage(img);
-        }
         setupExceptionHandling();
         setupTranslator();
         final SplashStage splashWindow = new SplashStage();
@@ -279,23 +273,29 @@ public final class Main extends Application {
 
                     List<String> cmdParams = getParameters().getRaw();
                     if (!cmdParams.isEmpty()) {
-                        String schedulePath = cmdParams.get(cmdParams.size()-1);
-                        if(!schedulePath.contains("--userhome=")) {
+                        String schedulePath = cmdParams.get(cmdParams.size() - 1);
+                        if (!schedulePath.contains("--userhome=")) {
                             LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                             Platform.runLater(() -> {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             });
                         }
                     }
-                    if (Utils.isMac()) {
-                        com.apple.eawt.Application.getApplication().setOpenFileHandler((com.apple.eawt.AppEvent.OpenFilesEvent ofe) -> {
-                            List<File> files = Utils.getFilesFromMacOpenFilesEvent(ofe);
-                            if (files != null && files.size() > 0) {
-                                Platform.runLater(() -> {
-                                    QueleaApp.get().openSchedule(files.get(0));
-                                });
-                            }
-                        });
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+                            desktop.setOpenFileHandler(new OpenFilesHandler() {
+                                @Override
+                                public void openFiles(OpenFilesEvent e) {
+                                    List<File> files = e.getFiles();
+                                    if (files != null && files.size() > 0) {
+                                        Platform.runLater(() -> {
+                                            QueleaApp.get().openSchedule(files.get(0));
+                                        });
+                                    }
+                                }
+                            });
+                        }
                     }
 
                     Platform.runLater(() -> {

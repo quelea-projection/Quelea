@@ -106,11 +106,6 @@ public final class Utils {
         Toolkit.getDefaultToolkit().beep();
     }
     
-    @SuppressWarnings("unchecked")
-    public static List<File> getFilesFromMacOpenFilesEvent(com.apple.eawt.AppEvent.OpenFilesEvent ofe) {
-        return ofe.getFiles();
-    }
-    
     public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
         File file = new File(node.getTextContent());
         String changedFile = fileChanges.get(file.getAbsolutePath());
