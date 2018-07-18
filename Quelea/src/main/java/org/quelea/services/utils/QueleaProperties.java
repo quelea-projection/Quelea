@@ -1993,6 +1993,10 @@ public final class QueleaProperties extends Properties {
         return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
     }
 
+    public boolean getShowDBSongPreview() {
+        return Boolean.parseBoolean(getProperty("db.song.preview", "true"));
+    }
+
     public void setDefaultSongDBUpdate(boolean updateInDB) {
         setProperty("default.song.db.update", Boolean.toString(updateInDB));
         write();

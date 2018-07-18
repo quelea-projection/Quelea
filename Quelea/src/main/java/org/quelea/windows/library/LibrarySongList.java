@@ -97,18 +97,19 @@ public class LibrarySongList extends StackPane {
             }
         });
         getChildren().add(loadingOverlay);
-        previewCanvas = new LibrarySongPreviewCanvas();
-        StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(previewCanvas, new Insets(10));
-        getChildren().add(previewCanvas);
-        songList.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue && songList.getSelectionModel().getSelectedItem()!=null) {
-                previewCanvas.show();
-            }
-            else {
-                previewCanvas.hide();
-            }
-        });
+        if (QueleaProperties.get().getShowDBSongPreview()) {
+            previewCanvas = new LibrarySongPreviewCanvas();
+            StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(previewCanvas, new Insets(10));
+            getChildren().add(previewCanvas);
+            songList.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue && songList.getSelectionModel().getSelectedItem() != null) {
+                    previewCanvas.show();
+                } else {
+                    previewCanvas.hide();
+                }
+            });
+        }
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
             public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
@@ -126,8 +127,7 @@ public class LibrarySongList extends StackPane {
                                 int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
                                 if (startIndex == -1) {
                                     textBox.getChildren().add(new Text(item.getTitle()));
-                                }
-                                else {
+                                } else {
                                     textBox.getChildren().add(new Text(item.getTitle().substring(0, startIndex)));
                                     String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
                                     Text boldText = new Text(boldTextStr);
@@ -168,11 +168,13 @@ public class LibrarySongList extends StackPane {
         songList.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
             @Override
             public void changed(ObservableValue<? extends SongDisplayable> observable, SongDisplayable oldSong, SongDisplayable song) {
-                previewCanvas.setSong(song);
-                if (song == null) {
-                    previewCanvas.hide();
-                } else {
-                    previewCanvas.show();
+                if (previewCanvas != null) {
+                    previewCanvas.setSong(song);
+                    if (song == null) {
+                        previewCanvas.hide();
+                    } else {
+                        previewCanvas.show();
+                    }
                 }
             }
         });
