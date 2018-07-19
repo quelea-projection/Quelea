@@ -45,6 +45,19 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Dirs]  
 Name: "{app}"; Permissions: everyone-modify;  
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}/lib"
+Type: filesandordirs; Name: "{app}/server"
+Type: filesandordirs; Name: "{app}/dictionaries"
+Type: filesandordirs; Name: "{app}/bibles"
+Type: filesandordirs; Name: "{app}/icons"
+Type: filesandordirs; Name: "{app}/img"
+Type: filesandordirs; Name: "{app}/vid"
+Type: filesandordirs; Name: "{app}/licenses"
+Type: filesandordirs; Name: "{app}/themes"
+Type: filesandordirs; Name: "{app}/winjre"
+Type: filesandordirs; Name: "{app}/winjre64"
+
 [Files]
 Source: "build/launch4j/Quelea64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist/Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
