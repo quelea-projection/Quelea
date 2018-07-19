@@ -5,6 +5,8 @@ quelea (2019.0) stable; urgency=normal
   * Removed paradox requirement when importing Easyworship databases
   * Format song list in accordance with search
   * Display preview of song in song list
+  * Move to JDK 9
+  * Fix bug with Java versions newer than 8 on MacOS
   * Fix bug where missing media from one schedule item prevented all following items from loading
   * Fix bug where spaces in first line of chords were removed
   * Fix bug with chord alignment in songs
