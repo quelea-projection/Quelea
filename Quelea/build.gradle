@@ -64,17 +64,17 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     outfile = "Quelea64.exe"
 }
 
-task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
-    mainClassName = 'org.quelea.windows.main.Main'
-    mutexName = "queleamutex"
-    supportUrl = "https://groups.google.com/group/quelea-discuss"
-    icon = "../../icons/logo.ico"
-    copyright = "GPLv3"
-    bundledJrePath = "winjre"
-    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
-    outfile = "Quelea.exe"
-}
-createQueleaExe.dependsOn createQueleaExe64
+//task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
+//    mainClassName = 'org.quelea.windows.main.Main'
+//    mutexName = "queleamutex"
+//    supportUrl = "https://groups.google.com/group/quelea-discuss"
+//    icon = "../../icons/logo.ico"
+//    copyright = "GPLv3"
+//    bundledJrePath = "winjre"
+//    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+//    outfile = "Quelea.exe"
+//}
+//createQueleaExe.dependsOn createQueleaExe64
 
 task copyToDist {
     doLast {
@@ -90,7 +90,7 @@ task copyToDist {
         copy {from "img" into project.distdir + "/img"}
         copy {from "timer" into project.distdir + "/timer"}
         copy {from "src" into project.distdir + "/src"}
-        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
+//        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
         copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
         copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
         copy {from file("README.TXT") into file(project.distdir)}
@@ -150,7 +150,7 @@ task innosetup (type:Exec) {
 }
 
 task dist(type: GradleBuild) {
-    tasks = ['createQueleaExe', 'copyToDist', 'izpack', 'innosetup']
+    tasks = ['createQueleaExe64', 'copyToDist', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 
