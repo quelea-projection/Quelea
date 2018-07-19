@@ -8,8 +8,8 @@ description: |
 confinement: strict
 
 environment:
-    JAVA_HOME: $SNAP/usr/lib/jvm/default-java
-    PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
+    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk
+    PATH: $SNAP/usr/lib/jvm/java-9-openjdk/bin:$PATH
     
 architectures:
   - build-on: amd64
