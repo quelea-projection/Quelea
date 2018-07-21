@@ -1,4 +1,4 @@
-quelea (2019.0) stable; urgency=normal
+quelea (2019.0) stable
  
   * Display warning if items are skipped when parsing schedule
   * Display CCLI number in schedule PDF export
@@ -10,5 +10,3 @@ quelea (2019.0) stable; urgency=normal
   * Fix bug where missing media from one schedule item prevented all following items from loading
   * Fix bug where spaces in first line of chords were removed
   * Fix bug with chord alignment in songs
-
- -- Michael Berry <michael@quelea.org>  Wednesday, 20 June 2018 00:00:00 +0000
