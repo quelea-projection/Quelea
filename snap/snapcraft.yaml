@@ -8,12 +8,11 @@ description: |
 confinement: strict
 
 environment:
-    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk
-    PATH: $SNAP/usr/lib/jvm/java-9-openjdk/bin:$PATH
+    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk-amd64
+    PATH: $SNAP/usr/lib/jvm/java-9-openjdk-amd64/bin:$PATH
     
 architectures:
   - build-on: amd64
-  - build-on: i386
 
 apps:
   quelea:
@@ -24,7 +23,8 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
-    stage-packages: [openjdk-9-jdk, vlc]
-    gradle-options: [-Dorg.gradle.java.home=$SNAP/usr/lib/jvm/java-9-openjdk, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
+    build-packages: [openjdk-9-jdk, openjfx]
+    stage-packages: [openjdk-9-jdk, openjfx, vlc]
+    gradle-options: [-Dorg.gradle.java.home=$SNAP/usr/lib/jvm/java-9-openjdk-amd64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]
