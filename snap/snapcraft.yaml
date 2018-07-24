@@ -24,6 +24,6 @@ parts:
     plugin: gradle
     source: Quelea
     stage-packages: [vlc]
-    gradle-options: [-Dorg.gradle.java.home=$SNAP/usr/lib/jvm/java-9-openjdk-amd64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
+    gradle-options: [-Dorg.gradle.java.home=$SNAP/jar/linjre64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]
