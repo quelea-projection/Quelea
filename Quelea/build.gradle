@@ -92,6 +92,7 @@ task copyToDist {
         copy {from "src" into project.distdir + "/src"}
 //        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
         copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
+        copy {from zipTree("bundlejre/linjre64.zip") into project.distdir}
         copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
         copy {from file("README.TXT") into file(project.distdir)}
         copy {from file("quelea.properties") into file(project.distdir)}

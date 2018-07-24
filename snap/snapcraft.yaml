@@ -8,8 +8,8 @@ description: |
 confinement: strict
 
 environment:
-    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk-amd64
-    PATH: $SNAP/usr/lib/jvm/java-9-openjdk-amd64/bin:$PATH
+    JAVA_HOME: $SNAP/jar/linjre64
+    PATH: $SNAP/jar/linjre64/bin:$PATH
     
 architectures:
   - build-on: amd64
@@ -23,8 +23,7 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
-    build-packages: [openjdk-9-jdk, openjfx]
-    stage-packages: [openjdk-9-jdk, openjfx, vlc]
+    stage-packages: [vlc]
     gradle-options: [-Dorg.gradle.java.home=$SNAP/usr/lib/jvm/java-9-openjdk-amd64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]
