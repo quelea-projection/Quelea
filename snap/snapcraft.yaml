@@ -24,7 +24,7 @@ parts:
     plugin: gradle
     source: Quelea
     stage-packages: [vlc]
-    build: unzip $SNAP/jar/bundlejre/linjre64.zip && ls -l $SNAP/jar
+    build: unzip jar/bundlejre/linjre64.zip && ls -l jar
     gradle-options: [-Dorg.gradle.java.home=$SNAP/jar/linjre64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]
