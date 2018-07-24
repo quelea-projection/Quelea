@@ -20,10 +20,13 @@ apps:
     plugs: [home, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media]
 
 parts:
+  initlinjre:
+    build: unzip $SNAP/jar/bundlejre/linjre64.zip && ls -l $SNAP/jar
+    
   quelea:
     plugin: gradle
     source: Quelea
     stage-packages: [vlc]
     gradle-options: [-Dorg.gradle.java.home=$SNAP/jar/linjre64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
-    after: [desktop-gtk3]
+    after: [desktop-gtk3, initlinjre]
