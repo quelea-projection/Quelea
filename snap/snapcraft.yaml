@@ -25,5 +25,5 @@ parts:
     source: Quelea
     build-packages: [gradle]
     stage-packages: [vlc]
-    build: unzip bundlejre/linjre64 && gradle -Dorg.gradle.java.home=$SNAP/jar/linjre64 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist
+    build: unzip bundlejre/linjre64 && ls -l && ls -l bundlejre && gradle -Dorg.gradle.java.home=linjre64 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist
     after: [desktop-gtk3]
