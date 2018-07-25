@@ -25,5 +25,5 @@ parts:
     source: Quelea
     build-packages: [gradle, wget, tar]
     stage-packages: [vlc]
-    build: wget https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/201807101745/OpenJDK10_x64_Linux_201807101745.tar.gz && tar -xzf OpenJDK10_x64_Linux_201807101745.tar.gz && ls -l jdk-10.0.1+10 && gradle -Dorg.gradle.java.home=jdk-10.0.1+10 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist
+    build: gradle wrapper --gradle-version 4.8 && wget https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/201807101745/OpenJDK10_x64_Linux_201807101745.tar.gz && tar -xzf OpenJDK10_x64_Linux_201807101745.tar.gz && ls -l jdk-10.0.1+10 && gradlew -Dorg.gradle.java.home=jdk-10.0.1+10 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist
     after: [desktop-gtk3]
