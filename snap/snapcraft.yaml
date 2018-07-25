@@ -21,10 +21,9 @@ apps:
 
 parts:
   quelea:
-    plugin: gradle
+    plugin: nil
     source: Quelea
+    build-packages: [gradle]
     stage-packages: [vlc]
-    build: pwd && ls -l && ls -l bundlejre && unzip bundlejre/linjre64
-    gradle-options: [-Dorg.gradle.java.home=$SNAP/jar/linjre64, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
-    gradle-output-dir: 'dist'
+    build: echo $SNAP && pwd && ls -l && ls -l $SNAP/jar/bundlejre && unzip $SNAP/jar/bundlejre/linjre64 gradle -Dorg.gradle.java.home=$SNAP/jar/linjre64 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist
     after: [desktop-gtk3]
