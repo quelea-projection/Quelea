@@ -7,6 +7,7 @@ quelea (2019.0) stable
   * Display preview of song in song list
   * Move to source level 9
   * Add support for extended chord symbols
+  * Add support for extra tags in plain text parser
   * Fix bug with Java versions newer than 8 on MacOS
   * Fix bug where missing media from one schedule item prevented all following items from loading
   * Fix bug where spaces in first line of chords were removed
