@@ -6,6 +6,10 @@ description: |
   multimedia content in your church service.
 
 confinement: strict
+
+environment:
+    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk
+    PATH: $SNAP/usr/lib/jvm/java-9-openjdk/bin:$PATH
     
 architectures:
   - build-on: amd64
@@ -17,9 +21,9 @@ apps:
 
 parts:
   quelea:
-    plugin: nil
+    plugin: gradle
     source: Quelea
-    build-packages: [gradle, wget, tar, curl]
-    stage-packages: [vlc]
-    build: export JAVA_OPTS="-Dhttp.proxyHost=10.10.10.1 -Dhttp.proxyPort=8222 -Dhttps.proxyHost=10.10.10.1 -Dhttps.proxyPort=8222" && curl -I https://jcenter.bintray.com/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar && gradle wrapper --gradle-version 4.9 && wget -q https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/201807101745/OpenJDK10_x64_Linux_201807101745.tar.gz && tar -xzf OpenJDK10_x64_Linux_201807101745.tar.gz && wget -q https://download.java.net/java/early_access/openjfx11/20/binaries/openjfx-11-ea+20_linux-x64_bin-jmods.zip && unzip openjfx-11-ea+20_linux-x64_bin-jmods.zip 'javafx-jmods-11/*' -d jdk-10.0.1+10/jmods && ./gradlew -Dhttp.proxyHost=10.10.10.1 -Dhttp.proxyPort=8222 -Dhttps.proxyHost=10.10.10.1 -Dhttps.proxyPort=8222 -Dorg.gradle.java.home=jdk-10.0.1+10 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist dist --stacktrace
+    stage-packages: [openjdk-9-jdk, vlc]
+    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
+    gradle-output-dir: 'dist'
     after: [desktop-gtk3]
