@@ -21,15 +21,15 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 
 /**
- * 
+ *
  * @author tomaszpio@gmail.com
  */
-public class PlainTextSongsImportDialog extends ImportDialog{
+public class PlainTextSongsImportDialog extends ImportDialog {
 
     public PlainTextSongsImportDialog() {
         super(new String[]{
-                LabelGrabber.INSTANCE.getLabel("plaintext.import.line1")
+            LabelGrabber.INSTANCE.getLabel("plaintext.import.line1")
         }, FileFilters.PLAIN_TEXT, new PlainTextParser(), true, false);
     }
-    
+
 }
