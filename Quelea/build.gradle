@@ -17,6 +17,10 @@ plugins {
     id 'com.bmuschko.izpack' version '3.0'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9'
+}
+
 buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
