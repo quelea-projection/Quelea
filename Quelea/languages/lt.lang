@@ -677,3 +677,5 @@ filefilters.description.songs.worshiphim=Worship Him MDB failai
 worshiphim.import.line1=Žemiau pasirinkite Worship Him duomenų bazės (mdb formatu) vietą:
 worshiphim.button=Worship Him
 show.extra.live.panel.toolbar.options.label=Rodyti papildomas skydelio "Gyvai" įrankių juostos parinktis
+schedule.items.skipped.text=Kai kurie tvarkaraščio elementai neturi savo įtaisytos medijos, taigi, jie nebuvo pridėti.
+schedule.items.skipped.header=Praleisti tvarkaraščio elementai
