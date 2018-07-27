@@ -30,6 +30,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -43,6 +44,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -57,6 +59,8 @@ public class MultimediaControls extends StackPane {
     private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
     private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
     private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
+    private static final Image LOOP_IMAGE_ON = new Image("file:icons/loop_on.png");
+    private static final Image LOOP_IMAGE_OFF = new Image("file:icons/loop_off.png");
     private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
     private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
     private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
@@ -64,6 +68,7 @@ public class MultimediaControls extends StackPane {
     private boolean playpause;
     private ImageView playButton;
     private ImageView stopButton;
+    private ImageView loopButton;
     private Slider posSlider;
     private boolean disablePosSliderListener;
     private boolean disableControls;
@@ -72,6 +77,7 @@ public class MultimediaControls extends StackPane {
     private Slider volSlider;
     private int vol = 100;
     private final ImageView muteButton;
+    private boolean looping;
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -122,7 +128,7 @@ public class MultimediaControls extends StackPane {
         posSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if(disablePosSliderListener) {
+                if (disablePosSliderListener) {
                     return;
                 }
                 if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
@@ -139,8 +145,28 @@ public class MultimediaControls extends StackPane {
         posSlider.setMaxWidth(rect.getWidth() - 20);
         getChildren().add(posSlider);
 
+        loopButton = new ImageView(LOOP_IMAGE_OFF);
+        Tooltip.install(loopButton, new Tooltip(LabelGrabber.INSTANCE.getLabel("video.loop.tooltip")));
+        loopButton.setOnMouseClicked(e -> {
+            if (!disableControls) {
+                if (loopButton.getImage().equals(LOOP_IMAGE_OFF)) {
+                    loopButton.setImage(LOOP_IMAGE_ON);
+                    looping = true;
+                } else {
+                    loopButton.setImage(LOOP_IMAGE_OFF);
+                    looping = false;
+                }
+                VLCWindow.INSTANCE.setRepeat(looping);
+            }
+        });
+        setButtonParams(loopButton);
+        loopButton.setTranslateY(-35);
+        loopButton.setTranslateX(posSlider.getMaxWidth() - 110);
+        loopButton.setFitWidth(20);
+        getChildren().add(loopButton);
+
         muteButton = new ImageView(VOLUME);
-        muteButton.setFitWidth(25);
+        muteButton.setFitWidth(20);
         muteButton.setPreserveRatio(true);
 
         volSlider = new Slider(0, 100, 0);
@@ -233,7 +259,7 @@ public class MultimediaControls extends StackPane {
         VLCWindow.INSTANCE.setOnFinished(new Runnable() {
             @Override
             public void run() {
-                if (getScene() != null && !disableControls) {
+                if (getScene() != null && !disableControls && !looping) {
                     reset();
                 }
             }
@@ -276,7 +302,7 @@ public class MultimediaControls extends StackPane {
         playpause = !playpause;
         if (playpause) {
             playButton.setImage(PAUSE_IMAGE);
-            VLCWindow.INSTANCE.setRepeat(false);
+            VLCWindow.INSTANCE.setRepeat(looping);
             VLCWindow.INSTANCE.setHue(0);
             VLCWindow.INSTANCE.play();
             VLCWindow.INSTANCE.setHue(0);
