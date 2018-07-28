@@ -98,7 +98,7 @@ public class LabelChecker {
                     && !file.getName().equals("us.lang")) { //Exclude GB english file since this is what we work from, and US file because it gets translated automatically!
                 LabelChecker lc = new LabelChecker(file.getName());
                 List<String> missingLabels = lc.getMissingLabels();
-                missingMap.put(file.getName() + "(" + lc.langName + ")", missingLabels);
+                missingMap.put(lc.langName, missingLabels);
                 if (!missingLabels.isEmpty()) {
                     ok = false;
                 }
