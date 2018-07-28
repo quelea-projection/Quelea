@@ -44,7 +44,7 @@ deploy:
     overwrite: true
     target_commitish: $TRAVIS_COMMIT
 after_success:
-  - git clone https://${GH_TOKEN}@github.com/quelea-projection/quelea-projection.github.io ./repo
+  - git clone https://berry120:${GH_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
   - cp dist/missingLabels.js repo/
   - cd repo
   - git commit -m "Update missing labels file"
