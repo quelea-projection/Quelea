@@ -8,12 +8,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.displayable.TextSection;
+import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.windows.main.StatusPanel;
 
 /**
- * A parser for plain text files - also supports some tags.
+ * A parser for plain text files - also supports some tags and chordpro chords.
  *
  * @author tomaszpio, Michael Berry
  */
@@ -93,6 +95,45 @@ public class PlainTextParser implements SongParser {
     private static boolean startsWithIgnoreCase(String str, String startsWith) {
         return str.toLowerCase().startsWith(startsWith.toLowerCase());
     }
+    
+    private void addSectionToLyrics(List<String> section, StringBuilder lyrics) {
+        for (String sectionLine : section) {
+            Pattern pattern = Pattern.compile("\\[" + LineTypeChecker.CHORD_REGEX + "\\]");
+            Matcher matcher = pattern.matcher(sectionLine);
+            
+            sectionLine = sectionLine.replaceAll("\\[" + LineTypeChecker.CHORD_REGEX + "\\]", "");
+
+            StringBuilder chordLine = new StringBuilder();
+            int offset = 0;
+            while (matcher.find()) {
+                int chordPos = matcher.start() - offset;
+                while (chordLine.length() < chordPos) {
+                    chordLine.append(' ');
+                }
+                if (chordLine.length() > chordPos) {
+                    chordLine.append(' ');
+                    
+                    String startStr = sectionLine.substring(0,chordPos);
+                    String endStr = sectionLine.substring(chordPos,sectionLine.length());
+                    
+                    sectionLine = startStr;
+                    for(int i=0 ; i<chordLine.length() - chordPos ; i++) {
+                        sectionLine += "_";
+                        offset--;
+                    }
+                    sectionLine += endStr;
+                }
+                offset += matcher.group().length();
+                chordLine.append(matcher.group().substring(1, matcher.group().length() - 1));
+            }
+
+            if (!chordLine.toString().isEmpty()) {
+                lyrics.append(chordLine.toString()).append('\n');
+            }
+
+            lyrics.append(sectionLine).append('\n');
+        }
+    }
 
     @Override
     public List<SongDisplayable> getSongs(File f, StatusPanel statusPanel) throws IOException {
@@ -121,22 +162,17 @@ public class PlainTextParser implements SongParser {
                                     section.add(line);
                                 }
                             } else {
-                                if(song.getTitle().equals(DEFAULT_TITLE) && section.size()==1) {
+                                if (song.getTitle().equals(DEFAULT_TITLE) && section.size() == 1) {
                                     song.setTitle(section.get(0));
-                                }
-                                else if(!isBlankLines(section)) {
-                                    for(String sectionLine : section) {
-                                        lyrics.append(sectionLine).append('\n');
-                                    }
+                                } else if (!isBlankLines(section)) {
+                                    addSectionToLyrics(section, lyrics);
                                     lyrics.append('\n');
                                 }
                                 section.clear();
                             }
                         }
                         if (!isBlankLines(section)) {
-                            for (String sectionLine : section) {
-                                lyrics.append(sectionLine).append('\n');
-                            }
+                            addSectionToLyrics(section, lyrics);
                             lyrics.append('\n');
                         }
                         song.setLyrics(lyrics.toString());
@@ -147,10 +183,12 @@ public class PlainTextParser implements SongParser {
         }
         return ret;
     }
-    
+
     private static boolean isBlankLines(List<String> section) {
-        for(String str : section) {
-            if(!str.trim().isEmpty()) return false;
+        for (String str : section) {
+            if (!str.trim().isEmpty()) {
+                return false;
+            }
         }
         return true;
     }

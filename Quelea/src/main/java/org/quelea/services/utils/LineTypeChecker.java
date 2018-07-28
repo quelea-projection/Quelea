@@ -26,6 +26,8 @@ import java.util.TreeMap;
  * @author Michael
  */
 public class LineTypeChecker {
+    
+    public static final String CHORD_REGEX = "(\\s*(((([a-hA-H](#|b|♯|♭?)[0-9]*)|\\/)*((sus|dim|º|ø|\\+|maj|dom|min|m|M|aug|add)?[0-9]*){3}(#|b|♯|♭)?[0-9]*)\\s*)+)";
 
     /**
      * The type of the line.
@@ -101,7 +103,7 @@ public class LineTypeChecker {
             if (s.trim().isEmpty()) {
                 continue;
             }
-            if (!s.matches("^(\\s*(((([a-hA-H](#|b|♯|♭?)[0-9]*)|\\/)*((sus|dim|º|ø|\\+|maj|dom|min|m|M|aug|add)?[0-9]*){3}(#|b|♯|♭)?[0-9]*)\\s*)+)$")) {
+            if (!s.matches("^" + CHORD_REGEX + "$")) {
                 return false;
             }
         }
