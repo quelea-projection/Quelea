@@ -20,6 +20,8 @@ You can see the latest CI release [here](https://github.com/quelea-projection/Qu
 
 If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
 
+**Note that snap builds are broken at the moment but should be working again Q4 2018, if all goes to plan. [See here for details.](https://github.com/quelea-projection/Quelea/issues/23)**
+
 CI releases are automatically built from the latest code in this repository, and thus are not fully tested. **They should not be used in production settings.**
 
 ## Documentation
