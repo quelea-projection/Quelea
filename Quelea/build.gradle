@@ -153,8 +153,13 @@ task innosetup (type:Exec) {
     }
 }
 
+task labelcheck(type:JavaExec) {
+   main = 'org.quelea.services.languages.LabelChecker'
+   classpath = sourceSets.main.runtimeClasspath
+}
+
 task dist(type: GradleBuild) {
-    tasks = ['createQueleaExe64', 'copyToDist', 'izpack', 'innosetup']
+    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 

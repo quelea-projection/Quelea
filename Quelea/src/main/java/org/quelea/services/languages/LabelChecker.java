@@ -18,15 +18,19 @@
  */
 package org.quelea.services.languages;
 
+import com.google.gson.Gson;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashSet;
-import java.util.Map.Entry;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 
 /**
  * Run as a standalone script - checks to see whether the language files are
@@ -40,76 +44,76 @@ public class LabelChecker {
     private Properties labels;
     private Properties engLabels;
     private String name;
+    private String langName;
 
     public LabelChecker(String name) {
         this.name = name;
         labels = new Properties();
         engLabels = new Properties();
         File langFile = new File("languages", name);
-        try (StringReader reader = new StringReader(Utils.getTextFromFile(langFile.getAbsolutePath(), ""))) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(langFile), "UTF-8")) {
             labels.load(reader);
+            langName = labels.getProperty("LANGUAGENAME");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        File englangFile = QueleaProperties.get().getEnglishLanguageFile();
-        try (StringReader reader = new StringReader(Utils.getTextFromFile(englangFile.getAbsolutePath(), ""))) {
+        File englangFile = new File("languages", "gb.lang");
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(englangFile), "UTF-8")) {
             engLabels.load(reader);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public boolean checkDuplicates() {
-        System.err.println("\nChecking duplicates...");
-        boolean ok = true;
-        Set<String> duplicateCheck = new HashSet<>();
-        for (Entry<Object, Object> entry : labels.entrySet()) {
-            String label = (String) entry.getValue();
-            boolean check = duplicateCheck.add(label);
-            if (!check) {
-                System.err.println("Duplicate label value: " + entry.getKey() + "=" + label);
-                ok = false;
-            }
-        }
-        return ok;
-    }
-
-    public boolean compare() {
-        boolean ok = true;
+    public List<String> getMissingLabels() {
+        List<String> missing = new ArrayList<>();
         boolean first = false;
         System.err.print("\nChecking \"" + name + "\"...");
         for (Object okey : engLabels.keySet()) {
             String key = (String) okey;
             String prop = labels.getProperty(key);
             if (prop == null) {
-                ok = false;
                 if (!first) {
                     first = true;
                     System.err.println();
                     System.err.println("MISSING LABELS:");
                 }
-                System.err.println(key + "=" + engLabels.getProperty(key).replace("\n", "\\n"));
+                String val = key + "=" + engLabels.getProperty(key).replace("\n", "\\n");
+                missing.add(val);
+                System.err.println(val);
             }
         }
-        if (ok) {
+        if (missing.isEmpty()) {
             System.err.println("All good.");
         }
-        return ok;
+        return missing;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("Checking language files:");
         boolean ok = true;
+        Map<String, List<String>> missingMap = new HashMap<>();
         for (File file : new File("languages").listFiles()) {
             if (file.getName().endsWith("lang")
                     && !file.getName().equals("gb.lang")
                     && !file.getName().equals("us.lang")) { //Exclude GB english file since this is what we work from, and US file because it gets translated automatically!
-                boolean result = new LabelChecker(file.getName()).compare();
-                if (!result) {
+                LabelChecker lc = new LabelChecker(file.getName());
+                List<String> missingLabels = lc.getMissingLabels();
+                missingMap.put(file.getName() + "(" + lc.langName + ")", missingLabels);
+                if (!missingLabels.isEmpty()) {
                     ok = false;
                 }
             }
         }
+        String json = new Gson().toJson(missingMap);
+        
+        File missingLabelFile = new File("dist/missinglabels.js");
+        new File("dist").mkdir();
+        missingLabelFile.createNewFile();
+        try (PrintWriter out = new PrintWriter(missingLabelFile, StandardCharsets.UTF_8)) {
+            out.println("var mls = " + json + ";");
+        }
+        
         if (!ok) {
             System.err.println("\nWARNING: Some language files have missing labels. "
                     + "This is normal for intermediate builds and development releases, "
@@ -118,13 +122,6 @@ public class LabelChecker {
                     + "and ask them to translate the missing labels, "
                     + "or if this isn't possible use Google Translate "
                     + "(only as a last resort though!)");
-        }
-        boolean result = new LabelChecker("gb.lang").checkDuplicates();
-
-        if (!result) {
-            System.err.println("\nThe main language file (gb.lang) has some labels "
-                    + "with duplicate values - there's cases where this is ok "
-                    + "(and necessary), but this list is here to double check.\n");
         }
     }
 }

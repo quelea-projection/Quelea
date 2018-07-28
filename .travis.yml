@@ -34,15 +34,24 @@ before_deploy:
   - git push --delete https://${GH_TOKEN}@github.com/quelea-projection/Quelea CI-RELEASE
   - git push -q https://${GH_TOKEN}@github.com/quelea-projection/Quelea --tags
 deploy:
-  provider: releases
-  api_key:
-    secure: qhNYAPbla5Ia0wJVzECCqW/1rxkkWXrGkTus2eluxbmJXLDpdViQBCveymTEnH+JM3PXMPXATdY7u4QMZtuc7ixozcEjl5y28TfUQIdvAEA2kX6yAUIGADz72Vfk75SRZQyhW1ZCkS7DI5Sz+uQUFhjG3s7EnNkEmWmXWOC/9bmWZnGqGZ4K9syI0yyrp4fJqvgIh9EauZeIzNY5d7vW0IJ6hAMxdT7LpbrbD3Fl0ymHVFRJU253cmFA76XT0Km9b0TJsTJa1CxZmCaVea6ip+LG7WG0cdP3Rj4UPUnPvmW4YUOWafCDn4Td/K4X/IC3QQI9JojnIIxe+SIr0fBJ6Pah4YokPG1LhONe0AiDtz25g3x9L7GiFLvPJcGhtNIy+ALqkoXhNbyK3b3fpOUV3rvthDIK3ZbnywNPA0vt4W5WMMy9d3H9lYMcTswHAfdEfx6GJ+h/RXD0F3ylvBQjPv6G3oCieV/KLlVpSXxMTkDWeZY/RZ/cgOEMvHimRIfJzHcc6PYUc0rYQjGBASIR4Kaw/JlnastRhFOH5SyEnRNqtKX85IUqowOCF7het8P8zel37bS/8MQK6RRpivg0AWr1WnHiSdokQFtlyLS8mXO4m+kyxTd92q2ZUu3X7/rcpe21fYxFGMpUshTQHaVg0hN3Mmr1rmIx5hrsNcS5G/o=
-  file_glob: true
-  file: dist/standalone/*
-  skip_cleanup: true
-  prerelease: true
-  overwrite: true
-  target_commitish: $TRAVIS_COMMIT
+  - provider: releases
+    api_key:
+      secure: qhNYAPbla5Ia0wJVzECCqW/1rxkkWXrGkTus2eluxbmJXLDpdViQBCveymTEnH+JM3PXMPXATdY7u4QMZtuc7ixozcEjl5y28TfUQIdvAEA2kX6yAUIGADz72Vfk75SRZQyhW1ZCkS7DI5Sz+uQUFhjG3s7EnNkEmWmXWOC/9bmWZnGqGZ4K9syI0yyrp4fJqvgIh9EauZeIzNY5d7vW0IJ6hAMxdT7LpbrbD3Fl0ymHVFRJU253cmFA76XT0Km9b0TJsTJa1CxZmCaVea6ip+LG7WG0cdP3Rj4UPUnPvmW4YUOWafCDn4Td/K4X/IC3QQI9JojnIIxe+SIr0fBJ6Pah4YokPG1LhONe0AiDtz25g3x9L7GiFLvPJcGhtNIy+ALqkoXhNbyK3b3fpOUV3rvthDIK3ZbnywNPA0vt4W5WMMy9d3H9lYMcTswHAfdEfx6GJ+h/RXD0F3ylvBQjPv6G3oCieV/KLlVpSXxMTkDWeZY/RZ/cgOEMvHimRIfJzHcc6PYUc0rYQjGBASIR4Kaw/JlnastRhFOH5SyEnRNqtKX85IUqowOCF7het8P8zel37bS/8MQK6RRpivg0AWr1WnHiSdokQFtlyLS8mXO4m+kyxTd92q2ZUu3X7/rcpe21fYxFGMpUshTQHaVg0hN3Mmr1rmIx5hrsNcS5G/o=
+    file_glob: true
+    file: dist/standalone/*
+    skip_cleanup: true
+    prerelease: true
+    overwrite: true
+    target_commitish: $TRAVIS_COMMIT
+  - provider: pages
+    api_key:
+      secure: qhNYAPbla5Ia0wJVzECCqW/1rxkkWXrGkTus2eluxbmJXLDpdViQBCveymTEnH+JM3PXMPXATdY7u4QMZtuc7ixozcEjl5y28TfUQIdvAEA2kX6yAUIGADz72Vfk75SRZQyhW1ZCkS7DI5Sz+uQUFhjG3s7EnNkEmWmXWOC/9bmWZnGqGZ4K9syI0yyrp4fJqvgIh9EauZeIzNY5d7vW0IJ6hAMxdT7LpbrbD3Fl0ymHVFRJU253cmFA76XT0Km9b0TJsTJa1CxZmCaVea6ip+LG7WG0cdP3Rj4UPUnPvmW4YUOWafCDn4Td/K4X/IC3QQI9JojnIIxe+SIr0fBJ6Pah4YokPG1LhONe0AiDtz25g3x9L7GiFLvPJcGhtNIy+ALqkoXhNbyK3b3fpOUV3rvthDIK3ZbnywNPA0vt4W5WMMy9d3H9lYMcTswHAfdEfx6GJ+h/RXD0F3ylvBQjPv6G3oCieV/KLlVpSXxMTkDWeZY/RZ/cgOEMvHimRIfJzHcc6PYUc0rYQjGBASIR4Kaw/JlnastRhFOH5SyEnRNqtKX85IUqowOCF7het8P8zel37bS/8MQK6RRpivg0AWr1WnHiSdokQFtlyLS8mXO4m+kyxTd92q2ZUu3X7/rcpe21fYxFGMpUshTQHaVg0hN3Mmr1rmIx5hrsNcS5G/o=
+    file_glob: true
+    file: dist/missingLabels.js
+    skip_cleanup: true
+    overwrite: true
+    on:
+      branch: master
 env:
   global:
     secure: B2CmIfRyqbeM0xDmxsKqfhvbx4Gr2sSrG9ZtkGWs0HkwmPtoWqqF6bibdj4nSArqTxaNGoHvlGuv2Psw7YK3cbGErHhAlDBzf9QiHkSYXN0NlYw3kH9k+O2h5lR7H8RwTXFxrTaoQSaXXpKQTytYDFh/fJEakIj7+tWTHa6WPDN0FmOjEvcij50WQfItW1/G3evQ5/AvbKF8DI6U9jNu66PEyDMVoTE4aLedoL7CTZRiA+tllttmIgy5z9ONzCr/hqamNfVz71/t+H7UkY2Z0WhRYydpp+6ck53uNzMwwBcPB4hz4Z1bvA7py78wewRTo+8TGWjRG5qr6DWY10sm9s60FU4E8m53gpA+rTPOTMckULFDZ9A7rYyFNTnKWf+3tvO98VoFt5XI9c329rC3stu1guhjTiPNE+tMJ/q762tVBFh9C9o/77HqyJDNbZo4rifDus2Sb4JlJEQdFlhb6oVJ2nz/Z+6qPbGbvjjvUwoul3lREc2D5VSssgdVJ7gTP9UwQhOqCGaYqhJiW6lKTuIDyzZz+Twp3WDTqbmTnu/Yxx6ieHkSDFFGjWtJrrA2qjrwwqjcUnzt2G76GfWiRNVXdRWd8FkCcY/pykWd4ZQZHSSdcKgANYYcTnbVFfrrODYS2yRWX7c2O4ysnyH3B3KY4P7Csq0Eg36RcNTysPE=
