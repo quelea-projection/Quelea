@@ -17,7 +17,7 @@ plugins {
     id 'com.bmuschko.izpack' version '3.0'
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = '4.9'
 }
 
