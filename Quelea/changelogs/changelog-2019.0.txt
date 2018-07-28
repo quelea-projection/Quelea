@@ -9,6 +9,7 @@ quelea (2019.0) stable
   * Add support for extended chord symbols
   * Add support for extra tags in plain text parser
   * Add support for looping a video
+  * Fix display of bible passages
   * Fix bug with Java versions newer than 8 on MacOS
   * Fix bug where missing media from one schedule item prevented all following items from loading
   * Fix bug where spaces in first line of chords were removed

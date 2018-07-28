@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import org.quelea.data.ThemeDTO;
@@ -35,8 +34,8 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.Chord;
-import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.utils.FXFontMetrics;
+import org.quelea.utils.WrapTextResult;
 
 /**
  *
@@ -67,6 +66,56 @@ public abstract class WordDrawer extends DisplayableDrawer {
 
     protected void setLastClearedState(boolean val) {
         lastClearedState.put(getCanvas(), val);
+    }
+    
+    private WrapTextResult getWrapTextProps(Font font, String lineToWrap, double width) {
+        FXFontMetrics metrics = new FXFontMetrics(font);
+        String[] words = lineToWrap.split(" ");
+        StringBuilder lineBuilder = new StringBuilder();
+        List<LyricLine> lines = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            String potentialStr = lineBuilder.toString() + word;
+            if (metrics.computeStringWidth(potentialStr.replace("<sup>", "").replace("</sup>", "")) > width) {
+                lines.add(new LyricLine(lineBuilder.toString()));
+                lineBuilder = new StringBuilder(word + " ");
+            }
+            else {
+                lineBuilder.append(word).append(" ");
+            }
+        }
+        lines.add(new LyricLine(lineBuilder.toString()));
+        //We're using the "fontsize" part of wraptextresult here as the height instead to reuse the same class, bit of a fudge...
+        return new WrapTextResult(lines, metrics.getLineHeight() * lines.size());
+    }
+    
+    protected WrapTextResult normalWrapText(Font font, String lineToWrap, double width, double height) {
+        double min = 1;
+        double max = font.getSize();
+        
+        double cur = (max-min)/2;
+        
+        font = new Font(font.getName(), cur);
+        WrapTextResult result = getWrapTextProps(font, lineToWrap, width);
+        
+        int i=0;
+        while(result.getFontSize()>height || result.getFontSize()<height-50) {
+            i++;
+            if(i>20) {
+                break;
+            }
+            if (result.getFontSize() > height) {
+                max = cur;
+            } else if (result.getFontSize() < height) {
+                min = cur;
+            } else {
+                throw new AssertionError("Shouldn't be here");
+            }
+            cur = ((max-min)/2)+min;
+            font = new Font(font.getName(), cur);
+            result = getWrapTextProps(font, lineToWrap, width);
+        }
+        return new WrapTextResult(result.getNewText(), cur);
     }
 
     /**
