@@ -119,7 +119,7 @@ public class FreeWorshipParser implements SongParser {
             }
             sb.append(str);
         }
-        return sb.toString();
+        return sb.toString().replaceAll("<\\?xml.*\\?>", "");
     }
 
 }

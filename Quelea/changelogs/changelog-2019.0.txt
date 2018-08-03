@@ -14,3 +14,4 @@ quelea (2019.0) stable
   * Fix bug where missing media from one schedule item prevented all following items from loading
   * Fix bug where spaces in first line of chords were removed
   * Fix bug with chord alignment in songs
+  * Fix bug with Freeworship importer
