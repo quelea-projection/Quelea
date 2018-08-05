@@ -1,5 +1,5 @@
 ######################################
-### Bulgarian 2017-12-30 Mediaworkshop
+### Bulgarian 2018-08-05 Mediaworkshop
 ######################################
 LANGUAGENAME=Български (BG)
 database.heading=База
@@ -664,3 +664,16 @@ website.dialog.content=Въведете адреса на уеб страниц�
 paste.label=Постави
 undo.label=Отмени
 redo.label=Повтори
+elevanto.button=Elevanto
+show.extra.live.panel.toolbar.options.label=Покажи допълнителни опции на панела за излъчване
+schedule.items.skipped.text=Някои елементи от плана нямат медията вградена и за това не са добавени.
+filefilters.description.songs.worshiphim=Worship Him MDB файлове
+elevanto.import.heading=Elevanto
+worshiphim.import.line1=Изберете директорията на Worship Him базата (в mdb формат) по-долу:
+help.menu.error.text=За съжаление страницата не може да бъде заредена. Може да я изберете ръчно: $1
+elevanto.loginsuccess.message=Може да затворите този прозорец и да се върнете в Quelea
+schedule.items.skipped.header=Пропуснати елементи от плана
+worshiphim.button=Worship Him
+sundayplus.import.line2=(За успешен импорт се очаква PTF файловете да бъдат в основната директория на zip-архив файла.)
+video.loop.tooltip=Превключване на повторения вкл. / изкл.
+elevanto.loginerror.warning=Регистриране на грешка в Elevanto
