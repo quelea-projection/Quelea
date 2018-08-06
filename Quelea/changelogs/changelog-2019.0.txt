@@ -1,7 +1,18 @@
-quelea (2019.0) stable; urgency=normal
+quelea (2019.0) stable
  
   * Display warning if items are skipped when parsing schedule
   * Display CCLI number in schedule PDF export
   * Removed paradox requirement when importing Easyworship databases
-
- -- Michael Berry <michael@quelea.org>  Wednesday, 20 June 2018 00:00:00 +0000
+  * Format song list in accordance with search
+  * Display preview of song in song list
+  * Move to source level 9
+  * Add support for extended chord symbols
+  * Add support for extra tags in plain text parser
+  * Add support for looping a video
+  * Add scrollbar to global themes panel
+  * Fix display of bible passages
+  * Fix bug with Java versions newer than 8 on MacOS
+  * Fix bug where missing media from one schedule item prevented all following items from loading
+  * Fix bug where spaces in first line of chords were removed
+  * Fix bug with chord alignment in songs
+  * Fix bug with Freeworship importer

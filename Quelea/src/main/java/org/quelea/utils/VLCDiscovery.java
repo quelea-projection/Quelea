@@ -1,5 +1,6 @@
 package org.quelea.utils;
 
+import java.io.File;
 import java.util.List;
 import java.util.regex.Pattern;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
@@ -47,6 +48,7 @@ public class VLCDiscovery {
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
             directoryNames.add("/usr/lib/i386-linux-gnu");
+            directoryNames.add(new File("../usr/lib").getAbsolutePath());
         }
 
     }

@@ -32,7 +32,7 @@ public class HibernateUtil {
     public static boolean init() {
         try {
             LOGGER.info("Initialising hibernate");
-            final String location = new File(new File(QueleaProperties.getQueleaUserHome(), "database_new"), "database_new").getAbsolutePath();
+            final String location = new File(new File(QueleaProperties.get().getQueleaUserHome(), "database_new"), "database_new").getAbsolutePath();
             final Configuration cfg = new Configuration();
             cfg.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + location);
             cfg.setProperty("hibernate.connection.dialect", "org.hibernate.dialect.HSQLDialect");

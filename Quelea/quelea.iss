@@ -2,7 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Quelea"
-#define MyAppVersion "2018.1"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
 #define MyAppExeName "quelea.exe"
@@ -45,14 +44,27 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Dirs]  
 Name: "{app}"; Permissions: everyone-modify;  
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}/lib"
+Type: filesandordirs; Name: "{app}/server"
+Type: filesandordirs; Name: "{app}/dictionaries"
+Type: filesandordirs; Name: "{app}/bibles"
+Type: filesandordirs; Name: "{app}/icons"
+Type: filesandordirs; Name: "{app}/img"
+Type: filesandordirs; Name: "{app}/vid"
+Type: filesandordirs; Name: "{app}/licenses"
+Type: filesandordirs; Name: "{app}/themes"
+Type: filesandordirs; Name: "{app}/winjre"
+Type: filesandordirs; Name: "{app}/winjre64"
+
 [Files]
-Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build/launch4j/Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist/Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
 Source: "scheduleformat.xsl"; DestDir: "{app}"; Flags: ignoreversion
 Source: "songformat.xsl"; DestDir: "{app}"; Flags: ignoreversion
-Source: "lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist/lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "server\*"; DestDir: "{app}\server"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dictionaries\*"; DestDir: "{app}\dictionaries"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "languages\*"; DestDir: "{app}\languages"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -64,7 +76,7 @@ Source: "img\*"; DestDir: "{app}\img"; Flags: ignoreversion recursesubdirs creat
 Source: "vid\*"; DestDir: "{app}\vid"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "themes\*"; DestDir: "{app}\themes"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "winjre\*"; DestDir: "{app}\winjre"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\winjre\*"; DestDir: "{app}\winjre"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

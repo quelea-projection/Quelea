@@ -134,7 +134,7 @@ public class EditThemeDialog extends Stage {
             File file;
             int filenum = 1;
             do {
-                file = new File(new File(QueleaProperties.getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
+                file = new File(new File(QueleaProperties.get().getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
                 filenum++;
             } while (file.exists());
             theme.setFile(file);

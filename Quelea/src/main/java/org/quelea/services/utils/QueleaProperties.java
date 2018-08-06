@@ -41,21 +41,32 @@ import org.quelea.services.notice.NoticeDrawer.NoticePosition;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2018.1", "");
-    private static final QueleaProperties INSTANCE = new QueleaProperties();
+    public static final Version VERSION = new Version("2019.0", "");
+    private static QueleaProperties INSTANCE;
+    private String userHome;
+
+    public static void init(String userHome) {
+        INSTANCE = new QueleaProperties(userHome);
+        try {
+            if (!get().getPropFile().exists()) {
+                get().getPropFile().createNewFile();
+            }
+            try (StringReader reader = new StringReader(Utils.getTextFromFile(get().getPropFile().getAbsolutePath(), ""))) {
+                get().load(reader);
+            }
+        } catch (IOException ex) { //Never mind.
+        }
+    }
 
     /**
      * Load the properties from the properties file.
      */
-    private QueleaProperties() {
-        try {
-            if (!getPropFile().exists()) {
-                getPropFile().createNewFile();
-            }
-            try (StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
-                load(reader);
-            }
-        } catch (IOException ex) { //Never mind.
+    private QueleaProperties(String userHome) {
+        if (userHome != null && !userHome.isEmpty()) {
+            this.userHome = userHome;
+        }
+        else {
+            this.userHome = System.getProperty("user.home");
         }
     }
 
@@ -97,11 +108,11 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
-    
+
     public boolean isDictionaryEnabled() {
         return Boolean.parseBoolean(getProperty("enable.dict", "false"));
     }
-    
+
     /**
      * Get the languages file that should be used as specified in the properties
      * file.
@@ -129,7 +140,7 @@ public final class QueleaProperties extends Properties {
         setProperty("language.file", file);
         write();
     }
-    
+
     /**
      * Get the english languages file that should be present on all
      * installations. We can default to this if labels are missing in other
@@ -634,7 +645,7 @@ public final class QueleaProperties extends Properties {
     public void setThumbnailSize(int thumbnailSize) {
         setProperty("thumbnail.size", Integer.toString(thumbnailSize));
     }
-    
+
     /**
      * Get the show extra live panel toolbar options setting.
      * <p>
@@ -652,7 +663,7 @@ public final class QueleaProperties extends Properties {
     public void setShowExtraLivePanelToolbarOptions(boolean show) {
         setProperty("show.extra.live.panel.toolbar.options", Boolean.toString(show));
     }
-    
+
     /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
@@ -698,8 +709,8 @@ public final class QueleaProperties extends Properties {
      * <p>
      * @return the Quelea home directory.
      */
-    public static File getQueleaUserHome() {
-        File ret = new File(new File(System.getProperty("user.home")), ".quelea");
+    public File getQueleaUserHome() {
+        File ret = new File(new File(userHome), ".quelea");
         if (!ret.exists()) {
             ret.mkdir();
         }
@@ -711,27 +722,8 @@ public final class QueleaProperties extends Properties {
      * <p>
      * @return the user's turbo db exe converter.
      */
-    public static File getTurboDBExe() {
-        return new File(QueleaProperties.getQueleaUserHome(), "TdbDataX.exe");
-    }
-
-    /**
-     * Get the number of the next kingsway song that should be imported.
-     * <p>
-     * @return the number of the next song.
-     */
-    public int getNextKingswaySong() {
-        return Integer.parseInt(getProperty("next.kingsway.song", "1"));
-    }
-
-    /**
-     * Set the number of the next kingsway song that should be imported.
-     * <p>
-     * @param num the number of the next song.
-     */
-    public void setNextKingswaySong(int num) {
-        setProperty("next.kingsway.song", Integer.toString(num));
-        write();
+    public File getTurboDBExe() {
+        return new File(getQueleaUserHome(), "TdbDataX.exe");
     }
 
     public int getTranslationFontSizeOffset() {
@@ -841,7 +833,7 @@ public final class QueleaProperties extends Properties {
     public File getVidDir() {
         return new File(getQueleaUserHome(), "vid");
     }
-    
+
     /**
      * Get the directory used for storing temporary recordings.
      * <p>
@@ -946,7 +938,7 @@ public final class QueleaProperties extends Properties {
         setProperty("projector.screen", Integer.toString(screen));
         write();
     }
-    
+
     /**
      * Determine whether the projection screen automatically should be moved to
      * a recently inserted monitor.
@@ -1539,7 +1531,7 @@ public final class QueleaProperties extends Properties {
         setProperty("oo.path", path);
         write();
     }
-    
+
     /**
      * Get whether to use PowerPoint for presentations.
      * <p/>
@@ -1579,8 +1571,8 @@ public final class QueleaProperties extends Properties {
         setProperty("pp.path", path);
         write();
     }
-    
-     /**
+
+    /**
      * Get the path to the desired direcotry for recordings.
      * <p>
      * @return the path to the desired direcotry for recordings.
@@ -1598,7 +1590,7 @@ public final class QueleaProperties extends Properties {
         setProperty("rec.path", path);
         write();
     }
-    
+
     /**
      * Get the path to the desired directory for downloading.
      * <p/>
@@ -1617,7 +1609,7 @@ public final class QueleaProperties extends Properties {
         setProperty("download.path", path);
         write();
     }
-    
+
     /**
      * Determine if the recordings should be converted to MP3 files.
      * <p>
@@ -1626,7 +1618,7 @@ public final class QueleaProperties extends Properties {
     public boolean getConvertRecordings() {
         return Boolean.parseBoolean(getProperty("convert.mp3", "false"));
     }
-    
+
     /**
      * Set whether to automatically convert the recordings to MP3 files.
      * <p>
@@ -1996,36 +1988,40 @@ public final class QueleaProperties extends Properties {
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
-    
+
     public boolean getDefaultSongDBUpdate() {
         return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
     }
-    
+
+    public boolean getShowDBSongPreview() {
+        return Boolean.parseBoolean(getProperty("db.song.preview", "true"));
+    }
+
     public void setDefaultSongDBUpdate(boolean updateInDB) {
         setProperty("default.song.db.update", Boolean.toString(updateInDB));
         write();
     }
-    
+
     public int getWebDisplayableRefreshRate() {
         return Integer.parseInt(getProperty("web.refresh.rate", "500"));
     }
-    
+
     public String getWebProxyHost() {
         return getProperty("web.proxy.host", null);
     }
-    
+
     public String getWebProxyPort() {
         return getProperty("web.proxy.port", null);
     }
-    
+
     public String getWebProxyUser() {
         return getProperty("web.proxy.user", null);
     }
-    
+
     public String getWebProxyPassword() {
         return getProperty("web.proxy.password", null);
     }
-    
+
     public String getChurchCcliNum() {
         return getProperty("church.ccli.num", null);
     }

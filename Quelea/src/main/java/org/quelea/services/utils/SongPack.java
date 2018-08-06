@@ -33,7 +33,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.services.importexport.PDFExporter;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
@@ -115,7 +114,7 @@ public class SongPack {
                         SongDisplayable song = songDisplayablesThreadSafe.get(i);
                         String name = song.getTitle() + ".xml";
                         while (names.contains(name)) {
-                            name = PDFExporter.incrementExtension(name);
+                            name = Utils.incrementExtension(name, "xml");
                         }
                         names.add(name);
                         zos.putNextEntry(new ZipEntry(name));
