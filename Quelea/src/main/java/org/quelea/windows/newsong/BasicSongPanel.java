@@ -471,8 +471,8 @@ public class BasicSongPanel extends BorderPane {
 
         String key = getKey(semitones);
 
-        StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-        for (String line : getLyricsField().getText().split("\n")) {
+        StringBuilder newText = new StringBuilder(getLyricsField().getTextArea().getText().length());
+        for (String line : getLyricsField().getTextArea().getText().split("\n")) {
             if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                 newText.append(new ChordLineTransposer(line).transpose(semitones, key));
             } else {
@@ -480,9 +480,9 @@ public class BasicSongPanel extends BorderPane {
             }
             newText.append('\n');
         }
-        int pos = getLyricsField().getCaretPosition();
-        getLyricsField().replaceText(newText.toString());
-        getLyricsField().moveTo(pos);
+        int pos = getLyricsField().getTextArea().getCaretPosition();
+        getLyricsField().getTextArea().replaceText(newText.toString());
+        getLyricsField().getTextArea().moveTo(pos);
     }
 
 }
