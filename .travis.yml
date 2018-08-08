@@ -26,9 +26,10 @@ jdk:
   - oraclejdk9
 script:
   - "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan"
+  - PREVDIR="$(pwd)"
   - cd $(mktemp -d)
   - git clone https://berry120:${GH_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
-  - cp dist/missinglabels.js repo/lang/
+  - cp $PREVDIR/dist/missinglabels.js repo/lang/
   - cd repo
   - git add lang/missinglabels.js
   - git commit -m "Update missing labels file"
