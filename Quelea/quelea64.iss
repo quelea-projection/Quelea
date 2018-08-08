@@ -47,6 +47,7 @@ Name: "{app}"; Permissions: everyone-modify;
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}/lib"
+Type: filesandordirs; Name: "{app}/src"
 Type: filesandordirs; Name: "{app}/server"
 Type: filesandordirs; Name: "{app}/dictionaries"
 Type: filesandordirs; Name: "{app}/bibles"
