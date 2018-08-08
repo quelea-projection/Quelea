@@ -215,7 +215,7 @@ public class SongEntryWindow extends Stage {
         hide();
     }
 
-    private void saveSong() {
+    public void saveSong() {
         resetChange();
         hide();
         SongDisplayable localSong = getSong();
