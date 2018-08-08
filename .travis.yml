@@ -31,8 +31,9 @@ script:
   - git clone https://berry120:${GH_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
   - cp $PREVDIR/dist/missinglabels.js repo/lang/
   - cd repo
+  - ls -l lang/
   - git add lang/missinglabels.js
-  - git commit -m "Update missing labels file"
+  - git commit -m "Update missing labels file" || ls -l
   - git push
   - cd $PREVDIR
 before_deploy:
