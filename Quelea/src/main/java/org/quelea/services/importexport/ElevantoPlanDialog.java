@@ -259,7 +259,7 @@ public class ElevantoPlanDialog extends BorderPane {
             JSONObject response = importDialog.getParser().arrangement(arrangementId);
             JSONObject arrangement = (JSONObject)((JSONArray)response.get("arrangement")).get(0);
             String lyrics = cleanLyrics((String)arrangement.get("lyrics"));
-            JSONArray sequence = (JSONArray)arrangement.get("sequence");
+            //JSONArray sequence = (JSONArray)arrangement.get("sequence");
 
             String ccli = (String)songJSON.get("ccli_number");
             String copyright = (String)arrangement.get("copyright");
