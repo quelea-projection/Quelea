@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main.schedule;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -43,6 +44,7 @@ import javafx.stage.Stage;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
@@ -116,7 +118,6 @@ public class ScheduleThemeNode extends BorderPane {
             LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
         }
-        themes.add(null);
         final ToggleGroup group = new ToggleGroup();
         contentPanel.getChildren().clear();
         final HBox northPanel = new HBox();
@@ -137,6 +138,10 @@ public class ScheduleThemeNode extends BorderPane {
                 }
             }
         }
+        if(selectedTheme==null) {
+            selectedTheme = themes.stream().filter((t) -> t.getFile().getAbsoluteFile().equals(QueleaProperties.get().getGlobalThemeFile())).findAny().orElse(null);
+        }
+        themes.add(null); //Used as "default" theme
 
         themePreviews = new FlowPane();
         themePreviews.setAlignment(Pos.CENTER);
@@ -145,14 +150,16 @@ public class ScheduleThemeNode extends BorderPane {
 
         for (final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup, this);
-            panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    tempTheme = theme;
-                    setTheme(theme);
-                    if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
-                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                    }
+            panel.getSelectButton().setOnAction((javafx.event.ActionEvent t) -> {
+                tempTheme = theme;
+                File storeFile = null;
+                if(tempTheme!=null) {
+                    storeFile = tempTheme.getFile();
+                }
+                QueleaProperties.get().setGlobalThemeFile(storeFile);
+                setTheme(theme);
+                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
             });
             if (selectedTheme != null && selectedTheme.equals(theme)) {

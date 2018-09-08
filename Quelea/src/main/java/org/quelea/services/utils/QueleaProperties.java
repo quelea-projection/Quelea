@@ -500,6 +500,29 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalThemeFile(File file) {
+        if(file==null) {
+            setProperty("global.theme.file", "");            
+        }
+        else {
+            setProperty("global.theme.file", file.getAbsolutePath());            
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalThemeFile() {
+        String path = getProperty("global.theme.file");
+        if(path==null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
      * Set the last directory used in the schedule file chooser.
      *
      * @param directory the last directory used in the schedule file chooser.
