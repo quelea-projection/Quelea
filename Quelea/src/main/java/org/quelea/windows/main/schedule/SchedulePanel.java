@@ -108,20 +108,17 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
-            @Override
-            public void updateTheme(ThemeDTO theme) {
-                if (scheduleList == null) {
-                    LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
-                    return;
-                }
-                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
-                    Displayable displayable = scheduleList.itemsProperty().get().get(i);
-                    if (displayable instanceof TextDisplayable) {
-                        TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                        for (TextSection section : textDisplayable.getSections()) {
-                            section.setTempTheme(theme);
-                        }
+        scheduleThemeNode = new ScheduleThemeNode((ThemeDTO theme) -> {
+            if (scheduleList == null) {
+                LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
+                return;
+            }
+            for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
+                Displayable displayable = scheduleList.itemsProperty().get().get(i);
+                if (displayable instanceof TextDisplayable) {
+                    TextDisplayable textDisplayable = (TextDisplayable) displayable;
+                    for (TextSection section : textDisplayable.getSections()) {
+                        section.setTempTheme(theme);
                     }
                 }
             }
