@@ -97,23 +97,19 @@ public class ThemePanel extends BorderPane {
         drawer.setCanvas(canvas);
         text = SAMPLE_LYRICS;
         if (wordsArea != null) {
-            ChangeListener<String> cl = new ChangeListener<String>() {
-
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String t, String newText) {
-                    SongDisplayable dummy = new SongDisplayable("", "");
-                    dummy.setLyrics(newText);
-                    TextSection[] sections = dummy.getSections();
-                    if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
-                        text = sections[0].getText(false, false);
-                    } else {
-                        text = SAMPLE_LYRICS;
-                    }
-                    if (isEmpty(text)) {
-                        text = SAMPLE_LYRICS;
-                    }
-                    updateTheme(false);
+            ChangeListener<String> cl = (ov, t, newText) -> {
+                SongDisplayable dummy = new SongDisplayable("", "");
+                dummy.setLyrics(newText);
+                TextSection[] sections = dummy.getSections();
+                if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
+                    text = sections[0].getText(false, false);
+                } else {
+                    text = SAMPLE_LYRICS;
                 }
+                if (isEmpty(text)) {
+                    text = SAMPLE_LYRICS;
+                }
+                updateTheme(false);
             };
             wordsArea.textProperty().addListener(cl);
             cl.changed(null, null, wordsArea.getText());
