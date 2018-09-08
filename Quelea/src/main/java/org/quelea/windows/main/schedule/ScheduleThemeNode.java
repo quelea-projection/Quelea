@@ -63,14 +63,17 @@ public class ScheduleThemeNode extends BorderPane {
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;
-    private ThemeDTO tempTheme;
+    private ThemeDTO songTempTheme;
+    private ThemeDTO bibleTempTheme;
     private EditThemeDialog themeDialog;
     private FlowPane themePreviews;
-    private UpdateThemeCallback callback = null;
+    private UpdateThemeCallback songCallback = null;
+    private UpdateThemeCallback bibleCallback = null;
     private Stage popup;
 
-    public ScheduleThemeNode(UpdateThemeCallback callback, Stage popup, Button themeButton) {
-        this.callback = callback;
+    public ScheduleThemeNode(UpdateThemeCallback songCallback, UpdateThemeCallback bibleCallback, Stage popup, Button themeButton) {
+        this.songCallback = songCallback;
+        this.bibleCallback = bibleCallback;
         this.popup = popup;
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
@@ -103,7 +106,8 @@ public class ScheduleThemeNode extends BorderPane {
      * Update the theme on the schedule to the current temporary theme.
      */
     public void updateTheme() {
-        setTheme(tempTheme);
+        setSongTheme(songTempTheme);
+        setBibleTheme(bibleTempTheme);
     }
 
     /**
@@ -118,7 +122,8 @@ public class ScheduleThemeNode extends BorderPane {
             LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
         }
-        final ToggleGroup group = new ToggleGroup();
+        final ToggleGroup songGroup = new ToggleGroup();
+        final ToggleGroup bibleGroup = new ToggleGroup();
         contentPanel.getChildren().clear();
         final HBox northPanel = new HBox();
         Label selectThemeLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.text"));
@@ -126,20 +131,28 @@ public class ScheduleThemeNode extends BorderPane {
         northPanel.getChildren().add(selectThemeLabel);
         contentPanel.getChildren().add(northPanel);
 
-        ThemeDTO selectedTheme = null;
+        ThemeDTO selectedSongTheme = null;
+        ThemeDTO selectedBibleTheme = null;
         if (themePreviews != null) {
             for (Node node : themePreviews.getChildren()) {
                 if (node instanceof ThemePreviewPanel) {
                     ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if (panel.getSelectButton().isSelected()) {
-                        selectedTheme = panel.getTheme();
-                        setTheme(selectedTheme);
+                    if (panel.getSongSelectButton().isSelected()) {
+                        selectedSongTheme = panel.getTheme();
+                        setSongTheme(selectedSongTheme);
+                    }
+                    if (panel.getBibleSelectButton().isSelected()) {
+                        selectedBibleTheme = panel.getTheme();
+                        setBibleTheme(selectedBibleTheme);
                     }
                 }
             }
         }
-        if(selectedTheme==null) {
-            selectedTheme = themes.stream().filter((t) -> t.getFile().getAbsoluteFile().equals(QueleaProperties.get().getGlobalThemeFile())).findAny().orElse(null);
+        if(selectedSongTheme==null) {
+            selectedSongTheme = themes.stream().filter((t) -> t.getFile().getAbsoluteFile().equals(QueleaProperties.get().getGlobalSongThemeFile())).findAny().orElse(null);
+        }
+        if(selectedBibleTheme==null) {
+            selectedBibleTheme = themes.stream().filter((t) -> t.getFile().getAbsoluteFile().equals(QueleaProperties.get().getGlobalBibleThemeFile())).findAny().orElse(null);
         }
         themes.add(null); //Used as "default" theme
 
@@ -150,32 +163,54 @@ public class ScheduleThemeNode extends BorderPane {
 
         for (final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup, this);
-            panel.getSelectButton().setOnAction((javafx.event.ActionEvent t) -> {
-                tempTheme = theme;
+            panel.getSongSelectButton().setOnAction(t -> {
+                songTempTheme = theme;
                 File storeFile = null;
-                if(tempTheme!=null) {
-                    storeFile = tempTheme.getFile();
+                if(songTempTheme!=null) {
+                    storeFile = songTempTheme.getFile();
                 }
-                QueleaProperties.get().setGlobalThemeFile(storeFile);
-                setTheme(theme);
+                QueleaProperties.get().setGlobalSongThemeFile(storeFile);
+                setSongTheme(theme);
                 if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
             });
-            if (selectedTheme != null && selectedTheme.equals(theme)) {
-                panel.getSelectButton().fire();
+            panel.getBibleSelectButton().setOnAction(t -> {
+                bibleTempTheme = theme;
+                File storeFile = null;
+                if(bibleTempTheme!=null) {
+                    storeFile = bibleTempTheme.getFile();
+                }
+                QueleaProperties.get().setGlobalBibleThemeFile(storeFile);
+                setBibleTheme(theme);
+                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                }
+            });
+            if (selectedSongTheme != null && selectedSongTheme.equals(theme)) {
+                panel.getSongSelectButton().fire();
             }
-            panel.getSelectButton().setToggleGroup(group);
+            if (selectedBibleTheme != null && selectedBibleTheme.equals(theme)) {
+                panel.getBibleSelectButton().fire();
+            }
+            panel.getSongSelectButton().setToggleGroup(songGroup);
+            panel.getBibleSelectButton().setToggleGroup(bibleGroup);
             themePreviews.getChildren().add(panel);
         }
-        if (QueleaApp.get().getMainWindow().getMainPanel() != null && group.getSelectedToggle() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel() != null && songGroup.getSelectedToggle() == null) {
             for (Node node : themePreviews.getChildren()) {
                 if (node instanceof ThemePreviewPanel) {
                     ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if (panel.getTheme() != null && selectedTheme != null
-                            && panel.getTheme().getThemeName().equals(selectedTheme.getThemeName())) {
-                        setTheme(selectedTheme);
-                        panel.getSelectButton().fire();
+                    if (panel.getTheme() != null && selectedSongTheme != null
+                            && panel.getTheme().getThemeName().equals(selectedSongTheme.getThemeName())) {
+                        setSongTheme(selectedSongTheme);
+                        panel.getSongSelectButton().fire();
+                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    }
+                    if (panel.getTheme() != null && selectedBibleTheme != null
+                            && panel.getTheme().getThemeName().equals(selectedBibleTheme.getThemeName())) {
+                        setSongTheme(selectedBibleTheme);
+                        panel.getBibleSelectButton().fire();
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                     }
                 }
@@ -205,13 +240,20 @@ public class ScheduleThemeNode extends BorderPane {
         contentPanel.getChildren().add(buttonPanel);
     }
 
-    /**
-     * Set the schedule to a given theme.
-     * <p/>
-     * @param theme the theme to set.
-     */
-    public void setTheme(ThemeDTO theme) {
-        callback.updateTheme(theme);
+    public void setSongTheme(ThemeDTO songTempTheme) {
+        songCallback.updateTheme(songTempTheme);
+    }
+    
+    public void setBibleTheme(ThemeDTO bibleTempTheme) {
+        bibleCallback.updateTheme(bibleTempTheme);
+    }
+    
+    public void selectSongTheme(ThemeDTO theme) {
+        selectTheme(theme, true);
+    }
+    
+    public void selectBibleTheme(ThemeDTO theme) {
+        selectTheme(theme, false);
     }
 
     /**
@@ -219,14 +261,19 @@ public class ScheduleThemeNode extends BorderPane {
      *
      * @param theme that is supposed to be used
      */
-    public void selectTheme(ThemeDTO theme) {
+    private void selectTheme(ThemeDTO theme, boolean songTheme) {
         int i = 0;
         for (Node node : themePreviews.getChildren()) {
             i++;
             if (node instanceof ThemePreviewPanel) {
                 ThemePreviewPanel panel = (ThemePreviewPanel) node;
                 if (i == themePreviews.getChildren().size() || panel.getTheme().getThemeName().equals(theme.getThemeName())) {
-                    panel.getSelectButton().fire();
+                    if(songTheme) {
+                        panel.getSongSelectButton().fire();
+                    }
+                    else {
+                        panel.getBibleSelectButton().fire();
+                    }
                     break;
                 }
             }

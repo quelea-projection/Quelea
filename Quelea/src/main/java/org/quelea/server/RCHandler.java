@@ -462,10 +462,12 @@ public class RCHandler {
                 for (ThemeDTO t : ThemeUtils.getThemes()) {
                     i++;
                     if (t.getThemeName().equals(themeName)) {
-                        stn.selectTheme(t);
+                        stn.selectSongTheme(t);
+                        stn.selectBibleTheme(t);
                         break;
                     } else if (i == ThemeUtils.getThemes().size()) {
-                        stn.selectTheme(ThemeDTO.DEFAULT_THEME);
+                        stn.selectSongTheme(ThemeDTO.DEFAULT_THEME);
+                        stn.selectBibleTheme(ThemeDTO.DEFAULT_THEME);
                     }
                 }
             });

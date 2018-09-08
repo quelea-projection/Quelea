@@ -60,7 +60,8 @@ public class ThemePreviewPanel extends VBox {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
-    private RadioButton selectButton;
+    private RadioButton songSelectButton;
+    private RadioButton bibleSelectButton;
     private Button removeButton;
     private Button editButton;
     private EditThemeDialog themeDialog;
@@ -97,7 +98,8 @@ public class ThemePreviewPanel extends VBox {
         }
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
-        selectButton = new RadioButton(name);
+        songSelectButton = new RadioButton(name);
+        bibleSelectButton = new RadioButton(name);
         if (theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
@@ -151,11 +153,13 @@ public class ThemePreviewPanel extends VBox {
                 @Override
                 public void handle(MouseEvent t) {
                     t.consume();
-                    selectButton.fire();
+                    songSelectButton.fire();
+                    bibleSelectButton.fire();
                 }
             });
         }
-        buttonPanel.getChildren().add(selectButton);
+        buttonPanel.getChildren().add(songSelectButton);
+        buttonPanel.getChildren().add(bibleSelectButton);
         if (theme != ThemeDTO.DEFAULT_THEME) {
             Region spacer = new Region();
             HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
@@ -169,13 +173,12 @@ public class ThemePreviewPanel extends VBox {
         getChildren().add(buttonPanel);
     }
 
-    /**
-     * Get the select radio button used to select this theme.
-     * <p/>
-     * @return the select radio button.
-     */
-    public RadioButton getSelectButton() {
-        return selectButton;
+    public RadioButton getSongSelectButton() {
+        return songSelectButton;
+    }
+    
+    public RadioButton getBibleSelectButton() {
+        return bibleSelectButton;
     }
 
     /**

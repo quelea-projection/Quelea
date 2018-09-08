@@ -502,20 +502,43 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the currently selected global theme file.
      */
-    public void setGlobalThemeFile(File file) {
+    public void setGlobalSongThemeFile(File file) {
         if(file==null) {
-            setProperty("global.theme.file", "");            
+            setProperty("global.song.theme.file", "");            
         }
         else {
-            setProperty("global.theme.file", file.getAbsolutePath());            
+            setProperty("global.song.theme.file", file.getAbsolutePath());            
         }
     }
 
     /**
      * Get the currently selected global theme file.
      */
-    public File getGlobalThemeFile() {
-        String path = getProperty("global.theme.file");
+    public File getGlobalSongThemeFile() {
+        String path = getProperty("global.song.theme.file");
+        if(path==null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalBibleThemeFile(File file) {
+        if(file==null) {
+            setProperty("global.bible.theme.file", "");            
+        }
+        else {
+            setProperty("global.bible.theme.file", file.getAbsolutePath());            
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalBibleThemeFile() {
+        String path = getProperty("global.bible.theme.file");
         if(path==null || path.isEmpty()) {
             return null;
         }
