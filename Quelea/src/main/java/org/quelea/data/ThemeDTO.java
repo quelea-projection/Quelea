@@ -239,6 +239,9 @@ public class ThemeDTO implements Serializable {
         if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
+        if (this.themeName != other.themeName && (this.themeName == null || !this.themeName.equals(other.themeName))) {
+            return false;
+        }
         return true;
     }
 
@@ -511,5 +514,10 @@ public class ThemeDTO implements Serializable {
      */
     public boolean isTranslateBold() {
         return isTranslateFontBold;
+    }
+    
+    @Override
+    public String toString() {
+        return themeName;
     }
 }

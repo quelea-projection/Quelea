@@ -17,15 +17,13 @@
  */
 package org.quelea.windows.main.schedule;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -45,8 +43,7 @@ import javafx.stage.Stage;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ThemePreviewPanel;
@@ -122,9 +119,9 @@ public class ScheduleThemeNode extends BorderPane {
      * through the folder and find the themes to display.
      */
     public synchronized final void refresh() {
-        List<ThemeDTO> themes;
+        ObservableList<ThemeDTO> themes;
         try {
-            themes = getThemes();
+            themes = ThemeUtils.getThemes();
         } catch (Exception ex) {
             LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
@@ -209,35 +206,6 @@ public class ScheduleThemeNode extends BorderPane {
         buttonPanel.getChildren().add(newThemeButton);
         contentPanel.getChildren().add(themePreviews);
         contentPanel.getChildren().add(buttonPanel);
-    }
-
-    /**
-     * Get a list of themes currently in use on this window.
-     * <p/>
-     * @return the list of themes displayed.
-     */
-    public List<ThemeDTO> getThemes() {
-        List<ThemeDTO> themesList = new ArrayList<>();
-        File themeDir = new File(QueleaProperties.get().getQueleaUserHome(), "themes");
-        if (!themeDir.exists()) {
-            themeDir.mkdir();
-        }
-        for (File file : themeDir.listFiles()) {
-            if (file.getName().endsWith(".th")) {
-                String fileText = Utils.getTextFromFile(file.getAbsolutePath(), "");
-                if (fileText.trim().isEmpty()) {
-                    continue;
-                }
-                final ThemeDTO theme = ThemeDTO.fromString(fileText);
-                if (theme == ThemeDTO.DEFAULT_THEME) {
-                    LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
-                    continue;  //error
-                }
-                theme.setFile(file);
-                themesList.add(theme);
-            }
-        }
-        return themesList;
     }
 
     /**
