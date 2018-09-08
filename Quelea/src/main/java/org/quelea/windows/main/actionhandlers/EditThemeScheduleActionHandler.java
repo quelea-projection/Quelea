@@ -79,7 +79,7 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         s.initOwner(QueleaApp.get().getMainWindow());
         s.resizableProperty().setValue(false);
         final BorderPane bp = new BorderPane();
-        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
+        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
         tp.setTheme(firstSelected.getTheme());
         confirmButton.setOnAction((ActionEvent event) -> {
