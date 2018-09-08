@@ -96,6 +96,7 @@ public class ScheduleThemeNode extends BorderPane {
         });
         setMaxHeight(300);
         contentPanel.setSpacing(5);
+        contentPanel.setPadding(new Insets(3));
         refresh();
         ScrollPane scroller = new ScrollPane(contentPanel);
         scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

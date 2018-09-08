@@ -676,3 +676,5 @@ schedule.items.skipped.text=Some schedule items don't have their media embedded,
 schedule.items.skipped.header=Schedule items skipped
 video.loop.tooltip=Toggle looping on / off
 allow.item.theme.override.global=Allow custom item themes to override global theme
+song.default.theme.label=Song default
+bible.default.theme.label=Bible default
