@@ -6,6 +6,7 @@ quelea (2019.0) stable
   * Format song list in accordance with search
   * Display preview of song in song list
   * Move to source level 9
+  * Remove schedule email functionality
   * Add support for extended chord symbols
   * Add support for extra tags in plain text parser
   * Add support for looping a video
@@ -17,3 +18,4 @@ quelea (2019.0) stable
   * Fix bug with chord alignment in songs
   * Fix bug with Freeworship importer
   * Fix bug with VideoPsalm importer
+  * Fix inconsistent behaviour when enabling copied schedule item
