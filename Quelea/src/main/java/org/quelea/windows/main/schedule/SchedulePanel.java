@@ -45,6 +45,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
@@ -100,7 +101,7 @@ public class SchedulePanel extends BorderPane {
                                 themePopup.hide();
                             }
                         });
-                        
+
                     } else {
                         themePopup.hide();
                     }
@@ -118,7 +119,11 @@ public class SchedulePanel extends BorderPane {
                 if (displayable instanceof TextDisplayable) {
                     TextDisplayable textDisplayable = (TextDisplayable) displayable;
                     for (TextSection section : textDisplayable.getSections()) {
-                        section.setTempTheme(theme);
+                        if (QueleaProperties.get().getItemThemeOverride() && !textDisplayable.getTheme().equalsIgnoreName(ThemeDTO.DEFAULT_THEME)) {
+                            section.setTempTheme(null);
+                        } else {
+                            section.setTempTheme(theme);
+                        }
                     }
                 }
             }
@@ -241,7 +246,7 @@ public class SchedulePanel extends BorderPane {
     public Button getThemeButton() {
         return themeButton;
     }
-    
+
     public ScheduleThemeNode getThemeNode() {
         return scheduleThemeNode;
     }

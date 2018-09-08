@@ -481,6 +481,25 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Sets whether item themes can override the global theme.
+     *
+     * @param val true if should override, false otherwise
+     */
+    public void setItemThemeOverride(boolean val) {
+        setProperty("item.theme.override", val + "");
+    }
+
+    /**
+     * Gets whether item themes can override the global theme.
+     *
+     * @return true if should override, false otherwise
+     */
+    public boolean getItemThemeOverride() {
+        boolean ret = Boolean.parseBoolean(getProperty("item.theme.override", "false"));
+        return ret;
+    }
+
+    /**
      * Set the last directory used in the schedule file chooser.
      *
      * @param directory the last directory used in the schedule file chooser.
