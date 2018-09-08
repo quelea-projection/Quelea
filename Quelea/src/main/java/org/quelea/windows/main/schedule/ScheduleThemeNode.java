@@ -98,16 +98,6 @@ public class ScheduleThemeNode extends BorderPane {
     }
 
     /**
-     * Get the temporary theme to be used on the schedule, the one currently
-     * selected by the user. Or null if it's default or nothing is selected.
-     * <p/>
-     * @return the user's chosen theme.
-     */
-    public ThemeDTO getTempTheme() {
-        return tempTheme;
-    }
-
-    /**
      * Update the theme on the schedule to the current temporary theme.
      */
     public void updateTheme() {
