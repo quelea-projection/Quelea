@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -44,8 +45,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.embed.swing.SwingFXUtils;
+
 import javax.imageio.ImageIO;
+
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
@@ -68,6 +72,7 @@ import org.quelea.windows.main.toolbars.MainToolbar;
  * The remote control server, responsible for handling the mobile HTTP calls and
  * changing the correct content.
  * <p>
+ *
  * @author Ben
  */
 public class RemoteControlServer {
@@ -84,6 +89,7 @@ public class RemoteControlServer {
      * Create a new mobile lyrics server on a specified port. The port must not
      * be in use.
      * <p>
+     *
      * @param port the port to use
      * @throws IOException if something goes wrong.
      */
@@ -125,6 +131,7 @@ public class RemoteControlServer {
         server.createContext("/movedown", new MoveItemDownHandler());
         server.createContext("/themethumb", new ThemeThumbnailsHandler());
         server.createContext("/slides", new PresentationSlidesHandler());
+        server.createContext("/transpose", new TransposeSongHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -153,6 +160,7 @@ public class RemoteControlServer {
     /**
      * Determine if the server is running.
      * <p/>
+     *
      * @return true if the server is running, false otherwise.
      */
     public boolean isRunning() {
@@ -692,6 +700,27 @@ public class RemoteControlServer {
         }
     }
 
+    //Handles song transposing
+    private class TransposeSongHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+                os.flush();
+                RCHandler.transposeSong(he);
+            } else {
+                reload(he);
+            }
+            he.close();
+        }
+    }
+
     //Handles 
     private class RootHandler implements HttpHandler {
 
@@ -847,6 +876,7 @@ public class RemoteControlServer {
      * row and one cell per lyric slide. The current slide has class current. To
      * understand target="empty" see comment in defaultrcspage.htm
      * <p/>
+     *
      * @return All lyrics formatted in a HTML table
      */
     public String lyrics(boolean chords) {
@@ -929,6 +959,7 @@ public class RemoteControlServer {
      * A bunch of checks to check whether the live panel that we grab the lyrics
      * from has fully initialised. Rather hacky but works for now at least.
      * <p>
+     *
      * @return true if we're initialised properly and ok to continue, false if
      * not.
      */
@@ -966,6 +997,7 @@ public class RemoteControlServer {
     /**
      * Read a file and return it as a string.
      * <p>
+     *
      * @param path the path to read the file from.
      * @return a string with the file contents.
      * @throws IOException if something goes wrong.

@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.splash;
 
-import com.sun.javafx.tk.Toolkit;
+import java.io.File;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -37,7 +37,7 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
 
 /**
  * The splash screen to display when the program starts.
@@ -56,14 +56,14 @@ public class SplashStage extends Stage {
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Image splashImage;
         if (QueleaProperties.VERSION.getUnstableName().toLowerCase().startsWith("beta")) {
-            splashImage = new Image("file:icons/splash-beta.png");
+            splashImage = new Image(new File("icons/splash-beta.png").getAbsoluteFile().toURI().toString());
         } else {
-            splashImage = new Image("file:icons/splash-bare.png");
+            splashImage = new Image(new File("icons/splash-bare.png").getAbsoluteFile().toURI().toString());
         }
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
-        FontMetricsWrapper loadingMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont));
+        FXFontMetrics loadingMetrics = new FXFontMetrics(loadingFont);
         LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#ffffff")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);

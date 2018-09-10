@@ -8,7 +8,6 @@
         <javaversion>1.7</javaversion>
         <url>http://www.quelea.org/</url>
         <run-privileged/>
-        <!--Uncomment the following line when going to production, drastically reduces size of the installer-->
         <!--<pack200/>-->
     </info>
 
@@ -56,14 +55,10 @@
             <description>Core components</description>
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
-            <file src="Quelea.vbs" targetdir="$INSTALL_PATH"/>
-            <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
             <file src="scheduleformat.xsl" targetdir="$INSTALL_PATH"/>
             <file src="fopcfg.xml" targetdir="$INSTALL_PATH"/>
             <file src="songformat.xsl" targetdir="$INSTALL_PATH"/>
-            <!--<file src="Quelea.exe" targetdir="$INSTALL_PATH"/>-->
-            <!--<file src="README.TXT" targetdir="$INSTALL_PATH"/>-->
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
             <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
         </pack>
@@ -87,10 +82,6 @@
             <description>Source code</description>
             <file src="src" targetdir="$INSTALL_PATH"/>
         </pack>
-<!--        <pack name="database" required="no" preselected="yes">
-            <description>Sample database of songs</description>
-            <file src="database" targetdir="$USER_HOME/.quelea/database" override="false"/>
-        </pack>-->
         <pack name="themes" required="yes" preselected="yes">
             <description>Sample themes</description>
             <file src="themes" targetdir="$INSTALL_PATH" override="false"/>

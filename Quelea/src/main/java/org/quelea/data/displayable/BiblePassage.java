@@ -119,15 +119,12 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 String[] verseWords = verseText.split(" ");
                 for (String verseWord : verseWords) {
                     if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() + verseWord.length() > MAX_CHARS) {
-                        line.append("\n");
                         section.append(line);
                         lines++;
                         line.setLength(0);
                     }
                     line.append(verseWord).append(" ");
                 }
-//            section.append(line);
-//            line.setLength(0); //Empty
                 count++;
                 if (USE_CHARS) {
                     if (!SPLIT_VERSES) {
@@ -143,7 +140,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
                         }
                         if (lines >= MAX_CHARS / 4) {
                             if (!line.toString().isEmpty()) {
-                                line.append("\n");
                                 section.append(line);
                                 line.setLength(0);
                                 lines++;
@@ -157,7 +153,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 } else { // using verses
                     if (count >= MAX_VERSES && count > 0) {
                         if (!line.toString().isEmpty()) {
-                            line.append("\n");
                             section.append(line);
                             line.setLength(0);
                         }
@@ -171,7 +166,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
         // Clean up anything left by the for loop (possible extra verses)
         if (!line.toString().isEmpty()) {
-            line.append("\n");
+//            line.append("\n");
             section.append(line);
         }
 

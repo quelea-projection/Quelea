@@ -145,6 +145,7 @@ public class ScheduleList extends StackPane {
 
                             db.setContent(content);
                             event.consume();
+                            db.setDragView(listCell.snapshot(null, null));
                         }
                     }
                 });

@@ -665,7 +665,7 @@ public class MacVideo extends VLCWindow {
     public int getVolume() {
         int volume = 100;
         try {
-            volume = (new Double(AVPlayerJava.getVolume() * 100)).intValue();
+            volume = (Double.valueOf(AVPlayerJava.getVolume() * 100)).intValue();
         } catch (Exception e) {
             LOGGER.log(Level.INFO, "Couldn't get volume level");
         }

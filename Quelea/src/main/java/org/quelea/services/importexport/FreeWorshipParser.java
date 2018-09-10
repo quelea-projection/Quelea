@@ -77,8 +77,8 @@ public class FreeWorshipParser implements SongParser {
             }
             SongDisplayable song = new SongDisplayable(title, author);
             song.setCopyright(copyright);
-            song.setCopyright(publisher);
-            song.setCopyright(ccli);
+            song.setPublisher(publisher);
+            song.setCcli(ccli);
             StringBuilder lyricsBuilder = new StringBuilder();
             Node lyrics = getChildByName(root, "lyrics");
             for (int i = 0; i < lyrics.getChildNodes().getLength(); i++) {
@@ -119,7 +119,7 @@ public class FreeWorshipParser implements SongParser {
             }
             sb.append(str);
         }
-        return sb.toString();
+        return sb.toString().replaceAll("<\\?xml.*\\?>", "");
     }
 
 }

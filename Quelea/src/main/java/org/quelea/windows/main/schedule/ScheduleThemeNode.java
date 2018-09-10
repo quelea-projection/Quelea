@@ -32,6 +32,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -84,13 +85,19 @@ public class ScheduleThemeNode extends BorderPane {
                 if (width < 50) {
                     width = 50;
                 }
+                if (width > 900) {
+                    width = 900;
+                }
                 contentPanel.setPrefWidth(width);
                 contentPanel.setMaxWidth(width);
             }
         });
+        setMaxHeight(300);
         contentPanel.setSpacing(5);
         refresh();
-        setCenter(contentPanel);
+        ScrollPane scroller = new ScrollPane(contentPanel);
+        scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        setCenter(scroller);
     }
 
     /**
@@ -211,7 +218,7 @@ public class ScheduleThemeNode extends BorderPane {
      */
     public List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
-        File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
+        File themeDir = new File(QueleaProperties.get().getQueleaUserHome(), "themes");
         if (!themeDir.exists()) {
             themeDir.mkdir();
         }
@@ -241,9 +248,10 @@ public class ScheduleThemeNode extends BorderPane {
     public void setTheme(ThemeDTO theme) {
         callback.updateTheme(theme);
     }
-    
+
     /**
      * Select a theme to be used.
+     *
      * @param theme that is supposed to be used
      */
     public void selectTheme(ThemeDTO theme) {
