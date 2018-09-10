@@ -162,9 +162,12 @@ public class VideoListPanel extends BorderPane {
                                     FileChannelWrapper ch = NIOUtils.readableFileChannel(file.getAbsolutePath());
                                     MP4Demuxer demuxer = MP4Demuxer.createMP4Demuxer(ch);
                                     DemuxerTrack video_track = demuxer.getVideoTrack();
-                                    double seconds = video_track.getMeta().getTotalDuration();
+                                    int totalSeconds = (int)video_track.getMeta().getTotalDuration();
+                                    int hours = totalSeconds / 3600;
+                                    int minutes = (totalSeconds % 3600) / 60;
+                                    int seconds = totalSeconds % 60;
                                     DecimalFormat formatter = new DecimalFormat("00");
-                                    fileLabel.setText(fileLabel.getText() + " - " + formatter.format(seconds/60/60) + ":" + formatter.format(seconds/60) + ":" + formatter.format(seconds));
+                                    fileLabel.setText(fileLabel.getText() + " - " + formatter.format(hours) + ":" + formatter.format(minutes) + ":" + formatter.format(seconds));
                                 } catch (Exception ex) {
                                     LOGGER.log(Level.INFO, "Couldn't get video length", ex);
                                 }
