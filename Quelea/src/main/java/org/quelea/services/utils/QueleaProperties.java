@@ -2090,4 +2090,13 @@ public final class QueleaProperties extends Properties {
     public String getChurchCcliNum() {
         return getProperty("church.ccli.num", null);
     }
+
+    /**
+     * Get the directory used for storing notices.
+     * <p>
+     * @return the notice directory
+     */
+    public File getNoticeDir() {
+        return new File(getQueleaUserHome(), "notices");
+    }
 }
