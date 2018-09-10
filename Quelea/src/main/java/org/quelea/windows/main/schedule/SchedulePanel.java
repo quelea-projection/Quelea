@@ -41,10 +41,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
@@ -100,7 +102,7 @@ public class SchedulePanel extends BorderPane {
                                 themePopup.hide();
                             }
                         });
-                        
+
                     } else {
                         themePopup.hide();
                     }
@@ -108,24 +110,7 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
-            @Override
-            public void updateTheme(ThemeDTO theme) {
-                if (scheduleList == null) {
-                    LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
-                    return;
-                }
-                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
-                    Displayable displayable = scheduleList.itemsProperty().get().get(i);
-                    if (displayable instanceof TextDisplayable) {
-                        TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                        for (TextSection section : textDisplayable.getSections()) {
-                            section.setTempTheme(theme);
-                        }
-                    }
-                }
-            }
-        }, themePopup, themeButton);
+        scheduleThemeNode = new ScheduleThemeNode(this::updateSongTheme, this::updateBibleTheme, themePopup, themeButton);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
         themePopup.setScene(new Scene(scheduleThemeNode));
 
@@ -218,6 +203,37 @@ public class SchedulePanel extends BorderPane {
         setLeft(toolbar);
         setCenter(scheduleList);
     }
+    
+    private void updateSongTheme(ThemeDTO theme) {
+        updateTheme(theme, true);
+    }
+    
+    private void updateBibleTheme(ThemeDTO theme) {
+        updateTheme(theme, false);
+    }
+
+    private void updateTheme(ThemeDTO theme, boolean song) {
+        if (scheduleList == null) {
+            LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
+            return;
+        }
+        for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
+            Displayable displayable = scheduleList.itemsProperty().get().get(i);
+            if (displayable instanceof SongDisplayable && !song) {
+                continue;
+            }
+            if (displayable instanceof TextDisplayable) {
+                TextDisplayable textDisplayable = (TextDisplayable) displayable;
+                for (TextSection section : textDisplayable.getSections()) {
+                    if (QueleaProperties.get().getItemThemeOverride() && !textDisplayable.getTheme().equalsIgnoreName(ThemeDTO.DEFAULT_THEME)) {
+                        section.setTempTheme(null);
+                    } else {
+                        section.setTempTheme(theme);
+                    }
+                }
+            }
+        }
+    }
 
     public void updateScheduleDisplay() {
         if (scheduleList.getItems().isEmpty()) {
@@ -244,7 +260,7 @@ public class SchedulePanel extends BorderPane {
     public Button getThemeButton() {
         return themeButton;
     }
-    
+
     public ScheduleThemeNode getThemeNode() {
         return scheduleThemeNode;
     }
