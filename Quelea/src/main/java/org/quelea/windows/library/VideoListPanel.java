@@ -167,7 +167,9 @@ public class VideoListPanel extends BorderPane {
                                     int minutes = (totalSeconds % 3600) / 60;
                                     int seconds = totalSeconds % 60;
                                     DecimalFormat formatter = new DecimalFormat("00");
-                                    fileLabel.setText(fileLabel.getText() + " - " + formatter.format(hours) + ":" + formatter.format(minutes) + ":" + formatter.format(seconds));
+                                    Platform.runLater(() -> {
+                                        fileLabel.setText(fileLabel.getText() + " - " + formatter.format(hours) + ":" + formatter.format(minutes) + ":" + formatter.format(seconds));
+                                    });
                                 } catch (Exception ex) {
                                     LOGGER.log(Level.INFO, "Couldn't get video length", ex);
                                 }
