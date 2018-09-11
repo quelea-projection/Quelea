@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
@@ -33,6 +36,8 @@ import org.quelea.windows.main.StatusPanel;
  * @author Michael
  */
 public class ZionWorxParser implements SongParser {
+
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Get a list of the songs contained in the given ZionWorx database.
@@ -47,8 +52,11 @@ public class ZionWorxParser implements SongParser {
         File csvLocation = new ZWCsvConverter(location).getCSV();
         String fileContent = Utils.getTextFromFile(csvLocation.getAbsolutePath(), null);
         RawTextWrapper rawText;
-        while((rawText = getRawText(fileContent)) != null) {
-            songs.add(getSong(rawText.rawText));
+        while ((rawText = getRawText(fileContent)) != null) {
+            SongDisplayable song = getSong(rawText.rawText);
+            if (song != null) {
+                songs.add(song);
+            }
             fileContent = fileContent.substring(rawText.endIndex);
         }
         return songs;
@@ -61,29 +69,34 @@ public class ZionWorxParser implements SongParser {
      * @return the song obtained from this raw text.
      */
     private SongDisplayable getSong(String rawText) {
-        int startTitleIndex = rawText.indexOf("\\");
-        int endTitleIndex = rawText.indexOf("\\", startTitleIndex + 1);
-        String title = rawText.substring(startTitleIndex + 1, endTitleIndex);
-        if(title.startsWith("\\")) {
-            title = title.substring(1);
+        try {
+            int startTitleIndex = rawText.indexOf("\\");
+            int endTitleIndex = rawText.indexOf("\\", startTitleIndex + 1);
+            String title = rawText.substring(startTitleIndex + 1, endTitleIndex);
+            if (title.startsWith("\\")) {
+                title = title.substring(1);
+            }
+            if (title.startsWith(",")) {
+                title = title.substring(1);
+            }
+            SongDisplayable song = new SongDisplayable(title, "");
+            rawText = rawText.substring(endTitleIndex);
+            int lastIndex = rawText.lastIndexOf("\\,");
+            String sub = rawText.substring(0, lastIndex);
+            rawText = rawText.substring(sub.lastIndexOf("\\,") + 2, lastIndex);
+            if (rawText.startsWith(",")) {
+                rawText = rawText.substring(1);
+            }
+            if (rawText.startsWith("\\")) {
+                rawText = rawText.substring(1);
+            }
+            rawText = rawText.trim(); //It should now be the lyrics
+            song.setLyrics(rawText);
+            return song;
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "ZWP error with text: " + rawText, ex);
+            return null;
         }
-        if(title.startsWith(",")) {
-            title = title.substring(1);
-        }
-        SongDisplayable song = new SongDisplayable(title, "");
-        rawText = rawText.substring(endTitleIndex);
-        int lastIndex = rawText.lastIndexOf("\\,");
-        String sub = rawText.substring(0, lastIndex);
-        rawText = rawText.substring(sub.lastIndexOf("\\,")+2, lastIndex);
-        if(rawText.startsWith(",")) {
-            rawText = rawText.substring(1);
-        }
-        if(rawText.startsWith("\\")) {
-            rawText = rawText.substring(1);
-        }
-        rawText = rawText.trim(); //It should now be the lyrics
-        song.setLyrics(rawText);
-        return song;
     }
 
     /**
@@ -96,14 +109,14 @@ public class ZionWorxParser implements SongParser {
     private RawTextWrapper getRawText(String fileContent) {
         Pattern patt = Pattern.compile("\\\\[0-9]+\\\\");
         Matcher matcher = patt.matcher(fileContent);
-        if(matcher.find()) {
+        if (matcher.find()) {
             int startIndex = matcher.start();
-            if(startIndex == -1) {
+            if (startIndex == -1) {
                 return null;
             }
             startIndex += matcher.end(); //Chop off index number / comma / backslashes
             int endIndex = fileContent.length();
-            if(matcher.find()) {
+            if (matcher.find()) {
                 endIndex = matcher.start();
             }
             return new RawTextWrapper(fileContent.substring(startIndex, endIndex), endIndex);
