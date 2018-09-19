@@ -6,6 +6,7 @@ description: |
   multimedia content in your church service.
 
 confinement: strict
+base: core18
 
 environment:
     JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk
