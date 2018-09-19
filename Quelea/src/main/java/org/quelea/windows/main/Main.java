@@ -17,6 +17,7 @@
 package org.quelea.windows.main;
 
 import java.awt.Desktop;
+import java.awt.Taskbar;
 import java.awt.desktop.OpenFilesEvent;
 import java.awt.desktop.OpenFilesHandler;
 import java.awt.image.BufferedImage;
@@ -91,7 +92,13 @@ public final class Main extends Application {
         LOGGER.log(Level.INFO, "OS name: {0}", System.getProperty("os.name"));
         LOGGER.log(Level.INFO, "Using JAVA version {0}", System.getProperty("java.version"));
         LOGGER.log(Level.INFO, "64-bit: {0}", Utils.is64Bit());
-
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File("icons/logo64.png"));
+            Taskbar.getTaskbar().setIconImage(img);
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about", ex);
+        }
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
         new Thread() {
