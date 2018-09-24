@@ -203,11 +203,11 @@ public class SchedulePanel extends BorderPane {
         setLeft(toolbar);
         setCenter(scheduleList);
     }
-    
+
     private void updateSongTheme(ThemeDTO theme) {
         updateTheme(theme, true);
     }
-    
+
     private void updateBibleTheme(ThemeDTO theme) {
         updateTheme(theme, false);
     }
@@ -219,16 +219,16 @@ public class SchedulePanel extends BorderPane {
         }
         for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
             Displayable displayable = scheduleList.itemsProperty().get().get(i);
-            if (displayable instanceof SongDisplayable && !song) {
-                continue;
-            }
-            if (displayable instanceof TextDisplayable) {
-                TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                for (TextSection section : textDisplayable.getSections()) {
-                    if (QueleaProperties.get().getItemThemeOverride() && !textDisplayable.getTheme().equalsIgnoreName(ThemeDTO.DEFAULT_THEME)) {
-                        section.setTempTheme(null);
-                    } else {
-                        section.setTempTheme(theme);
+            boolean isSong = displayable instanceof SongDisplayable;
+            if ((isSong && song) || (!isSong && !song)) {
+                if (displayable instanceof TextDisplayable) {
+                    TextDisplayable textDisplayable = (TextDisplayable) displayable;
+                    for (TextSection section : textDisplayable.getSections()) {
+                        if (QueleaProperties.get().getItemThemeOverride() && !textDisplayable.getTheme().equalsIgnoreName(ThemeDTO.DEFAULT_THEME)) {
+                            section.setTempTheme(null);
+                        } else {
+                            section.setTempTheme(theme);
+                        }
                     }
                 }
             }
