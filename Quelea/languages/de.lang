@@ -678,3 +678,5 @@ copy=Kopieren
 save.add.notice.button=Speichern und fügen Sie eine Benachrichtigung hinzu
 video.loop.tooltip=Schleifen ein- / ausschalten
 elevanto.loginerror.warning=Fehler beim Anmelden bei Elevanto
+elevanto.button=Elevanto
+elevanto.import.heading=Elevanto
