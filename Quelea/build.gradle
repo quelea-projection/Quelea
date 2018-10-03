@@ -164,16 +164,13 @@ task dist(type: GradleBuild) {
 build.finalizedBy(dist)
 
 repositories {
-    maven { //Until PR is accepted and new release issued
-        url 'https://dl.bintray.com/berry120/paradoxdriver'
-    }
     jcenter()
 }
 
 dependencies {
     izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
     
-    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4'
+    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4.0'
     compile 'de.suse.lib:jopenlyricslib:1.0'
     compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
     compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '4.0.0'
