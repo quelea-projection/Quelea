@@ -82,7 +82,7 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
         tp.setTheme(firstSelected.getTheme());
-        confirmButton.setOnAction((ActionEvent event) -> {
+        confirmButton.setOnAction(e -> {
             if (tp.getTheme() != null) {
                 ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
                 tp.updateTheme(false);
@@ -108,7 +108,7 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
             }
             s.hide();
         });
-        cancelButton.setOnAction((ActionEvent event) -> {
+        cancelButton.setOnAction(e -> {
             s.hide();
         });
         bp.setCenter(tp);
