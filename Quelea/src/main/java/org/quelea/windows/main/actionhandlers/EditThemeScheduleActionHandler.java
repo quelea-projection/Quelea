@@ -32,6 +32,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.quelea.data.ColourBackground;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -81,7 +82,9 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
-        tp.setTheme(firstSelected.getTheme());
+        if (firstSelected.getSections().length > 0) {
+            tp.setTheme(firstSelected.getSections()[0].getTheme());
+        }
         confirmButton.setOnAction(e -> {
             if (tp.getTheme() != null) {
                 ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
