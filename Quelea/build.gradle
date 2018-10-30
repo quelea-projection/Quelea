@@ -88,6 +88,7 @@ task copyToDist {
         copy {from "bibles" into project.distdir + "/bibles"}
         copy {from "server" into project.distdir + "/server"}
         copy {from "vid" into project.distdir + "/vid"}
+        copy {from "vbs" into project.distdir + "/vbs"}
         copy {from "licenses" into project.distdir + "/licenses"}
         copy {from "languages" into project.distdir + "/languages"}
         copy {from "dictionaries" into project.distdir + "/dictionaries"}

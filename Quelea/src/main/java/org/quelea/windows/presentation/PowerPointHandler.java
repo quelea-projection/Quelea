@@ -386,9 +386,9 @@ public class PowerPointHandler {
         String path;
         if (script.contains(" ")) {
             script = script.replace(" ", "\" ");
-            path = "\"" + new File("lib/vbs/" + script).getAbsolutePath();
+            path = "\"" + new File("vbs/" + script).getAbsolutePath();
         } else {
-            path = "\"" + new File("lib/vbs/" + script).getAbsolutePath() + "\"";
+            path = "\"" + new File("vbs/" + script).getAbsolutePath() + "\"";
         }
 
         return path;
