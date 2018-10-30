@@ -97,7 +97,7 @@ public final class Main extends Application {
             img = ImageIO.read(new File("icons/logo64.png"));
             Taskbar.getTaskbar().setIconImage(img);
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about", ex);
+            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about: {0}", ex.getMessage());
         }
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
