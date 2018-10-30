@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '2.0.1'
+    id 'com.gradle.build-scan' version '1.16'
     id 'java'
     id 'edu.sc.seis.launch4j' version '2.4.4'
     id 'com.github.ben-manes.versions' version '0.20.0'
