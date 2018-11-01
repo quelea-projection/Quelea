@@ -63,7 +63,7 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
     bundledJre64Bit = true
     outfile = "Quelea64.exe"
 }
@@ -75,7 +75,7 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
 //    icon = "../../icons/logo.ico"
 //    copyright = "GPLv3"
 //    bundledJrePath = "winjre"
-//    jvmOptions = ["-Dfile.encoding=UTF-8","-Djavafx.embed.singleThread=true","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+//    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
 //    outfile = "Quelea.exe"
 //}
 //createQueleaExe.dependsOn createQueleaExe64
