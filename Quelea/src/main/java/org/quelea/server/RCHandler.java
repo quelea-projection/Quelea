@@ -51,6 +51,7 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
@@ -441,7 +442,7 @@ public class RCHandler {
 
     public static String getThemes(HttpExchange he) {
         StringBuilder ret = new StringBuilder();
-        for (ThemeDTO t : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().getThemes()) {
+        for (ThemeDTO t : ThemeUtils.getThemes()) {
             ret.append(t.getThemeName()).append("\n");
         }
         ret.append(LabelGrabber.INSTANCE.getLabel("default.theme.text")).append("\n");
@@ -458,13 +459,15 @@ public class RCHandler {
 
             Utils.fxRunAndWait(() -> {
                 int i = 0;
-                for (ThemeDTO t : stn.getThemes()) {
+                for (ThemeDTO t : ThemeUtils.getThemes()) {
                     i++;
                     if (t.getThemeName().equals(themeName)) {
-                        stn.selectTheme(t);
+                        stn.selectSongTheme(t);
+                        stn.selectBibleTheme(t);
                         break;
-                    } else if (i == stn.getThemes().size()) {
-                        stn.selectTheme(ThemeDTO.DEFAULT_THEME);
+                    } else if (i == ThemeUtils.getThemes().size()) {
+                        stn.selectSongTheme(ThemeDTO.DEFAULT_THEME);
+                        stn.selectBibleTheme(ThemeDTO.DEFAULT_THEME);
                     }
                 }
             });

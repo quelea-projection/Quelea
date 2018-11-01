@@ -19,6 +19,7 @@
 package org.quelea.services.lucene;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 
@@ -66,7 +67,13 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     public SongSearchIndex() {
         songs = new HashMap<>();
         analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
-        index = new RAMDirectory();
+        try {
+            index = new MMapDirectory(Files.createTempDirectory("quelea-mmap-song").toAbsolutePath());
+        }
+        catch(IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't create song search index");
+            throw new RuntimeException("Couldn't create song search index", ex);
+        }
     }
 
     @Override

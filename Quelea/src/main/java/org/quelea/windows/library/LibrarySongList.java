@@ -162,7 +162,7 @@ public class LibrarySongList extends StackPane {
         });
         songList.setOnKeyPressed((KeyEvent t) -> {
             if (t.getCode() == KeyCode.ENTER) {
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
+                new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
             }
         });
         if (popup) {

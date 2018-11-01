@@ -481,6 +481,71 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Sets whether item themes can override the global theme.
+     *
+     * @param val true if should override, false otherwise
+     */
+    public void setItemThemeOverride(boolean val) {
+        setProperty("item.theme.override", val + "");
+    }
+
+    /**
+     * Gets whether item themes can override the global theme.
+     *
+     * @return true if should override, false otherwise
+     */
+    public boolean getItemThemeOverride() {
+        boolean ret = Boolean.parseBoolean(getProperty("item.theme.override", "false"));
+        return ret;
+    }
+
+    /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalSongThemeFile(File file) {
+        if(file==null) {
+            setProperty("global.song.theme.file", "");            
+        }
+        else {
+            setProperty("global.song.theme.file", file.getAbsolutePath());            
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalSongThemeFile() {
+        String path = getProperty("global.song.theme.file");
+        if(path==null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalBibleThemeFile(File file) {
+        if(file==null) {
+            setProperty("global.bible.theme.file", "");            
+        }
+        else {
+            setProperty("global.bible.theme.file", file.getAbsolutePath());            
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalBibleThemeFile() {
+        String path = getProperty("global.bible.theme.file");
+        if(path==null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
      * Set the last directory used in the schedule file chooser.
      *
      * @param directory the last directory used in the schedule file chooser.
@@ -2024,5 +2089,14 @@ public final class QueleaProperties extends Properties {
 
     public String getChurchCcliNum() {
         return getProperty("church.ccli.num", null);
+    }
+
+    /**
+     * Get the directory used for storing notices.
+     * <p>
+     * @return the notice directory
+     */
+    public File getNoticeDir() {
+        return new File(getQueleaUserHome(), "notices");
     }
 }

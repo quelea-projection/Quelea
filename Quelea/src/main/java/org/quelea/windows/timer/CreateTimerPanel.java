@@ -140,7 +140,7 @@ public class CreateTimerPanel extends Stage {
         tpConfirm.setAlignment(Pos.CENTER);
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(durationTextField.getText());
-        tp = new ThemePanel(wordsArea, tpConfirm);
+        tp = new ThemePanel(wordsArea, tpConfirm, true);
         tp.setPrefSize(500, 500);
         if (td == null) {
             tp.setTheme(timerTheme);

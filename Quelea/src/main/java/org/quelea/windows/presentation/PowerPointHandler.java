@@ -356,7 +356,9 @@ public class PowerPointHandler {
         Platform.runLater(() -> {
         });
         try {
-            Process p = Runtime.getRuntime().exec("cscript " + string);
+            String scr = "cscript " + string;
+            LOGGER.log(Level.FINE, "Running VBS: {0}", scr);
+            Process p = Runtime.getRuntime().exec(scr);
             try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
                 String line;
                 while ((line = input.readLine()) != null) {
@@ -384,9 +386,9 @@ public class PowerPointHandler {
         String path;
         if (script.contains(" ")) {
             script = script.replace(" ", "\" ");
-            path = "\"" + new File("lib/vbs/" + script).getAbsolutePath();
+            path = "\"" + new File("vbs/" + script).getAbsolutePath();
         } else {
-            path = "\"" + new File("lib/vbs/" + script).getAbsolutePath() + "\"";
+            path = "\"" + new File("vbs/" + script).getAbsolutePath() + "\"";
         }
 
         return path;

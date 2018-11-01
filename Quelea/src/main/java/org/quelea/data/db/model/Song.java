@@ -237,7 +237,7 @@ public class Song {
     }
 
     @Lob
-    @Column(name="translations")
+    @Column(name="translations", length=STRING_LENGTH)
     public HashMap<String, String> getTranslations() {
         return translations;
     }
