@@ -169,6 +169,7 @@ public class OptionsDialog extends Stage {
         if(presentationPanel.hasPPChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
         }
+        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
     }
 
     /**
