@@ -501,7 +501,13 @@ public class RCHandler {
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n<html>");
-                int numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                int numberOfFiles;
+                if (d instanceof PresentationDisplayable)
+                    numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                else if (d instanceof PdfDisplayable)
+                    numberOfFiles = ((PdfDisplayable) d).getPresentation().getSlides().length;
+                else
+                    numberOfFiles = ((ImageGroupDisplayable) d).getPresentation().getSlides().length;
                 for (int i = 0; i < numberOfFiles; i++) {
                     if (currentLyricSection() == i) {
                         sb.append("<div class=\"inner current\">");
