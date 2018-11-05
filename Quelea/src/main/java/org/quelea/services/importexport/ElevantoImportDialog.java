@@ -161,6 +161,7 @@ public class ElevantoImportDialog extends Stage {
                 convertedDate = currentTFormat.format(date);
             }catch (Exception e){
                 // error
+                LOGGER.log(Level.WARNING, "Error", e);
             }
 
             return convertedDate;
@@ -190,6 +191,7 @@ public class ElevantoImportDialog extends Stage {
                 }
                 catch (Exception e) {
                     // no valid service times?
+                    LOGGER.log(Level.WARNING, "Error", e);
                 }
                 
                 JSONObject plans;
