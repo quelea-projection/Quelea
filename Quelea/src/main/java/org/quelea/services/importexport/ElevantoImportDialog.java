@@ -184,14 +184,12 @@ public class ElevantoImportDialog extends Stage {
                 String serviceName = (String)service.get("name");
                 
                 String date = convertToCurrentTimeZone((String)service.get("date"));
-                try {
+                if (date != null) {
                     // grab the date, ignore the time
                     String[] dateParts = date.split(" ");
-                    date = dateParts[0];
-                }
-                catch (Exception e) {
-                    // no valid service times?
-                    LOGGER.log(Level.WARNING, "Error", e);
+                    if (dateParts.length >= 1) {
+                        date = dateParts[0];
+                    }
                 }
                 
                 JSONObject plans;
