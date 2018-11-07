@@ -43,7 +43,6 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -250,7 +249,6 @@ public final class Main extends Application {
 
                     backgroundExecutor.submit(() -> {
                         new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                        PhoneHome.INSTANCE.phone(); //Phone home
                     });
 
                     LOGGER.log(Level.INFO, "Registering canvases");
