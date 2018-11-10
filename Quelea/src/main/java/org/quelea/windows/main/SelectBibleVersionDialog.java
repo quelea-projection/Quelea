@@ -108,8 +108,10 @@ public class SelectBibleVersionDialog extends Stage {
      */
     public ArrayList<Bible> getAddVersion(@Nullable Bible exclude, List<Bible> selectedBibles) {
         StringBuilder sb = new StringBuilder();
-        for (Bible b : selectedBibles) {
-            sb.append(b.getBibleName()).append(",");
+        if (selectedBibles != null) {
+            for (Bible b : selectedBibles) {
+                sb.append(b.getBibleName()).append(",");
+            }
         }
         return getAddVersion(exclude, sb.toString());
     }
