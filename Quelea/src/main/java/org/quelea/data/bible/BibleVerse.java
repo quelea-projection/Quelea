@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package org.quelea.data.bible;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -27,7 +28,7 @@ import org.w3c.dom.Node;
  *
  * @author Michael
  */
-public final class BibleVerse implements BibleInterface, Serializable {
+public class BibleVerse implements BibleInterface, Serializable {
 
     private String verse;
     private int num;
@@ -37,7 +38,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
     /**
      * For internal use only.
      */
-    private BibleVerse() {
+    public BibleVerse() {
         //For internal use
     }
 
@@ -61,10 +62,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
         if (!Objects.equals(this.verse, other.verse)) {
             return false;
         }
-        if (this.num != other.num) {
-            return false;
-        }
-        return true;
+        return this.num == other.num;
     }
 
     /**
@@ -174,5 +172,13 @@ public final class BibleVerse implements BibleInterface, Serializable {
 
     public int getChapterNum() {
         return chapterNum;
+    }
+
+    public BibleVerse copyVerse(BibleVerse bv) {
+        BibleVerse ret = new BibleVerse();
+        ret.setChapter(bv.getChapter());
+        ret.num = bv.getNum();
+        ret.verse = bv.getVerseText();
+        return ret;
     }
 }

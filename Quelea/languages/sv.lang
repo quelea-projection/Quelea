@@ -665,3 +665,5 @@ filefilters.description.songs.worshiphim=Worship Him MDB-filer
 worshiphim.import.line1=Bläddra till Worship Him db-filen (i mdb-format) nedan:
 worshiphim.button=Worship Him
 show.extra.live.panel.toolbar.options.label=Visa extra knapp för att gömma livefönster
+always.use.multi.bible=Använd alltid flera bibelöversättningar
+select.multi.bible.label=Välj bibelversioner

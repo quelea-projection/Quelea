@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,12 +32,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
-import org.quelea.data.bible.Bible;
-import org.quelea.data.bible.BibleBook;
-import org.quelea.data.bible.BibleChangeListener;
-import org.quelea.data.bible.BibleManager;
-import org.quelea.data.bible.BibleVerse;
-import org.quelea.data.bible.ChapterVerseParser;
+import org.quelea.data.bible.*;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -53,6 +48,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 
 /**
  * The panel used to get bible verses.
@@ -123,7 +119,26 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         bottomPane.setCenter(preview);
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
         addToSchedule.setOnAction((ActionEvent t) -> {
-            BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
+            BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi, false, null);
+            if (QueleaProperties.get().getAlwaysUseMultiPassage()) {
+                ArrayList<Bible> bibles = new ArrayList<>();
+                for (String s : (bibleSelector.getSelectionModel().getSelectedItem().getName() + "," + QueleaProperties.get().getMultiPassageVersions()).split(",")) {
+                    for (Bible b : BibleManager.get().getBibles()) {
+                        if (b.getBibleName().equals(s) && !bibles.contains(b))
+                            bibles.add(b);
+                    }
+                }
+                List<CustomVerse> newVerses = SelectBibleVersionActionHandler.getNewVerses(bibles, passage);
+                StringBuilder sb = new StringBuilder();
+                if (newVerses != null) {
+                    CustomVerse firstVerse = newVerses.get(0);
+                    for (Bible b : bibles) {
+                        sb.append(" + ").append(b.getBibleName());
+                    }
+                    String summary = firstVerse.getChapter().getBook() + " " + passage.getLocation().split(" (?=\\d)")[1];
+                    passage = new BiblePassage(sb.toString().replaceFirst(" \\+ ", ""), summary, newVerses.toArray(new CustomVerse[newVerses.size()]), passage.getMulti(), bibles.size() > 1, bibles);
+                }
+            }
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             passageSelector.setText("");
         });

@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,12 +29,12 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
-import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
 
 /**
  * The popup menu that displays when an item in the schedule is right-clicked.
@@ -49,7 +49,7 @@ public class SchedulePopupMenu extends ContextMenu {
     private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
     private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.timer.text"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
     private final MenuItem editTimerTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-    
+
 
     public SchedulePopupMenu(Displayable item) {
         getItems().add(new MenuItem("placeholder")); //TODO: Investigate why this is required
@@ -110,7 +110,7 @@ public class SchedulePopupMenu extends ContextMenu {
         translationChoice.setOnAction(new SelectTranslationsActionHandler());
         editTimer.setOnAction(new EditTimerActionHandler());
         editTimerTheme.setOnAction(new EditTimerThemeActionHandler());
-        changeBibleVersion.setOnAction(new SwitchBibleVersionActionHandler());
+        changeBibleVersion.setOnAction(new SelectBibleVersionActionHandler());
     }
 
 }

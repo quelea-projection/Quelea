@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import org.quelea.data.ThemeDTO;
@@ -38,7 +39,6 @@ import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 
 /**
- *
  * @author Ben
  */
 public abstract class WordDrawer extends DisplayableDrawer {
@@ -67,20 +67,23 @@ public abstract class WordDrawer extends DisplayableDrawer {
     protected void setLastClearedState(boolean val) {
         lastClearedState.put(getCanvas(), val);
     }
-    
+
     private WrapTextResult getWrapTextProps(Font font, String lineToWrap, double width) {
         FXFontMetrics metrics = new FXFontMetrics(font);
-        String[] words = lineToWrap.split(" ");
+        String[] words = lineToWrap.replaceAll(" {2}", " ").trim().split("[ |\n]");
         StringBuilder lineBuilder = new StringBuilder();
         List<LyricLine> lines = new ArrayList<>();
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
             String potentialStr = lineBuilder.toString() + word;
-            if (metrics.computeStringWidth(potentialStr.replace("<sup>", "").replace("</sup>", "")) > width) {
+            if (word.trim().isEmpty()) {
+                lines.add(new LyricLine(lineBuilder.toString()));
+                lines.add(new LyricLine(""));
+                lineBuilder = new StringBuilder();
+            } else if (metrics.computeStringWidth(potentialStr.replace("<sup>", "").replace("</sup>", "")) > width) {
                 lines.add(new LyricLine(lineBuilder.toString()));
                 lineBuilder = new StringBuilder(word + " ");
-            }
-            else {
+            } else {
                 lineBuilder.append(word).append(" ");
             }
         }
@@ -88,20 +91,20 @@ public abstract class WordDrawer extends DisplayableDrawer {
         //We're using the "fontsize" part of wraptextresult here as the height instead to reuse the same class, bit of a fudge...
         return new WrapTextResult(lines, metrics.getLineHeight() * lines.size());
     }
-    
+
     protected WrapTextResult normalWrapText(Font font, String lineToWrap, double width, double height) {
         double min = 1;
         double max = font.getSize();
-        
-        double cur = (max-min)/2;
-        
+
+        double cur = (max - min) / 2;
+
         font = new Font(font.getName(), cur);
         WrapTextResult result = getWrapTextProps(font, lineToWrap, width);
-        
-        int i=0;
-        while(result.getFontSize()>height || result.getFontSize()<height-50) {
+
+        int i = 0;
+        while (result.getFontSize() > height || result.getFontSize() < height - 50) {
             i++;
-            if(i>20) {
+            if (i > 20) {
                 break;
             }
             if (result.getFontSize() > height) {
@@ -111,7 +114,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             } else {
                 throw new AssertionError("Shouldn't be here");
             }
-            cur = ((max-min)/2)+min;
+            cur = ((max - min) / 2) + min;
             font = new Font(font.getName(), cur);
             result = getWrapTextProps(font, lineToWrap, width);
         }
@@ -122,9 +125,10 @@ public abstract class WordDrawer extends DisplayableDrawer {
      * Pick a font size for the specified font that fits the given text into the
      * width and height provided.
      * <p>
-     * @param font the font to use for calculations.
-     * @param text the text to fit.
-     * @param width the fit width.
+     *
+     * @param font   the font to use for calculations.
+     * @param text   the text to fit.
+     * @param width  the fit width.
      * @param height the fit height.
      * @return a font size for the specified font that fits the text into the
      * width and height provided.
@@ -190,8 +194,8 @@ public abstract class WordDrawer extends DisplayableDrawer {
                 }
 
             } else {
-                int lineWidth = (int)metrics.computeStringWidth(line.getLine());
-                if(lineWidth>longestLine) {
+                int lineWidth = (int) metrics.computeStringWidth(line.getLine());
+                if (lineWidth > longestLine) {
                     longestLine = lineWidth;
                 }
             }
@@ -217,8 +221,9 @@ public abstract class WordDrawer extends DisplayableDrawer {
      * Determine if the given line contains the given string in the middle 80%
      * of the line.
      * <p/>
+     *
      * @param line the line to check.
-     * @param str the string to use.
+     * @param str  the string to use.
      * @return true if the line contains the delimiter, false otherwise.
      */
     protected static boolean containsNotAtEnd(String line, String str) {
@@ -231,7 +236,8 @@ public abstract class WordDrawer extends DisplayableDrawer {
      * Split a string with the given delimiter into two parts, using the
      * delimiter closest to the middle of the string.
      * <p/>
-     * @param line the line to split.
+     *
+     * @param line      the line to split.
      * @param delimiter the delimiter.
      * @return an array containing two strings split in the middle by the
      * delimiter.

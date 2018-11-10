@@ -1922,6 +1922,42 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+
+    /**
+     * Get whether multiple Bible translations should be added automatically
+     *
+     * @return true if using multiple Bible translations
+     */
+    public boolean getAlwaysUseMultiPassage() {
+        return Boolean.parseBoolean(getProperty("use.multi.passage", "false"));
+    }
+
+    public void setAlwaysUseMultiPassage(boolean useMultiPassage) {
+        setProperty("use.multi.passage", Boolean.toString(useMultiPassage));
+        write();
+    }
+
+    /**
+     * Get the versions used for multiple Bible translations.
+     * text.
+     * <p>
+     * @return the Bible versions selected
+     * text.
+     */
+    public String getMultiPassageVersions() {
+        return getProperty("multi.passage.versions", "");
+    }
+
+    /**
+     * Set tthe versions used for multiple Bible translations.
+     * <p>
+     * @param versions the selected Bible versions to use
+     */
+    public void setMultiPassageVersions(String versions) {
+        setProperty("multi.passage.versions", versions);
+        write();
+    }
+
     /**
      * Get the fade duration of the logo button text.
      * <p>

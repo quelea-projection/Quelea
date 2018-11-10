@@ -20,8 +20,8 @@ package org.quelea.windows.options;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,13 +29,8 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -57,10 +52,10 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.SelectBibleVersionDialog;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.widgets.NumberSpinner;
-import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -75,6 +70,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private final CheckBox splitBibleVersesBox;
     private final NumberSpinner maxVersesPerSlideBox;
     private final CheckBox maxVersesEnable;
+    private final CheckBox alwaysUseMultiPassage;
+    private String multiBibleVersions;
+    private final Button multiBibleButton;
 //    private final Slider maxCharsSlider;
     private boolean changed;
 
@@ -144,6 +142,32 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 changed = true;
             }
         });
+
+        final Label alwaysUseMultiPassageLabel = new Label(LabelGrabber.INSTANCE.getLabel("always.use.multi.bible"));
+        GridPane.setConstraints(alwaysUseMultiPassageLabel, 1, 5);
+        getChildren().add(alwaysUseMultiPassageLabel);
+        HBox multiPassageHBox = new HBox();
+        alwaysUseMultiPassage = new CheckBox();
+        alwaysUseMultiPassageLabel.setLabelFor(alwaysUseMultiPassage);
+        multiPassageHBox.getChildren().add(alwaysUseMultiPassage);
+        multiBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("select.multi.bible.label"));
+        alwaysUseMultiPassage.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            multiBibleButton.setDisable(!newValue);
+            changed = true;
+        });
+        multiBibleButton.setOnAction(t -> {
+            SelectBibleVersionDialog dialog = new SelectBibleVersionDialog();
+            ArrayList<Bible> bibles = dialog.getAddVersion(null, multiBibleVersions);
+            StringBuilder sb = new StringBuilder();
+            for (Bible b : bibles) {
+                sb.append(b.getBibleName()).append(",");
+            }
+            multiBibleVersions = sb.toString();
+
+        });
+        multiPassageHBox.getChildren().add(multiBibleButton);
+        GridPane.setConstraints(multiPassageHBox, 2, 5);
+        getChildren().add(multiPassageHBox);
 //        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
 //
 //        GridPane.setConstraints(maxCharsLabel, 1, 5);
@@ -260,6 +284,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         splitBibleVersesBox.setSelected(props.getBibleSplitVerses());
         maxVersesPerSlideBox.setNumber(props.getMaxBibleVerses());
         maxVersesEnable.setSelected(!props.getBibleUsingMaxChars());
+        alwaysUseMultiPassage.setSelected(props.getAlwaysUseMultiPassage());
+        multiBibleVersions = props.getMultiPassageVersions();
+        multiBibleButton.setDisable(!alwaysUseMultiPassage.isSelected());
 //        maxCharsSlider.setValue(props.getMaxBibleChars());
 
     }
@@ -278,6 +305,8 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setBibleSplitVerses(splitBibleVersesBox.isSelected());
         props.setMaxBibleVerses(maxVersesPerSlideBox.getNumber());
         props.setBibleUsingMaxChars(!maxVersesEnable.isSelected());
+        props.setAlwaysUseMultiPassage(alwaysUseMultiPassage.isSelected());
+        props.setMultiPassageVersions(multiBibleVersions);
 //        int maxCharsPerLine = (int) maxCharsSlider.getValue();
 //        props.setMaxBibleChars(maxCharsPerLine);
         if (changed) {

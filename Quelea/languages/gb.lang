@@ -685,3 +685,5 @@ video.loop.tooltip=Toggle looping on / off
 allow.item.theme.override.global=Allow custom item themes to override global theme
 song.default.theme.label=Song default
 bible.default.theme.label=Bible default
+always.use.multi.bible=Always use multiple-version passages
+select.multi.bible.label=Select Bible versions

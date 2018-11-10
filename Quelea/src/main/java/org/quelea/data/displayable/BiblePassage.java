@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,10 +28,7 @@ import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.bible.Bible;
-import org.quelea.data.bible.BibleBook;
-import org.quelea.data.bible.BibleManager;
-import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.*;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -39,9 +36,17 @@ import org.quelea.windows.main.QueleaApp;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * A displayable passage from the bible.
  * <p>
+ *
  * @author Michael
  */
 public class BiblePassage implements TextDisplayable, Serializable {
@@ -52,28 +57,32 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private BibleVerse[] verses;
     private ThemeDTO theme;
     private final boolean multi;
+    private final boolean multiLingual;
+    private List<Bible> bibleVersions;
 
     /**
      * Create a new bible passage.
      * <p>
+     *
      * @param biblename the bible that the passage comes from.
-     * @param location the location of the passage in the bible.
-     * @param verses the verses, in order, that make up the passage.
+     * @param location  the location of the passage in the bible.
+     * @param verses    the verses, in order, that make up the passage.
      */
-    public BiblePassage(String biblename, String location, BibleVerse[] verses, boolean multi) {
+    public BiblePassage(String biblename, String location, BibleVerse[] verses, boolean multi, boolean multilingual, List<Bible> versions) {
         this(location + "\n" + biblename, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1), multi);
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1), multi, multilingual, versions);
     }
 
     /**
      * Create a new bible passage from a summary and an array of verses.
      * <p>
+     *
      * @param summary the summary to display in the schedule.
-     * @param verses the verses in the passage.
-     * @param theme the theme of the passage.
+     * @param verses  the verses in the passage.
+     * @param theme   the theme of the passage.
      */
-    public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi) {
+    public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi, boolean multilingual, List<Bible> versions) {
         this.summary = summary;
         this.multi = multi;
         this.smallText = summary.split("\n");
@@ -82,11 +91,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
         }
         this.verses = Arrays.copyOf(verses, verses.length);
         this.theme = theme;
+        this.multiLingual = multilingual;
         textSections = new ArrayList<>();
         fillTextSections();
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
         }
+        this.bibleVersions = versions;
     }
 
     /**
@@ -126,7 +137,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                     line.append(verseWord).append(" ");
                 }
                 count++;
-                if (USE_CHARS) {
+                if (USE_CHARS && !multiLingual) {
                     if (!SPLIT_VERSES) {
                         if (lines >= MAX_CHARS / 4) {
                             lines = 0;
@@ -149,9 +160,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
                             section.setLength(0);
                         }
                     }
-
-                } else { // using verses
-                    if (count >= MAX_VERSES && count > 0) {
+                } else { // using verses, always splitting multi-lingual passages per verse
+                    if (count >= MAX_VERSES && count > 0 || multiLingual) {
                         if (!line.toString().isEmpty()) {
                             section.append(line);
                             line.setLength(0);
@@ -191,6 +201,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Get the XML behind this bible passage.
      * <p/>
+     *
      * @return the XML.
      */
     @Override
@@ -211,6 +222,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
         ret.append("\" multi=\"").append(multi);
         ret.append("\" bible=\"");
         ret.append(Utils.escapeXML(bible));
+        ret.append("\" multiLang=\"").append(multiLingual);
         ret.append("\">");
         for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
@@ -225,6 +237,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Return the first verse in this passage as a "preview".
      * <p>
+     *
      * @return the first verse in this passage as a "preview".
      */
     @Override
@@ -239,6 +252,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Retrieve assigned theme
      * <p/>
+     *
      * @return assigned theme
      */
     @Override
@@ -249,6 +263,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Set assigned theme
      * <p/>
+     *
      * @param theme new theme
      */
     @Override
@@ -262,6 +277,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Parse the xml from a bible passage and return the passage.
      * <p>
+     *
      * @param passage the passage to parse.
      * @return the passage object.
      */
@@ -276,25 +292,41 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (passage.getAttributes().getNamedItem("multi") != null) {
             multi = Boolean.parseBoolean(passage.getAttributes().getNamedItem("multi").getTextContent());
         }
+        boolean multiLang = false;
+        if (passage.getAttributes().getNamedItem("multiLang") != null) {
+            multiLang = Boolean.parseBoolean(passage.getAttributes().getNamedItem("multiLang").getTextContent());
+        }
         String summary = passageSummary + "\n" + bibleSummary;
         ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
+        List<CustomVerse> customVerses = new ArrayList<>();
+        List<Bible> bibles = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("vers")) {
                 BibleVerse bv = BibleVerse.parseXML(node);
                 if (bv != null) {
                     for (Bible b : BibleManager.get().getBibles()) {
-                        if (b.getBibleName().equals(bibleSummary)) {
+                        if (b.getBibleName().equals(bibleSummary.split(" \\+ ")[0])) {
                             int ii = 1;
                             for (BibleBook bb : b.getBooks()) {
                                 String p = passageSummary.split(" \\d")[0];
                                 if (bb.getBookName().equals(p)) {
                                     bv.getChapter().setBook(BibleBook.parseXML(node, ii));
                                     bv.getChapter().getBook().setBible(b);
-                                    verses.add(bv);
+                                    if (multiLang) {
+                                        CustomVerse customVerse = new CustomVerse(bv);
+                                        customVerses.add(customVerse);
+                                    } else {
+                                        verses.add(bv);
+                                    }
                                 }
                                 ii++;
+                            }
+                        }
+                        for (String s : bibleSummary.split(" \\+ ")) {
+                            if (s.equals(b.getBibleName()) && !bibles.contains(b)) {
+                                bibles.add(b);
                             }
                         }
                     }
@@ -303,12 +335,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 tempTheme = ThemeDTO.fromString(node.getTextContent());
             }
         }
-        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme, multi);
+        return new BiblePassage(summary, multiLang ? customVerses.toArray(new BibleVerse[customVerses.size()]) : verses.toArray(new BibleVerse[verses.size()]), tempTheme, multi, multiLang, bibles); // TOOO: Save/restore bilingual
     }
 
     /**
      * Get the bible preview icon.
      * <p>
+     *
      * @return the bible preview icon.
      */
     @Override
@@ -319,6 +352,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Get the preview text.
      * <p>
+     *
      * @return the preview text.
      */
     @Override
@@ -329,6 +363,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Get the text sections in this passage.
      * <p>
+     *
      * @return the text sections in this passage.
      */
     @Override
@@ -339,6 +374,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * Bible passages don't need any resources, return an empty collection.
      * <p>
+     *
      * @return an empty list, always.
      */
     @Override
@@ -357,6 +393,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     /**
      * We support clear, so return true.
      * <p>
+     *
      * @return true, always.
      */
     @Override
@@ -384,4 +421,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
     public String getLocation() {
         return summary.split("\n")[0];
     }
+
+    public boolean getMultiLingual() {
+        return multiLingual;
+    }
+
+    public List<Bible> getBibleVersions() {
+        return bibleVersions;
+    }
+
 }

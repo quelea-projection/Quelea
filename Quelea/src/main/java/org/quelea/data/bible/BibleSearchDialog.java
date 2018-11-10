@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
  */
 package org.quelea.data.bible;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,7 +31,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -46,6 +43,11 @@ import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.LoadingPane;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A dialog that can be used for searching for bible passages.
@@ -108,28 +110,19 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         this.setMinWidth(500);
 
         // Event handlers
-        bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                searchResults.resetRoot();
-                update();
-            }
+        bibles.setOnAction(t -> {
+            searchResults.resetRoot();
+            update();
         });
-        searchField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                update();
-            }
-        });
-        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
-                    BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
-                    Bible bib = (Bible) chap.getParent().getParent();
-                    BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false);
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
-                }
+        searchField.textProperty().addListener((ov, t, t1) -> update());
+        addToSchedule.setOnAction(t -> {
+            if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
+                BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
+                Bible bib = (Bible) chap.getParent().getParent();
+                List<Bible> list = new ArrayList<>();
+                list.add(bib);
+                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false, false, list);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
         setOnShown((WindowEvent event) -> {
@@ -148,10 +141,10 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     public final void reset() {
 //        searchResults.itemsProperty().get().clear();
         searchField.setText(LabelGrabber.INSTANCE.getLabel("initial.search.text"));
-        searchField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+        searchField.focusedProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1.booleanValue()) {
+                if (t1) {
                     searchField.setText("");
                     searchField.focusedProperty().removeListener(this);
                 }
@@ -192,28 +185,25 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                             return;
                         }
                         final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                searchResults.reset();
-                                if (!text.trim().isEmpty()) {
-                                    for (BibleChapter chapter : results) {
-                                        if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                            for (BibleVerse verse : chapter.getVerses()) {
-                                                if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
-                                                    searchResults.add(verse);
-                                                }
+                        Platform.runLater(() -> {
+                            searchResults.reset();
+                            if (!text.trim().isEmpty()) {
+                                for (BibleChapter chapter : results) {
+                                    if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                        for (BibleVerse verse : chapter.getVerses()) {
+                                            if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
+                                                searchResults.add(verse);
                                             }
                                         }
                                     }
                                 }
-                                overlay.hide();
-                                String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
-                                if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
-                                    resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
-                                }
-                                resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
                             }
+                            overlay.hide();
+                            String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
+                            if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
+                                resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
+                            }
+                            resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
                         });
                     }
                 };
