@@ -54,7 +54,8 @@ public final class Bible implements BibleInterface, Serializable {
     private final String name;
     private BibleInfo information;
     private final List<BibleBook> books;
-
+    private String filePath;
+    
     /**
      * Create a new bible.
      * <p/>
@@ -63,6 +64,17 @@ public final class Bible implements BibleInterface, Serializable {
     private Bible(String name) {
         books = new ArrayList<>();
         this.name = name;
+    }
+    
+    /**
+     * @return the path of the file this bible has been read from on null if n.a.
+     */
+    public String getFilePath() {
+        return filePath;
+    }
+    
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     @Override

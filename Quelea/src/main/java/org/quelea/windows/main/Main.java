@@ -43,7 +43,6 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -97,7 +96,7 @@ public final class Main extends Application {
             img = ImageIO.read(new File("icons/logo64.png"));
             Taskbar.getTaskbar().setIconImage(img);
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about", ex);
+            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about: {0}", ex.getMessage());
         }
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
@@ -250,7 +249,6 @@ public final class Main extends Application {
 
                     backgroundExecutor.submit(() -> {
                         new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                        PhoneHome.INSTANCE.phone(); //Phone home
                     });
 
                     LOGGER.log(Level.INFO, "Registering canvases");

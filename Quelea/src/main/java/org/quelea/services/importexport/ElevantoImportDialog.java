@@ -17,8 +17,13 @@
  */
 package org.quelea.services.importexport;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -142,6 +147,32 @@ public class ElevantoImportDialog extends Stage {
             return null;
         }
                
+        public String convertToCurrentTimeZone(String p_date) {
+            String convertedDate = "";
+            try {
+                DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                Date date = utcFormat.parse(p_date);
+
+                DateFormat currentTFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                currentTFormat.setTimeZone(TimeZone.getTimeZone(getCurrentTimeZone()));
+
+                convertedDate = currentTFormat.format(date);
+            }catch (Exception e){
+                // error
+                LOGGER.log(Level.WARNING, "Error", e);
+            }
+
+            return convertedDate;
+        }
+
+        //get the current time zone
+        public String getCurrentTimeZone(){
+            TimeZone tz = Calendar.getInstance().getTimeZone();
+            return tz.getID();
+        }
+    
         @SuppressWarnings("unchecked")
         protected void processServices(JSONObject response, TreeItem<String> parentItem)
         {
@@ -150,10 +181,16 @@ public class ElevantoImportDialog extends Stage {
             for (Object serviceTypeObj : serviceJsonArray) {
                 JSONObject service = (JSONObject)serviceTypeObj;
                 String serviceTypeId = (String)service.get("id");
-                //JSONObject serviceTypePlans = parser.serviceTypePlans(serviceTypeId);
                 String serviceName = (String)service.get("name");
                 
-                String date = (String)service.get("date");
+                String date = convertToCurrentTimeZone((String)service.get("date"));
+                if (date != null) {
+                    // grab the date, ignore the time
+                    String[] dateParts = date.split(" ");
+                    if (dateParts.length >= 1) {
+                        date = dateParts[0];
+                    }
+                }
                 
                 JSONObject plans;
                 try {
@@ -172,7 +209,7 @@ public class ElevantoImportDialog extends Stage {
                 for (Object planObj : servicePlanArray) {
                     JSONObject plan = (JSONObject)planObj;
 
-                    TreeItem<String> planItem = new TreeItem<String>(date);
+                    TreeItem<String> planItem = new TreeItem<String>(date + " " + serviceName);
                     parentItem.getChildren().add(planItem);
                     ElevantoPlanDialog planDialog = new ElevantoPlanDialog(ElevantoImportDialog.this, plan);
                     treeViewItemPlanDialogMap.put(planItem, planDialog);

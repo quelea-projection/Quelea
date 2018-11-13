@@ -79,7 +79,6 @@ public class Dialog extends Stage {
 
         public Builder create() {
             stage = new Dialog();
-            stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setIconified(false);
             stage.centerOnScreen();
