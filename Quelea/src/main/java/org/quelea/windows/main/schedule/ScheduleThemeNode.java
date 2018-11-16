@@ -219,22 +219,19 @@ public class ScheduleThemeNode extends BorderPane {
         }
         HBox buttonPanel = new HBox();
         Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/add.png")));
-        newThemeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themeDialog.setTheme(null);
-                themeDialog.showAndWait();
-                ThemeDTO ret = themeDialog.getTheme();
-                if (ret != null) {
-                    try (PrintWriter pw = new PrintWriter(ret.getFile())) {
-                        pw.println(ret.getTheme());
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
-                    }
-                    refresh();
+        newThemeButton.setOnAction(t -> {
+            themeDialog.setTheme(null);
+            themeDialog.showAndWait();
+            ThemeDTO ret = themeDialog.getTheme();
+            if (ret != null) {
+                try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                    pw.println(ret.getTheme());
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
                 }
-                popup.show();
+                refresh();
             }
+            popup.show();
         });
         buttonPanel.getChildren().add(newThemeButton);
         contentPanel.getChildren().add(themePreviews);

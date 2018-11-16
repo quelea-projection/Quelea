@@ -34,7 +34,7 @@ script:
   - ls -l lang/
   - git add lang/missinglabels.js
   - git commit -m "Update missing labels file" || ls -l
-  - git push
+  - git push || echo "PR build, no problem"
   - cd $PREVDIR
 before_deploy:
   - git config --global user.email "builds@travis-ci.com"

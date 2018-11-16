@@ -16,7 +16,11 @@
  */
 package org.quelea.services.importexport;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.Header;
@@ -62,7 +66,8 @@ public class ElevantoParser {
             StringEntity params = new StringEntity(content.toString());
             httpost.addHeader("content-type", "application/json");
             httpost.setEntity(params);
-
+            LOGGER.log(Level.INFO, "Params: {0}", params);
+            
             HttpResponse response = httpClient.execute(httpost, httpContext);
 
             LOGGER.log(Level.INFO, "Response code {0}", response.getStatusLine().getStatusCode());
@@ -92,6 +97,18 @@ public class ElevantoParser {
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(jsonStr);
+            
+            // check for error, just log them
+            try {
+                String status = (String)json.get("status");
+                if (status.equals("fail")) {                    
+                    String errorMsg = (String)((JSONObject)json.get("error")).get("message");
+                    LOGGER.log(Level.WARNING, "Error", errorMsg);
+                }
+            }
+            catch (Exception e) {
+            }
+            
             return json;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error", e);
@@ -107,6 +124,20 @@ public class ElevantoParser {
         json.put("page", "1");
         json.put("page_size", "100");
         json.put("status", "published");
+        
+        // set suitable start and end date
+        Date date = Calendar.getInstance().getTime();        
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = df.format(date);  
+  
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 14);
+        date = c.getTime();
+        String endDate = df.format(date);  
+
+        json.put("start", startDate);
+        json.put("end", endDate);
+                
         json.put("fields", Arrays.asList(new String[]{"series_name", "service_times", "plans", "volunteers", "songs", "files", "notes"}));
         return postJson("https://api.elvanto.com/v1/services/getAll.json", json);
     }
