@@ -64,8 +64,8 @@ public final class Main extends Application {
 
     private static Logger LOGGER;
     private MainWindow mainWindow;
-    private DisplayStage fullScreenWindow;
-    private DisplayStage stageWindow;
+    private ProjectorWindow projectorWindow;
+    private StageWindow stageWindow;
     private Dialog vlcWarningDialog;
 
     public static void main(String[] args) {
@@ -104,6 +104,11 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
+                    
+                    final ObservableList<Screen> monitors = Screen.getScreens();
+                    LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
+                    final int monitorNumber = monitors.size();
+                    
                     boolean vlcOk = false;
                     try {
                         vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
@@ -114,31 +119,14 @@ public final class Main extends Application {
                     final boolean VLC_INIT;
                     if (VLC_OK) {
                         VLC_INIT = VLCWindow.INSTANCE.isInit();
+                        if (ProjectorWindow.needsHidding()) {
+                            VLCWindow.INSTANCE.hide();
+                        }
                     } else {
                         VLC_INIT = false;
-                    }
+                    }                    
                     new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
-
-                    final ObservableList<Screen> monitors = Screen.getScreens();
-                    LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
-
-                    final int projectorScreen = QueleaProperties.get().getProjectorScreen();
-                    final int stageScreen = QueleaProperties.get().getStageScreen();
-                    final int monitorNumber = monitors.size();
-
-                    final boolean lyricsHidden;
-                    if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
-                        lyricsHidden = true;
-                    } else {
-                        lyricsHidden = false;
-                    }
-                    final boolean stageHidden;
-                    if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitorNumber || stageScreen < 0)) {
-                        stageHidden = true;
-                    } else {
-                        stageHidden = false;
-                    }
 
                     if (QueleaProperties.get().getUseMobLyrics()) {
                         LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
@@ -185,51 +173,17 @@ public final class Main extends Application {
                         System.setProperty("http.proxyUser", QueleaProperties.get().getWebProxyUser());
                         System.setProperty("http.proxyPassword", QueleaProperties.get().getWebProxyPassword());
                     }
-                    if (lyricsHidden) {
-                        LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-                        Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
-                            fullScreenWindow.hide();
-                        });
-                    } else if (QueleaProperties.get().isProjectorModeCoords()) {
-                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
-                        Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
-                        });
-                    } else {
-                        LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                        Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
-                            fullScreenWindow.setFullScreenAlwaysOnTop(true);
-                        });
-                    }
-
+                    
                     Platform.runLater(() -> {
-                        QueleaApp.get().setProjectionWindow(fullScreenWindow);
+                        projectorWindow = ProjectorWindow.create();
+                        QueleaApp.get().setProjectionWindow(projectorWindow);
                     });
-
-                    if (stageHidden) {
-                        LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-                        Platform.runLater(() -> {
-                            stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
-                            stageWindow.hide();
-                        });
-                    } else if (QueleaProperties.get().isStageModeCoords()) {
-                        Platform.runLater(() -> {
-                            LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
-                            stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
-                        });
-                    } else {
-                        Platform.runLater(() -> {
-                            LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-                            stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
-                        });
-                    }
-
+                    
                     Platform.runLater(() -> {
+                        stageWindow = StageWindow.create();
                         QueleaApp.get().setStageWindow(stageWindow);
                     });
-
+                    
                     backgroundExecutor.submit(() -> {
                         LOGGER.log(Level.INFO, "Loading bibles");
                         BibleManager.get();
@@ -253,17 +207,17 @@ public final class Main extends Application {
 
                     LOGGER.log(Level.INFO, "Registering canvases");
                     Platform.runLater(() -> {
-                        mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
-                        mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
-                        mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
-                        if (lyricsHidden) {
-                            fullScreenWindow.hide();
+                        mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(projectorWindow.getCanvas());
+                        mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(projectorWindow);
+                        mainWindow.getNoticeDialog().registerCanvas(projectorWindow.getCanvas());
+                        if (ProjectorWindow.needsHidding()) {
+                            projectorWindow.hide();
                         } else {
-                            fullScreenWindow.show();
+                            projectorWindow.show();
                         }
                         mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
                         mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
-                        if (stageHidden) {
+                        if (stageWindow.needsHidding()) {
                             stageWindow.hide();
                         } else {
                             stageWindow.show();
