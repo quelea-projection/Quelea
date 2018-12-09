@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
@@ -61,18 +62,19 @@ public class OptionsDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
         initOwner(QueleaApp.get().getMainWindow());
-        setResizable(false);
         
         getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
         mainPane = new BorderPane();
         tabbedPane = new TabPane();
         
         generalPanel = new OptionsGeneralPanel();
+        ScrollPane generalScrollPane = new ScrollPane();
+        generalScrollPane.setContent(generalPanel);
         Tab generalTab = new Tab();
         generalTab.setClosable(false);
         generalTab.setText(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
         generalTab.setGraphic(new ImageView(new Image("file:icons/generalsettingsicon.png")));
-        generalTab.setContent(generalPanel);
+        generalTab.setContent(generalScrollPane);
         tabbedPane.getTabs().add(generalTab);
         
         displayPanel = new OptionsDisplaySetupPanel();
@@ -169,6 +171,7 @@ public class OptionsDialog extends Stage {
         if(presentationPanel.hasPPChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
         }
+        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
     }
 
     /**

@@ -167,7 +167,7 @@ public class ThemeDTO implements Serializable {
      * @return the translate theme font.
      */
     public Font getTranslateFont() {
-        if(translateFont==null) {
+        if (translateFont == null) {
             return null;
         }
         return translateFont.getFont();
@@ -221,8 +221,7 @@ public class ThemeDTO implements Serializable {
      * @param obj the other object.
      * @return true if the two objects are meaningfully equal, false otherwise.
      */
-    @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj, boolean ignoreName) {
         if (obj == null) {
             return false;
         }
@@ -239,7 +238,21 @@ public class ThemeDTO implements Serializable {
         if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
+        if (!ignoreName) {
+            if (this.themeName != other.themeName && (this.themeName == null || !this.themeName.equals(other.themeName))) {
+                return false;
+            }
+        }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return equals(obj, false);
+    }
+
+    public boolean equalsIgnoreName(ThemeDTO obj) {
+        return equals(obj, true);
     }
 
     /**
@@ -351,7 +364,7 @@ public class ThemeDTO implements Serializable {
         ret.append("$textalignment:").append(textAlignment);
         return ret.toString();
     }
-    
+
     public String asXMLString() {
         return Utils.escapeXML(asString());
     }
@@ -511,5 +524,10 @@ public class ThemeDTO implements Serializable {
      */
     public boolean isTranslateBold() {
         return isTranslateFontBold;
+    }
+
+    @Override
+    public String toString() {
+        return themeName;
     }
 }

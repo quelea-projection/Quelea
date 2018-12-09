@@ -1,23 +1,24 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.server;
 
 import com.sun.net.httpserver.HttpExchange;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,9 +30,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+
 import javax.imageio.ImageIO;
+
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
@@ -47,6 +51,7 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
@@ -56,6 +61,7 @@ import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.multimedia.VLCWindow;
+import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * Handles the RemoteControlServer commands.
@@ -436,7 +442,7 @@ public class RCHandler {
 
     public static String getThemes(HttpExchange he) {
         StringBuilder ret = new StringBuilder();
-        for (ThemeDTO t : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().getThemes()) {
+        for (ThemeDTO t : ThemeUtils.getThemes()) {
             ret.append(t.getThemeName()).append("\n");
         }
         ret.append(LabelGrabber.INSTANCE.getLabel("default.theme.text")).append("\n");
@@ -453,13 +459,15 @@ public class RCHandler {
 
             Utils.fxRunAndWait(() -> {
                 int i = 0;
-                for (ThemeDTO t : stn.getThemes()) {
+                for (ThemeDTO t : ThemeUtils.getThemes()) {
                     i++;
                     if (t.getThemeName().equals(themeName)) {
-                        stn.selectTheme(t);
+                        stn.selectSongTheme(t);
+                        stn.selectBibleTheme(t);
                         break;
-                    } else if (i == stn.getThemes().size()) {
-                        stn.selectTheme(ThemeDTO.DEFAULT_THEME);
+                    } else if (i == ThemeUtils.getThemes().size()) {
+                        stn.selectSongTheme(ThemeDTO.DEFAULT_THEME);
+                        stn.selectBibleTheme(ThemeDTO.DEFAULT_THEME);
                     }
                 }
             });
@@ -493,7 +501,13 @@ public class RCHandler {
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n<html>");
-                int numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                int numberOfFiles;
+                if (d instanceof PresentationDisplayable)
+                    numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                else if (d instanceof PdfDisplayable)
+                    numberOfFiles = ((PdfDisplayable) d).getPresentation().getSlides().length;
+                else
+                    numberOfFiles = ((ImageGroupDisplayable) d).getPresentation().getSlides().length;
                 for (int i = 0; i < numberOfFiles; i++) {
                     if (currentLyricSection() == i) {
                         sb.append("<div class=\"inner current\">");
@@ -579,5 +593,27 @@ public class RCHandler {
             }
         }
         return ret.toString();
+    }
+
+    public static void transposeSong(HttpExchange he) throws UnsupportedEncodingException {
+        String semiTones;
+        if (he.getRequestURI().toString().contains("/transpose/")) {
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            semiTones = uri.split("/transpose/", 2)[1];
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            Displayable d = p.getLivePanel().getDisplayable();
+            if (d instanceof SongDisplayable) {
+                Utils.fxRunAndWait(() -> {
+                    SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
+                    songEntryWindow.resetEditSong((SongDisplayable) d);
+                    songEntryWindow.getBasicSongPanel().transposeSong(Integer.parseInt(semiTones));
+                    songEntryWindow.saveSong();
+                    int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(d);
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+                    p.getPreviewPanel().goLive();
+                });
+            }
+        }
     }
 }

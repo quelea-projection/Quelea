@@ -356,7 +356,11 @@ public class ScheduleList extends StackPane {
             if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable || useTempDisp) {
                 Displayable displayable;
                 if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
-                    displayable = (SongDisplayable) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                    displayable = (Displayable) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                    if (!QueleaProperties.get().getDefaultSongDBUpdate() && displayable instanceof SongDisplayable) {
+                        ((SongDisplayable) displayable).setID(-1);
+                        ((SongDisplayable) displayable).setNoDBUpdate();
+                    }
                 } else {
                     displayable = tempDisp;
                     tempDisp = null;

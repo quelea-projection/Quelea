@@ -148,8 +148,7 @@ public class BasicSongPanel extends BorderPane {
             dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
             lyricsToolbar.getItems().add(dictSelector);
             lyricsToolbar.getItems().add(getDictButton());
-        }
-        else {
+        } else {
             dictSelector = null;
         }
         VBox.setVgrow(mainPanel, Priority.ALWAYS);
@@ -274,25 +273,7 @@ public class BasicSongPanel extends BorderPane {
                 transposeDialog.showAndWait();
                 int semitones = transposeDialog.getSemitones();
 
-                TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
-                if (!keyField.getText().isEmpty()) {
-                    keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
-                }
-
-                String key = getKey(semitones);
-
-                StringBuilder newText = new StringBuilder(getLyricsField().getTextArea().getText().length());
-                for (String line : getLyricsField().getTextArea().getText().split("\n")) {
-                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
-                        newText.append(new ChordLineTransposer(line).transpose(semitones, key));
-                    } else {
-                        newText.append(line);
-                    }
-                    newText.append('\n');
-                }
-                int pos = getLyricsField().getTextArea().getCaretPosition();
-                getLyricsField().getTextArea().replaceText(newText.toString());
-                getLyricsField().getTextArea().moveTo(pos);
+                transposeSong(semitones);
             }
         });
         Utils.setToolbarButtonStyle(ret);
@@ -480,6 +461,28 @@ public class BasicSongPanel extends BorderPane {
                 }
             }
         }
+    }
+
+    public void transposeSong(int semitones) {
+        TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+        if (!keyField.getText().isEmpty()) {
+            keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
+        }
+
+        String key = getKey(semitones);
+
+        StringBuilder newText = new StringBuilder(getLyricsField().getTextArea().getText().length());
+        for (String line : getLyricsField().getTextArea().getText().split("\n")) {
+            if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                newText.append(new ChordLineTransposer(line).transpose(semitones, key));
+            } else {
+                newText.append(line);
+            }
+            newText.append('\n');
+        }
+        int pos = getLyricsField().getTextArea().getCaretPosition();
+        getLyricsField().getTextArea().replaceText(newText.toString());
+        getLyricsField().getTextArea().moveTo(pos);
     }
 
 }

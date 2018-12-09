@@ -16,9 +16,6 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.Desktop;
-import java.awt.desktop.OpenFilesEvent;
-import java.awt.desktop.OpenFilesHandler;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +39,6 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -91,7 +87,14 @@ public final class Main extends Application {
         LOGGER.log(Level.INFO, "OS name: {0}", System.getProperty("os.name"));
         LOGGER.log(Level.INFO, "Using JAVA version {0}", System.getProperty("java.version"));
         LOGGER.log(Level.INFO, "64-bit: {0}", Utils.is64Bit());
-
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File("icons/logo64.png"));
+            //Only supported in Java 9+
+//            Taskbar.getTaskbar().setIconImage(img);
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about: {0}", ex.getMessage());
+        }
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
         new Thread() {
@@ -243,7 +246,6 @@ public final class Main extends Application {
 
                     backgroundExecutor.submit(() -> {
                         new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                        PhoneHome.INSTANCE.phone(); //Phone home
                     });
 
                     LOGGER.log(Level.INFO, "Registering canvases");
@@ -281,22 +283,24 @@ public final class Main extends Application {
                             });
                         }
                     }
-                    if (Desktop.isDesktopSupported()) {
-                        Desktop desktop = Desktop.getDesktop();
-                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
-                            desktop.setOpenFileHandler(new OpenFilesHandler() {
-                                @Override
-                                public void openFiles(OpenFilesEvent e) {
-                                    List<File> files = e.getFiles();
-                                    if (files != null && files.size() > 0) {
-                                        Platform.runLater(() -> {
-                                            QueleaApp.get().openSchedule(files.get(0));
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
+                    
+                    //Only supported in Java 9+
+//                    if (Desktop.isDesktopSupported()) {
+//                        Desktop desktop = Desktop.getDesktop();
+//                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+//                            desktop.setOpenFileHandler(new OpenFilesHandler() {
+//                                @Override
+//                                public void openFiles(OpenFilesEvent e) {
+//                                    List<File> files = e.getFiles();
+//                                    if (files != null && files.size() > 0) {
+//                                        Platform.runLater(() -> {
+//                                            QueleaApp.get().openSchedule(files.get(0));
+//                                        });
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
 
                     Platform.runLater(() -> {
                         splashWindow.hide();

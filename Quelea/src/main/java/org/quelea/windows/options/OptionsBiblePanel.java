@@ -19,15 +19,23 @@ package org.quelea.windows.options;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -92,31 +100,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
 
-        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), new ImageView(new Image("file:icons/add.png")));
-        addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                FileChooser chooser = new FileChooser();
-                if (QueleaProperties.get().getLastDirectory() != null) {
-                    chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
-                }
-                chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
-                File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if (file != null) {
-                    QueleaProperties.get().setLastDirectory(file.getParentFile());
-                    try {
-                        Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
-                        BibleManager.get().refreshAndLoad();
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Errpr copying bible file", ex);
-                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
-                    }
-                }
-            }
-        });
-        GridPane.setConstraints(addBibleButton, 3, 1);
-        getChildren().add(addBibleButton);
-
+        createAddBibleButton();
+        createDeleteBibleButton();
+        
         Label showVerseNumLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"));
         GridPane.setConstraints(showVerseNumLabel, 1, 2);
         getChildren().add(showVerseNumLabel);
@@ -181,6 +167,63 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
 //        });
         readProperties();
 
+    }
+
+    private void createAddBibleButton() {
+        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"),
+                                                 new ImageView(new Image("file:icons/add.png")));
+        addBibleButton.setOnAction(t -> {
+            
+            FileChooser chooser = new FileChooser();
+            if (QueleaProperties.get().getLastDirectory() != null) {
+                chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
+            }
+            chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
+            File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+            if (file != null) {
+                QueleaProperties.get().setLastDirectory(file.getParentFile());
+                try {
+                    Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
+                    BibleManager.get().refreshAndLoad();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error copying bible file", ex);
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"),
+                                     LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
+                }
+            }
+            
+        });
+        GridPane.setConstraints(addBibleButton, 3, 1);
+        getChildren().add(addBibleButton);
+    }
+
+    private void createDeleteBibleButton() {
+        final Button deleteBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
+                                                    new ImageView(new Image("file:icons/cross.png")));
+        deleteBibleButton.setOnAction(t -> {
+               
+            Bible bible = defaultBibleComboBox.getSelectionModel().getSelectedItem();
+            if (bible!=null && bible.getFilePath()!=null) {
+                    
+                final AtomicBoolean yes = new AtomicBoolean();
+                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
+                                         LabelGrabber.INSTANCE.getLabel("delete.bible.confirmation").replace("$1",bible.getBibleName())).
+                                         addYesButton(ae -> {yes.set(true);}).addNoButton(ae -> {}).build().showAndWait();
+                    
+                if (yes.get()) {                        
+                    try {
+                        Files.delete(Paths.get(bible.getFilePath()));
+                        BibleManager.get().refreshAndLoad();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Error deleting bible file", ex);
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.delete.error.heading"),
+                                         LabelGrabber.INSTANCE.getLabel("bible.delete.error.text"));
+                    }
+                }
+            }            
+        });
+        GridPane.setConstraints(deleteBibleButton, 4, 1);
+        getChildren().add(deleteBibleButton);
     }
 
     /**

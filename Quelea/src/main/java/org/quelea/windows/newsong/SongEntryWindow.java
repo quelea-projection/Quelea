@@ -215,7 +215,7 @@ public class SongEntryWindow extends Stage {
         hide();
     }
 
-    private void saveSong() {
+    public void saveSong() {
         resetChange();
         hide();
         SongDisplayable localSong = getSong();
@@ -236,7 +236,7 @@ public class SongEntryWindow extends Stage {
      * Called by the constructor to initialise the theme panel.
      */
     private void setupThemePanel() {
-        themePanel = new ThemePanel(basicSongPanel.getLyricsField().getTextArea(), confirmButton);
+        themePanel = new ThemePanel(basicSongPanel.getLyricsField().getTextArea(), confirmButton, true);
     }
 
     /**

@@ -19,10 +19,12 @@ package org.quelea.windows.newsong;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.fxmisc.richtext.InlineCssTextArea;
@@ -30,6 +32,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
@@ -52,12 +55,17 @@ public class ThemePanel extends BorderPane {
     private DisplayPositionSelector positionSelector;
     private String saveHash = "";
     private final Button confirmButton;
+    private ComboBox<ThemeDTO> themeCombo;
 
     /**
      * Create and initialise the theme panel
      */
     public ThemePanel() {
         this(null, null);
+    }
+    
+    public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton) {
+        this(wordsArea, confirmButton, false);
     }
 
     /**
@@ -66,7 +74,7 @@ public class ThemePanel extends BorderPane {
      * @param wordsArea the text area to use for words. If null, sample lyrics
      * will be used.
      */
-    public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton) {
+    public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton, boolean showThemeCopyPanel) {
         this.confirmButton = confirmButton;
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
@@ -97,29 +105,46 @@ public class ThemePanel extends BorderPane {
         drawer.setCanvas(canvas);
         text = SAMPLE_LYRICS;
         if (wordsArea != null) {
-            ChangeListener<String> cl = new ChangeListener<String>() {
-
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String t, String newText) {
-                    SongDisplayable dummy = new SongDisplayable("", "");
-                    dummy.setLyrics(newText);
-                    TextSection[] sections = dummy.getSections();
-                    if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
-                        text = sections[0].getText(false, false);
-                    } else {
-                        text = SAMPLE_LYRICS;
-                    }
-                    if (isEmpty(text)) {
-                        text = SAMPLE_LYRICS;
-                    }
-                    updateTheme(false);
+            ChangeListener<String> cl = (ov, t, newText) -> {
+                SongDisplayable dummy = new SongDisplayable("", "");
+                dummy.setLyrics(newText);
+                TextSection[] sections = dummy.getSections();
+                if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
+                    text = sections[0].getText(false, false);
+                } else {
+                    text = SAMPLE_LYRICS;
                 }
+                if (isEmpty(text)) {
+                    text = SAMPLE_LYRICS;
+                }
+                updateTheme(false);
             };
             wordsArea.textProperty().addListener(cl);
             cl.changed(null, null, wordsArea.getText());
         }
+        
+        VBox northBox = new VBox();
+        HBox themeSelectPanel = new HBox();
+        themeSelectPanel.setPadding(new Insets(5));
+        Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.copy.label") + ": ");
+        themeSelectLabel.setPadding(new Insets(3,0,0,0));
+        themeCombo = new ComboBox<>();
+        themeCombo.setItems(ThemeUtils.getThemes());
+        
+        Button copyButton = new Button(LabelGrabber.INSTANCE.getLabel("copy"));
+        copyButton.setOnAction(event -> {
+            setTheme(themeCombo.getValue());
+        });
+        themeSelectPanel.setSpacing(5);
+        themeSelectPanel.getChildren().addAll(themeSelectLabel, themeCombo, copyButton);
+
         themeToolbar = new ThemeToolbar(this);
-        setTop(themeToolbar);
+        if(showThemeCopyPanel) {
+            northBox.getChildren().add(themeSelectPanel);
+        }
+        northBox.getChildren().add(themeToolbar);
+        
+        setTop(northBox);
         updateTheme(false);
         setMaxSize(800, 600);
     }
