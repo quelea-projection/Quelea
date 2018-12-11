@@ -219,7 +219,7 @@ public class SongEntryWindow extends Stage {
         resetChange();
         hide();
         SongDisplayable localSong = getSong();
-        boolean quickInsert = song != null && song.isQuickInSert();
+        boolean quickInsert = song != null && song.isQuickInsert();
         if (shouldSave) {
             if (updateDBOnHide && !quickInsert) {
                 Utils.updateSongInBackground(localSong, true, false);

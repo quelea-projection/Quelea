@@ -327,7 +327,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * <p>
      * @return true if this is a "quick insert" song, false otherwise.
      */
-    public boolean isQuickInSert() {
+    public boolean isQuickInsert() {
         return quickInsert;
     }
 
