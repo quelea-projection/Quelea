@@ -47,6 +47,7 @@ Name: "{app}"; Permissions: everyone-modify;
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}/lib"
+Type: filesandordirs; Name: "{app}/vbs"
 Type: filesandordirs; Name: "{app}/src"
 Type: filesandordirs; Name: "{app}/server"
 Type: filesandordirs; Name: "{app}/dictionaries"
@@ -67,6 +68,7 @@ Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
 Source: "scheduleformat.xsl"; DestDir: "{app}"; Flags: ignoreversion
 Source: "songformat.xsl"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist/lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist/vbs\*"; DestDir: "{app}\vbs"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "server\*"; DestDir: "{app}\server"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dictionaries\*"; DestDir: "{app}\dictionaries"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "languages\*"; DestDir: "{app}\languages"; Flags: ignoreversion recursesubdirs createallsubdirs
