@@ -91,14 +91,14 @@ public class QuickEditDialog extends Stage {
             public void handle(javafx.event.ActionEvent t) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 String[] sectionLyrics = sectionArea.getText().replace("<>", " ").split("\n\n");
-                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()), currentIndex);
+                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
                 for(int i = 1; i < sectionLyrics.length; i++) {
                     String[] lyrics = sectionLyrics[i].split("\n");
                     String newTitle = "";
                     if(oldSection.getTitle() != null && !oldSection.getTitle().trim().isEmpty()) {
                         newTitle = oldSection.getTitle() + " (" + LabelGrabber.INSTANCE.getLabel("part") + " " + (i + 1) + ")";
                     }
-                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()));
+                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()));
                 }
                 if(sectionArea.getText().trim().isEmpty()) {
                     currentSong.removeSection(currentIndex);

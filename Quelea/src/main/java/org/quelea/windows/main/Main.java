@@ -32,6 +32,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;

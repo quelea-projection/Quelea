@@ -42,7 +42,6 @@ public class TextSection implements Serializable {
     private final String[] lines;
     private final String[] smallLines;
     private ThemeDTO theme;
-    private ThemeDTO tempTheme;
     private final boolean capitaliseFirst;
 
     public TextSection(TextSection orig) {
@@ -50,7 +49,6 @@ public class TextSection implements Serializable {
         this.lines = orig.lines;
         this.smallLines = orig.smallLines;
         this.theme = orig.theme;
-        this.tempTheme = orig.tempTheme;
         this.capitaliseFirst = orig.capitaliseFirst;
     }
 
@@ -65,7 +63,7 @@ public class TextSection implements Serializable {
      * a capital, false otherwise.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
-        this(title, lines, smallLines, capitaliseFirst, null, null);
+        this(title, lines, smallLines, capitaliseFirst, null);
     }
 
     /**
@@ -80,7 +78,7 @@ public class TextSection implements Serializable {
      * @param theme the theme of this song section.
      * @param tempTheme the tempTheme of this song section.
      */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme, ThemeDTO tempTheme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
@@ -89,7 +87,6 @@ public class TextSection implements Serializable {
         }
         this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
         this.theme = theme;
-        this.tempTheme = tempTheme;
     }
 
     /**
@@ -291,24 +288,6 @@ public class TextSection implements Serializable {
      */
     public ThemeDTO getTheme() {
         return theme;
-    }
-
-    /**
-     * Get the temporary theme of the section.
-     *
-     * @return the temporary theme of the section, or null if none has been set.
-     */
-    public ThemeDTO getTempTheme() {
-        return tempTheme;
-    }
-
-    /**
-     * Set the temporary theme of the section.
-     *
-     * @param tempTheme the temporary theme.
-     */
-    public void setTempTheme(ThemeDTO tempTheme) {
-        this.tempTheme = tempTheme;
     }
 
     /**

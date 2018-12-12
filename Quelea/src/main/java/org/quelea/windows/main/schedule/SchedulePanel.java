@@ -39,6 +39,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
@@ -205,34 +206,11 @@ public class SchedulePanel extends BorderPane {
     }
 
     private void updateSongTheme(ThemeDTO theme) {
-        updateTheme(theme, true);
+        QueleaApp.get().getMainWindow().getGlobalThemeStore().setSongThemeOverride(theme);
     }
 
     private void updateBibleTheme(ThemeDTO theme) {
-        updateTheme(theme, false);
-    }
-
-    private void updateTheme(ThemeDTO theme, boolean song) {
-        if (scheduleList == null) {
-            LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
-            return;
-        }
-        for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
-            Displayable displayable = scheduleList.itemsProperty().get().get(i);
-            boolean isSong = displayable instanceof SongDisplayable;
-            if ((isSong && song) || (!isSong && !song)) {
-                if (displayable instanceof TextDisplayable) {
-                    TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                    for (TextSection section : textDisplayable.getSections()) {
-                        if (QueleaProperties.get().getItemThemeOverride() && !textDisplayable.getTheme().equalsIgnoreName(ThemeDTO.DEFAULT_THEME)) {
-                            section.setTempTheme(null);
-                        } else {
-                            section.setTempTheme(theme);
-                        }
-                    }
-                }
-            }
-        }
+        QueleaApp.get().getMainWindow().getGlobalThemeStore().setBibleThemeOverride(theme);
     }
 
     public void updateScheduleDisplay() {
