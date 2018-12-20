@@ -531,6 +531,9 @@ public class LyricDrawer extends WordDrawer {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
+        if(displayable.getCachedUniformFontSize()>-1) {
+            return displayable.getCachedUniformFontSize();
+        }
         Font font = theme.getFont();
         font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -564,6 +567,7 @@ public class LyricDrawer extends WordDrawer {
         if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
+        displayable.setCachedUniformFontSize(fontSize);
         return fontSize;
     }
 

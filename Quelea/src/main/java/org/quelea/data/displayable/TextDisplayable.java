@@ -31,6 +31,9 @@ public interface TextDisplayable extends Displayable {
      */
     TextSection[] getSections();
     
+    double getCachedUniformFontSize();
+    void setCachedUniformFontSize(double d);
+    
     /**
      * Get the current theme
      * @return the theme

@@ -52,6 +52,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private BibleVerse[] verses;
     private ThemeDTO theme;
     private final boolean multi;
+    private double cachedUniformFontSize = -1;
 
     /**
      * Create a new bible passage.
@@ -87,6 +88,16 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
         }
+    }
+    
+    @Override
+    public double getCachedUniformFontSize() {
+        return cachedUniformFontSize;
+    }
+
+    @Override
+    public void setCachedUniformFontSize(double d) {
+        this.cachedUniformFontSize = d;
     }
 
     /**
@@ -253,6 +264,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public void setTheme(ThemeDTO theme) {
+        cachedUniformFontSize = -1;
         this.theme = theme;
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
@@ -370,6 +382,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     public void updateBibleLines() {
+        cachedUniformFontSize = -1;
         textSections.clear();
         fillTextSections();
         for (TextSection ts : getSections()) {
