@@ -1261,7 +1261,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL used for checking the latest version.
      */
     public String getUpdateURL() {
-        return "http://quelea.org/update/index.html";
+        return "https://quelea-projection.github.io/changelog";
     }
 
     /**
