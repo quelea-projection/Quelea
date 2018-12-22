@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -243,7 +244,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private long id = 0;
     private boolean printChords;
     private String lastSearch = "";
-    private double cachedUniformFontSize = -1;
+    private Map<Dimension,Double> fontSizeCache;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -251,6 +252,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param song the song to copy to create the new song.
      */
     public SongDisplayable(SongDisplayable song) {
+        this.fontSizeCache = new HashMap<>();
         this.title = song.title;
         this.author = song.author;
         this.sections = new ArrayList<>();
@@ -291,6 +293,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param theme the theme of the song.
      */
     public SongDisplayable(String title, String author, ThemeDTO theme) {
+        this.fontSizeCache = new HashMap<>();
         id = -1;
         this.title = title;
         this.author = author;
@@ -299,13 +302,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
     
     @Override
-    public double getCachedUniformFontSize() {
-        return cachedUniformFontSize;
+    public Double getCachedUniformFontSize(Dimension dimension) {
+        return fontSizeCache.get(dimension);
     }
 
     @Override
-    public void setCachedUniformFontSize(double d) {
-        this.cachedUniformFontSize = d;
+    public void setCachedUniformFontSize(Dimension dimension, double size) {
+        fontSizeCache.put(dimension, size);
     }
 
     /**
@@ -471,7 +474,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     public void setTranslations(HashMap<String, String> translations) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         this.translations = translations;
     }
 
@@ -651,7 +654,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     private void refreshLyrics() {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         ThemeDTO theme = ThemeDTO.DEFAULT_THEME;
         for (TextSection section : sections) {
             theme = section.getTheme();
@@ -685,7 +688,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     public void addTranslation(String translationName, String translationText) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         translations.put(translationName, translationText.trim());
     }
 
@@ -701,7 +704,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param lyrics the lyrics to set as this song's lyrics.
      */
     public void setLyrics(String lyrics) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         sections.clear();
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
@@ -761,7 +764,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         if (section.getTheme() == null) {
             section.setTheme(theme);
         }
@@ -775,7 +778,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(int index, TextSection section) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         if (section.getTheme() == null) {
             section.setTheme(theme);
         }
@@ -788,7 +791,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         for (TextSection section : sections) {
             addSection(section);
         }
@@ -801,7 +804,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param index the index of the section to replace.
      */
     public void replaceSection(TextSection newSection, int index) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         sections.set(index, newSection);
     }
 
@@ -811,7 +814,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param index the index of the text section to remove.
      */
     public void removeSection(int index) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         sections.remove(index);
     }
 
@@ -1229,7 +1232,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * Remove any duplicate sections in this song.
      */
     public void removeDuplicateSections() {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         Utils.removeDuplicateWithOrder(sections);
     }
 
@@ -1252,7 +1255,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     public void setTheme(ThemeDTO theme) {
-        cachedUniformFontSize = -1;
+        fontSizeCache.clear();
         this.theme = theme;
     }
 

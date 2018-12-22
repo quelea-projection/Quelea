@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.lyrics;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -531,8 +532,13 @@ public class LyricDrawer extends WordDrawer {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
-        if(displayable.getCachedUniformFontSize()>-1) {
-            return displayable.getCachedUniformFontSize();
+        
+        int width = (int)(getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+        int height = (int)(getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+        
+        Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
+        if(cachedSize!=null) {
+            return cachedSize;
         }
         Font font = theme.getFont();
         font = Font.font(font.getName(),
@@ -547,7 +553,7 @@ public class LyricDrawer extends WordDrawer {
             List<LyricLine> processedText;
             double newSize;
             if (displayable instanceof BiblePassage) {
-                WrapTextResult result = normalWrapText(font, textArr[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
                 if (result.getFontSize() < fontSize) {
                     fontSize = result.getFontSize();
                 }
@@ -558,7 +564,7 @@ public class LyricDrawer extends WordDrawer {
                     translationArr = translationLyrics.split("\n");
                 }
                 processedText = sanctifyText(textArr, translationArr);
-                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                newSize = pickFontSize(font, processedText, width, height);
                 if (newSize < fontSize) {
                     fontSize = newSize;
                 }
@@ -567,7 +573,7 @@ public class LyricDrawer extends WordDrawer {
         if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
-        displayable.setCachedUniformFontSize(fontSize);
+        displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
         return fontSize;
     }
 

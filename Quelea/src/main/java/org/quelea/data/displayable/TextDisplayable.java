@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import java.awt.Dimension;
 import org.quelea.data.ThemeDTO;
 
 /**
@@ -31,8 +32,8 @@ public interface TextDisplayable extends Displayable {
      */
     TextSection[] getSections();
     
-    double getCachedUniformFontSize();
-    void setCachedUniformFontSize(double d);
+    Double getCachedUniformFontSize(Dimension dimension);
+    void setCachedUniformFontSize(Dimension dimension, double size);
     
     /**
      * Get the current theme
