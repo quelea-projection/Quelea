@@ -32,6 +32,7 @@ ext {
     CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
     WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
     WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
+    MacInstallerName="quelea-" + versionsuffix + "-mac.zip"
     DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
     
     CPInstaller ="dist/standalone/" + CPInstallerName
@@ -159,8 +160,27 @@ task labelcheck(type:JavaExec) {
    classpath = sourceSets.main.runtimeClasspath
 }
 
+task runPackr(type: JavaExec) {
+    classpath = files('packr.jar')
+    main = "com.badlogicgames.packr.Packr"
+    args = ["packr.json"]
+}
+
+task zipMacPackr(type: Zip) {
+    archiveName = MacInstallerName
+    destinationDir = file("dist/standalone")
+    
+    from "out-mac"
+    
+    doLast {
+        delete (file("out-mac"))
+    }
+}
+
+runPackr.finalizedBy(zipMacPackr);
+
 task dist(type: GradleBuild) {
-    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'izpack', 'innosetup']
+    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup']
 }
 build.finalizedBy(dist)
 
