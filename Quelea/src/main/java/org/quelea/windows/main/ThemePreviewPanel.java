@@ -220,12 +220,6 @@ public class ThemePreviewPanel extends VBox {
     }
 
     public Image getThemePreviewImage() {
-        WordDrawer drawer;
-        if (canvas.isStageView()) {
-            drawer = new StageDrawer();
-        } else {
-            drawer = new LyricDrawer();
-        }
         previewImage = new WritableImage(200, 200);
         canvas.snapshot(new SnapshotParameters(), previewImage);
         BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
