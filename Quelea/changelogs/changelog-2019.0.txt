@@ -5,7 +5,6 @@ quelea (2019.0) stable
   * Removed paradox requirement when importing Easyworship databases
   * Format song list in accordance with search
   * Display preview of song in song list
-  * Move to source level 9
   * Remove schedule email functionality
   * Add support for extended chord symbols
   * Add support for extra tags in plain text parser
