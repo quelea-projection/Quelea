@@ -61,6 +61,9 @@ public class PlatformUtils {
     }
 
     private static boolean setFullScreenWindow(long wid, boolean fullScreen) {
+        //Ignore this method for now. Doesn't work with snaps.
+        if(true) return false;
+        
         // Use the JNA platform X11 binding
         X11 x = X11.INSTANCE;
         X11.Display display = null;
