@@ -10,6 +10,7 @@ quelea (2019.0) stable
   * Add support for extra tags in plain text parser
   * Add support for looping a video
   * Add scrollbar to global themes panel
+  * Add options to manage notices
   * Allow setting of different global themes for songs and bible passages
   * Allow a custom theme set on a song to override a global theme
   * Allow a global theme to be used as the basis for a custom theme on a schedule item
