@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -156,7 +157,11 @@ public class OptionsDialog extends Stage {
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
     
     /**

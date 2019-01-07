@@ -312,6 +312,8 @@ public class RemoteControlServer {
         public void handle(HttpExchange t) {
             Utils.fxRunAndWait(() -> {
                 try {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemePopup().show();
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemePopup().close();
                     ScheduleThemeNode stn = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode();
                     int themeNum = Integer.parseInt(t.getRequestURI().getPath().replace("/themethumb", ""));
                     BufferedImage image = SwingFXUtils.fromFXImage(((ThemePreviewPanel) stn.getThemePreviews().getChildren().get(themeNum)).getThemePreviewImage(), null);

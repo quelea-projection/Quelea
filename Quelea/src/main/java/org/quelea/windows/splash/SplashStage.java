@@ -72,7 +72,11 @@ public class SplashStage extends Stage {
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
         mainPane.getChildren().add(loadingText);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
 
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;

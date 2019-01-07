@@ -68,7 +68,9 @@ public class EditThemeDialog extends Stage {
         setResizable(false);
 
         BorderPane mainPane = new BorderPane();
-        mainPane.setStyle("-fx-background-color:#dddddd;");
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            mainPane.setStyle("-fx-background-color:#dddddd;");
+        }
 
         VBox northBox = new VBox();
         HBox themeSelectPanel = new HBox();
@@ -129,7 +131,11 @@ public class EditThemeDialog extends Stage {
         southPanel.getChildren().add(cancelButton);
         mainPane.setBottom(southPanel);
 
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

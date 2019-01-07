@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package org.quelea.windows.main.schedule;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,6 +58,7 @@ import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
  * loaded into the preview panel where they are viewed and then projected live.
  * Items can be added here from the library.
  * <p/>
+ *
  * @author Michael
  */
 public class SchedulePanel extends BorderPane {
@@ -74,6 +76,7 @@ public class SchedulePanel extends BorderPane {
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
         ImageView themeButtonIcon = new ImageView(new Image("file:icons/theme.png"));
         themeButtonIcon.setFitWidth(16);
         themeButtonIcon.setFitHeight(16);
@@ -113,7 +116,11 @@ public class SchedulePanel extends BorderPane {
 
         scheduleThemeNode = new ScheduleThemeNode(this::updateSongTheme, this::updateBibleTheme, themePopup, themeButton);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
-        themePopup.setScene(new Scene(scheduleThemeNode));
+        Scene scene = new Scene(scheduleThemeNode);
+        if (darkTheme) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        themePopup.setScene(scene);
 
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -143,7 +150,7 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        ImageView removeIV = new ImageView(new Image("file:icons/cross.png"));
+        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png"));
         removeIV.setFitWidth(16);
         removeIV.setFitHeight(16);
         removeButton = new Button("", removeIV);
@@ -152,7 +159,7 @@ public class SchedulePanel extends BorderPane {
         removeButton.setDisable(true);
         removeButton.setOnAction(new RemoveScheduleItemActionHandler());
 
-        ImageView upIV = new ImageView(new Image("file:icons/up.png"));
+        ImageView upIV = new ImageView(new Image(darkTheme ? "file:icons/up-light.png" : "file:icons/up.png"));
         upIV.setFitWidth(16);
         upIV.setFitHeight(16);
         upButton = new Button("", upIV);
@@ -166,7 +173,7 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        ImageView downIV = new ImageView(new Image("file:icons/down.png"));
+        ImageView downIV = new ImageView(new Image(darkTheme ? "file:icons/down-light.png" : "file:icons/down.png"));
         downIV.setFitWidth(16);
         downIV.setFitHeight(16);
         downButton = new Button("", downIV);
@@ -229,6 +236,7 @@ public class SchedulePanel extends BorderPane {
     /**
      * Get the schedule list backing this panel.
      * <p/>
+     *
      * @return the schedule list.
      */
     public ScheduleList getScheduleList() {
@@ -242,5 +250,10 @@ public class SchedulePanel extends BorderPane {
     public ScheduleThemeNode getThemeNode() {
         return scheduleThemeNode;
     }
+
+    public Stage getThemePopup() {
+        return themePopup;
+    }
+
 
 }

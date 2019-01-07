@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -81,7 +82,11 @@ public class TranslationChoiceDialog extends Stage {
         buttonPane.getChildren().add(okButton);
         root.setBottom(buttonPane);
 
-        setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

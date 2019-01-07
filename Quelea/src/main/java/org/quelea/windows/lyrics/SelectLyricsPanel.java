@@ -68,7 +68,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         lyricsList = new SelectLyricsList();
         previewCanvas = new DisplayCanvas(false, false, false, this::updateCanvas, Priority.LOW);
         DisplayPreview preview = new DisplayPreview(previewCanvas);
-        splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
+//        splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(preview);
         setCenter(splitPane);

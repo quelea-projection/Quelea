@@ -41,6 +41,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslatePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -178,7 +179,11 @@ public class SongEntryWindow extends Stage {
 //        setWidth(525);
 //        setHeight(600);
 //        setResizable(false);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

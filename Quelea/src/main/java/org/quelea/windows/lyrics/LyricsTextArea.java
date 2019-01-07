@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,13 +30,13 @@ import org.fxmisc.undo.UndoManagerFactory;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
- *
  * @author Michael
  */
 public class LyricsTextArea extends StackPane {
-    
+
     private InlineCssTextArea textArea;
 
     public LyricsTextArea() {
@@ -58,20 +58,21 @@ public class LyricsTextArea extends StackPane {
         textArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             Platform.runLater(this::refreshStyle);
         });
-        
+
         textArea.setStyle("-fx-font: 10pt Consolas, 10pt Courier;");
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
+        textArea.getStyleClass().add("text-area");
     }
 
     public InlineCssTextArea getTextArea() {
         return textArea;
     }
-    
+
     public void refreshStyle() {
         setStyles(textArea.getText());
     }
-    
+
     private String[] oldLines;
 
     private void setStyles(String text) {
@@ -85,14 +86,22 @@ public class LyricsTextArea extends StackPane {
             }
             if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
                 textArea.clearStyle(charPos, charPos + line.length());
-                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
+                if (QueleaProperties.get().getUseDarkTheme()) {
+                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: rgb(50,160,255); -fx-font-weight: bold;");
+                } else {
+                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
+                }
             } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
                 textArea.clearStyle(charPos, charPos + line.length());
-                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
+                if (QueleaProperties.get().getUseDarkTheme()) {
+                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: rgb(200,200,200); -fx-font-style: italic;");
+                } else {
+                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
+                }
             } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
                 textArea.clearStyle(charPos, charPos + line.length());
                 textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
-            } else if(new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
+            } else if (new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
                 textArea.clearStyle(charPos, charPos + line.length());
                 textArea.setStyle(charPos, charPos + line.length(), "");
             }

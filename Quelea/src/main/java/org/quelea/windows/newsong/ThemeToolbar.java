@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package org.quelea.windows.newsong;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -67,6 +68,7 @@ import org.quelea.windows.main.widgets.CardPane;
  * The toolbar that sits atop of the theme dialog, and gives the user control
  * over the theme currently in use.
  * <p>
+ *
  * @author Michael
  */
 public class ThemeToolbar extends HBox {
@@ -94,6 +96,7 @@ public class ThemeToolbar extends HBox {
     /**
      * Create a new theme toolbar.
      * <p>
+     *
      * @param themePanel the theme panel that this toolbar sits on.
      */
     public ThemeToolbar(final ThemePanel themePanel) {
@@ -101,7 +104,10 @@ public class ThemeToolbar extends HBox {
         this.themePanel = themePanel;
         moreFontOptionsDialog = new FontOptionsDialog(themePanel);
         setPadding(new Insets(5));
-        setStyle("-fx-background-color:#dddddd;");
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
+        if (!darkTheme) {
+            setStyle("-fx-background-color:#dddddd;");
+        }
         VBox topLevelFontBox = new VBox(10);
         topLevelFontBox.setStyle("-fx-border-color: bbbbbb;");
         topLevelFontBox.setPadding(new Insets(10));
@@ -142,7 +148,7 @@ public class ThemeToolbar extends HBox {
         topLevelFontBox.getChildren().add(fontTop);
 
         HBox fontMid = new HBox();
-        boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png", 15, 15, false, true)));
+        boldButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/bold-light.png" : "file:icons/bold.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(boldButton);
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -150,7 +156,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 15, 15, false, true)));
+        italicButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/italic-light.png" : "file:icons/italic.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(italicButton);
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -159,7 +165,7 @@ public class ThemeToolbar extends HBox {
             }
         });
         ToggleGroup alignGroup = new ToggleGroup();
-        leftAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/leftalign.png", 15, 15, false, true)));
+        leftAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/leftalign-light.png" : "file:icons/leftalign.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(leftAlignButton);
         leftAlignButton.setToggleGroup(alignGroup);
         leftAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -168,7 +174,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        centreAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/centrealign.png", 15, 15, false, true)));
+        centreAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/centrealign-light.png" : "file:icons/centrealign.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(centreAlignButton);
         centreAlignButton.setToggleGroup(alignGroup);
         centreAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -177,7 +183,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        rightAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/rightalign.png", 15, 15, false, true)));
+        rightAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/rightalign-light.png" : "file:icons/rightalign.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(rightAlignButton);
         rightAlignButton.setToggleGroup(alignGroup);
         rightAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -247,10 +253,10 @@ public class ThemeToolbar extends HBox {
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backTop.getChildren().add(backTypeSelection);
-        
+
         vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
         vidStretchCheckbox.setStyle("-fx-text-fill:#666666");
-        HBox.setMargin(vidStretchCheckbox, new Insets(2,0,0,0));
+        HBox.setMargin(vidStretchCheckbox, new Insets(2, 0, 0, 0));
         vidStretchCheckbox.setAlignment(Pos.CENTER_RIGHT);
         vidStretchCheckbox.setVisible(false);
         Region stretchSpacer = new Region();
@@ -372,6 +378,7 @@ public class ThemeToolbar extends HBox {
     /**
      * Set the theme represented by this toolbar.
      * <p>
+     *
      * @param theme the theme to represent.
      */
     public void setTheme(ThemeDTO theme) {
@@ -411,6 +418,7 @@ public class ThemeToolbar extends HBox {
     /**
      * Get the theme represented by this toolbar.
      * <p>
+     *
      * @return the theme.
      */
     public ThemeDTO getTheme() {
@@ -419,7 +427,7 @@ public class ThemeToolbar extends HBox {
                 boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
-        
+
         //Overly spammy
         //LOGGER.log(Level.INFO, "Selected font theme \"{0}\", font family is \"{1}\"", new Object[]{fontSelection.getSelectionModel().getSelectedItem(), font.getFamily()});
 
