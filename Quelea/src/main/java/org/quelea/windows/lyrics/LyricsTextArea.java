@@ -30,6 +30,7 @@ import org.fxmisc.undo.UndoManagerFactory;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
+import org.quelea.services.utils.Utils;
 
 /**
  *
@@ -58,8 +59,14 @@ public class LyricsTextArea extends StackPane {
         textArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             Platform.runLater(this::refreshStyle);
         });
+
+        if(Utils.isWindows()) {
+            textArea.setStyle("-fx-font: 10pt Consolas;");
+        }
+        else {
+            textArea.setStyle("-fx-font: 10pt Courier;");
+        }
         
-        textArea.setStyle("-fx-font: 10pt Consolas, 10pt Courier;");
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
     }
