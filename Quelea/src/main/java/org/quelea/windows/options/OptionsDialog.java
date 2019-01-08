@@ -149,10 +149,10 @@ public class OptionsDialog extends Stage {
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
+            callBeforeHiding();
             for(PropertyPanel panel : propertyPanels) {
                 panel.setProperties();
             }
-            callBeforeHiding();
             hide();
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
