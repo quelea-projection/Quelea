@@ -291,7 +291,8 @@ public class MainToolbar extends ToolBar {
         // Set dynamic TextField width
         recordingPathTextField.textProperty().addListener((ov, prevText, currText) -> {
             Platform.runLater(() -> {
-                Label text = new Label(currText);
+                Text text = new Text(currText);
+                text.getStyleClass().add("text");
                 text.setFont(recordingPathTextField.getFont());
                 double width = text.getLayoutBounds().getWidth()
                         + recordingPathTextField.getPadding().getLeft() + recordingPathTextField.getPadding().getRight()
