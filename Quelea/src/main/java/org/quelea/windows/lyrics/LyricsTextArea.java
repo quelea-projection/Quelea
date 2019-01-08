@@ -64,7 +64,8 @@ public class LyricsTextArea extends StackPane {
             textArea.setStyle("-fx-font: 10pt Consolas;");
         }
         else {
-            textArea.setStyle("-fx-font: 10pt Courier;");
+            textArea.setStyle("-fx-font-size: 10pt;");
+            textArea.setStyle("-fx-font-family: \"Courier New\";");
         }
         
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
