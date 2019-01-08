@@ -221,7 +221,7 @@ public class ThemeDTO implements Serializable {
      * @param obj the other object.
      * @return true if the two objects are meaningfully equal, false otherwise.
      */
-    public boolean equals(Object obj, boolean ignoreName) {
+    public boolean equals(Object obj, boolean ignoreName, boolean ignoreFontSize) {
         if (obj == null) {
             return false;
         }
@@ -229,7 +229,7 @@ public class ThemeDTO implements Serializable {
             return false;
         }
         final ThemeDTO other = (ThemeDTO) obj;
-        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+        if (this.font != other.font && (this.font == null || !this.font.equals(other.font, ignoreFontSize))) {
             return false;
         }
         if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
@@ -248,11 +248,11 @@ public class ThemeDTO implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return equals(obj, false);
+        return equals(obj, false, false);
     }
 
-    public boolean equalsIgnoreName(ThemeDTO obj) {
-        return equals(obj, true);
+    public boolean equalsIgnoreNameAndFontSize(ThemeDTO obj) {
+        return equals(obj, true, true);
     }
 
     /**
