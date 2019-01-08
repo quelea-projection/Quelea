@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITYs or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package org.quelea.windows.options;
 
 import java.text.NumberFormat;
 import java.math.BigDecimal;
+
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,6 +45,7 @@ import org.quelea.utils.BigDecimalSpinner;
 /**
  * A panel where the general options in the program are set.
  * <p/>
+ *
  * @author Michael
  */
 public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
@@ -63,13 +65,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox uniformFontSizeCheckBox;
     private final CheckBox defaultSongDBUpdateCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
+    private final ComboBox<String> interfaceThemeComboBox;
     private final Slider thumbnailSizeSlider;
     private final CheckBox showExtraLivePanelToolbarOptionsCheckBox;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
-//    private final Slider minLinesSlider;
+    //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
+    private String currentTHeme;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
     private final ComboBox<String> smallBibleTextVPositionCombo;
@@ -110,6 +114,17 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         interfaceLanguageLabel.setLabelFor(languageFileComboBox);
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
+        rows++;
+
+        Label interfaceThemeLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.theme.label"));
+        GridPane.setConstraints(interfaceThemeLabel, 1, rows);
+        getChildren().add(interfaceThemeLabel);
+        interfaceThemeComboBox = new ComboBox<>();
+        interfaceThemeComboBox.getItems().add(LabelGrabber.INSTANCE.getLabel("default.theme.label"));
+        interfaceThemeComboBox.getItems().add(LabelGrabber.INSTANCE.getLabel("dark.theme.label"));
+        interfaceThemeLabel.setLabelFor(interfaceThemeComboBox);
+        GridPane.setConstraints(interfaceThemeComboBox, 2, rows);
+        getChildren().add(interfaceThemeComboBox);
         rows++;
 
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
@@ -290,7 +305,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 smallSongTextVPositionCombo.setDisable(true);
             }
         });
-        
+
         Label thumbnailSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"));
         GridPane.setConstraints(thumbnailSizeLabel, 1, rows);
         getChildren().add(thumbnailSizeLabel);
@@ -298,9 +313,9 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         thumbnailSizeSlider.setMajorTickUnit(50);
         thumbnailSizeSlider.setMinorTickCount(0);
         thumbnailSizeSlider.setShowTickMarks(true);
-        thumbnailSizeSlider.setSnapToTicks(true); 
-        thumbnailSizeSlider.setBlockIncrement(50);      
-        
+        thumbnailSizeSlider.setSnapToTicks(true);
+        thumbnailSizeSlider.setBlockIncrement(50);
+
         GridPane.setConstraints(thumbnailSizeSlider, 2, rows);
         getChildren().add(thumbnailSizeSlider);
         thumbnailSizeLabel.setLabelFor(thumbnailSizeSlider);
@@ -315,12 +330,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-        
-        
+
+
         Label showExtraLivePanelToolbarOptionsLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"));
         GridPane.setConstraints(showExtraLivePanelToolbarOptionsLabel, 1, rows);
         getChildren().add(showExtraLivePanelToolbarOptionsLabel);
-        
+
         showExtraLivePanelToolbarOptionsCheckBox = new CheckBox();
         GridPane.setConstraints(showExtraLivePanelToolbarOptionsCheckBox, 2, rows);
         getChildren().add(showExtraLivePanelToolbarOptionsCheckBox);
@@ -425,13 +440,29 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     }
 
     /**
+     * Reset the mechanism for determining if the user has changed the interface
+     * theme. Call before showing the options dialog.
+     */
+    public void resetThemeChanged() {
+        currentTHeme = interfaceThemeComboBox.getValue();
+    }
+
+    /**
      * Determine if the user has changed the interface language since the last
      * call of resetLanguageChanged().
      */
     public boolean hasLanguageChanged() {
         return !languageFileComboBox.getValue().equals(currentLanguageFile);
     }
-    
+
+    /**
+     * Determine if the user has changed the interface theme since the last
+     * call of resetLanguageChanged().
+     */
+    public boolean hasThemeChanged() {
+        return !interfaceThemeComboBox.getValue().equals(currentTHeme);
+    }
+
     private void checkOverflowEnable() {
         if (advanceOnLiveCheckBox.isSelected()) {
             overflowSongCheckBox.setDisable(false);
@@ -447,6 +478,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     @Override
     public final void readProperties() {
         languageFileComboBox.setValue(LanguageFileManager.INSTANCE.getCurrentFile());
+        interfaceThemeComboBox.setValue(props.getUseDarkTheme() ? LabelGrabber.INSTANCE.getLabel("dark.theme.label") : LabelGrabber.INSTANCE.getLabel("default.theme.label"));
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
@@ -486,6 +518,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         props.setLanguageFile(languageFileComboBox.getValue().getFile().getName());
+        props.setUseDarkTheme(interfaceThemeComboBox.getValue().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")));
         boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
         props.setCheckUpdate(checkUpdate);
         boolean showWarning = getOneMonitorWarningCheckBox().isSelected();
@@ -541,13 +574,13 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSmallSongTextSize(smallSongSize);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
-        props.setThumbnailSize((int)thumbnailSizeSlider.getValue());
+        props.setThumbnailSize((int) thumbnailSizeSlider.getValue());
         props.setShowExtraLivePanelToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
-        
+
         // apply some properties so we don't need to restart 
         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
         lp.showExtraToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
-                
+
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();
@@ -557,6 +590,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the max chars slider.
      * <p/>
+     *
      * @return the max chars slider.
      */
     public Slider getMaxCharsSlider() {
@@ -566,6 +600,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the startup readProperties checkbox.
      * <p/>
+     *
      * @return the startup readProperties checkbox.
      */
     public CheckBox getStartupUpdateCheckBox() {
@@ -575,6 +610,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the capitalise first character in each line checkbox.
      * <p/>
+     *
      * @return the capitalise first character in each line checkbox.
      */
     public CheckBox getCapitalFirstCheckBox() {
@@ -584,6 +620,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "one monitor warning" checkbox.
      * <p/>
+     *
      * @return the "one monitor warning" checkbox.
      */
     public CheckBox getOneMonitorWarningCheckBox() {
@@ -593,6 +630,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "one line mode" checkbox.
      * <p/>
+     *
      * @return the "one line mode" checkbox.
      */
     public CheckBox getOneLineModeCheckBox() {
@@ -602,6 +640,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "auto translate" checkbox.
      * <p/>
+     *
      * @return the "auto translate" checkbox.
      */
     public CheckBox getAutoTranslateCheckBox() {
@@ -611,6 +650,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small song text" checkbox.
      * <p/>
+     *
      * @return the "use small song text" checkbox.
      */
     public CheckBox getShowSmallSongTextCheckBox() {
@@ -620,6 +660,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small bible text" checkbox.
      * <p/>
+     *
      * @return the "use small bible text" checkbox.
      */
     public CheckBox getShowSmallBibleTextCheckBox() {
@@ -629,6 +670,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small Bible text" checkbox.
      * <p/>
+     *
      * @return the "use small Bible text" checkbox.
      */
     public ComboBox getSmallBibleTextVPositionComboBox() {
@@ -638,6 +680,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small Bible text" checkbox.
      * <p/>
+     *
      * @return the "use small Bible text" checkbox.
      */
     public ComboBox getSmallBibleTextHPositionComboBox() {
@@ -647,6 +690,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small Song text" checkbox.
      * <p/>
+     *
      * @return the "use small Song text" checkbox.
      */
     public ComboBox getSmallSongTextVPositionComboBox() {
@@ -656,6 +700,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     /**
      * Get the "use small Song text" checkbox.
      * <p/>
+     *
      * @return the "use small Song text" checkbox.
      */
     public ComboBox getSmallSongTextHPositionComboBox() {

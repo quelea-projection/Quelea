@@ -169,6 +169,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
+        generalPanel.resetThemeChanged();
         serverSettingsPanel.resetChanged();
         presentationPanel.resetPresentationChanged();
     }
@@ -179,6 +180,9 @@ public class OptionsDialog extends Stage {
     private void callBeforeHiding() {
         if(generalPanel.hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        if(generalPanel.hasThemeChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("theme.changed"), LabelGrabber.INSTANCE.getLabel("theme.changed.message"), QueleaApp.get().getMainWindow());
         }
         if(serverSettingsPanel.hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
