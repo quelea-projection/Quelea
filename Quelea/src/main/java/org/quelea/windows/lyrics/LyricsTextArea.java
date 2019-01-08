@@ -60,13 +60,7 @@ public class LyricsTextArea extends StackPane {
             Platform.runLater(this::refreshStyle);
         });
 
-        if(Utils.isWindows()) {
-            textArea.setStyle("-fx-font: 10pt Consolas;");
-        }
-        else {
-            textArea.setStyle("-fx-font-size: 10pt;");
-            textArea.setStyle("-fx-font-family: \"Courier New\";");
-        }
+        textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 10pt;");
         
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
