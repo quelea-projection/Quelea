@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,14 @@
 package org.quelea.windows.main.menus;
 
 import java.lang.ref.SoftReference;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.ShortcutManager;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
@@ -39,6 +37,7 @@ import org.quelea.windows.main.widgets.TestPaneDialog;
 /**
  * Quelea's tools menu.
  * <p>
+ *
  * @author Michael
  */
 public class ToolsMenu extends Menu {
@@ -65,30 +64,26 @@ public class ToolsMenu extends Menu {
         getItems().add(searchBibleItem);
 
         testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/testbars.png", 20, 20, false, true)));
-        testItem.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                TestPaneDialog dialog = testDialog.get();
-                if (dialog == null) {
-                    dialog = new TestPaneDialog();
-                    testDialog = new SoftReference<>(dialog);
-                }
-                dialog.show();
+        testItem.setOnAction(t -> {
+            TestPaneDialog dialog = testDialog.get();
+            if (dialog == null) {
+                dialog = new TestPaneDialog();
+                testDialog = new SoftReference<>(dialog);
             }
+            dialog.show();
         });
         getItems().add(testItem);
 
         liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image("file:icons/live_text.png", 20, 20, false, true)));
-        liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        liveTextItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getLiveTextKeys()));
         liveTextItem.setOnAction(new LiveTextActionHandler());
-        if(QueleaApp.get().getMobileLyricsServer()==null) {
+        if (QueleaApp.get().getMobileLyricsServer() == null) {
             liveTextItem.setDisable(true);
         }
         getItems().add(liveTextItem);
 
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
-        optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
+        optionsItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getOptionsKeys()));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
 
         getItems().add(optionsItem);

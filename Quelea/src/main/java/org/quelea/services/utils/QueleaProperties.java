@@ -2103,4 +2103,56 @@ public final class QueleaProperties extends Properties {
     public File getNoticeDir() {
         return new File(getQueleaUserHome(), "notices");
     }
+
+    public String[] getNewSongKeys() {
+        return getProperty("new.song.keys", "Ctrl,Alt,N").split(",");
+    }
+
+    public String[] getSearchKeys() {
+        return getProperty("search.keys", "Ctrl,L").split(",");
+    }
+
+    public String[] getOptionsKeys() {
+        return getProperty("options.keys", "Shortcut,T").split(",");
+    }
+
+    public String[] getLiveTextKeys() {
+        return getProperty("live.text.keys", "Shortcut,Shift,L").split(",");
+    }
+
+    public String[] getLogoKeys() {
+        return getProperty("logo.keys", "F5").split(",");
+    }
+
+    public String[] getBlackKeys() {
+        return getProperty("black.keys", "F6").split(",");
+    }
+
+    public String[] getClearKeys() {
+        return getProperty("clear.keys", "F7").split(",");
+    }
+
+    public String[] getHideKeys() {
+        return getProperty("hide.keys", "F8").split(",");
+    }
+
+    public String[] getAdvanceKeys() {
+        return getProperty("advance.keys", "Page Down").split(",");
+    }
+
+    public String[] getPreviousKeys() {
+        return getProperty("previous.keys", "Page Up").split(",");
+    }
+
+    public String[] getNoticesKeys() {
+        return getProperty("notices.keys", "Ctrl,M").split(",");
+    }
+
+    public String[] getScheduleFocusKeys() {
+        return getProperty("schedule.focus.keys", "Ctrl,D").split(",");
+    }
+
+    public String[] getBibleFocusKeys() {
+        return getProperty("bible.focus.keys", "Ctrl,B").split(",");
+    }
 }

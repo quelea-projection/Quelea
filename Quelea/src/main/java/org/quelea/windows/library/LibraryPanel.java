@@ -157,4 +157,8 @@ public class LibraryPanel extends VBox {
         }
         timerPanel.getTimerPanel().refresh();
     }
+
+    public TabPane getTabPane() {
+        return tabPane;
+    }
 }
