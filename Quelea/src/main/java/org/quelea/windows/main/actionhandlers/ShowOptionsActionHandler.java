@@ -33,6 +33,7 @@ public class ShowOptionsActionHandler implements EventHandler<ActionEvent> {
         QueleaApp.get().getMainWindow().getOptionsDialog().callBeforeShowing();
         QueleaApp.get().getMainWindow().getOptionsDialog().show();
         QueleaApp.get().getMainWindow().getOptionsDialog().toFront();
+        QueleaApp.get().getMainWindow().getPreferencesDialog().show();
     }
     
 }
