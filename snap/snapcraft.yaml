@@ -6,14 +6,14 @@ description: |
   multimedia content in your church service.
 
 confinement: strict
-base: core18
 
 environment:
-    JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk
-    PATH: $SNAP/usr/lib/jvm/java-11-openjdk/bin:$PATH
+    JAVA_HOME: $SNAP/usr/lib/jvm/default-java
+    PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
     
 architectures:
   - build-on: amd64
+  - build-on: i386
 
 apps:
   quelea:
@@ -24,7 +24,7 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
-    stage-packages: [openjdk-11-jdk, vlc]
+    stage-packages: [default-jre, openjfx, vlc]
     gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]

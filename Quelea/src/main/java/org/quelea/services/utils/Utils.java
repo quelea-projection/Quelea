@@ -404,7 +404,7 @@ public final class Utils {
      * the status panel.
      */
     public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
-        if (!song.checkDBUpdate()) {
+        if (!song.checkDBUpdate() || song.isQuickInsert()) {
             return;
         }
         final Runnable updateRunner = new Runnable() {

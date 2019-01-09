@@ -883,13 +883,18 @@ public class RemoteControlServer {
         StringBuilder sb = new StringBuilder();
         sb.append("<div id=\"outer\">");
         int i = 0;
+        List<TextSection> textSections = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getItems();
         for (String lyricBlock : getLyrics(chords)) {
             if (i == RCHandler.currentLyricSection()) {
                 sb.append("<div class=\"inner current\">");
             } else {
                 sb.append("<div class=\"inner\">");
             }
-            sb.append("<p class=\"empty\" onclick=\"section(").append(i).append(");\">");
+            sb.append("<p class=\"empty\" onclick=\"section(").append(i).append(");\"");
+            if (textSections.get(i).getTitle() != null && !textSections.get(i).getTitle().isEmpty()) {
+                sb.append(" data-type=\"").append(textSections.get(i).getTitle()).append("\"");
+            }
+            sb.append(">");
             sb.append(lyricBlock);
             sb.append("</p></div>");
             i++;

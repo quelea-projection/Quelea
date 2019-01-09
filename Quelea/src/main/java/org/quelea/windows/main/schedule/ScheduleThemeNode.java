@@ -210,7 +210,7 @@ public class ScheduleThemeNode extends BorderPane {
                     }
                     if (panel.getTheme() != null && selectedBibleTheme != null
                             && panel.getTheme().getThemeName().equals(selectedBibleTheme.getThemeName())) {
-                        setSongTheme(selectedBibleTheme);
+                        setBibleTheme(selectedBibleTheme);
                         panel.getBibleSelectButton().fire();
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                     }

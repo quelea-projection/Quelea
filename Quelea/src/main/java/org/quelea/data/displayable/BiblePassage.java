@@ -17,12 +17,15 @@
  */
 package org.quelea.data.displayable;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
@@ -57,6 +60,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private BibleVerse[] verses;
     private ThemeDTO theme;
     private final boolean multi;
+    private Map<Dimension,Double> fontSizeCache;
     private final boolean multiLingual;
     private List<Bible> bibleVersions;
 
@@ -83,6 +87,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param theme   the theme of the passage.
      */
     public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi, boolean multilingual, List<Bible> versions) {
+        fontSizeCache = new HashMap<>();
         this.summary = summary;
         this.multi = multi;
         this.smallText = summary.split("\n");
@@ -98,6 +103,16 @@ public class BiblePassage implements TextDisplayable, Serializable {
             ts.setTheme(theme);
         }
         this.bibleVersions = versions;
+    }
+
+    @Override
+    public Double getCachedUniformFontSize(Dimension dimension) {
+        return fontSizeCache.get(dimension);
+    }
+
+    @Override
+    public void setCachedUniformFontSize(Dimension dimension, double size) {
+        fontSizeCache.put(dimension, size);
     }
 
     /**
@@ -268,6 +283,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public void setTheme(ThemeDTO theme) {
+        fontSizeCache.clear();
         this.theme = theme;
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
@@ -407,6 +423,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     public void updateBibleLines() {
+        fontSizeCache.clear();
         textSections.clear();
         fillTextSections();
         for (TextSection ts : getSections()) {

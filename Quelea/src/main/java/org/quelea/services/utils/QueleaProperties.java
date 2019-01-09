@@ -213,6 +213,10 @@ public final class QueleaProperties extends Properties {
     public double getMainDivPos() {
         return Double.parseDouble(getProperty("main.divpos", "-1"));
     }
+    
+    public String getElevantoClientId() {
+        return getProperty("elevanto.client.id", "91955");
+    }
 
     /**
      * Get the library / schedule splitpane divider position property.
@@ -1261,7 +1265,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL used for checking the latest version.
      */
     public String getUpdateURL() {
-        return "http://quelea.org/update/index.html";
+        return "https://quelea-projection.github.io/changelog";
     }
 
     /**

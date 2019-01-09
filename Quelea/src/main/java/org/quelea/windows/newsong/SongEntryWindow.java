@@ -219,7 +219,7 @@ public class SongEntryWindow extends Stage {
         resetChange();
         hide();
         SongDisplayable localSong = getSong();
-        boolean quickInsert = song != null && song.isQuickInSert();
+        boolean quickInsert = song != null && song.isQuickInsert();
         if (shouldSave) {
             if (updateDBOnHide && !quickInsert) {
                 Utils.updateSongInBackground(localSong, true, false);
@@ -382,10 +382,6 @@ public class SongEntryWindow extends Stage {
         if (song == null) {
             song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
-        ThemeDTO tempTheme = null;
-        if (song.getSections().length > 0) {
-            tempTheme = song.getSections()[0].getTempTheme();
-        }
         song.setLyrics(getBasicSongPanel().getLyricsField().getTextArea().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
@@ -399,9 +395,6 @@ public class SongEntryWindow extends Stage {
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
         for (TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
-            if (tempTheme != null) {
-                section.setTempTheme(tempTheme);
-            }
         }
         song.setTheme(themePanel.getTheme());
         return song;
