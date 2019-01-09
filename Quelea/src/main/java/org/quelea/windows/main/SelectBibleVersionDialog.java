@@ -136,7 +136,7 @@ public class SelectBibleVersionDialog extends Stage {
             }
         }
         listView.setCellFactory(lv -> {
-            ListCell<Bible> cell = new ListCell<>() {
+            ListCell<Bible> cell = new ListCell<Bible>() {
                 @Override
                 protected void updateItem(Bible t, boolean empty) {
                     super.updateItem(t, empty);
