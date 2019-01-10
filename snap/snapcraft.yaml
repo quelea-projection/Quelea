@@ -18,7 +18,7 @@ architectures:
 apps:
   quelea:
     command: sh $SNAP/jar/launch.sh
-    plugs: [home, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
+    plugs: [home, mount-observe, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
 parts:
   quelea:
