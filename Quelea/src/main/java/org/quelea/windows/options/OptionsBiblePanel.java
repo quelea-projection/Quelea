@@ -20,7 +20,6 @@ package org.quelea.windows.options;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -29,13 +28,8 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -60,7 +54,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.widgets.NumberSpinner;
-import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -75,7 +68,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private final CheckBox splitBibleVersesBox;
     private final NumberSpinner maxVersesPerSlideBox;
     private final CheckBox maxVersesEnable;
-//    private final Slider maxCharsSlider;
     private boolean changed;
 
     /**
@@ -144,27 +136,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 changed = true;
             }
         });
-//        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
-//
-//        GridPane.setConstraints(maxCharsLabel, 1, 5);
-//        getChildren().add(maxCharsLabel);
-//        maxCharsSlider = new Slider(10, 160, 0);
-//
-//        GridPane.setConstraints(maxCharsSlider, 2, 5);
-////        getChildren().add(maxCharsSlider);
-//        maxCharsLabel.setLabelFor(maxCharsSlider);
-//        final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
-//
-//        GridPane.setConstraints(maxCharsValue, 3, 5);
-//        getChildren().add(maxCharsValue);
-//        maxCharsValue.setLabelFor(maxCharsSlider);
-//
-//        maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-//                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
-//            }
-//        });
         readProperties();
 
     }
@@ -260,7 +231,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         splitBibleVersesBox.setSelected(props.getBibleSplitVerses());
         maxVersesPerSlideBox.setNumber(props.getMaxBibleVerses());
         maxVersesEnable.setSelected(!props.getBibleUsingMaxChars());
-//        maxCharsSlider.setValue(props.getMaxBibleChars());
 
     }
 
@@ -278,8 +248,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setBibleSplitVerses(splitBibleVersesBox.isSelected());
         props.setMaxBibleVerses(maxVersesPerSlideBox.getNumber());
         props.setBibleUsingMaxChars(!maxVersesEnable.isSelected());
-//        int maxCharsPerLine = (int) maxCharsSlider.getValue();
-//        props.setMaxBibleChars(maxCharsPerLine);
         if (changed) {
             if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                 ScheduleList list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
