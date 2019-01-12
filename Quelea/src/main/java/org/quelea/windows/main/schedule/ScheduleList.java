@@ -100,7 +100,7 @@ public class ScheduleList extends StackPane {
     public ScheduleList() {
         setAlignment(Pos.TOP_LEFT);
         listView = new ListView<>();
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         getChildren().add(listView);
         markerRect = new Rectangle(200, 3, Color.GRAY);
         markerRect.setVisible(false);
