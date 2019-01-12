@@ -287,11 +287,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                     if (d != null) {
                         if (d instanceof BiblePassage) {
                             ((BiblePassage) d).updateBibleLines();
-                            int index = list.getListView().itemsProperty().get().indexOf(d);
-                            if (index != -1) {
-                                list.getListView().itemsProperty().get().set(index, d);
-                                list.getListView().selectionModelProperty().get().select(index); //Needed for single item lists
-                            }
                         }
                     }
                 }
