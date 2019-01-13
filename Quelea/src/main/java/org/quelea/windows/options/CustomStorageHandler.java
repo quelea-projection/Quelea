@@ -160,7 +160,7 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
-        QueleaProperties.get().setProperty(breadcrumb, object.toString());
+//        QueleaProperties.get().setProperty(breadcrumb, object.toString());
     }
     // asciidoctor Documentation - end::storageHandlerSave[]
 
@@ -174,10 +174,10 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerLoad[]
     public Object loadObject(String breadcrumb, Object defaultObject) {
-//        String serializedDefault = gson.toJson(defaultObject);
-//        String json = preferences.get(hash(breadcrumb), serializedDefault);
-//        return gson.fromJson(json, Object.class);
-        return QueleaProperties.get().getProperty(breadcrumb, defaultObject.toString());
+        String serializedDefault = gson.toJson(defaultObject);
+        String json = preferences.get(hash(breadcrumb), serializedDefault);
+        return gson.fromJson(json, Object.class);
+//        return gson.fromJson(QueleaProperties.get().getProperty(breadcrumb, serializedDefault), Object.class);
     }
     // asciidoctor Documentation - end::storageHandlerLoad[]
 

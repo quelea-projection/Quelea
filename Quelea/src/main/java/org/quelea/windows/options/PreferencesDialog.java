@@ -3,6 +3,7 @@ package org.quelea.windows.options;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
+import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.formsfx.view.controls.IntegerSliderControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
@@ -13,9 +14,7 @@ import com.dlsc.preferencesfx.model.Setting;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.LabelGrabber;
@@ -24,13 +23,8 @@ import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.Utils;
 
 import java.awt.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.prefs.Preferences;
 
 public class PreferencesDialog {
     private PreferencesFx preferencesFx;
@@ -158,6 +152,11 @@ public class PreferencesDialog {
     }
 
     private Category getPresentationsTab() {
+        /*
+        StringProperty directoryChooser = new SimpleStringProperty("");
+        StringField directoryField = Field.ofStringType(directoryChooser).render(
+                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), ""));
+         */
         return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"));
     }
 
@@ -167,9 +166,15 @@ public class PreferencesDialog {
 
     private Category getStageViewTab() {
         BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(true);
-        ColorPicker backgroundColorPicker;
-        ColorPicker chordColorPicker;
-        ColorPicker lyricsColorPicker;
+        StringProperty backgroundColorProperty = new SimpleStringProperty("");
+        StringField backgroundColorPicker = Field.ofStringType(backgroundColorProperty).render(
+                new ColorPickerPreference(Color.BLACK));
+        StringProperty chordColorProperty = new SimpleStringProperty("");
+        StringField chordColorPicker = Field.ofStringType(chordColorProperty).render(
+                new ColorPickerPreference(Color.BLACK));
+        StringProperty lyricsColorProperty = new SimpleStringProperty("");
+        StringField lyricsColorPicker = Field.ofStringType(lyricsColorProperty).render(
+                new ColorPickerPreference(Color.BLACK));
         BooleanProperty clearWithMainBox = new SimpleBooleanProperty(true);
         BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(true);
         ArrayList<String> textAlignment = new ArrayList<>();
@@ -184,6 +189,9 @@ public class PreferencesDialog {
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), backgroundColorPicker, backgroundColorProperty),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), lyricsColorPicker, lyricsColorProperty),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), chordColorPicker, chordColorProperty),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), clearWithMainBox),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), use24HBooleanProperty)
         );
