@@ -8,22 +8,23 @@ description: |
 confinement: strict
 
 environment:
-    JAVA_HOME: $SNAP/usr/lib/jvm/java-9-openjdk
-    PATH: $SNAP/usr/lib/jvm/java-9-openjdk/bin:$PATH
+    JAVA_HOME: $SNAP/usr/lib/jvm/default-java
+    PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
     
 architectures:
   - build-on: amd64
+  - build-on: i386
 
 apps:
   quelea:
     command: sh $SNAP/jar/launch.sh
-    plugs: [home, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media]
+    plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
 parts:
   quelea:
     plugin: gradle
     source: Quelea
-    stage-packages: [openjdk-9-jdk, vlc]
+    stage-packages: [default-jre, openjfx, vlc]
     gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
-    after: [desktop-gtk3]
+    after: [desktop-gtk2]

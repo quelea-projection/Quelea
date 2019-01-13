@@ -1,0 +1,188 @@
+Oct 16, 2018 8:55:25 PM org.quelea.services.languages.LabelGrabber <init>
+INFO: Using languages file C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\languages\gb.lang
+
+Oct 16, 2018 8:55:25 PM org.quelea.services.languages.LabelGrabber <init>
+INFO: Setting en-uk locale
+
+Oct 16, 2018 8:55:25 PM org.quelea.windows.main.Main start
+INFO: Started, version 2019.0
+
+Oct 16, 2018 8:55:25 PM org.quelea.windows.main.Main start
+INFO: OS name: Windows 10
+
+Oct 16, 2018 8:55:25 PM org.quelea.windows.main.Main start
+INFO: Using JAVA version 9.0.4
+
+Oct 16, 2018 8:55:25 PM org.quelea.windows.main.Main start
+INFO: 64-bit: true
+
+Oct 16, 2018 8:55:25 PM org.quelea.windows.main.Main start
+INFO: Couldn't set icon, probably an unsupported platform and nothing to worry about
+java.lang.UnsupportedOperationException: The ICON_IMAGE feature is not supported on the current platform!
+	at java.desktop/java.awt.Taskbar.checkFeatureSupport(Taskbar.java:175)
+	at java.desktop/java.awt.Taskbar.setIconImage(Taskbar.java:335)
+	at org.quelea.windows.main.Main.start(Main.java:98)
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:919)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$11(PlatformImpl.java:449)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$9(PlatformImpl.java:418)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:417)
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:96)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:175)
+	at java.base/java.lang.Thread.run(Thread.java:844)
+
+
+Oct 16, 2018 8:55:26 PM org.quelea.windows.multimedia.VLCWindowEmbed lambda$new$2
+INFO: Video initialised ok
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\NotoSans-Bold.ttf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\NotoSans-BoldItalic.ttf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\NotoSans-Italic.ttf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\NotoSans-Regular.ttf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Oxygen-Bold.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Oxygen-BoldItalic.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Oxygen-Italic.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Oxygen.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Vegur-Bold.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.FontInstaller lambda$setupBundledFonts$0
+INFO: Loaded bundled font C:\Users\Michael\Documents\NetBeansProjects\Quelea\Quelea\icons\bundledfonts\Vegur-Regular.otf
+
+Oct 16, 2018 8:55:27 PM org.quelea.services.utils.UserFileChecker checkUserFiles
+INFO: Checking user files
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Number of displays: 2
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Starting lyric server on 1,111
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Starting remote control server on 1,112
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Starting auto-detection server on 50,015
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Hiding projector display on monitor 0 (base 0!)
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 run
+INFO: Hiding stage display on monitor 0 (base 0!)
+
+Oct 16, 2018 8:55:27 PM org.quelea.data.db.HibernateUtil init
+INFO: Initialising hibernate
+
+Oct 16, 2018 8:55:27 PM org.quelea.windows.main.Main$1 lambda$run$8
+INFO: Loading bibles
+
+Oct 16, 2018 8:55:27 PM org.quelea.data.db.HibernateUtil init
+INFO: Initialised hibernate properties
+
+Oct 16, 2018 8:55:27 PM org.quelea.data.bible.Bible parseXML
+INFO: Parsed bible: American Standard Version. Contains 66 books.
+
+Oct 16, 2018 8:55:28 PM org.quelea.data.db.HibernateUtil init
+INFO: Initialised hibernate service registry
+
+Oct 16, 2018 8:55:29 PM org.quelea.services.utils.VersionChecker getLatestVersion
+INFO: Checking for an updated version...
+
+Oct 16, 2018 8:55:30 PM org.quelea.windows.options.ServerSettingsPanel getIP
+INFO: Found v4: 192.168.1.91
+
+Oct 16, 2018 8:55:30 PM org.quelea.windows.options.ServerSettingsPanel getIP
+INFO: Found v4: 192.168.1.91
+
+Oct 16, 2018 8:55:30 PM org.quelea.windows.main.MainPanel <init>
+INFO: Creating schedule panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.main.MainPanel <init>
+INFO: Creating library panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library song panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library bible panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library image panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library video panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.library.LibraryPanel <init>
+INFO: Creating library timer panel
+
+Oct 16, 2018 8:55:31 PM org.quelea.windows.main.MainPanel <init>
+INFO: Creating preview panel
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.library.VideoListPanel$1 lambda$run$3
+INFO: Grabbing frame for C:\Users\Michael\.quelea\vid\abstract blue.mp4
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.main.MainPanel <init>
+INFO: Creating live panel
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.main.MainPanel <init>
+INFO: Creating split panels
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.library.VideoListPanel$1 lambda$run$3
+INFO: Grabbed frame for C:\Users\Michael\.quelea\vid\abstract blue.mp4
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.library.VideoListPanel$1 lambda$run$3
+INFO: Grabbing frame for C:\Users\Michael\.quelea\vid\earth and sun.mp4
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.main.MainPanel <init>
+INFO: Created main panel
+
+Oct 16, 2018 8:55:32 PM org.quelea.windows.library.VideoListPanel$1 lambda$run$3
+INFO: Grabbed frame for C:\Users\Michael\.quelea\vid\earth and sun.mp4
+
+Oct 16, 2018 8:55:59 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: exit() called
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Saving window position...
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Hiding main window...
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Cleaning up displayables before exiting..
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Cleaning up class org.quelea.data.displayable.SongDisplayable
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Try to close OOfice if opened
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Stopping mobile lyrics server
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Stopping remote control server
+
+Oct 16, 2018 8:56:00 PM org.quelea.windows.main.actionhandlers.ExitActionHandler exit
+INFO: Checking if Quelea currently is recording audio
+

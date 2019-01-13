@@ -18,26 +18,18 @@
 package org.quelea.windows.options;
 
 import java.text.NumberFormat;
-import java.io.File;
 import java.math.BigDecimal;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.DirectoryChooser;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
@@ -64,6 +56,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox autoTranslateCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox embedMediaInScheduleCheckBox;
+    private final CheckBox itemThemeOverrideCheckBox;
     private final CheckBox autoPlayVidCheckBox;
     private final CheckBox advanceOnLiveCheckBox;
     private final CheckBox previewOnImageChangeCheckBox;
@@ -229,6 +222,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         embedMediaLabel.setLabelFor(embedMediaInScheduleCheckBox);
         GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
         getChildren().add(embedMediaInScheduleCheckBox);
+        rows++;
+
+        Label itemThemeOverrideLabel = new Label(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global") + " ");
+        GridPane.setConstraints(itemThemeOverrideLabel, 1, rows);
+        getChildren().add(itemThemeOverrideLabel);
+        itemThemeOverrideCheckBox = new CheckBox();
+        itemThemeOverrideLabel.setLabelFor(itemThemeOverrideCheckBox);
+        GridPane.setConstraints(itemThemeOverrideCheckBox, 2, rows);
+        getChildren().add(itemThemeOverrideCheckBox);
         rows++;
 
         Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
@@ -411,24 +413,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         rows++;
 
-//        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
-//        GridPane.setConstraints(minLinesLabel, 1, rows);
-//        getChildren().add(minLinesLabel);
-//        minLinesSlider = new Slider(1, 20, 0);
-//        GridPane.setConstraints(minLinesSlider, 2, rows);
-//        getChildren().add(minLinesSlider);
-//        minLinesLabel.setLabelFor(minLinesSlider);
-//        final Label minLinesValue = new Label(Integer.toString((int) minLinesSlider.getValue()));
-//        GridPane.setConstraints(minLinesValue, 3, rows);
-//        getChildren().add(minLinesValue);
-//        minLinesValue.setLabelFor(minLinesSlider);
-//        minLinesSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-//                minLinesValue.setText(Integer.toString((int) minLinesSlider.getValue()));
-//            }
-//        });
-//        rows++;
         readProperties();
     }
 
@@ -477,6 +461,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         previewOnImageChangeCheckBox.setSelected(props.getPreviewOnImageUpdate());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
+        itemThemeOverrideCheckBox.setSelected(props.getItemThemeOverride());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         showSmallSongTextBox.setSelected(props.getSmallSongTextShow());
@@ -515,6 +500,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setClearLiveOnRemove(clearLive);
         boolean embedMedia = embedMediaInScheduleCheckBox.isSelected();
         props.setEmbedMediaInScheduleFile(embedMedia);
+        boolean itemThemeOverride = itemThemeOverrideCheckBox.isSelected();
+        props.setItemThemeOverride(itemThemeOverride);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
         boolean autoTranslate = getAutoTranslateCheckBox().isSelected();
@@ -576,14 +563,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         return maxCharsSlider;
     }
 
-//    /**
-//     * Get the min lines slider.
-//     * <p/>
-//     * @return the min lines slider.
-//     */
-//    public Slider getMinLinesSlider() {
-//        return minLinesSlider;
-//    }
     /**
      * Get the startup readProperties checkbox.
      * <p/>

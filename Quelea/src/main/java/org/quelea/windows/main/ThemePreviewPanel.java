@@ -25,16 +25,20 @@ import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -60,7 +64,8 @@ public class ThemePreviewPanel extends VBox {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
-    private RadioButton selectButton;
+    private RadioButton songSelectButton;
+    private RadioButton bibleSelectButton;
     private Button removeButton;
     private Button editButton;
     private EditThemeDialog themeDialog;
@@ -97,7 +102,8 @@ public class ThemePreviewPanel extends VBox {
         }
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
-        selectButton = new RadioButton(name);
+        songSelectButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("song.default.theme.label"));
+        bibleSelectButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("bible.default.theme.label"));
         if (theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
@@ -146,36 +152,50 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         HBox buttonPanel = new HBox();
-        if (canvas != null) {
-            canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent t) {
-                    t.consume();
-                    selectButton.fire();
-                }
-            });
-        }
-        buttonPanel.getChildren().add(selectButton);
-        if (theme != ThemeDTO.DEFAULT_THEME) {
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-            buttonPanel.getChildren().add(spacer);
-            buttonPanel.getChildren().add(editButton);
-            buttonPanel.getChildren().add(removeButton);
-        }
+        buttonPanel.setSpacing(5);
+        buttonPanel.getChildren().add(songSelectButton);
+        buttonPanel.getChildren().add(bibleSelectButton);
+
         HBox canvasPanel = new HBox();
         canvasPanel.getChildren().add(canvas);
-        getChildren().add(canvasPanel);
+
+        StackPane canvasOverlay = new StackPane();
+        StackPane.setAlignment(canvasPanel, Pos.CENTER);
+        canvasOverlay.getChildren().add(canvasPanel);
+
+        HBox editRemovePanel = new HBox();
+        editRemovePanel.setSpacing(2);
+        editRemovePanel.setPadding(new Insets(3));
+        editRemovePanel.setAlignment(Pos.BOTTOM_RIGHT);
+        if (theme != ThemeDTO.DEFAULT_THEME) {
+            editRemovePanel.getChildren().addAll(editButton, removeButton);
+        }
+        canvasOverlay.getChildren().add(editRemovePanel);
+        
+        Label themeLabel = new Label(name);
+        themeLabel.setPadding(new Insets(3));
+        themeLabel.setStyle("-fx-text-fill: white; -fx-background-color: black;");
+        StackPane.setAlignment(themeLabel, Pos.TOP_CENTER);
+        canvasOverlay.getChildren().add(themeLabel);
+        
+        if (canvas != null) {
+            canvasOverlay.setOnMouseClicked((MouseEvent t) -> {
+                t.consume();
+                songSelectButton.fire();
+                bibleSelectButton.fire();
+            });
+        }
+
+        getChildren().add(canvasOverlay);
         getChildren().add(buttonPanel);
     }
 
-    /**
-     * Get the select radio button used to select this theme.
-     * <p/>
-     * @return the select radio button.
-     */
-    public RadioButton getSelectButton() {
-        return selectButton;
+    public RadioButton getSongSelectButton() {
+        return songSelectButton;
+    }
+
+    public RadioButton getBibleSelectButton() {
+        return bibleSelectButton;
     }
 
     /**
@@ -198,14 +218,8 @@ public class ThemePreviewPanel extends VBox {
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
     }
-    
+
     public Image getThemePreviewImage() {
-        WordDrawer drawer;
-        if (canvas.isStageView()) {
-            drawer = new StageDrawer();
-        } else {
-            drawer = new LyricDrawer();
-        }
         previewImage = new WritableImage(200, 200);
         canvas.snapshot(new SnapshotParameters(), previewImage);
         BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
@@ -213,5 +227,5 @@ public class ThemePreviewPanel extends VBox {
 
         return previewImage;
     }
-    
+
 }

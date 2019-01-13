@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -180,7 +181,7 @@ public class ElevantoLoginDialog extends Stage {
         }
         
         // redirect url: http://localhost:7070/oauth
-        String url = "https://api.elvanto.com/oauth?type=user_agent&client_id=91955&redirect_uri=http%3A%2F%2Flocalhost%3A7070%2Foauth&scope=ManageServices%2CManageSongs%2CManageCalendar";
+        String url = "https://api.elvanto.com/oauth?type=user_agent&client_id=" + QueleaProperties.get().getElevantoClientId() + "&redirect_uri=http%3A%2F%2Flocalhost%3A7070%2Foauth&scope=ManageServices%2CManageSongs%2CManageCalendar";
 
         // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
         if(Desktop.isDesktopSupported() && !Utils.isLinux()){
