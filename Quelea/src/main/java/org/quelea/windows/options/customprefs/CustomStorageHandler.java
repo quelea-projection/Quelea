@@ -3,12 +3,18 @@ package org.quelea.windows.options.customprefs;
 import com.dlsc.preferencesfx.model.Setting;
 import com.dlsc.preferencesfx.util.StorageHandler;
 import com.dlsc.preferencesfx.util.StorageHandlerImpl;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.javafx.dialog.Dialog;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.LanguageFile;
+import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaPropertyKeys;
+import org.quelea.windows.main.QueleaApp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -156,9 +162,26 @@ public class CustomStorageHandler implements StorageHandler {
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
 //        QueleaProperties.get().setProperty(breadcrumb, object.toString());
-        if (breadcrumb.equals("General#User Options#Warn if only one monitor is connected"))
-            QueleaProperties.get().setProperty("single.monitor.warning", object.toString());
-//        System.out.println(breadcrumb + object.toString());
+//        QueleaApp.get().getMainWindow().getPreferencesDialog().discardChanges();
+        if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label")) && !object.toString().contains(new LanguageFile(QueleaProperties.get().getLanguageFile()).getLanguageName())) {
+            for (LanguageFile l : LanguageFileManager.INSTANCE.languageFiles()) {
+                if (l.getLanguageName().equals(object.toString())) {
+                    QueleaProperties.get().setProperty(QueleaPropertyKeys.languageFileKey, l.getFile().getName());
+                }
+            }
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        System.out.println(breadcrumb + " " + object);
+    }
+
+    public String parse(String jsonLine) {
+        JsonElement jelement = new JsonParser().parse(jsonLine);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("languageFile");
+//        JsonArray jarray = jobject.getAsJsonArray("path");
+//        jobject = jarray.get(0).getAsJsonObject();
+        String result = jobject.get("path").getAsString();
+        return result;
     }
     // asciidoctor Documentation - end::storageHandlerSave[]
 

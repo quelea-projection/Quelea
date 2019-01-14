@@ -90,13 +90,8 @@ public class PreferencesDialog {
         IntegerProperty additionalSpacing = new SimpleIntegerProperty((int) QueleaProperties.get().getAdditionalLineSpacing());
         IntegerProperty maxChars = new SimpleIntegerProperty(QueleaProperties.get().getMaxChars());
 
-        ArrayList<String> languages = new ArrayList<>();
-        for (LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
-            languages.add(file.getLanguageName());
-        }
-
-        ObservableList languageItems = FXCollections.observableArrayList(languages);
-        ObjectProperty languageSelection = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile().getLanguageName());
+        ObservableList<LanguageFile> languageItems = FXCollections.observableArrayList(LanguageFileManager.INSTANCE.languageFiles());
+        ObjectProperty<LanguageFile> languageSelection = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile());
 
         bindings.put(smallSongSizeController, showSmallSong.not());
         bindings.put(smallBibleSizeController, showSmallBible.not());
