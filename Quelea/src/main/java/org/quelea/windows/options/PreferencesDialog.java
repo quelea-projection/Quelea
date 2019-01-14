@@ -2,20 +2,24 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
-import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.formsfx.view.controls.IntegerSliderControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
+import com.dlsc.preferencesfx.formsfx.view.controls.SimpleIntegerControl;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import org.quelea.data.bible.Bible;
+import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.languages.LanguageFile;
@@ -38,10 +42,6 @@ public class PreferencesDialog {
      * @author Arvid
      */
     public PreferencesDialog(Class parent) {
-        StringProperty stringProperty = new SimpleStringProperty("String");
-        IntegerProperty integerProperty = new SimpleIntegerProperty(12);
-        DoubleProperty doubleProperty = new SimpleDoubleProperty(6.5);
-
         preferencesFx =
                 PreferencesFx.of(new CustomStorageHandler(parent),
                         getGeneralTab(),
@@ -55,189 +55,50 @@ public class PreferencesDialog {
 
 
                 );
-//        PreferencesFx.of(parent, Category.of("General"));
         bindings.forEach(this::bind);
     }
 
-    private HashMap<Field, BooleanProperty> bindings = new HashMap<>();
-
-    private Group getDisplayGroup(String groupName, String image, boolean custom) {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        int width = gd.getDisplayMode().getWidth();
-        int height = gd.getDisplayMode().getHeight();
-        IntegerProperty widthProperty = new SimpleIntegerProperty(width / 2);
-        IntegerProperty heightProperty = new SimpleIntegerProperty(height / 2);
-        IntegerProperty xProperty = new SimpleIntegerProperty(0);
-        IntegerProperty yProperty = new SimpleIntegerProperty(0);
-        BooleanProperty booleanProperty = new SimpleBooleanProperty(false);
-
-        IntegerField sizeWith = Field.ofIntegerType(widthProperty).render(
-                new IntegerSliderControl(0, width));
-        IntegerField sizeHeight = Field.ofIntegerType(heightProperty).render(
-                new IntegerSliderControl(0, height));
-        IntegerField posX = Field.ofIntegerType(xProperty).render(
-                new IntegerSliderControl(0, width));
-        IntegerField posY = Field.ofIntegerType(yProperty).render(
-                new IntegerSliderControl(0, height));
-
-//        outputList = FXCollections.observableArrayList(getAvailableScreens(custom));
-//        ListProperty outputList = new SimpleListProperty<>(
-//                FXCollections.observableArrayList(getAvailableScreens(custom))
-//        );
-        SimpleComboBoxControl simpleComboBoxControl = new SimpleComboBoxControl<>();
-        SingleSelectionField singleSelectionField = Field.ofSingleSelectionType(FXCollections.observableArrayList(getAvailableScreens(custom))).render(simpleComboBoxControl);
-        ObjectProperty outputSelection = new SimpleObjectProperty<>(getAvailableScreens(custom).get(0));
-
-        Group group;
-        if (!custom) {
-            group = Group.of(groupName,
-                    Setting.of(groupName, singleSelectionField, outputSelection)
-            );//.addGroupNode(new ImageView(new Image(image)));}
-        } else {
-            group = Group.of(groupName,
-                    Setting.of(groupName, singleSelectionField, outputSelection),
-                    Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), booleanProperty),
-                    Setting.of("W", sizeWith, widthProperty),
-                    Setting.of("H", sizeHeight, heightProperty),
-                    Setting.of("X", posX, xProperty),
-                    Setting.of("Y", posY, yProperty)
-            );//.addGroupNode(new ImageView(new Image(image)));
-            bindings.put(sizeWith, booleanProperty);
-            bindings.put(sizeHeight, booleanProperty);
-            bindings.put(posX, booleanProperty);
-            bindings.put(posY, booleanProperty);
-            bindings.put(singleSelectionField, booleanProperty);
-//            simpleComboBoxControl.disableProperty().bind(booleanProperty);
-//            bindings.put(singleSelectionField, booleanProperty);
-        }
-        return group;
-    }
-
-    /**
-     * Get a list model describing the available graphical devices.
-     *
-     * @return a list model describing the available graphical devices.
-     */
-    private ObservableList<String> getAvailableScreens(boolean none) {
-//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//        final GraphicsDevice[] gds = ge.getScreenDevices();
-
-        ObservableList<Screen> monitors = Screen.getScreens();
-
-        ObservableList<String> descriptions = FXCollections.<String>observableArrayList();
-        if (none) {
-            descriptions.add(LabelGrabber.INSTANCE.getLabel("none.text"));
-        }
-        for (int i = 0; i < monitors.size(); i++) {
-            descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
-        }
-        return descriptions;
-    }
-
-    private void bind(Field field, BooleanProperty booleanProperty) {
-        if (field.getRenderer() instanceof SimpleComboBoxControl)
-            ((SimpleComboBoxControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
-        else
-            ((SimpleControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty.not());
-    }
-
-    private Category getRecordingsTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"));
-    }
-
-    private Category getServerTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
-    }
-
-    private Category getBiblesTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
-    }
-
-    private Category getPresentationsTab() {
-        StringProperty directoryChooser = new SimpleStringProperty(QueleaProperties.get().getOOPath());
-        StringField directoryField = Field.ofStringType(directoryChooser).render(
-                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
-        return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryField, directoryChooser));
-    }
-
-    private Category getNoticesTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
-    }
-
-    private Category getStageViewTab() {
-        BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getShowChords());
-        BooleanProperty clearWithMainBox = new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain());
-        BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock());
-        ArrayList<String> textAlignment = new ArrayList<>();
-        for (TextAlignment alignment : TextAlignment.values()) {
-            textAlignment.add(alignment.toFriendlyString());
-        }
-        ObservableList lineAlignment = FXCollections.observableArrayList(textAlignment);
-        ObservableList fonts = FXCollections.observableArrayList(Utils.getAllFonts());
-        ObjectProperty alignmentSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
-        ObjectProperty fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
-        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection),
-                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), QueleaProperties.get().getStageBackgroundColor()),
-                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()),
-                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), clearWithMainBox),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), use24HBooleanProperty)
-        );
-    }
-
-    private Setting getColorPicker(String label, Color color) {
-        StringProperty property = new SimpleStringProperty(QueleaProperties.get().getStr(color));
-        StringField field = Field.ofStringType(property).render(
-                new ColorPickerPreference(color));
-        return Setting.of(label, field, property);
-    }
-
-    private Category getDisplaySetupTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
-                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), "file:icons/monitor.png", false),
-                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), "file:icons/projector.png", true),
-                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), "file:icons/stage.png", true)
-        );
-    }
-
     private Category getGeneralTab() {
-        BooleanProperty checkForUpdate = new SimpleBooleanProperty(true);
+        BooleanProperty checkForUpdate = new SimpleBooleanProperty(QueleaProperties.get().checkUpdate());
         BooleanProperty singleMonitorWarning = new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning());
-        BooleanProperty oneLineMode = new SimpleBooleanProperty(false);
-        BooleanProperty autoPlayVideo = new SimpleBooleanProperty(false);
-        BooleanProperty advanceOnLive = new SimpleBooleanProperty(false);
-        BooleanProperty autoTranslate = new SimpleBooleanProperty(true);
-        BooleanProperty clearLiveOnRemove = new SimpleBooleanProperty(true);
-        BooleanProperty embedMediaInSchedule = new SimpleBooleanProperty(true);
-        BooleanProperty itemThemeOverride = new SimpleBooleanProperty(false);
-        BooleanProperty autoPlayVid = new SimpleBooleanProperty(false);
-        BooleanProperty previewOnImageChange = new SimpleBooleanProperty(false);
-        BooleanProperty uniformFontSize = new SimpleBooleanProperty(true);
-        BooleanProperty defaultSongDBUpdate = new SimpleBooleanProperty(false);
-        BooleanProperty showSmallSong = new SimpleBooleanProperty(true);
+        BooleanProperty oneLineMode = new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode());
+        BooleanProperty autoPlayVideo = new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo());
+        BooleanProperty advanceOnLive = new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive());
+        BooleanProperty autoTranslate = new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate());
+        BooleanProperty clearLiveOnRemove = new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove());
+        BooleanProperty embedMediaInSchedule = new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile());
+        BooleanProperty itemThemeOverride = new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride());
+        BooleanProperty previewOnImageChange = new SimpleBooleanProperty(QueleaProperties.get().getPreviewOnImageUpdate());
+        BooleanProperty uniformFontSize = new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize());
+        BooleanProperty defaultSongDBUpdate = new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate());
+        BooleanProperty showSmallSong = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
+        IntegerProperty smallSongSizeSpinner = new SimpleIntegerProperty((int) (QueleaProperties.get().getSmallSongTextSize() * 100));
+        IntegerField smallSongSizeController = Field.ofIntegerType(smallSongSizeSpinner).render(
+                new PercentIntegerSliderControl(0.1, 0.5));
+        BooleanProperty showSmallBible = new SimpleBooleanProperty(QueleaProperties.get().getSmallBibleTextShow());
+        IntegerProperty smallBibleSizeSpinner = new SimpleIntegerProperty((int) (100 * QueleaProperties.get().getSmallBibleTextSize()));
+        IntegerField smallBibleSizeController = Field.ofIntegerType(smallBibleSizeSpinner).render(
+                new PercentIntegerSliderControl(0.1, 0.5));
 
-        BooleanProperty showSmallBible = new SimpleBooleanProperty(true);
-        BooleanProperty overflowSong = new SimpleBooleanProperty(false);
-        BooleanProperty showVideoPanel = new SimpleBooleanProperty(false);
-        BooleanProperty showExtraLivePanelToolbarOptions = new SimpleBooleanProperty(false);
-        BooleanProperty capitalFirst = new SimpleBooleanProperty(false);
-        IntegerProperty thumbnailSize = new SimpleIntegerProperty(300);
-        IntegerProperty maxFontSize = new SimpleIntegerProperty(100);
-        IntegerProperty additionalSpacing = new SimpleIntegerProperty(10);
-        IntegerProperty maxChars = new SimpleIntegerProperty(45);
+        BooleanProperty overflowSong = new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow());
+        BooleanProperty showVideoPanel = new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab());
+        BooleanProperty showExtraLivePanelToolbarOptions = new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions());
+        BooleanProperty capitalFirst = new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst());
+        IntegerProperty thumbnailSize = new SimpleIntegerProperty(QueleaProperties.get().getThumbnailSize());
+        IntegerProperty maxFontSize = new SimpleIntegerProperty((int) QueleaProperties.get().getMaxFontSize());
+        IntegerProperty additionalSpacing = new SimpleIntegerProperty((int) QueleaProperties.get().getAdditionalLineSpacing());
+        IntegerProperty maxChars = new SimpleIntegerProperty(QueleaProperties.get().getMaxChars());
+
         ArrayList<String> languages = new ArrayList<>();
         for (LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
             languages.add(file.getLanguageName());
         }
 
         ObservableList languageItems = FXCollections.observableArrayList(languages);
-        ObservableList songInfoPosItems = FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
-        ObjectProperty languageSelection = new SimpleObjectProperty<>("English (GB)");
-        ObjectProperty songPosSelection = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("top"));
+        ObjectProperty languageSelection = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile().getLanguageName());
+
+        bindings.put(smallSongSizeController, showSmallSong.not());
+        bindings.put(smallBibleSizeController, showSmallBible.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"),
                 Group.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
@@ -256,7 +117,13 @@ public class PreferencesDialog {
                         Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), embedMediaInSchedule),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), itemThemeOverride),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSong),
-                        Setting.of("Small song text position", songInfoPosItems, songPosSelection),
+                        getPositionSelector("Small song info position", false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSong),
+                        getPositionSelector("Small song info position", true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSong),
+                        Setting.of("Small song info size", smallSongSizeController, smallSongSizeSpinner),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"), showSmallBible),
+                        getPositionSelector("Small bible info position", false, QueleaProperties.get().getSmallBibleTextPositionV(), showSmallBible),
+                        getPositionSelector("Small bible info position", true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBible),
+                        Setting.of("Small bible info size", smallBibleSizeController, smallBibleSizeSpinner),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSize, 100, 500),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), showExtraLivePanelToolbarOptions)
                 ),
@@ -268,6 +135,250 @@ public class PreferencesDialog {
                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"), maxChars, 10, 160)
                 )
         );
+    }
+
+    private Category getDisplaySetupTab() {
+        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
+                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), "file:icons/monitor.png", false),
+                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), "file:icons/projector.png", true),
+                getDisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), "file:icons/stage.png", true)
+        );
+    }
+
+    private Category getStageViewTab() {
+        BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getShowChords());
+        BooleanProperty clearWithMainBox = new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain());
+        BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock());
+
+        ArrayList<String> textAlignment = new ArrayList<>();
+        for (TextAlignment alignment : TextAlignment.values()) {
+            textAlignment.add(alignment.toFriendlyString());
+        }
+        ObservableList lineAlignment = FXCollections.observableArrayList(textAlignment);
+        ObjectProperty alignmentSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
+
+        ObservableList fonts = FXCollections.observableArrayList(Utils.getAllFonts());
+        ObjectProperty fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
+
+        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),//.setCustomKey(QueleaPropertyKeys.stageShowChordsKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), QueleaProperties.get().getStageBackgroundColor()),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), clearWithMainBox),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), use24HBooleanProperty)
+        );
+    }
+
+    private Category getNoticesTab() {
+        DoubleProperty noticeSpeed = new SimpleDoubleProperty(QueleaProperties.get().getNoticeSpeed());
+        DoubleProperty noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());
+        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"),
+                getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 10),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSize, 20, 100, 10)
+        );
+    }
+
+    private Category getPresentationsTab() {
+        BooleanProperty useOO = new SimpleBooleanProperty(QueleaProperties.get().getUseOO());
+        StringProperty directoryChooserOO = new SimpleStringProperty(QueleaProperties.get().getOOPath());
+        StringField directoryFieldOO = Field.ofStringType(directoryChooserOO).render(
+                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+        bindings.put(directoryFieldOO, useOO.not());
+
+        if (!Utils.isLinux()) {
+            BooleanProperty usePP = new SimpleBooleanProperty(QueleaProperties.get().getUsePP());
+            StringProperty directoryChooserPP = new SimpleStringProperty(QueleaProperties.get().getPPPath());
+            StringField directoryFieldPP = Field.ofStringType(directoryChooserPP).render(
+                    new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+            bindings.put(directoryFieldPP, usePP.not());
+
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOO),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOO, directoryChooserOO),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("use.pp.label"), usePP),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("pp.path"), directoryFieldPP, directoryChooserPP)
+            );
+        } else
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOO),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOO, directoryChooserOO));
+    }
+
+    private Category getBiblesTab() {
+        ListProperty bibleItems = new SimpleListProperty<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
+        ArrayList<String> bibles = new ArrayList<>();
+        for (Bible b : BibleManager.get().getBibles()) {
+            bibles.add(b.getBibleName());
+        }
+        ObjectProperty bibleSelection = new SimpleObjectProperty<>(QueleaProperties.get().getDefaultBible());
+        Field bibleField = Field.ofSingleSelectionType(bibleItems).render(new DefaultBibleSelector());
+
+        BooleanProperty showVerseNum = new SimpleBooleanProperty(QueleaProperties.get().getShowVerseNumbers());
+        BooleanProperty splitBibleVerse = new SimpleBooleanProperty(QueleaProperties.get().getBibleSplitVerses());
+        BooleanProperty useMaxVerses = new SimpleBooleanProperty(QueleaProperties.get().getBibleUsingMaxChars());
+
+        IntegerProperty maxVerse = new SimpleIntegerProperty(QueleaProperties.get().getMaxBibleVerses());
+        Field maxVerseField = Field.ofIntegerType(QueleaProperties.get().getMaxBibleVerses()).render(new SimpleIntegerControl());
+        bindings.put(maxVerseField, useMaxVerses.not());
+
+        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("default.bible.label"), bibleField, bibleSelection),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"), showVerseNum),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("split.bible.verses"), splitBibleVerse),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("max.items.per.slide").replace("%", LabelGrabber.INSTANCE.getLabel("verses")), useMaxVerses),
+                Setting.of("", maxVerseField, maxVerse)
+        );
+    }
+
+    private Category getServerTab() {
+        BooleanProperty useMobileLyrics = new SimpleBooleanProperty(QueleaProperties.get().getUseMobLyrics());
+        StringProperty lyricsPortNumber = new SimpleStringProperty(String.valueOf(QueleaProperties.get().getMobLyricsPort()));
+        StringField mobileLyricsField = Field.ofStringType(lyricsPortNumber).render(new MobileServerPreference(true));
+        bindings.put(mobileLyricsField, useMobileLyrics.not());
+
+        BooleanProperty useMobileRemote = new SimpleBooleanProperty(QueleaProperties.get().getUseRemoteControl());
+        StringProperty remotePortNumber = new SimpleStringProperty(String.valueOf(QueleaProperties.get().getRemoteControlPort()));
+        StringField remoteField = Field.ofStringType(remotePortNumber).render(new MobileServerPreference(false));
+        bindings.put(remoteField, useMobileRemote.not());
+
+        StringProperty passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
+
+        return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"),
+                Group.of("Mobile Lyrics",
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyrics),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), mobileLyricsField, lyricsPortNumber)),
+                Group.of("Mobile Remote",
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.remote.control.label"), useMobileRemote),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), remoteField, remotePortNumber),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("remote.control.password"), passwordProperty))
+        );
+    }
+
+    private Category getRecordingsTab() {
+        StringProperty recordingsDirectoryChooser = new SimpleStringProperty(QueleaProperties.get().getRecordingsPath());
+        StringField recordingsDirectoryField = Field.ofStringType(recordingsDirectoryChooser).render(
+                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+
+        BooleanProperty useConvert = new SimpleBooleanProperty(QueleaProperties.get().getConvertRecordings());
+        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("recordings.path"), recordingsDirectoryField, recordingsDirectoryChooser),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("convert.mp3"), useConvert)
+        );
+    }
+
+    private HashMap<Field, ObservableValue> bindings = new HashMap<>();
+
+    private Group getDisplayGroup(String groupName, String image, boolean custom) {
+        BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
+        if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label")))
+            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
+        else if (groupName.equals(LabelGrabber.INSTANCE.getLabel("stage.screen.label")))
+            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
+
+        ObservableList<String> availableScreens = getAvailableScreens(custom);
+        ListProperty screenListProperty = new SimpleListProperty<>(availableScreens);
+        ObjectProperty<String> screenSelectProperty = new SimpleObjectProperty<>(availableScreens.get(0));
+        Field customControl = Field.ofSingleSelectionType(screenListProperty, screenSelectProperty).render(
+                new SimpleComboBoxControl<>());
+
+        Group group;
+        if (!custom) {
+            int screen = QueleaProperties.get().getControlScreen();
+            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
+            group = Group.of(groupName,
+                    Setting.of(groupName, customControl, screenSelectProperty)
+            );//.addGroupNode(new ImageView(new Image(image)));}
+        } else {
+            int screen;
+            Bounds bounds;
+            if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
+                screen = QueleaProperties.get().getProjectorScreen();
+                bounds = QueleaProperties.get().getProjectorCoords();
+            } else {
+                screen = QueleaProperties.get().getStageScreen();
+                bounds = QueleaProperties.get().getStageCoords();
+            }
+
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            int width = gd.getDisplayMode().getWidth();
+            int height = gd.getDisplayMode().getHeight();
+
+            IntegerProperty widthProperty = new SimpleIntegerProperty((int) bounds.getWidth());
+            IntegerProperty heightProperty = new SimpleIntegerProperty((int) bounds.getHeight());
+            IntegerProperty xProperty = new SimpleIntegerProperty((int) bounds.getMinX());
+            IntegerProperty yProperty = new SimpleIntegerProperty((int) bounds.getMinY());
+            IntegerField sizeWith = Field.ofIntegerType(widthProperty).render(
+                    new IntegerSliderControl(0, width));
+            IntegerField sizeHeight = Field.ofIntegerType(heightProperty).render(
+                    new IntegerSliderControl(0, height));
+            IntegerField posX = Field.ofIntegerType(xProperty).render(
+                    new IntegerSliderControl(0, width));
+            IntegerField posY = Field.ofIntegerType(yProperty).render(
+                    new IntegerSliderControl(0, height));
+
+            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
+
+            group = Group.of(groupName,
+                    Setting.of(groupName, customControl, screenSelectProperty),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition),
+                    Setting.of("W", sizeWith, widthProperty),
+                    Setting.of("H", sizeHeight, heightProperty),
+                    Setting.of("X", posX, xProperty),
+                    Setting.of("Y", posY, yProperty)
+            );//.addGroupNode(new ImageView(new Image(image)));
+
+            bindings.put(sizeWith, useCustomPosition.not());
+            bindings.put(sizeHeight, useCustomPosition.not());
+            bindings.put(posX, useCustomPosition.not());
+            bindings.put(posY, useCustomPosition.not());
+            bindings.put(customControl, useCustomPosition);
+        }
+        return group;
+    }
+
+    /**
+     * Get a list model describing the available graphical devices.
+     *
+     * @return a list model describing the available graphical devices.
+     */
+    private ObservableList<String> getAvailableScreens(boolean none) {
+        ObservableList<Screen> monitors = Screen.getScreens();
+
+        ObservableList<String> descriptions = FXCollections.<String>observableArrayList();
+        if (none) {
+            descriptions.add(LabelGrabber.INSTANCE.getLabel("none.text"));
+        }
+        for (int i = 0; i < monitors.size(); i++) {
+            descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
+        }
+        return descriptions;
+    }
+
+    private void bind(Field field, ObservableValue<? extends Boolean> booleanProperty) {
+        ((SimpleControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
+    }
+
+    private Setting getColorPicker(String label, Color color) {
+        StringProperty property = new SimpleStringProperty(QueleaProperties.get().getStr(color));
+        StringField field = Field.ofStringType(property).render(
+                new ColorPickerPreference(color));
+        return Setting.of(label, field, property);
+    }
+
+    private Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind) {
+        Setting setting;
+        if (horizontal)
+            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue)));
+        else
+            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue)));
+        if (booleanBind != null)
+            bindings.put(setting.getField(), booleanBind.not());
+        return setting;
     }
 
     public PreferencesFx getPreferenceDialog() {
