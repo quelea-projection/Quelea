@@ -1,13 +1,11 @@
 package org.quelea.windows.options;
 
+import com.dlsc.formsfx.model.structure.DoubleField;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.PreferencesFx;
-import com.dlsc.preferencesfx.formsfx.view.controls.IntegerSliderControl;
-import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
-import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
-import com.dlsc.preferencesfx.formsfx.view.controls.SimpleIntegerControl;
+import com.dlsc.preferencesfx.formsfx.view.controls.*;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -170,12 +168,15 @@ public class PreferencesDialog {
 
     private Category getNoticesTab() {
         DoubleProperty noticeSpeed = new SimpleDoubleProperty(QueleaProperties.get().getNoticeSpeed());
+        DoubleField noticeSpeedField = Field.ofDoubleType(noticeSpeed).render(new DoubleNoLabelPreference(2, 20, 10));
         DoubleProperty noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());
+        DoubleField noticeSizeField = Field.ofDoubleType(noticeSize).render(new DoubleNoLabelPreference(20, 100, 10));
+
         return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 10),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSize, 20, 100, 10)
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeedField, noticeSpeed),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.font.size"), noticeSizeField, noticeSize)
         );
     }
 
