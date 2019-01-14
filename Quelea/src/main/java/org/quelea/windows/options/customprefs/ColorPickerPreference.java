@@ -1,4 +1,4 @@
-package org.quelea.windows.options;
+package org.quelea.windows.options.customprefs;
 
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
@@ -15,7 +15,7 @@ public class ColorPickerPreference extends SimpleControl<StringField, StackPane>
     private ColorPicker colorPicker;
     private Color initialValue;
 
-    ColorPickerPreference(Color initialValue) {
+    public ColorPickerPreference(Color initialValue) {
         this.initialValue = initialValue;
     }
 

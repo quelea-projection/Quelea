@@ -1,4 +1,4 @@
-package org.quelea.windows.options;
+package org.quelea.windows.options.customprefs;
 
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
@@ -12,8 +12,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -1,4 +1,4 @@
-package org.quelea.windows.options;
+package org.quelea.windows.options.customprefs;
 
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;

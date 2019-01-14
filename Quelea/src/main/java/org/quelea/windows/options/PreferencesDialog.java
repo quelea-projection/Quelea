@@ -27,6 +27,7 @@ import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.options.customprefs.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -117,13 +118,13 @@ public class PreferencesDialog {
                         Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), embedMediaInSchedule),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), itemThemeOverride),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSong),
-                        getPositionSelector("Small song info position", false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSong),
-                        getPositionSelector("Small song info position", true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSong),
-                        Setting.of("Small song info size", smallSongSizeController, smallSongSizeSpinner),
+                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSong),
+                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSong),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.song.size.label"), smallSongSizeController, smallSongSizeSpinner),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"), showSmallBible),
-                        getPositionSelector("Small bible info position", false, QueleaProperties.get().getSmallBibleTextPositionV(), showSmallBible),
-                        getPositionSelector("Small bible info position", true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBible),
-                        Setting.of("Small bible info size", smallBibleSizeController, smallBibleSizeSpinner),
+                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), false, QueleaProperties.get().getSmallBibleTextPositionV(), showSmallBible),
+                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBible),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.bible.size.label"), smallBibleSizeController, smallBibleSizeSpinner),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSize, 100, 500),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), showExtraLivePanelToolbarOptions)
                 ),
