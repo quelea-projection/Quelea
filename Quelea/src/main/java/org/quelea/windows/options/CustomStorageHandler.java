@@ -161,6 +161,9 @@ public class CustomStorageHandler implements StorageHandler {
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
 //        QueleaProperties.get().setProperty(breadcrumb, object.toString());
+//        if (breadcrumb.equals("General#User Options#Warn if only one monitor is connected"))
+//            QueleaProperties.get().setProperty("single.monitor.warning", object.toString());
+        System.out.println(breadcrumb + object.toString());
     }
     // asciidoctor Documentation - end::storageHandlerSave[]
 

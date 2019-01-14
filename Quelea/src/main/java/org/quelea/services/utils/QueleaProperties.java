@@ -1425,7 +1425,7 @@ public final class QueleaProperties extends Properties {
      * @param color the color to get as a string.
      * @return the color as a string.
      */
-    private String getStr(Color color) {
+    public String getStr(Color color) {
         return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
     }
 

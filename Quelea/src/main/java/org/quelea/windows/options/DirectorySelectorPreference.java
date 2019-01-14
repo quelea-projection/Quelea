@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -25,10 +26,12 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
     private Stage stage;
     private HBox hBox = new HBox();
     private String buttonText;
+    private File initialDirectory;
 
-    public DirectorySelectorPreference(Stage stage, String buttonText) {
+    public DirectorySelectorPreference(Stage stage, String buttonText, File initialDirectory) {
         this.stage = stage;
         this.buttonText = buttonText;
+        this.initialDirectory = initialDirectory;
     }
 
     /**
@@ -45,6 +48,10 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
 
         DirectoryChooser directoryChooser = new DirectoryChooser();
 
+        if (initialDirectory != null) {
+            directoryChooser.setInitialDirectory(initialDirectory);
+        }
+
         directoryChooserButton.setOnAction(event -> {
             File dir = directoryChooser.showDialog(stage);
             if (dir != null) {
@@ -55,6 +62,7 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
         directoryChooserButton.setText(buttonText);
 
         editableField.setPromptText(field.placeholderProperty().getValue());
+
         hBox.getChildren().addAll(editableField, directoryChooserButton);
     }
 
@@ -63,9 +71,9 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
      */
     @Override
     public void layoutParts() {
-        node.getChildren().addAll(hBox);
-
+        HBox.setHgrow(editableField, Priority.ALWAYS);
         node.setAlignment(Pos.CENTER_LEFT);
+        node.getChildren().addAll(hBox);
     }
 
     /**

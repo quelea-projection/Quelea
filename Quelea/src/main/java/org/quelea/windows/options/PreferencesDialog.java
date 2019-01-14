@@ -20,7 +20,9 @@ import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -152,12 +154,11 @@ public class PreferencesDialog {
     }
 
     private Category getPresentationsTab() {
-        /*
-        StringProperty directoryChooser = new SimpleStringProperty("");
+        StringProperty directoryChooser = new SimpleStringProperty(QueleaProperties.get().getOOPath());
         StringField directoryField = Field.ofStringType(directoryChooser).render(
-                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), ""));
-         */
-        return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"));
+                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+        return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryField, directoryChooser));
     }
 
     private Category getNoticesTab() {
@@ -165,36 +166,34 @@ public class PreferencesDialog {
     }
 
     private Category getStageViewTab() {
-        BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(true);
-        StringProperty backgroundColorProperty = new SimpleStringProperty("");
-        StringField backgroundColorPicker = Field.ofStringType(backgroundColorProperty).render(
-                new ColorPickerPreference(Color.BLACK));
-        StringProperty chordColorProperty = new SimpleStringProperty("");
-        StringField chordColorPicker = Field.ofStringType(chordColorProperty).render(
-                new ColorPickerPreference(Color.BLACK));
-        StringProperty lyricsColorProperty = new SimpleStringProperty("");
-        StringField lyricsColorPicker = Field.ofStringType(lyricsColorProperty).render(
-                new ColorPickerPreference(Color.BLACK));
-        BooleanProperty clearWithMainBox = new SimpleBooleanProperty(true);
-        BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(true);
+        BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getShowChords());
+        BooleanProperty clearWithMainBox = new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain());
+        BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock());
         ArrayList<String> textAlignment = new ArrayList<>();
         for (TextAlignment alignment : TextAlignment.values()) {
             textAlignment.add(alignment.toFriendlyString());
         }
         ObservableList lineAlignment = FXCollections.observableArrayList(textAlignment);
         ObservableList fonts = FXCollections.observableArrayList(Utils.getAllFonts());
-        ObjectProperty alignmentSelection = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("left"));
-        ObjectProperty fontSelection = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("SansSerif"));
+        ObjectProperty alignmentSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
+        ObjectProperty fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
         return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), backgroundColorPicker, backgroundColorProperty),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), lyricsColorPicker, lyricsColorProperty),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), chordColorPicker, chordColorProperty),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), QueleaProperties.get().getStageBackgroundColor()),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), clearWithMainBox),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), use24HBooleanProperty)
         );
+    }
+
+    private Setting getColorPicker(String label, Color color) {
+        StringProperty property = new SimpleStringProperty(QueleaProperties.get().getStr(color));
+        StringField field = Field.ofStringType(property).render(
+                new ColorPickerPreference(color));
+        return Setting.of(label, field, property);
     }
 
     private Category getDisplaySetupTab() {
@@ -207,7 +206,7 @@ public class PreferencesDialog {
 
     private Category getGeneralTab() {
         BooleanProperty checkForUpdate = new SimpleBooleanProperty(true);
-        BooleanProperty singleMonitorWarning = new SimpleBooleanProperty(true);
+        BooleanProperty singleMonitorWarning = new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning());
         BooleanProperty oneLineMode = new SimpleBooleanProperty(false);
         BooleanProperty autoPlayVideo = new SimpleBooleanProperty(false);
         BooleanProperty advanceOnLive = new SimpleBooleanProperty(false);
