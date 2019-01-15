@@ -1,12 +1,10 @@
 package org.quelea.windows.options.customprefs;
 
-import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -31,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Field>, StackPane> {
+public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<String>, StackPane> {
 
     /**
      * - The fieldLabel is the container that displays the label property of
@@ -41,9 +39,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
      * - The readOnlyLabel is used to show the current selection in read only.
      * - The node is a StackPane to hold the field and read only label.
      */
-    private Label fieldLabel;
-    private ComboBox<Bible> comboBox;
-    private Label readOnlyLabel;
+    private ComboBox<String> comboBox;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -53,24 +49,14 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
     public void initializeParts() {
         super.initializeParts();
 
-        fieldLabel = new Label(field.labelProperty().getValue());
-        readOnlyLabel = new Label();
 
         node = new StackPane();
         node.setMaxWidth(Double.MAX_VALUE);
         node.getStyleClass().add("simple-select-control");
 
-        comboBox = new ComboBox<>(field.getItems());
+        comboBox = new ComboBox<String>(field.getItems());
 
-        QueleaProperties props = QueleaProperties.get();
-        String selectedBibleName = props.getDefaultBible();
-        for (int i = 0; i < comboBox.itemsProperty().get().size(); i++) {
-            Bible bible = comboBox.itemsProperty().get().get(i);
-            if (bible.getBibleName().equals(selectedBibleName)) {
-                comboBox.getSelectionModel().select(i);
-            }
-        }
-//        comboBox.getSelectionModel().select(field.getItems().indexOf(field.getSelection()));
+        comboBox.getSelectionModel().select(field.getItems().indexOf(field.getSelection()));
     }
 
     /**
@@ -78,7 +64,6 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
      */
     @Override
     public void layoutParts() {
-        readOnlyLabel.getStyleClass().add("read-only-label");
 
         comboBox.setVisibleRowCount(4);
         comboBox.setMaxWidth(Double.MAX_VALUE);
@@ -88,7 +73,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
         HBox hBox = new HBox();
         hBox.getChildren().addAll(comboBox, createAddBibleButton(), createDeleteBibleButton());
         HBox.setHgrow(comboBox, Priority.ALWAYS);
-        node.getChildren().addAll(hBox, readOnlyLabel);
+        node.getChildren().addAll(hBox);
     }
 
     /**
@@ -99,8 +84,6 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
         super.setupBindings();
 
         comboBox.visibleProperty().bind(field.editableProperty());
-        readOnlyLabel.visibleProperty().bind(field.editableProperty().not());
-        readOnlyLabel.textProperty().bind(comboBox.valueProperty().asString());
     }
 
     /**
@@ -175,13 +158,16 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Fie
                 new ImageView(new Image("file:icons/cross.png")));
         deleteBibleButton.setOnAction(t -> {
 
-            Bible bible = comboBox.getSelectionModel().getSelectedItem();
-            if (bible!=null && bible.getFilePath()!=null) {
+            Bible bible = BibleManager.get().getBibleFromName(comboBox.getSelectionModel().getSelectedItem());
+            if (bible != null && bible.getFilePath() != null) {
 
                 final AtomicBoolean yes = new AtomicBoolean();
                 Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
-                        LabelGrabber.INSTANCE.getLabel("delete.bible.confirmation").replace("$1",bible.getBibleName())).
-                        addYesButton(ae -> {yes.set(true);}).addNoButton(ae -> {}).build().showAndWait();
+                        LabelGrabber.INSTANCE.getLabel("delete.bible.confirmation").replace("$1", bible.getBibleName())).
+                        addYesButton(ae -> {
+                            yes.set(true);
+                        }).addNoButton(ae -> {
+                }).build().showAndWait();
 
                 if (yes.get()) {
                     try {

@@ -1,9 +1,6 @@
 package org.quelea.windows.options;
 
-import com.dlsc.formsfx.model.structure.DoubleField;
-import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.IntegerField;
-import com.dlsc.formsfx.model.structure.StringField;
+import com.dlsc.formsfx.model.structure.*;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.formsfx.view.controls.*;
 import com.dlsc.preferencesfx.model.Category;
@@ -148,11 +145,11 @@ public class PreferencesDialog {
         for (TextAlignment alignment : TextAlignment.values()) {
             textAlignment.add(alignment.toFriendlyString());
         }
-        ObservableList lineAlignment = FXCollections.observableArrayList(textAlignment);
-        ObjectProperty alignmentSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
+        ObservableList<String> lineAlignment = FXCollections.observableArrayList(textAlignment);
+        ObjectProperty<String> alignmentSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
 
-        ObservableList fonts = FXCollections.observableArrayList(Utils.getAllFonts());
-        ObjectProperty fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
+        ObservableList<String> fonts = FXCollections.observableArrayList(Utils.getAllFonts());
+        ObjectProperty<String> fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),//.setCustomKey(QueleaPropertyKeys.stageShowChordsKey),
@@ -207,13 +204,13 @@ public class PreferencesDialog {
     }
 
     private Category getBiblesTab() {
-        ListProperty bibleItems = new SimpleListProperty<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         ArrayList<String> bibles = new ArrayList<>();
         for (Bible b : BibleManager.get().getBibles()) {
-            bibles.add(b.getBibleName());
+            bibles.add(b.getName());
         }
-        ObjectProperty bibleSelection = new SimpleObjectProperty<>(QueleaProperties.get().getDefaultBible());
-        Field bibleField = Field.ofSingleSelectionType(bibleItems).render(new DefaultBibleSelector());
+        ObjectProperty<String> bibleSelection = new SimpleObjectProperty<>(QueleaProperties.get().getDefaultBible());
+        SingleSelectionField<String> bibleField = Field.ofSingleSelectionType(bibles).render(new DefaultBibleSelector());
+        bibleField.selectionProperty().bindBidirectional(bibleSelection);
 
         BooleanProperty showVerseNum = new SimpleBooleanProperty(QueleaProperties.get().getShowVerseNumbers());
         BooleanProperty splitBibleVerse = new SimpleBooleanProperty(QueleaProperties.get().getBibleSplitVerses());

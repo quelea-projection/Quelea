@@ -161,28 +161,17 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
-//        QueleaProperties.get().setProperty(breadcrumb, object.toString());
-//        QueleaApp.get().getMainWindow().getPreferencesDialog().discardChanges();
-        if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label")) && !object.toString().contains(new LanguageFile(QueleaProperties.get().getLanguageFile()).getLanguageName())) {
-            for (LanguageFile l : LanguageFileManager.INSTANCE.languageFiles()) {
-                if (l.getLanguageName().equals(object.toString())) {
-                    QueleaProperties.get().setProperty(QueleaPropertyKeys.languageFileKey, l.getFile().getName());
-                }
+        if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label"))) {
+            if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
+                QueleaProperties.get().setLanguageFile(((LanguageFile) object).getFile().getName());
+                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
             }
-            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        } else {
+//            QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
-        System.out.println(breadcrumb + " " + object);
+        System.out.println(breadcrumb + " " + object.toString() + " ");
     }
 
-    public String parse(String jsonLine) {
-        JsonElement jelement = new JsonParser().parse(jsonLine);
-        JsonObject jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("languageFile");
-//        JsonArray jarray = jobject.getAsJsonArray("path");
-//        jobject = jarray.get(0).getAsJsonObject();
-        String result = jobject.get("path").getAsString();
-        return result;
-    }
     // asciidoctor Documentation - end::storageHandlerSave[]
 
     /**
@@ -195,10 +184,16 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerLoad[]
     public Object loadObject(String breadcrumb, Object defaultObject) {
-        String serializedDefault = gson.toJson(defaultObject);
-        String json = preferences.get(hash(breadcrumb), serializedDefault);
-        return gson.fromJson(json, Object.class);
-//        return gson.fromJson(QueleaProperties.get().getProperty(breadcrumb, serializedDefault), Object.class);
+//        String serializedDefault = gson.toJson(defaultObject);
+//        String json = preferences.get(hash(breadcrumb), serializedDefault);
+//      return gson.fromJson(json, Object.class);
+//                    return gson.fromJson(json, Object.class);
+
+        if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label"))) {
+            return LanguageFileManager.INSTANCE.getCurrentFile();
+        }
+
+        return defaultObject;
     }
     // asciidoctor Documentation - end::storageHandlerLoad[]
 
@@ -217,9 +212,10 @@ public class CustomStorageHandler implements StorageHandler {
             String breadcrumb,
             ObservableList defaultObservableList
     ) {
-        String serializedDefault = gson.toJson(defaultObservableList);
-        String json = preferences.get(hash(breadcrumb), serializedDefault);
-        return FXCollections.observableArrayList(gson.fromJson(json, ArrayList.class));
+//        String serializedDefault = gson.toJson(defaultObservableList);
+//        String json = preferences.get(hash(breadcrumb), serializedDefault);
+//        return FXCollections.observableArrayList(gson.fromJson(json, ArrayList.class));
+        return defaultObservableList;
     }
 
     /**
