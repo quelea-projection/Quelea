@@ -55,31 +55,16 @@ public class PreferencesDialog {
     }
 
     private Category getGeneralTab() {
-        BooleanProperty checkForUpdate = new SimpleBooleanProperty(QueleaProperties.get().checkUpdate());
-        BooleanProperty singleMonitorWarning = new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning());
-        BooleanProperty oneLineMode = new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode());
-        BooleanProperty autoPlayVideo = new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo());
-        BooleanProperty advanceOnLive = new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive());
-        BooleanProperty autoTranslate = new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate());
-        BooleanProperty clearLiveOnRemove = new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove());
-        BooleanProperty embedMediaInSchedule = new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile());
-        BooleanProperty itemThemeOverride = new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride());
-        BooleanProperty previewOnImageChange = new SimpleBooleanProperty(QueleaProperties.get().getPreviewOnImageUpdate());
-        BooleanProperty uniformFontSize = new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize());
-        BooleanProperty defaultSongDBUpdate = new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate());
         BooleanProperty showSmallSong = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
         IntegerProperty smallSongSizeSpinner = new SimpleIntegerProperty((int) (QueleaProperties.get().getSmallSongTextSize() * 100));
         IntegerField smallSongSizeController = Field.ofIntegerType(smallSongSizeSpinner).render(
                 new PercentIntegerSliderControl(0.1, 0.5));
+
         BooleanProperty showSmallBible = new SimpleBooleanProperty(QueleaProperties.get().getSmallBibleTextShow());
         IntegerProperty smallBibleSizeSpinner = new SimpleIntegerProperty((int) (100 * QueleaProperties.get().getSmallBibleTextSize()));
         IntegerField smallBibleSizeController = Field.ofIntegerType(smallBibleSizeSpinner).render(
                 new PercentIntegerSliderControl(0.1, 0.5));
 
-        BooleanProperty overflowSong = new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow());
-        BooleanProperty showVideoPanel = new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab());
-        BooleanProperty showExtraLivePanelToolbarOptions = new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions());
-        BooleanProperty capitalFirst = new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst());
         IntegerProperty thumbnailSize = new SimpleIntegerProperty(QueleaProperties.get().getThumbnailSize());
         IntegerProperty maxFontSize = new SimpleIntegerProperty((int) QueleaProperties.get().getMaxFontSize());
         IntegerProperty additionalSpacing = new SimpleIntegerProperty((int) QueleaProperties.get().getAdditionalLineSpacing());
@@ -94,19 +79,19 @@ public class PreferencesDialog {
         return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"),
                 Group.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItems, languageSelection),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), checkForUpdate),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), singleMonitorWarning),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"), oneLineMode),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), autoPlayVideo),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), advanceOnLive),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), overflowSong),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"), previewOnImageChange),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), showVideoPanel),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), autoTranslate),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), defaultSongDBUpdate),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), clearLiveOnRemove),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), embedMediaInSchedule),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), itemThemeOverride),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"), new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"), new SimpleBooleanProperty(QueleaProperties.get().getPreviewOnImageUpdate())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride())),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSong),
                         getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSong),
                         getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSong),
@@ -116,11 +101,11 @@ public class PreferencesDialog {
                         getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBible),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("small.bible.size.label"), smallBibleSizeController, smallBibleSizeSpinner),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSize, 100, 500),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), showExtraLivePanelToolbarOptions)
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions()))
                 ),
                 Group.of(LabelGrabber.INSTANCE.getLabel(LabelGrabber.INSTANCE.getLabel("text.options.options")),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), capitalFirst),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), uniformFontSize),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst())),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize())),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.font.size.label"), maxFontSize, 12, 300),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"), additionalSpacing, 0, 50),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"), maxChars, 10, 160)
@@ -137,10 +122,6 @@ public class PreferencesDialog {
     }
 
     private Category getStageViewTab() {
-        BooleanProperty showChordsBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getShowChords());
-        BooleanProperty clearWithMainBox = new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain());
-        BooleanProperty use24HBooleanProperty = new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock());
-
         ArrayList<String> textAlignment = new ArrayList<>();
         for (TextAlignment alignment : TextAlignment.values()) {
             textAlignment.add(alignment.toFriendlyString());
@@ -152,14 +133,14 @@ public class PreferencesDialog {
         ObjectProperty<String> fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), showChordsBooleanProperty),//.setCustomKey(QueleaPropertyKeys.stageShowChordsKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), new SimpleBooleanProperty(QueleaProperties.get().getShowChords())),//.setCustomKey(QueleaPropertyKeys.stageShowChordsKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), QueleaProperties.get().getStageBackgroundColor()),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), clearWithMainBox),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), use24HBooleanProperty)
+                Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain())),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock()))
         );
     }
 
@@ -275,7 +256,7 @@ public class PreferencesDialog {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
 
         ObservableList<String> availableScreens = getAvailableScreens(custom);
-        ListProperty screenListProperty = new SimpleListProperty<>(availableScreens);
+        ListProperty<String> screenListProperty = new SimpleListProperty<>(availableScreens);
         ObjectProperty<String> screenSelectProperty = new SimpleObjectProperty<>(availableScreens.get(0));
         Field customControl = Field.ofSingleSelectionType(screenListProperty, screenSelectProperty).render(
                 new SimpleComboBoxControl<>());
