@@ -681,3 +681,7 @@ copy=Kopieer
 save.add.notice.button=Opslaan en tonen
 video.loop.tooltip=Herhaal video aan / uit
 elevanto.loginerror.warning=Inloggen in Elevanto is niet gelukt
+delete.bible.confirmation=Wil je deze bijbel verwijderen: $1?
+bible.delete.error.heading=Error
+bible.delete.error.text=Sorry, er was een probleem met het verwijderen van de bijbel van de bestandslocatie.
+delete.bible.label=Verwijder deze bijbel
