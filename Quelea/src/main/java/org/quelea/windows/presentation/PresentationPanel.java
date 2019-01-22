@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -106,7 +106,7 @@ public class PresentationPanel extends AbstractPanel {
                             pres.gotoSlide(presentationPreview.getSelectedIndex() - 1);
                         }
                     }
-                    if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
+                    if (QueleaProperties.get().getUsePP() && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
                         lp.setBlacked(false);
                     }
                 }
@@ -310,8 +310,8 @@ public class PresentationPanel extends AbstractPanel {
 
         /*
          * TODO
-         * For some reason the following scroll to line causes a bug whereby 
-         * the contents are only registered the second time of viewing? So 
+         * For some reason the following scroll to line causes a bug whereby
+         * the contents are only registered the second time of viewing? So
          * leave commented out until we can get to the bottom of it.
          */
 //        presentationList.scrollTo(getIndex());
