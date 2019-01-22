@@ -3,22 +3,20 @@ package org.quelea.windows.options.customprefs;
 import com.dlsc.preferencesfx.model.Setting;
 import com.dlsc.preferencesfx.util.StorageHandler;
 import com.dlsc.preferencesfx.util.StorageHandlerImpl;
-import com.google.gson.*;
-import javafx.collections.FXCollections;
+import com.google.gson.Gson;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.QueleaPropertyKeys;
 import org.quelea.windows.main.QueleaApp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.prefs.BackingStoreException;
@@ -188,12 +186,32 @@ public class CustomStorageHandler implements StorageHandler {
 //        String json = preferences.get(hash(breadcrumb), serializedDefault);
 //      return gson.fromJson(json, Object.class);
 //                    return gson.fromJson(json, Object.class);
+        if (breadcrumb.equals("Stage View#null#Text Alignment")) {
+            breadcrumb = "stage.text.alignment";
+        }
 
         if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label"))) {
             return LanguageFileManager.INSTANCE.getCurrentFile();
         }
-
-        return defaultObject;
+        String property = QueleaProperties.get().getProperty(breadcrumb);
+        if (property == null) {
+            System.out.println("Null");
+            return defaultObject;
+        } else {
+            try {
+                Object object = gson.fromJson(property, Object.class);
+                System.out.println("Gson " + object.getClass().getName());
+                if (object instanceof TextAlignment) {
+                    System.out.println("Text alignment");
+                    return ((TextAlignment) object).toFriendlyString();
+                } else {
+                    return object;
+                }
+            } catch (com.google.gson.JsonSyntaxException e) {
+                System.out.println("Plain");
+                return property;
+            }
+        }
     }
     // asciidoctor Documentation - end::storageHandlerLoad[]
 
