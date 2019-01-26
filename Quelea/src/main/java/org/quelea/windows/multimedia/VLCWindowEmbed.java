@@ -196,7 +196,7 @@ public class VLCWindowEmbed extends VLCWindow {
                         @Override
                         public void run() {
                             mediaPlayer.setAdjustVideo(true);
-                            mediaPlayer.setHue((int) (hue * 360));
+                            mediaPlayer.setHue((int) (hue * 360) - 180);
                         }
                     });
                 }
