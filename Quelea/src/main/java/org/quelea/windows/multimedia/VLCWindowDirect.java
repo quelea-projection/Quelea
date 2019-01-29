@@ -171,7 +171,10 @@ public class VLCWindowDirect extends VLCWindow {
                         @Override
                         public void run() {
                             mediaPlayer.getMediaPlayer().setAdjustVideo(true);
-                            mediaPlayer.getMediaPlayer().setHue((int) (hue * 360) - 180);
+                            int hueVal = (int) (hue * 360);
+                            if(hueVal>180) hueVal-=360;
+                            hueVal += 180;
+                            mediaPlayer.getMediaPlayer().setHue(hueVal);
                             Platform.runLater(new Runnable() {
 
                                 @Override
