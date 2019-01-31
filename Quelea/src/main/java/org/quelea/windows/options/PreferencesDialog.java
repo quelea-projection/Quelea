@@ -21,7 +21,6 @@ import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.options.customprefs.*;
 
 import java.awt.*;
@@ -162,14 +161,14 @@ public class PreferencesDialog {
         BooleanProperty useOO = new SimpleBooleanProperty(QueleaProperties.get().getUseOO());
         StringProperty directoryChooserOO = new SimpleStringProperty(QueleaProperties.get().getOOPath());
         StringField directoryFieldOO = Field.ofStringType(directoryChooserOO).render(
-                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+                new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
         bindings.put(directoryFieldOO, useOO.not());
 
         if (!Utils.isLinux()) {
             BooleanProperty usePP = new SimpleBooleanProperty(QueleaProperties.get().getUsePP());
             StringProperty directoryChooserPP = new SimpleStringProperty(QueleaProperties.get().getPPPath());
             StringField directoryFieldPP = Field.ofStringType(directoryChooserPP).render(
-                    new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+                    new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
             bindings.put(directoryFieldPP, usePP.not());
 
             return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
@@ -237,7 +236,7 @@ public class PreferencesDialog {
     private Category getRecordingsTab() {
         StringProperty recordingsDirectoryChooser = new SimpleStringProperty(QueleaProperties.get().getRecordingsPath());
         StringField recordingsDirectoryField = Field.ofStringType(recordingsDirectoryChooser).render(
-                new DirectorySelectorPreference(QueleaApp.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("browse"), null));
+                new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
 
         BooleanProperty useConvert = new SimpleBooleanProperty(QueleaProperties.get().getConvertRecordings());
         return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"),

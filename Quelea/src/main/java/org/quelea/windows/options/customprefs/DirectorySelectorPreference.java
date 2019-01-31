@@ -23,13 +23,11 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
      */
     private TextField editableField;
     private Button directoryChooserButton = new Button();
-    private Stage stage;
     private HBox hBox = new HBox();
     private String buttonText;
     private File initialDirectory;
 
-    public DirectorySelectorPreference(Stage stage, String buttonText, File initialDirectory) {
-        this.stage = stage;
+    public DirectorySelectorPreference(String buttonText, File initialDirectory) {
         this.buttonText = buttonText;
         this.initialDirectory = initialDirectory;
     }
@@ -53,7 +51,7 @@ public class DirectorySelectorPreference extends SimpleControl<StringField, Stac
         }
 
         directoryChooserButton.setOnAction(event -> {
-            File dir = directoryChooser.showDialog(stage);
+            File dir = directoryChooser.showDialog(getNode().getScene().getWindow());
             if (dir != null) {
                 editableField.setText(dir.getAbsolutePath());
             }
