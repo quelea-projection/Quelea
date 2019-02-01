@@ -144,7 +144,7 @@ public class LibrarySongList extends StackPane {
         songList.setOnMouseClicked((MouseEvent t) -> {
             if (t.getClickCount() == 2 && songList.getSelectionModel().getSelectedItem() != null) {
                 new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
-            } else if (t.getClickCount() == 1 && (t.isControlDown() || QueleaProperties.get().getImmediateSongDBPreview())) {
+            } else if (t.getClickCount() == 1 && (t.isControlDown())) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
@@ -156,6 +156,9 @@ public class LibrarySongList extends StackPane {
                 } else {
                     previewCanvas.hide();
                 }
+            }
+            if(QueleaProperties.get().getImmediateSongDBPreview()) {
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
         songList.setOnKeyPressed((KeyEvent t) -> {
