@@ -54,12 +54,7 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Image splashImage;
-        if (QueleaProperties.VERSION.getUnstableName().toLowerCase().startsWith("beta")) {
-            splashImage = new Image(new File("icons/splash-beta.png").getAbsoluteFile().toURI().toString());
-        } else {
-            splashImage = new Image(new File("icons/splash-bare.png").getAbsoluteFile().toURI().toString());
-        }
+        Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
