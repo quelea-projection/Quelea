@@ -171,7 +171,7 @@ task zipMacPackr(type: Zip) {
 runPackr.finalizedBy(zipMacPackr);
 
 task dist(type: GradleBuild) {
-    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup']
+    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
 build.finalizedBy(dist)
 
@@ -237,4 +237,9 @@ jar {
             "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
         )
     }
+}
+
+task releaseSummary(type:JavaExec) {
+   main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
+   classpath = sourceSets.main.runtimeClasspath
 }
