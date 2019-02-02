@@ -29,4 +29,5 @@ quelea (2019.0) stable
   * Fix line spacing bug with importing some XMM based bibles
   * Fix hue adjustment bug
   * Fix broken links in help menu
+  * Fix bug with XML bible verses containing new lines
   * Remove reference to manuals from help menu
