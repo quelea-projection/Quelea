@@ -46,7 +46,6 @@ import org.quelea.utils.ThreadedDesktop;
 public class HelpMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
     private final MenuItem queleaWiki;
@@ -65,11 +64,6 @@ public class HelpMenu extends Menu {
         });
 
         if (Desktop.isDesktopSupported()) {
-            queleaManual = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.manual"), new ImageView(new Image("file:icons/manual.png", 16, 16, false, true)));
-            queleaManual.setOnAction(t -> {
-                launchPage("http://quelea.org/manuals/get.php?lang=" + QueleaProperties.get().getLanguageFile().getName());
-            });
-            getItems().add(queleaManual);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getFacebookPageLocation());
@@ -89,7 +83,6 @@ public class HelpMenu extends Menu {
             queleaDiscuss = null;
             queleaFacebook = null;
             queleaWiki = null;
-            queleaManual = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
         updateCheck.setOnAction(t -> {
