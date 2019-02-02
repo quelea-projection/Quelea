@@ -685,3 +685,7 @@ delete.bible.confirmation=Wil je deze bijbel verwijderen: $1?
 bible.delete.error.heading=Error
 bible.delete.error.text=Sorry, er was een probleem met het verwijderen van de bijbel van de bestandslocatie.
 delete.bible.label=Verwijder deze bijbel
+db.song.preview.label.databasepreview=In database paneel
+db.song.preview.label=Database voorvertoning lied
+db.song.preview.label.control=Geen
+db.song.preview.label.previewpane=In voorvertoning paneel
