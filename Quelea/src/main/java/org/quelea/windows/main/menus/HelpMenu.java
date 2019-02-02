@@ -60,44 +60,29 @@ public class HelpMenu extends Menu {
     public HelpMenu() {
         super(LabelGrabber.INSTANCE.getLabel("help.menu"));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                aboutDialog = new AboutDialog();
-            }
+        Platform.runLater(() -> {
+            aboutDialog = new AboutDialog();
         });
 
         if (Desktop.isDesktopSupported()) {
             queleaManual = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.manual"), new ImageView(new Image("file:icons/manual.png", 16, 16, false, true)));
-            queleaManual.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage("http://quelea.org/manuals/get.php?lang=" + QueleaProperties.get().getLanguageFile().getName());
-                }
+            queleaManual.setOnAction(t -> {
+                launchPage("http://quelea.org/manuals/get.php?lang=" + QueleaProperties.get().getLanguageFile().getName());
             });
             getItems().add(queleaManual);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
-            queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getFacebookPageLocation());
-                }
+            queleaFacebook.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getFacebookPageLocation());
             });
             getItems().add(queleaFacebook);
             queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
-            queleaDiscuss.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getDiscussLocation());
-                }
+            queleaDiscuss.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getDiscussLocation());
             });
             getItems().add(queleaDiscuss);
             queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
-            queleaWiki.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getWikiPageLocation());
-                }
+            queleaWiki.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getWikiPageLocation());
             });
             getItems().add(queleaWiki);
         } else {
@@ -107,19 +92,13 @@ public class HelpMenu extends Menu {
             queleaManual = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
-        updateCheck.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                new UpdateChecker().checkUpdate(true, true, true);
-            }
+        updateCheck.setOnAction(t -> {
+            new UpdateChecker().checkUpdate(true, true, true);
         });
         getItems().add(updateCheck);
         about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
-        about.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                aboutDialog.show();
-            }
+        about.setOnAction(t -> {
+            aboutDialog.show();
         });
         getItems().add(about);
     }
