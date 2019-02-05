@@ -41,7 +41,7 @@ import org.quelea.services.notice.NoticeDrawer.NoticePosition;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2019.0", "");
+    public static final Version VERSION = new Version("2019.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
@@ -2063,7 +2063,19 @@ public final class QueleaProperties extends Properties {
     }
 
     public boolean getShowDBSongPreview() {
-        return Boolean.parseBoolean(getProperty("db.song.preview", "true"));
+        return Boolean.parseBoolean(getProperty("db.song.preview", "false"));
+    }
+
+    public void setShowDBSongPreview(boolean val) {
+        setProperty("db.song.preview", Boolean.toString(val));
+    }
+
+    public boolean getImmediateSongDBPreview() {
+        return Boolean.parseBoolean(getProperty("db.song.immediate.preview", "false"));
+    }
+
+    public void setImmediateSongDBPreview(boolean val) {
+        setProperty("db.song.immediate.preview", Boolean.toString(val));
     }
 
     public void setDefaultSongDBUpdate(boolean updateInDB) {

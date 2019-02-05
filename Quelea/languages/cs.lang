@@ -684,3 +684,7 @@ save.add.notice.button=Uložit a přidat
 video.loop.tooltip=Zapnout/Vypnout přehrávání ve smyčce
 elevanto.loginerror.warning=Chyba při přihlašování se do Elevanto
 delete.bible.label=Smazat nynější Bibli
+db.song.preview.label.databasepreview=V okně s databází
+db.song.preview.label=Náhled písně v databázi
+db.song.preview.label.control=Žádný
+db.song.preview.label.previewpane=V okně s náhledem

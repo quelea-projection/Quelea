@@ -107,7 +107,11 @@ public final class Utils {
     }
     
     public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
-        File file = new File(node.getTextContent());
+        return getChangedFile(node.getTextContent(), fileChanges);
+    }
+
+    public static File getChangedFile(String filePath, Map<String, String> fileChanges) {
+        File file = new File(filePath);
         String changedFile = fileChanges.get(file.getAbsolutePath());
         if (!file.exists() && changedFile != null) {
             LOGGER.log(Level.INFO, "Changing {0} to {1}", new Object[]{file.getAbsolutePath(), changedFile});

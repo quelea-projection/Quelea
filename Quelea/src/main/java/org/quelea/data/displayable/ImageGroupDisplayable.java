@@ -1,17 +1,17 @@
- /* 
+ /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -88,7 +89,7 @@ public class ImageGroupDisplayable implements Displayable {
         ret.append("</fileimagegroup>");
         return ret.toString();
     }
-    
+
     /**
      * Parse some XML representing this object and return the object it
      * represents.
@@ -96,11 +97,11 @@ public class ImageGroupDisplayable implements Displayable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static ImageGroupDisplayable parseXML(Node node) throws IOException {
+    public static ImageGroupDisplayable parseXML(Node node, Map<String, String> fileChanges) throws IOException {
         String[] files = node.getTextContent().split(";");
         ArrayList<File> tmp = new ArrayList<>();
         for (String f : files) {
-            tmp.add(new File(f));
+            tmp.add(Utils.getChangedFile(f, fileChanges));
         }
         return new ImageGroupDisplayable(tmp.toArray(new File[tmp.size()]));
     }
