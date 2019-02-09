@@ -56,17 +56,8 @@ public class SplashStage extends Stage {
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
         ImageView imageView = new ImageView(splashImage);
-        Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
-        FXFontMetrics loadingMetrics = new FXFontMetrics(loadingFont);
-        LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#ffffff")));
-        loadingText.setFill(loadingGrad);
-        loadingText.setFont(loadingFont);
-        loadingText.setLayoutX(splashImage.getWidth() / 2 - loadingMetrics.computeStringWidth(loadingText.getText()) / 2);
-        loadingText.setLayoutY(270);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
-        mainPane.getChildren().add(loadingText);
         setScene(new Scene(mainPane));
 
         ObservableList<Screen> monitors = Screen.getScreens();
