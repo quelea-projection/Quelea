@@ -24,12 +24,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -37,7 +31,6 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.utils.FXFontMetrics;
 
 /**
  * The splash screen to display when the program starts.
