@@ -685,3 +685,7 @@ save.add.notice.button=Spara och lägg till
 video.loop.tooltip=Starta/stanna loopning
 elevanto.loginerror.warning=Ett problem uppstod vid inloggning till Elevanto
 delete.bible.label=Ta bort vald bibel
+db.song.preview.label.databasepreview=Som ruta i databasen
+db.song.preview.label=Förhandsgranskning av sånger i databasen
+db.song.preview.label.control=Ingen
+db.song.preview.label.previewpane=I förhandsgranskningspanelen
