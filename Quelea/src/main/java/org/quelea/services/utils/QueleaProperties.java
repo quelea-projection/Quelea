@@ -2115,7 +2115,6 @@ public final class QueleaProperties extends Properties {
     public File getNoticeDir() {
         return new File(getQueleaUserHome(), "notices");
     }
-}
 
     /**
      * Set whether fade should be used.
@@ -2147,7 +2146,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the slide transition in duration.
      *
-     * @return* milliseconds for fade-in effect.
+     * @return milliseconds for fade-in effect.
      */
     public int getSlideTransitionInDuration() {
         return Integer.parseInt(getProperty("slide.transition.duration.in", "750"));
@@ -2156,7 +2155,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the slide transition out duration.
      *
-     * @return* milliseconds for fade-out effect.
+     * @return milliseconds for fade-out effect.
      */
     public int getSlideTransitionOutDuration() {
         return Integer.parseInt(getProperty("slide.transition.duration.out", "400"));
