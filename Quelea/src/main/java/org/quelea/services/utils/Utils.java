@@ -51,6 +51,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -104,13 +106,12 @@ public final class Utils {
         Toolkit.getDefaultToolkit().beep();
     }
     
-    @SuppressWarnings("unchecked")
-    public static List<File> getFilesFromMacOpenFilesEvent(com.apple.eawt.AppEvent.OpenFilesEvent ofe) {
-        return ofe.getFiles();
-    }
-    
     public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
-        File file = new File(node.getTextContent());
+        return getChangedFile(node.getTextContent(), fileChanges);
+    }
+
+    public static File getChangedFile(String filePath, Map<String, String> fileChanges) {
+        File file = new File(filePath);
         String changedFile = fileChanges.get(file.getAbsolutePath());
         if (!file.exists() && changedFile != null) {
             LOGGER.log(Level.INFO, "Changing {0} to {1}", new Object[]{file.getAbsolutePath(), changedFile});
@@ -126,7 +127,7 @@ public final class Utils {
      * @return the debug log file.
      */
     public static File getDebugLog() {
-        return new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+        return new File(QueleaProperties.get().getQueleaUserHome(), "quelea-debuglog.txt");
     }
 
     /**
@@ -205,6 +206,19 @@ public final class Utils {
             }
         }
         return true;
+    }
+    
+    public static String incrementExtension(String name, String ext) {
+        name = name.substring(0, name.length() - 4).trim();
+        Pattern p = Pattern.compile(".*\\(([0-9]+)\\)");
+        Matcher matcher = p.matcher(name);
+        if (matcher.matches()) {
+            int suffixLength = matcher.group(1).length() + 2;
+            int nextNum = Integer.parseInt(matcher.group(1)) + 1;
+            return name.substring(0, name.length() - suffixLength) + "(" + nextNum + ")." + ext;
+        } else {
+            return name + "(2)." + ext;
+        }
     }
 
     /**
@@ -394,7 +408,7 @@ public final class Utils {
      * the status panel.
      */
     public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
-        if (!song.checkDBUpdate()) {
+        if (!song.checkDBUpdate() || song.isQuickInsert()) {
             return;
         }
         final Runnable updateRunner = new Runnable() {

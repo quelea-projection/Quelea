@@ -19,7 +19,6 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -27,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.bible.BibleBrowseDialog;
 import org.quelea.data.bible.BibleSearchDialog;
 import org.quelea.services.notice.NoticeDialog;
@@ -58,6 +58,7 @@ public class MainWindow extends Stage {
     private final OptionsDialog optionsDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
+    private final GlobalThemeStore globalThemeStore;
 
     /**
      * Create a new main window.
@@ -71,6 +72,7 @@ public class MainWindow extends Stage {
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
         noticeDialog = new NoticeDialog();
+        globalThemeStore = new GlobalThemeStore();
         LOGGER.log(Level.INFO, "Creating main window");
         if (setApplicationWindow) {
             QueleaApp.get().setMainWindow(this);
@@ -112,19 +114,19 @@ public class MainWindow extends Stage {
         menuBox.getChildren().add(mainPane);
 
         mainPane.setCenter(mainpanel);
-        setScene(new Scene(menuBox));
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+            setScene(new Scene(menuBox, (double)sceneInfo.getWidth(), (double)sceneInfo.getHeight()));
             setWidth(sceneInfo.getWidth());
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
             setY(sceneInfo.getY());
-            if(Utils.isMac()){
+            if (Utils.isMac()) {
                 setMinWidth(400);
                 setMinHeight(300);
-                
-            }else{
+
+            } else {
                 setMaximized(sceneInfo.isMaximised());
             }
         }
@@ -214,6 +216,10 @@ public class MainWindow extends Stage {
      */
     public TranslationChoiceDialog getTranslationChoiceDialog() {
         return translationChoiceDialog;
+    }
+
+    public GlobalThemeStore getGlobalThemeStore() {
+        return globalThemeStore;
     }
 
 }

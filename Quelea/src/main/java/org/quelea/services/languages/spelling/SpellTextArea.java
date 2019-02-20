@@ -70,7 +70,7 @@ public class SpellTextArea extends StackPane {
             speller = new Speller(null);
         }
         area = new LyricsTextArea();
-        spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
+        spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getTextArea().getText(), true));
         getChildren().add(area);
         warning = new ImageView("file:icons/warning.png");
         Tooltip.install(warning, new Tooltip(LabelGrabber.INSTANCE.getLabel("spelling.errors.in.doc.label")));
@@ -84,13 +84,13 @@ public class SpellTextArea extends StackPane {
         undoItem.setOnAction(e -> {
             undo();
         });
-        area.getContextMenu().getItems().add(undoItem);
+        area.getTextArea().getContextMenu().getItems().add(undoItem);
         MenuItem redoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("redo.label"));
         redoItem.setOnAction(e -> {
             redo();
         });
-        area.getContextMenu().getItems().add(redoItem);
-        area.getContextMenu().setOnShown(e -> {
+        area.getTextArea().getContextMenu().getItems().add(redoItem);
+        area.getTextArea().getContextMenu().setOnShown(e -> {
             undoItem.setDisable(!undoHandler.canUndo());
             redoItem.setDisable(!undoHandler.canRedo());
         });
@@ -100,7 +100,7 @@ public class SpellTextArea extends StackPane {
                 runSpellCheck();
             }
             if (t.getCode() == KeyCode.ENTER && t.isShiftDown()) {
-                area.replaceText(area.getCaretPosition(), area.getCaretPosition(), "\n<>");
+                area.getTextArea().replaceText(area.getTextArea().getCaretPosition(), area.getTextArea().getCaretPosition(), "\n<>");
                 area.refreshStyle();
             }
             if (t.getCode() == KeyCode.Z && t.isShortcutDown()) {
@@ -110,7 +110,7 @@ public class SpellTextArea extends StackPane {
                 redo();
             }
         });
-        area.textProperty().addListener(new ChangeListener<String>() {
+        area.getTextArea().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, final String t1) {
                 updateSpelling(false);
@@ -199,7 +199,7 @@ public class SpellTextArea extends StackPane {
      * @return the text area's text, without chord lines.
      */
     public String getText() {
-        String[] lines = area.getText().split("\n");
+        String[] lines = area.getTextArea().getText().split("\n");
         StringBuilder ret = new StringBuilder();
         for (String line : lines) {
             if (new LineTypeChecker(line).getLineType() != Type.CHORDS) {
@@ -215,7 +215,7 @@ public class SpellTextArea extends StackPane {
      * @return the text area's text, with chord lines.
      */
     public String getTextAndChords() {
-        String[] lines = area.getText().split("\n");
+        String[] lines = area.getTextArea().getText().split("\n");
         StringBuilder ret = new StringBuilder();
         for (String line : lines) {
             ret.append(line).append("\n");
@@ -251,9 +251,9 @@ public class SpellTextArea extends StackPane {
         if (undoHandler.canUndo()) {
             String newText = undoHandler.undo();
             if (!newText.equals(getTextAndChords())) {
-                area.replaceText(0, area.getText().length(), newText);
+                area.getTextArea().replaceText(0, area.getTextArea().getText().length(), newText);
                 int pos = undoHandler.getCaretPos(true);
-                area.selectRange(pos, pos);
+                area.getTextArea().selectRange(pos, pos);
             }
         }
     }
@@ -262,9 +262,9 @@ public class SpellTextArea extends StackPane {
         if (undoHandler.canRedo()) {
             String newText = undoHandler.redo();
             if (!newText.equals(getTextAndChords())) {
-                area.replaceText(0, area.getText().length(), newText);
+                area.getTextArea().replaceText(0, area.getTextArea().getText().length(), newText);
                 int pos = undoHandler.getCaretPos(false);
-                area.selectRange(pos, pos);
+                area.getTextArea().selectRange(pos, pos);
             }
         }
     }

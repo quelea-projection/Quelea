@@ -17,8 +17,7 @@
  */
 package org.quelea.windows.lyrics;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,7 +58,8 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
+import org.quelea.utils.WrapTextResult;
 
 /**
  * Responsible for drawing lyrics and their background.
@@ -68,7 +68,6 @@ import org.quelea.utils.FontMetricsWrapper;
  */
 public class LyricDrawer extends WordDrawer {
 
-    
     private String[] text;
     private String[] translations;
     private Group textGroup;
@@ -135,23 +134,22 @@ public class LyricDrawer extends WordDrawer {
         }
 
         List<LyricLine> newText;
+        double fontSize = -1;
         if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
+            if (text.length == 0) {
+                fontSize = 1;
+                newText = new ArrayList<>();
+            } else {
+                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                newText = result.getNewText();
+                fontSize = result.getFontSize();
             }
-//            newText = dumbWrapText(text);
         } else {
             newText = sanctifyText(text, translations);
         }
-        double fontSize;
-//        if (QueleaProperties.get().getUseUniformFontSize()) {
-//            fontSize = defaultFontSize;
-//        } else {
-        fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-//        }
+        if (fontSize == -1) {
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+        }
         font = Font.font(font.getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -172,9 +170,9 @@ public class LyricDrawer extends WordDrawer {
         }
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
-        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
-        FontMetricsWrapper translateMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont));
-        FontMetricsWrapper smallTextMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont));
+        FXFontMetrics metrics = new FXFontMetrics(font);
+        FXFontMetrics translateMetrics = new FXFontMetrics(translateFont);
+        FXFontMetrics smallTextMetrics = new FXFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
         shadow.setOffsetX(metrics.getLineHeight() * shadow.getOffsetX() * 0.003);
         shadow.setOffsetY(metrics.getLineHeight() * shadow.getOffsetY() * 0.003);
@@ -239,7 +237,7 @@ public class LyricDrawer extends WordDrawer {
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
         for (LyricLine line : newText) {
-            FontMetricsWrapper loopMetrics;
+            FXFontMetrics loopMetrics;
             if (line.isTranslateLine()) {
                 loopMetrics = translateMetrics;
             } else {
@@ -356,7 +354,7 @@ public class LyricDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetricsWrapper metrics, String line, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FXFontMetrics metrics, String line, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -494,7 +492,7 @@ public class LyricDrawer extends WordDrawer {
         int translationOffset = 0;
         for (int i = 0; i < linesArr.length; i++) {
             finalLines.add(new LyricLine(linesArr[i]));
-            if(new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
+            if (new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
                 continue;
             }
             if (translationArr != null && i < translationArr.length) {
@@ -568,6 +566,21 @@ public class LyricDrawer extends WordDrawer {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
+        
+        int width = (int)(getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+        int height = (int)(getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+        
+        if (displayable instanceof BiblePassage) {
+            height *= 1-QueleaProperties.get().getSmallBibleTextSize();
+        }
+        else {
+            height *= 1-QueleaProperties.get().getSmallSongTextSize();
+        }
+        
+        Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
+        if(cachedSize!=null) {
+            return cachedSize;
+        }
         Font font = theme.getFont();
         font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -581,31 +594,27 @@ public class LyricDrawer extends WordDrawer {
             List<LyricLine> processedText;
             double newSize;
             if (displayable instanceof BiblePassage) {
-                processedText = new ArrayList<>();
-                for (String str : displayable.getSections()[i].getText(false, false)) {
-                    for (String line : str.split("\n")) {
-                        processedText.add(new LyricLine(line));
-                    }
+                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
+                if (result.getFontSize() < fontSize) {
+                    fontSize = result.getFontSize();
                 }
-//                processedText = dumbWrapText(textArr);
             } else {
                 String[] translationArr = null;
-                if (displayable instanceof SongDisplayable) {
-                    String translationLyrics = ((SongDisplayable) displayable).getCurrentTranslationSection(i);
-                    if (translationLyrics != null) {
-                        translationArr = translationLyrics.split("\n");
-                    }
+                String translationLyrics = ((SongDisplayable) displayable).getCurrentTranslationSection(i);
+                if (translationLyrics != null) {
+                    translationArr = translationLyrics.split("\n");
                 }
                 processedText = sanctifyText(textArr, translationArr);
-            }
-            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-            if (newSize < fontSize) {
-                fontSize = newSize;
+                newSize = pickFontSize(font, processedText, width, height);
+                if (newSize < fontSize) {
+                    fontSize = newSize;
+                }
             }
         }
         if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
+        displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
         return fontSize;
     }
 
