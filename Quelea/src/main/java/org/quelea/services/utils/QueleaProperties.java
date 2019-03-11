@@ -41,7 +41,7 @@ import org.quelea.services.notice.NoticeDrawer.NoticePosition;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2019.0", VersionType.CI);
+    public static final Version VERSION = new Version("2019.0", VersionType.RELEASE);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
