@@ -14,7 +14,7 @@
 ![screenshot](screenshot.png)
 
 ## CI releases
-You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows installers are provided (both 32 and 64 bit) in addition to a cross platform installer that requires Java to already be installed on your system.
+You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows, Mac and Crossplatform installers are provided.
 
 If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
 
