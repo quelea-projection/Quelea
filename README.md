@@ -1,6 +1,6 @@
 ![Github All Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/total.svg)
  [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
+ 
 # Quelea
 
 **Are you here to download the latest version? Great! You want one of these:**
@@ -10,6 +10,9 @@
 [**2019.0 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2019.0/quelea-2019.0-crossplatform-install.jar)
 
 [**2019.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2019.0/quelea-2019.0-mac.zip)
+
+**Linux:**<br>
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
 ![screenshot](screenshot.png)
 
