@@ -11,7 +11,7 @@
 
 [**2019.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2019.0/quelea-2019.0-mac.zip)
 
-**Linux:**<br>
+[**2019.0 - Linux**](https://snapcraft.io/quelea)<br>
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
 ![screenshot](screenshot.png)
