@@ -1,6 +1,6 @@
 ![Github All Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/total.svg)
  [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) [![Snap Status](https://build.snapcraft.io/badge/quelea-projection/Quelea.svg)](https://build.snapcraft.io/user/quelea-projection/Quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
+ 
 # Quelea
 
 **Are you here to download the latest version? Great! You want one of these:**
@@ -11,10 +11,13 @@
 
 [**2019.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2019.0/quelea-2019.0-mac.zip)
 
+[**2019.0 - Linux**](https://snapcraft.io/quelea)<br>
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
+
 ![screenshot](screenshot.png)
 
 ## CI releases
-You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows installers are provided (both 32 and 64 bit) in addition to a cross platform installer that requires Java to already be installed on your system.
+You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows, Mac and Crossplatform installers are provided.
 
 If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
 
@@ -22,7 +25,7 @@ CI releases are automatically built from the latest code in this repository, and
 
 ## Documentation
 
-If you're interested in learning more about how to use Quelea, the manual can be found [here](https://quelea.org/wiki/index.php/Main_Page).
+If you're interested in learning more about how to use Quelea, the documentation can be found [here](https://quelea-projection.github.io/docs/).
 
 ## I've found a bug!
 Please report it so we can fix it! Feel free to [create an issue](https://github.com/quelea-projection/Quelea/issues), and provide as much information as you can on how to reproduce the problem (step by step instructions for recreating the issue after starting Quelea are very useful.) After recreating the problem, you should also attach your [debug log](https://quelea.org/wiki/index.php/Debug_log) - this may give us a few technical clues as to what's going on.
