@@ -159,7 +159,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
             IndexSearcher searcher = new IndexSearcher(dr);
             BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             Query q = new ComplexPhraseQueryParser("text", analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(10000);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(10000,10000);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();

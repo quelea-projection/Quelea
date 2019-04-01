@@ -71,7 +71,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.awt.AWTFrameGrab;
 import org.quelea.data.ThemeDTO;
@@ -684,7 +684,7 @@ public final class Utils {
      * @return the escaped string.
      */
     public static String escapeXML(String s) {
-        return StringEscapeUtils.escapeXml(s);
+        return StringEscapeUtils.escapeXml11(s);
     }
 
     public static synchronized String getTextFromFile(String fileName, String errorText) {
