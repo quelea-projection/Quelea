@@ -159,15 +159,17 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
+
+        // TODO: Change to QueleaPropertyKeys.languageFileKey after PR merge
         if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label"))) {
             if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
                 QueleaProperties.get().setLanguageFile(((LanguageFile) object).getFile().getName());
                 Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
             }
         } else {
+            // TODO: Fix storing preferences after PR merge
 //            QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
-        System.out.println(breadcrumb + " " + object.toString() + " ");
     }
 
     // asciidoctor Documentation - end::storageHandlerSave[]
@@ -182,33 +184,23 @@ public class CustomStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerLoad[]
     public Object loadObject(String breadcrumb, Object defaultObject) {
-//        String serializedDefault = gson.toJson(defaultObject);
-//        String json = preferences.get(hash(breadcrumb), serializedDefault);
-//      return gson.fromJson(json, Object.class);
-//                    return gson.fromJson(json, Object.class);
-        if (breadcrumb.equals("Stage View#null#Text Alignment")) {
-            breadcrumb = "stage.text.alignment";
-        }
 
+        // TODO: Change to QueleaPropertyKeys.languageFileKey after PR merge
         if (breadcrumb.equals(LabelGrabber.INSTANCE.getLabel("general.options.heading") + "#" + LabelGrabber.INSTANCE.getLabel("user.options.options") + "#" + LabelGrabber.INSTANCE.getLabel("interface.language.label"))) {
             return LanguageFileManager.INSTANCE.getCurrentFile();
         }
         String property = QueleaProperties.get().getProperty(breadcrumb);
         if (property == null) {
-            System.out.println("Null");
             return defaultObject;
         } else {
             try {
                 Object object = gson.fromJson(property, Object.class);
-                System.out.println("Gson " + object.getClass().getName());
                 if (object instanceof TextAlignment) {
-                    System.out.println("Text alignment");
                     return ((TextAlignment) object).toFriendlyString();
                 } else {
                     return object;
                 }
             } catch (com.google.gson.JsonSyntaxException e) {
-                System.out.println("Plain");
                 return property;
             }
         }
