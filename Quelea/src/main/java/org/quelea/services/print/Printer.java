@@ -17,7 +17,6 @@
  */
 package org.quelea.services.print;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -25,7 +24,6 @@ import java.util.logging.Logger;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThreadedDesktop;
 
 /**
