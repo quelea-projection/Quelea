@@ -30,8 +30,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -68,8 +70,12 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     public SongSearchIndex() {
         songs = new HashMap<>();
-        analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
         try {
+            analyzer = CustomAnalyzer.builder()
+                    .withTokenizer(StandardTokenizerFactory.class)
+                    .addTokenFilter(LowerCaseFilterFactory.class)
+                    .addTokenFilter(ASCIIFoldingFilterFactory.class)
+                    .build();
             index = new MMapDirectory(Files.createTempDirectory("quelea-mmap-song").toAbsolutePath());
         }
         catch(IOException ex) {

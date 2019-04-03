@@ -200,6 +200,7 @@ dependencies {
     compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '3.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.0.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.0.0'
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.14'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.8'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.8'
