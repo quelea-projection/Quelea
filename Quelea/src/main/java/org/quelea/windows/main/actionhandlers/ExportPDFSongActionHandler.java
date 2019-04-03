@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -33,10 +32,10 @@ import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * An event handler that exports the currently selected song to a PDF file.
@@ -44,9 +43,9 @@ import org.quelea.utils.ThreadedDesktop;
  * @author Michael
  */
 public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    
+
     private boolean exportTranslations;
 
     @Override
@@ -101,12 +100,8 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
                 SongPDFPrinter.INSTANCE.print(song, file, exportTranslations);
-                if (Desktop.isDesktopSupported()) {
-                    String path = file.getAbsolutePath();
-                    ThreadedDesktop.open(file, (ex) -> {
-                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", path);
-                    });
-                }
+                String path = file.getAbsolutePath();
+                DesktopApi.open(file);
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't export song as PDF", ex);

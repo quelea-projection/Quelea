@@ -46,9 +46,9 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
-import org.quelea.utils.ThreadedDesktop;
 import org.quelea.utils.VLCDiscovery;
 
 /**
@@ -330,14 +330,10 @@ public final class Main extends Application {
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), (t) -> {
                                         vlcWarningDialog.hide();
                                     });
-                            if (java.awt.Desktop.isDesktopSupported()) {
-                                vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
-                                    ThreadedDesktop.browse("http://www.videolan.org/vlc/index.html", (ex) -> {
-                                        LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                    });
-                                    vlcWarningDialog.hide();
-                                });
-                            }
+                            vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
+                                DesktopApi.browse("http://www.videolan.org/vlc/index.html");
+                                vlcWarningDialog.hide();
+                            });
                             vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                             vlcWarningDialog.showAndWait();
                         }

@@ -2,3 +2,4 @@ quelea (2019.1) stable
  
   * Fix icon for Mac releases
   * Fix fop cache permissions on some systems
+  * Fix help links on Linux

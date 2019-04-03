@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.utils.ThreadedDesktop;
+import org.quelea.utils.DesktopApi;
 
 /**
  * Used for printing.
@@ -62,9 +62,7 @@ public class Printer {
             File temp = File.createTempFile(song.getTitle(), ".pdf");
             temp.deleteOnExit();
             SongPDFPrinter.INSTANCE.print(song, temp, false);
-            ThreadedDesktop.print(temp, (ex) -> {
-                LOGGER.log(Level.WARNING, "Couldn't print file: {0}", temp.getAbsolutePath());
-            });
+            DesktopApi.print(temp);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't print song", ex);
         }
@@ -75,9 +73,7 @@ public class Printer {
             File temp = File.createTempFile("schedule", ".pdf");
             temp.deleteOnExit();
             new SchedulePDFPrinter().print(schedule, temp);
-            ThreadedDesktop.print(temp, (ex) -> {
-                LOGGER.log(Level.WARNING, "Couldn't print file: {0}", temp.getAbsolutePath());
-            });
+            DesktopApi.print(temp);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't print song", ex);
         }

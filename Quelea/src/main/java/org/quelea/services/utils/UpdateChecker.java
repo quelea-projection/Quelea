@@ -25,7 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.utils.ThreadedDesktop;
+import org.quelea.utils.DesktopApi;
 
 /**
  * Checks for any updates to Quelea.
@@ -60,12 +60,7 @@ public class UpdateChecker {
 
                         @Override
                         public void handle(ActionEvent t) {
-                            ThreadedDesktop.browse(QueleaProperties.get().getDownloadLocation(), (ex) -> {
-                                LOGGER.log(Level.WARNING, "Couldn't open file: {0}", LoggerUtils.getHandlerFileLocation());
-                                if (showIfError) {
-                                    showUpdateError();
-                                }
-                            });
+                            DesktopApi.browse(QueleaProperties.get().getDownloadLocation());
                         }
                     }).addNoButton(new EventHandler<ActionEvent>() {
 

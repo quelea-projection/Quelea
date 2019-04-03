@@ -19,7 +19,6 @@
 package org.quelea.windows.main.menus;
 
 import java.awt.Desktop;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.Menu;
@@ -31,8 +30,8 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.UpdateChecker;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.help.AboutDialog;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * Quelea's help menu.
@@ -93,10 +92,7 @@ public class HelpMenu extends Menu {
     }
 
     private void launchPage(String page) {
-        ThreadedDesktop.browse(page, (ex) -> {
-            LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
-            showError(page);
-        });
+        DesktopApi.browse(page);
     }
 
     /**
