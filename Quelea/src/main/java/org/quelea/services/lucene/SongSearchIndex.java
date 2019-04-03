@@ -19,6 +19,7 @@
 package org.quelea.services.lucene;
 
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.util.ThreadInterruptedException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 
@@ -206,7 +208,12 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
                 }
             }
             return ret.toArray(new SongDisplayable[ret.size()]);
-        } catch (ParseException | IOException ex) {
+        }
+        catch(ClosedByInterruptException|ThreadInterruptedException ex) {
+            //Ignore, thread is being shut down by other character being typed
+            return new SongDisplayable[0];
+        }
+        catch (ParseException | IOException ex) {
             LOGGER.log(Level.WARNING, "Invalid query string: " + sanctifyQueryString, ex);
             return new SongDisplayable[0];
         }
