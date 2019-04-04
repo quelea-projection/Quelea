@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -31,8 +30,8 @@ import org.quelea.services.print.SchedulePDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * An event handler that exports the current schedule to a PDF file.
@@ -60,11 +59,7 @@ public class ExportPDFScheduleActionHandler implements EventHandler<ActionEvent>
                 }
                 new SchedulePDFPrinter().print(schedule, file);
                 String path = file.getAbsolutePath();
-                if (Desktop.isDesktopSupported()) {
-                    ThreadedDesktop.open(file, (ex) -> {
-                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", path);
-                    });
-                }
+                DesktopApi.open(file);
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't export schedule as pdf", ex);
