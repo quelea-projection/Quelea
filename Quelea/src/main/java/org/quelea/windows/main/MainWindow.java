@@ -120,7 +120,6 @@ public class MainWindow extends Stage {
 
         mainPane.setCenter(mainpanel);
         
-        setScene(getScene(menuBox));
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
@@ -136,6 +135,9 @@ public class MainWindow extends Stage {
             } else {
                 setMaximized(sceneInfo.isMaximised());
             }
+        }
+        else {
+            setScene(getScene(menuBox));
         }
         LOGGER.log(Level.INFO, "Created main window.");
     }
