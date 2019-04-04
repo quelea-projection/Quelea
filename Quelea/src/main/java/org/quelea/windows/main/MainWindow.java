@@ -42,7 +42,7 @@ import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
 
-import static javafx.application.Application.STYLESHEET_MODENA;
+import javafx.scene.Parent;
 
 /**
  * The main window used to control the projection.
@@ -119,14 +119,12 @@ public class MainWindow extends Stage {
         menuBox.getChildren().add(mainPane);
 
         mainPane.setCenter(mainpanel);
-        Scene scene = new Scene(menuBox);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
-        setScene(scene);
+        
+        setScene(getScene(menuBox));
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+            setScene(getScene(menuBox, (double)sceneInfo.getWidth(), (double)sceneInfo.getHeight()));
             setWidth(sceneInfo.getWidth());
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
@@ -140,6 +138,22 @@ public class MainWindow extends Stage {
             }
         }
         LOGGER.log(Level.INFO, "Created main window.");
+    }
+
+    private Scene getScene(Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        return scene;
+    }
+
+    private Scene getScene(Parent root) {
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        return scene;
     }
 
     /**

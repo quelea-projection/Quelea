@@ -71,7 +71,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.awt.AWTFrameGrab;
 import org.quelea.data.ThemeDTO;
@@ -107,7 +107,11 @@ public final class Utils {
     }
     
     public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
-        File file = new File(node.getTextContent());
+        return getChangedFile(node.getTextContent(), fileChanges);
+    }
+
+    public static File getChangedFile(String filePath, Map<String, String> fileChanges) {
+        File file = new File(filePath);
         String changedFile = fileChanges.get(file.getAbsolutePath());
         if (!file.exists() && changedFile != null) {
             LOGGER.log(Level.INFO, "Changing {0} to {1}", new Object[]{file.getAbsolutePath(), changedFile});
@@ -680,7 +684,7 @@ public final class Utils {
      * @return the escaped string.
      */
     public static String escapeXML(String s) {
-        return StringEscapeUtils.escapeXml(s);
+        return StringEscapeUtils.escapeXml11(s);
     }
 
     public static synchronized String getTextFromFile(String fileName, String errorText) {

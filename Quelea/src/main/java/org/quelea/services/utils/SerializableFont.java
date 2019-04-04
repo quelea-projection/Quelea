@@ -75,8 +75,7 @@ public class SerializableFont implements Serializable {
         return hash;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj, boolean ignoreSize) {
         if(obj == null) {
             return false;
         }
@@ -87,10 +86,15 @@ public class SerializableFont implements Serializable {
         if(!Objects.equals(this.family, other.family)) {
             return false;
         }
-        if(Double.doubleToLongBits(this.size) != Double.doubleToLongBits(other.size)) {
+        if(!ignoreSize && Double.doubleToLongBits(this.size) != Double.doubleToLongBits(other.size)) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return equals(obj, false);
     }
 
 }

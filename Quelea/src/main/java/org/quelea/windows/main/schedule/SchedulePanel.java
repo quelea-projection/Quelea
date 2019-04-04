@@ -148,6 +148,11 @@ public class SchedulePanel extends BorderPane {
         });
 //        themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
 
+        //Needed to initialise theme preview. Without this calls to the theme thumbnail return a blank image
+        //before hte theme popup is opened for the first time. TODO: Find a better way of doing this.
+        themePopup.show();
+        Platform.runLater(() -> themePopup.hide());
+
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
         ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png"));

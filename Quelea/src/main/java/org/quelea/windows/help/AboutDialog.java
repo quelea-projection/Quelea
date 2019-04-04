@@ -20,7 +20,6 @@ package org.quelea.windows.help;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -46,7 +45,7 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.utils.ThreadedDesktop;
+import org.quelea.utils.DesktopApi;
 
 /**
  * Quelea's about Dialog, displaying general features about the program and the
@@ -98,9 +97,7 @@ public class AboutDialog extends Stage {
 
                 @Override
                 public void handle(MouseEvent t) {
-                    ThreadedDesktop.open(new File(LoggerUtils.getHandlerFileLocation()), (ex) -> {
-                        LOGGER.log(Level.WARNING, "Couldn't open file: {0}", LoggerUtils.getHandlerFileLocation());
-                    });
+                    DesktopApi.open(new File(LoggerUtils.getHandlerFileLocation()));
                 }
             });
         }

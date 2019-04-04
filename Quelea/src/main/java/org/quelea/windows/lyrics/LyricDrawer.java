@@ -536,6 +536,13 @@ public class LyricDrawer extends WordDrawer {
         int width = (int)(getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
         int height = (int)(getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
         
+        if (displayable instanceof BiblePassage) {
+            height *= 1-QueleaProperties.get().getSmallBibleTextSize();
+        }
+        else {
+            height *= 1-QueleaProperties.get().getSmallSongTextSize();
+        }
+        
         Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
         if(cachedSize!=null) {
             return cachedSize;

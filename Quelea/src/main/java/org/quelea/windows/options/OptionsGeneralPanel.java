@@ -76,6 +76,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private String currentTHeme;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
+    private final ComboBox<String> databasePreviewCombo;
     private final ComboBox<String> smallBibleTextVPositionCombo;
     private final ComboBox<String> smallBibleTextHPositionCombo;
     private final ComboBox<String> smallSongTextVPositionCombo;
@@ -152,6 +153,18 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         oneLineModeLabel.setLabelFor(oneLineModeCheckBox);
         GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
         getChildren().add(oneLineModeCheckBox);
+        rows++;
+
+        Label dbSongPreviewLabel = new Label(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"));
+        GridPane.setConstraints(dbSongPreviewLabel, 1, rows);
+        getChildren().add(dbSongPreviewLabel);
+        databasePreviewCombo = new ComboBox<>();
+        databasePreviewCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"),
+                LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"),
+                LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"));
+        dbSongPreviewLabel.setLabelFor(databasePreviewCombo);
+        GridPane.setConstraints(databasePreviewCombo, 2, rows);
+        getChildren().add(databasePreviewCombo);
         rows++;
 
         Label autoPlayVidLabel = new Label(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"));
@@ -331,7 +344,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         rows++;
 
-
         Label showExtraLivePanelToolbarOptionsLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"));
         GridPane.setConstraints(showExtraLivePanelToolbarOptionsLabel, 1, rows);
         getChildren().add(showExtraLivePanelToolbarOptionsLabel);
@@ -508,6 +520,13 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         thumbnailSizeSlider.setValue(props.getThumbnailSize());
         showExtraLivePanelToolbarOptionsCheckBox.setSelected(props.getShowExtraLivePanelToolbarOptions());
+        if (props.getShowDBSongPreview()) {
+            databasePreviewCombo.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"));
+        } else if (props.getImmediateSongDBPreview()) {
+            databasePreviewCombo.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"));
+        } else {
+            databasePreviewCombo.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
+        }
         checkOverflowEnable();
     }
 
@@ -576,6 +595,17 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         props.setThumbnailSize((int) thumbnailSizeSlider.getValue());
         props.setShowExtraLivePanelToolbarOptions(showExtraLivePanelToolbarOptionsCheckBox.isSelected());
+        
+        if (databasePreviewCombo.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"))) {
+            props.setShowDBSongPreview(true);
+            props.setImmediateSongDBPreview(false);
+        } else if (databasePreviewCombo.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"))) {
+            props.setShowDBSongPreview(false);
+            props.setImmediateSongDBPreview(true);
+        } else {
+            props.setShowDBSongPreview(false);
+            props.setImmediateSongDBPreview(false);
+        }
 
         // apply some properties so we don't need to restart 
         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();

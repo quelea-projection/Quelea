@@ -59,7 +59,7 @@ public class LyricsTextArea extends StackPane {
             Platform.runLater(this::refreshStyle);
         });
 
-        textArea.setStyle("-fx-font: 10pt Consolas, 10pt Courier;");
+        textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 10pt;");
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
         textArea.getStyleClass().add("text-area");
