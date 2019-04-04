@@ -121,10 +121,10 @@ public class MainWindow extends Stage {
         menuBox.getChildren().add(mainPane);
 
         mainPane.setCenter(mainpanel);
-        setScene(new Scene(menuBox));
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+            setScene(new Scene(menuBox, (double)sceneInfo.getWidth(), (double)sceneInfo.getHeight()));
             setWidth(sceneInfo.getWidth());
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
