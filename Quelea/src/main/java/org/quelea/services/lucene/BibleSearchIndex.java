@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -65,8 +67,12 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
      */
     public BibleSearchIndex() {
         chapters = new HashMap<>();
-        analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
         try {
+            analyzer = CustomAnalyzer.builder()
+                    .withTokenizer(StandardTokenizerFactory.class)
+                    .addTokenFilter(LowerCaseFilterFactory.class)
+                    .addTokenFilter(ASCIIFoldingFilterFactory.class)
+                    .build();
             index = new MMapDirectory(Files.createTempDirectory("quelea-mmap-bible").toAbsolutePath());
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't create song search index");
@@ -159,7 +165,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
             IndexSearcher searcher = new IndexSearcher(dr);
             BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             Query q = new ComplexPhraseQueryParser("text", analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(10000);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(10000,10000);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();

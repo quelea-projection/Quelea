@@ -678,3 +678,7 @@ video.loop.tooltip=Превключване на повторения вкл. / 
 allow.item.theme.override.global=Позволяване на персонализирани елементи на темите да презаписват тези в основната тема
 song.default.theme.label=Песен по подразбиране
 bible.default.theme.label=Библия по подразбиране
+db.song.preview.label=Преглед на песни в базата
+db.song.preview.label.control=Няма
+db.song.preview.label.databasepreview=В панела на базата
+db.song.preview.label.previewpane=В панела за преглед

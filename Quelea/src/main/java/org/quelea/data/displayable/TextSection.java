@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -76,7 +76,6 @@ public class TextSection implements Serializable {
      * @param capitaliseFirst true if the first character of each line should be
      * a capital, false otherwise.
      * @param theme the theme of this song section.
-     * @param tempTheme the tempTheme of this song section.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
         this.capitaliseFirst = capitaliseFirst;
@@ -96,7 +95,7 @@ public class TextSection implements Serializable {
      */
     public String getXML() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
+        xml.append("<section ").append("title=\"").append(Utils.escapeXML(getTitle())).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
         if (theme != null) {
             xml.append("<theme>");
             xml.append(Utils.escapeXML(theme.asString()));
