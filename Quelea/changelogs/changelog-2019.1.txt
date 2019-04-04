@@ -5,3 +5,4 @@ quelea (2019.1) stable
   * Fix help links on Linux
   * Search bibles & songs in diacritic-insensitive manner
   * Change aspect ratio on global themes panel to 4:3
+  * Fix PDF chord alignment for songs
