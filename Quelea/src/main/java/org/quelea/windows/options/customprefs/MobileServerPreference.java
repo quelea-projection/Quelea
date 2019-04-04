@@ -25,7 +25,6 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.utils.ThreadedDesktop;
 import org.quelea.windows.main.QueleaApp;
 
 import javax.imageio.ImageIO;
@@ -37,6 +36,7 @@ import java.net.*;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.utils.DesktopApi;
 
 public class MobileServerPreference extends SimpleControl<StringField, StackPane> {
 
@@ -120,9 +120,7 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
             mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                ThreadedDesktop.browse(url, (ex) -> {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", url);
-                });
+                DesktopApi.browse(url);
             });
         }
 
