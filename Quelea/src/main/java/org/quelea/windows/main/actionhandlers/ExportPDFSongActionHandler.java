@@ -100,7 +100,6 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
                 SongPDFPrinter.INSTANCE.print(song, file, exportTranslations);
-                String path = file.getAbsolutePath();
                 DesktopApi.open(file);
             }
         } catch (IOException ex) {
