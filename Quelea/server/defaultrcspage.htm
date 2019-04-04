@@ -181,6 +181,9 @@
                 height: 200px;
                 overflow: auto;
             }
+            .title {
+				color: #ff4141;
+			}
 
         </style>
         <script>
@@ -206,6 +209,7 @@
                         if (lyriccache !== xmlhttp.responseText) {
                             document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
                             lyriccache = xmlhttp.responseText;
+                            getSectionTitles();
                         }
 
                     }
@@ -344,6 +348,18 @@
                 request.send();
                 request = null;
             }
+            
+            function getSectionTitles() {
+				var sections = document.getElementsByTagName("p");
+				var title;
+				var i;
+				for (i = 0; i < sections.length; i++) {
+					title = sections[i].getAttribute("data-type"); 
+					if (title != null) {
+						sections[i].innerHTML = "<div class='title'>" + title + "</div>" + sections[i].innerHTML;
+					}
+				} 
+			}
 
             /*
              ------------------------------------------------------------

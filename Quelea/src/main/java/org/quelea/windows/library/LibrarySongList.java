@@ -89,19 +89,17 @@ public class LibrarySongList extends StackPane {
             }
         });
         getChildren().add(loadingOverlay);
-        if (QueleaProperties.get().getShowDBSongPreview()) {
             previewCanvas = new LibrarySongPreviewCanvas();
             StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
             StackPane.setMargin(previewCanvas, new Insets(10));
             getChildren().add(previewCanvas);
             songList.focusedProperty().addListener((observable, oldFocused, focused) -> {
-                if (focused && songList.getSelectionModel().getSelectedItem() != null) {
+                if (QueleaProperties.get().getShowDBSongPreview() && focused && songList.getSelectionModel().getSelectedItem() != null) {
                     previewCanvas.show();
                 } else {
                     previewCanvas.hide();
                 }
             });
-        }
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = (lv) -> {
             final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
                 @Override
@@ -146,18 +144,21 @@ public class LibrarySongList extends StackPane {
         songList.setOnMouseClicked((MouseEvent t) -> {
             if (t.getClickCount() == 2 && songList.getSelectionModel().getSelectedItem() != null) {
                 new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
-            } else if (t.getClickCount() == 1 && t.isControlDown()) {
+            } else if (t.getClickCount() == 1 && (t.isControlDown())) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
         songList.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldSong, song) -> {
             if (previewCanvas != null) {
                 previewCanvas.setSong(song);
-                if (song == null) {
-                    previewCanvas.hide();
-                } else {
+                if (song != null && QueleaProperties.get().getShowDBSongPreview()) {
                     previewCanvas.show();
+                } else {
+                    previewCanvas.hide();
                 }
+            }
+            if(QueleaProperties.get().getImmediateSongDBPreview()) {
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
         songList.setOnKeyPressed((KeyEvent t) -> {

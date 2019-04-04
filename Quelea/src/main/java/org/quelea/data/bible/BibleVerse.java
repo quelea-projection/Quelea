@@ -103,7 +103,7 @@ public class BibleVerse implements BibleInterface, Serializable {
             } else {
                 ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
             }
-            ret.verse = node.getTextContent();
+            ret.verse = node.getTextContent().replace("\n", " ").trim();
             return ret;
         } catch (NumberFormatException nfe) {
             return null;

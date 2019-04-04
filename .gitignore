@@ -16,6 +16,7 @@
 hs_err_pid*
 
 Quelea/build/*
+Quelea/out-mac/*
 Quelea/dist/*
 Quelea/nbproject/*
 Quelea/.idea/*

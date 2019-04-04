@@ -344,7 +344,7 @@ public class Schedule implements Iterable<Displayable> {
                 } else if (name.equalsIgnoreCase("filepdf")) {
                     skipped = skipped | !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileimagegroup")) {
-                    skipped = skipped | !newSchedule.add(ImageGroupDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(ImageGroupDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("url")) {
                     skipped = skipped | !newSchedule.add(WebDisplayable.parseXML(node));
                 }

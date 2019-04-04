@@ -73,7 +73,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private final CheckBox alwaysUseMultiPassage;
     private String multiBibleVersions;
     private final Button multiBibleButton;
-//    private final Slider maxCharsSlider;
     private boolean changed;
 
     /**
@@ -168,27 +167,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         multiPassageHBox.getChildren().add(multiBibleButton);
         GridPane.setConstraints(multiPassageHBox, 2, 5);
         getChildren().add(multiPassageHBox);
-//        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
-//
-//        GridPane.setConstraints(maxCharsLabel, 1, 5);
-//        getChildren().add(maxCharsLabel);
-//        maxCharsSlider = new Slider(10, 160, 0);
-//
-//        GridPane.setConstraints(maxCharsSlider, 2, 5);
-////        getChildren().add(maxCharsSlider);
-//        maxCharsLabel.setLabelFor(maxCharsSlider);
-//        final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
-//
-//        GridPane.setConstraints(maxCharsValue, 3, 5);
-//        getChildren().add(maxCharsValue);
-//        maxCharsValue.setLabelFor(maxCharsSlider);
-//
-//        maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-//                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
-//            }
-//        });
         readProperties();
 
     }
@@ -287,7 +265,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         alwaysUseMultiPassage.setSelected(props.getAlwaysUseMultiPassage());
         multiBibleVersions = props.getMultiPassageVersions();
         multiBibleButton.setDisable(!alwaysUseMultiPassage.isSelected());
-//        maxCharsSlider.setValue(props.getMaxBibleChars());
 
     }
 
@@ -307,8 +284,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setBibleUsingMaxChars(!maxVersesEnable.isSelected());
         props.setAlwaysUseMultiPassage(alwaysUseMultiPassage.isSelected());
         props.setMultiPassageVersions(multiBibleVersions);
-//        int maxCharsPerLine = (int) maxCharsSlider.getValue();
-//        props.setMaxBibleChars(maxCharsPerLine);
         if (changed) {
             if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                 ScheduleList list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
@@ -316,11 +291,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                     if (d != null) {
                         if (d instanceof BiblePassage) {
                             ((BiblePassage) d).updateBibleLines();
-                            int index = list.getListView().itemsProperty().get().indexOf(d);
-                            if (index != -1) {
-                                list.getListView().itemsProperty().get().set(index, d);
-                                list.getListView().selectionModelProperty().get().select(index); //Needed for single item lists
-                            }
                         }
                     }
                 }

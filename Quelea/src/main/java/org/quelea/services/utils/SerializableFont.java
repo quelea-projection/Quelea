@@ -86,7 +86,7 @@ public class SerializableFont implements Serializable {
         if(!Objects.equals(this.family, other.family)) {
             return false;
         }
-        if(Double.doubleToLongBits(this.size) != Double.doubleToLongBits(other.size)) {
+        if(!ignoreSize && Double.doubleToLongBits(this.size) != Double.doubleToLongBits(other.size)) {
             return false;
         }
         return true;

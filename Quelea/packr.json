@@ -7,26 +7,26 @@
     ],
     "mainclass": "org.quelea.windows.main.Main",
     "vmargs": [
-    	"Xmx1G"
+        "Xmx1G"
     ],
     "resources": [
         "dist/bibles",
-		"dist/dictionaries",
-		"dist/icons",
-		"dist/img",
-		"dist/languages",
-		"dist/lib",
-		"dist/licenses",
-		"dist/server",
-		"dist/src",
-		"dist/themes",
-		"dist/vid",
-		"dist/fopcfg.xml",
-		"dist/quelea.properties",
-		"dist/scheduleformat.xsl",
-		"dist/songformat.xsl"
+        "dist/dictionaries",
+        "dist/icons",
+        "dist/img",
+        "dist/languages",
+        "dist/lib",
+        "dist/licenses",
+        "dist/server",
+        "dist/src",
+        "dist/themes",
+        "dist/vid",
+        "dist/fopcfg.xml",
+        "dist/quelea.properties",
+        "dist/scheduleformat.xsl",
+        "dist/songformat.xsl"
     ],
     "minimizejre": "soft",
-	"icon": "dist/icon/mac-logo.icns",
+    "icon": "dist/icons/mac-logo.icns",
     "output": "out-mac/Quelea.app"
 }
