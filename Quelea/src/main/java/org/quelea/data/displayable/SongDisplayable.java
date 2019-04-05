@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -277,6 +278,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private boolean printChords;
     private String lastSearch = "";
     private String sequence = "";
+    private Map<Dimension,Double> fontSizeCache;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -285,6 +287,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param song the song to copy to create the new song.
      */
     public SongDisplayable(SongDisplayable song) {
+        this.fontSizeCache = new HashMap<>();
         this.title = song.title;
         this.author = song.author;
         this.sectionsInSequence = new ArrayList<>();
@@ -329,6 +332,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param theme  the theme of the song.
      */
     public SongDisplayable(String title, String author, ThemeDTO theme) {
+        this.fontSizeCache = new HashMap<>();
         id = -1;
         this.title = title;
         this.author = author;
@@ -336,6 +340,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         sectionsInSequence = new ArrayList<>();
         sectionsWithoutSequence = new ArrayList<>();
         sequence = "";
+    }
+    
+    @Override
+    public Double getCachedUniformFontSize(Dimension dimension) {
+        return fontSizeCache.get(dimension);
+    }
+
+    @Override
+    public void setCachedUniformFontSize(Dimension dimension, double size) {
+        fontSizeCache.put(dimension, size);
     }
 
     /**
@@ -369,7 +383,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      *
      * @return true if this is a "quick insert" song, false otherwise.
      */
-    public boolean isQuickInSert() {
+    public boolean isQuickInsert() {
         return quickInsert;
     }
 
@@ -508,6 +522,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     public void setTranslations(HashMap<String, String> translations) {
+        fontSizeCache.clear();
         this.translations = translations;
     }
 
@@ -726,6 +741,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     private void refreshLyrics() {
+        fontSizeCache.clear();
         ThemeDTO theme = ThemeDTO.DEFAULT_THEME;
         for (TextSection section : sectionsInSequence) {
             theme = section.getTheme();
@@ -757,10 +773,11 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             ret.append("\n");
         }
-        return ret.toString().trim().replace(" ", "<>");
+        return ret.toString().replaceAll("\\s+$", "").replace(" ", "<>");
     }
 
     public void addTranslation(String translationName, String translationText) {
+        fontSizeCache.clear();
         translations.put(translationName, translationText.trim());
     }
 
@@ -779,6 +796,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public void setLyrics(String lyrics) {
         sectionsWithoutSequence.clear();
         sectionsInSequence.clear();
+        fontSizeCache.clear();
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
         lyrics = lyrics.replace("<>", " ");
@@ -863,6 +881,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
+        fontSizeCache.clear();
         if (section.getTheme() == null) {
             section.setTheme(theme);
         }
@@ -877,6 +896,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(int index, TextSection section) {
+        fontSizeCache.clear();
         if (section.getTheme() == null) {
             section.setTheme(theme);
         }
@@ -890,6 +910,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
+        fontSizeCache.clear();
         for (TextSection section : sections) {
             addSection(section);
         }
@@ -904,6 +925,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void replaceSection(TextSection newSection, int index) {
         sectionsWithoutSequence.set(index, newSection);
+        fontSizeCache.clear();
     }
 
     /**
@@ -914,6 +936,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void removeSection(int index) {
         sectionsWithoutSequence.remove(index);
+        fontSizeCache.clear();
     }
 
     /**
@@ -960,22 +983,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public String getListHTML() {//@todo wrong method name
         return getTitle();
-//        if(lastSearch == null) {
-//            return getTitle();
-//        }
-//        int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
-//        if(startIndex == -1) {
-//            return getTitle();
-//        }
-//        StringBuilder ret = new StringBuilder();
-//        ret.append("<html>");
-//        ret.append(getTitle().substring(0, startIndex));
-//        ret.append("<b>");
-//        ret.append(getTitle().substring(startIndex, startIndex + lastSearch.length()));
-//        ret.append("</b>");
-//        ret.append(getTitle().substring(startIndex + lastSearch.length()));
-//        ret.append("</html>");
-//        return ret.toString();
+    }
+    
+    public String getLastSearch() {
+        return lastSearch;
     }
 
     /**
@@ -1389,6 +1400,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void removeDuplicateSections() {
         Utils.removeDuplicateWithOrder(sectionsWithoutSequence);
+        fontSizeCache.clear();
     }
 
     /**
@@ -1411,6 +1423,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     public void setTheme(ThemeDTO theme) {
+        fontSizeCache.clear();
         this.theme = theme;
     }
 

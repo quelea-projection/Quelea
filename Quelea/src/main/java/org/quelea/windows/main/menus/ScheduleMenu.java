@@ -19,10 +19,6 @@
 package org.quelea.windows.main.menus;
 
 import java.util.logging.Logger;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -32,12 +28,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
-import org.quelea.data.Schedule;
-import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -69,7 +61,6 @@ public class ScheduleMenu extends Menu {
     private final MenuItem addImageItem;
     private final StackPane dvdImageStack;
     private final MenuItem manageNoticesItem;
-    private final MenuItem shareScheduleItem;
     private final MenuItem exportScheduleItem;
 
     /**
@@ -125,27 +116,6 @@ public class ScheduleMenu extends Menu {
         manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
         manageNoticesItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
         getItems().add(manageNoticesItem);
-
-        shareScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), new ImageView(new Image("file:icons/email.png", 16, 16, false, true)));
-        shareScheduleItem.setDisable(true);
-        scheduleList.getItems().addListener(new ListChangeListener<Displayable>() {
-            @Override
-            public void onChanged(Change<? extends Displayable> change) {
-                Schedule schedule = scheduleList.getSchedule();
-                if (schedule == null || !schedule.iterator().hasNext()) {
-                    shareScheduleItem.setDisable(true);
-                } else {
-                    shareScheduleItem.setDisable(false);
-                }
-            }
-        });
-        shareScheduleItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), LabelGrabber.INSTANCE.getLabel("email.text"));
-            }
-        });
-        getItems().add(shareScheduleItem);
 
         exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
         exportScheduleItem.setOnAction(new ExportPDFScheduleSongsActionHandler());

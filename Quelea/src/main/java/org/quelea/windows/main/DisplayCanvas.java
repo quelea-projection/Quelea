@@ -125,6 +125,7 @@ public class DisplayCanvas extends StackPane {
         black.widthProperty().bind(this.widthProperty());
         black.heightProperty().bind(this.heightProperty());
         black.setOpacity(0);
+        black.setCache(true);
         getChildren().add(black);
 
         logoImage = new LogoImage(stageView);
@@ -134,6 +135,7 @@ public class DisplayCanvas extends StackPane {
         logoImage.minHeightProperty().bind(heightProperty());
         logoImage.maxHeightProperty().bind(heightProperty());
         logoImage.setOpacity(0);
+        logoImage.setCache(true);
         getChildren().add(logoImage);
 
         if (stageView) {
@@ -179,6 +181,7 @@ public class DisplayCanvas extends StackPane {
                 getChildren().addListener(listener);
             }
         };
+        noticeOverlay.setCache(true);
         getChildren().add(noticeOverlay);
     }
 

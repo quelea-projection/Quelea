@@ -23,19 +23,25 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
+import javafx.scene.layout.StackPane;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.undo.UndoManagerFactory;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
+import org.quelea.services.utils.Utils;
 
 /**
  *
  * @author Michael
  */
-public class LyricsTextArea extends InlineCssTextArea {
+public class LyricsTextArea extends StackPane {
+    
+    private InlineCssTextArea textArea;
 
     public LyricsTextArea() {
+        textArea = new InlineCssTextArea();
         ContextMenu contextMenu = new ContextMenu();
         Clipboard systemClipboard = Clipboard.getSystemClipboard();
         MenuItem paste = new MenuItem(LabelGrabber.INSTANCE.getLabel("paste.label"));
@@ -45,20 +51,27 @@ public class LyricsTextArea extends InlineCssTextArea {
 
         paste.setOnAction(e -> {
             String clipboardText = systemClipboard.getString();
-            this.insertText(this.getCaretPosition(), clipboardText);
+            textArea.insertText(textArea.getCaretPosition(), clipboardText);
         });
 
         contextMenu.getItems().add(paste);
-        this.setContextMenu(contextMenu);
-        textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+        textArea.setContextMenu(contextMenu);
+        textArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             Platform.runLater(this::refreshStyle);
         });
+
+        textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 10pt;");
         
-        setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(richChanges()));
+        textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
+        getChildren().add(new VirtualizedScrollPane<>(textArea));
     }
 
+    public InlineCssTextArea getTextArea() {
+        return textArea;
+    }
+    
     public void refreshStyle() {
-        setStyles(getText());
+        setStyles(textArea.getText());
     }
     
     private String[] oldLines;
@@ -73,17 +86,17 @@ public class LyricsTextArea extends InlineCssTextArea {
                 oldLine = oldLines[i];
             }
             if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
-                clearStyle(charPos, charPos + line.length());
-                setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
+                textArea.clearStyle(charPos, charPos + line.length());
+                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
             } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
-                clearStyle(charPos, charPos + line.length());
-                setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
+                textArea.clearStyle(charPos, charPos + line.length());
+                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
             } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
-                clearStyle(charPos, charPos + line.length());
-                setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
+                textArea.clearStyle(charPos, charPos + line.length());
+                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
             } else if(new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
-                clearStyle(charPos, charPos + line.length());
-                setStyle(charPos, charPos + line.length(), "");
+                textArea.clearStyle(charPos, charPos + line.length());
+                textArea.setStyle(charPos, charPos + line.length(), "");
             }
             charPos += line.length() + 1;
         }

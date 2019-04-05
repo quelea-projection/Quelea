@@ -39,12 +39,15 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
@@ -100,7 +103,7 @@ public class SchedulePanel extends BorderPane {
                                 themePopup.hide();
                             }
                         });
-                        
+
                     } else {
                         themePopup.hide();
                     }
@@ -108,24 +111,7 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
-            @Override
-            public void updateTheme(ThemeDTO theme) {
-                if (scheduleList == null) {
-                    LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
-                    return;
-                }
-                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
-                    Displayable displayable = scheduleList.itemsProperty().get().get(i);
-                    if (displayable instanceof TextDisplayable) {
-                        TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                        for (TextSection section : textDisplayable.getSections()) {
-                            section.setTempTheme(theme);
-                        }
-                    }
-                }
-            }
-        }, themePopup, themeButton);
+        scheduleThemeNode = new ScheduleThemeNode(this::updateSongTheme, this::updateBibleTheme, themePopup, themeButton);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
         themePopup.setScene(new Scene(scheduleThemeNode));
 
@@ -154,6 +140,11 @@ public class SchedulePanel extends BorderPane {
             }
         });
 //        themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
+
+        //Needed to initialise theme preview. Without this calls to the theme thumbnail return a blank image
+        //before hte theme popup is opened for the first time. TODO: Find a better way of doing this.
+        themePopup.show();
+        Platform.runLater(() -> themePopup.hide());
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
@@ -219,6 +210,14 @@ public class SchedulePanel extends BorderPane {
         setCenter(scheduleList);
     }
 
+    private void updateSongTheme(ThemeDTO theme) {
+        QueleaApp.get().getMainWindow().getGlobalThemeStore().setSongThemeOverride(theme);
+    }
+
+    private void updateBibleTheme(ThemeDTO theme) {
+        QueleaApp.get().getMainWindow().getGlobalThemeStore().setBibleThemeOverride(theme);
+    }
+
     public void updateScheduleDisplay() {
         if (scheduleList.getItems().isEmpty()) {
             removeButton.setDisable(true);
@@ -244,7 +243,7 @@ public class SchedulePanel extends BorderPane {
     public Button getThemeButton() {
         return themeButton;
     }
-    
+
     public ScheduleThemeNode getThemeNode() {
         return scheduleThemeNode;
     }

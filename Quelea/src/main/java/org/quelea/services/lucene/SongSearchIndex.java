@@ -19,6 +19,8 @@
 package org.quelea.services.lucene;
 
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,12 +30,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -44,7 +48,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.util.ThreadInterruptedException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 
@@ -65,8 +70,18 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     public SongSearchIndex() {
         songs = new HashMap<>();
-        analyzer = new StandardAnalyzer();
-        index = new RAMDirectory();
+        try {
+            analyzer = CustomAnalyzer.builder()
+                    .withTokenizer(StandardTokenizerFactory.class)
+                    .addTokenFilter(LowerCaseFilterFactory.class)
+                    .addTokenFilter(ASCIIFoldingFilterFactory.class)
+                    .build();
+            index = new MMapDirectory(Files.createTempDirectory("quelea-mmap-song").toAbsolutePath());
+        }
+        catch(IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't create song search index");
+            throw new RuntimeException("Couldn't create song search index", ex);
+        }
     }
 
     @Override
@@ -182,7 +197,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         try (DirectoryReader dr = DirectoryReader.open(index)) {
             IndexSearcher searcher = new IndexSearcher(dr);
             Query q = new ComplexPhraseQueryParser(typeStr, analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(10000);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(1000,10000);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();
@@ -199,7 +214,12 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
                 }
             }
             return ret.toArray(new SongDisplayable[ret.size()]);
-        } catch (ParseException | IOException ex) {
+        }
+        catch(ClosedByInterruptException|ThreadInterruptedException ex) {
+            //Ignore, thread is being shut down by other character being typed
+            return new SongDisplayable[0];
+        }
+        catch (ParseException | IOException ex) {
             LOGGER.log(Level.WARNING, "Invalid query string: " + sanctifyQueryString, ex);
             return new SongDisplayable[0];
         }
