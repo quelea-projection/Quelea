@@ -17,12 +17,14 @@
  */
 package org.quelea.windows.options;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
@@ -53,7 +55,6 @@ public class OptionsDialog extends Stage {
     private final OptionsStageViewPanel stageViewPanel;
     private final ServerSettingsPanel serverSettingsPanel;
     private final OptionsRecordingPanel recordingPanel;
-    private final OptionsImportExportPanel importExportPanel;
 
     /**
      * Create a new options dialog.
@@ -62,21 +63,26 @@ public class OptionsDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
         initOwner(QueleaApp.get().getMainWindow());
-        setResizable(false);
         
         getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
         mainPane = new BorderPane();
         tabbedPane = new TabPane();
         
+        List<PropertyPanel> propertyPanels = new ArrayList<>();
+        
         generalPanel = new OptionsGeneralPanel();
+        propertyPanels.add(generalPanel);
+        ScrollPane generalScrollPane = new ScrollPane();
+        generalScrollPane.setContent(generalPanel);
         Tab generalTab = new Tab();
         generalTab.setClosable(false);
         generalTab.setText(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
         generalTab.setGraphic(new ImageView(new Image("file:icons/generalsettingsicon.png")));
-        generalTab.setContent(generalPanel);
+        generalTab.setContent(generalScrollPane);
         tabbedPane.getTabs().add(generalTab);
         
         displayPanel = new OptionsDisplaySetupPanel();
+        propertyPanels.add(displayPanel);
         Tab displayTab = new Tab();
         displayTab.setClosable(false);
         displayTab.setText(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
@@ -85,6 +91,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(displayTab);
         
         stageViewPanel = new OptionsStageViewPanel();
+        propertyPanels.add(stageViewPanel);
         Tab stageViewTab = new Tab();
         stageViewTab.setClosable(false);
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
@@ -93,6 +100,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(stageViewTab);
         
         noticePanel = new OptionsNoticePanel();
+        propertyPanels.add(noticePanel);
         Tab noticeTab = new Tab();
         noticeTab.setClosable(false);
         noticeTab.setText(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
@@ -101,6 +109,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(noticeTab);
         
         presentationPanel = new OptionsPresentationPanel();
+        propertyPanels.add(presentationPanel);
         Tab presentationTab = new Tab();
         presentationTab.setClosable(false);
         presentationTab.setText(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"));
@@ -109,6 +118,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(presentationTab);
         
         biblePanel = new OptionsBiblePanel();
+        propertyPanels.add(biblePanel);
         Tab bibleTab = new Tab();
         bibleTab.setClosable(false);
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
@@ -117,6 +127,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(bibleTab);
         
         serverSettingsPanel = new ServerSettingsPanel();
+        propertyPanels.add(serverSettingsPanel);
         Tab serverSettingsTab = new Tab();
         serverSettingsTab.setClosable(false);
         serverSettingsTab.setText(LabelGrabber.INSTANCE.getLabel("server.settings.heading"));
@@ -125,6 +136,7 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(serverSettingsTab);
         
         recordingPanel = new OptionsRecordingPanel();
+        propertyPanels.add(recordingPanel);
         Tab optionsRecordingTab = new Tab();
         optionsRecordingTab.setClosable(false);
         optionsRecordingTab.setText(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"));
@@ -132,22 +144,13 @@ public class OptionsDialog extends Stage {
         optionsRecordingTab.setContent(recordingPanel);
         tabbedPane.getTabs().add(optionsRecordingTab);
         
-        importExportPanel = new OptionsImportExportPanel();
-        Tab optionsImportExportTab = new Tab();
-        optionsImportExportTab.setClosable(false);
-        optionsImportExportTab.setText(LabelGrabber.INSTANCE.getLabel("importexport.options.heading"));
-        optionsImportExportTab.setGraphic(new ImageView(new Image("file:icons/text.png")));
-        optionsImportExportTab.setContent(importExportPanel);
-        tabbedPane.getTabs().add(optionsImportExportTab);
-        
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
-            List<Tab> tabs = tabbedPane.getTabs();
-            tabs.stream().filter((tab) -> (tab.getContent() instanceof PropertyPanel)).forEach((tab) -> {
-                ((PropertyPanel) tab.getContent()).setProperties();
-            });
+            for(PropertyPanel panel : propertyPanels) {
+                panel.setProperties();
+            }
             callBeforeHiding();
             hide();
         });
@@ -178,6 +181,7 @@ public class OptionsDialog extends Stage {
         if(presentationPanel.hasPPChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
         }
+        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
     }
 
     /**
@@ -202,10 +206,6 @@ public class OptionsDialog extends Stage {
     
     public OptionsRecordingPanel getRecordingSettingsPanel() {
         return recordingPanel;
-    }
-    
-    public OptionsImportExportPanel getImportExportSettingsPanel() {
-        return importExportPanel;
     }
     
     public void setCurrentPanel(GridPane pane) {

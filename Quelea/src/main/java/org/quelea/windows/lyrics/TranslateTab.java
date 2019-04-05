@@ -59,7 +59,7 @@ public class TranslateTab extends Tab {
         this.name = name;
         setClosable(true);
         lyricsArea = new LyricsTextArea();
-        lyricsArea.replaceText(lyrics);
+        lyricsArea.getTextArea().replaceText(lyrics);
         setContent(lyricsArea);
     }
 
@@ -76,7 +76,7 @@ public class TranslateTab extends Tab {
      * @return the translation's lyrics.
      */
     public String getLyrics() {
-        return lyricsArea.getText();
+        return lyricsArea.getTextArea().getText();
     }
     
     /**
@@ -84,6 +84,6 @@ public class TranslateTab extends Tab {
      * @param lyrics the lyrics to set on the lyrics area.
      */
     public void setLyrics(String lyrics) {
-        lyricsArea.replaceText(lyrics);
+        lyricsArea.getTextArea().replaceText(lyrics);
     }
 }

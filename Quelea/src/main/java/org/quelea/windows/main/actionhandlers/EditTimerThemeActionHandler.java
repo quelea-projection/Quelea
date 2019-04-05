@@ -82,7 +82,7 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
         s.resizableProperty().setValue(false);
         s.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
         final BorderPane bp = new BorderPane();
-        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
+        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
         tp.setTheme(selectedDisplayable.getTheme());
         confirmButton.setOnAction((ActionEvent event) -> {

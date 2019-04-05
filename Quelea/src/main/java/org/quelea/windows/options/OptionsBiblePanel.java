@@ -19,13 +19,15 @@ package org.quelea.windows.options;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -52,7 +54,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.widgets.NumberSpinner;
-import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -67,7 +68,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private final CheckBox splitBibleVersesBox;
     private final NumberSpinner maxVersesPerSlideBox;
     private final CheckBox maxVersesEnable;
-//    private final Slider maxCharsSlider;
     private boolean changed;
 
     /**
@@ -92,31 +92,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
 
-        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), new ImageView(new Image("file:icons/add.png")));
-        addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                FileChooser chooser = new FileChooser();
-                if (QueleaProperties.get().getLastDirectory() != null) {
-                    chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
-                }
-                chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
-                File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if (file != null) {
-                    QueleaProperties.get().setLastDirectory(file.getParentFile());
-                    try {
-                        Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
-                        BibleManager.get().refreshAndLoad();
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Errpr copying bible file", ex);
-                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
-                    }
-                }
-            }
-        });
-        GridPane.setConstraints(addBibleButton, 3, 1);
-        getChildren().add(addBibleButton);
-
+        createAddBibleButton();
+        createDeleteBibleButton();
+        
         Label showVerseNumLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"));
         GridPane.setConstraints(showVerseNumLabel, 1, 2);
         getChildren().add(showVerseNumLabel);
@@ -158,29 +136,65 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 changed = true;
             }
         });
-//        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
-//
-//        GridPane.setConstraints(maxCharsLabel, 1, 5);
-//        getChildren().add(maxCharsLabel);
-//        maxCharsSlider = new Slider(10, 160, 0);
-//
-//        GridPane.setConstraints(maxCharsSlider, 2, 5);
-////        getChildren().add(maxCharsSlider);
-//        maxCharsLabel.setLabelFor(maxCharsSlider);
-//        final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
-//
-//        GridPane.setConstraints(maxCharsValue, 3, 5);
-//        getChildren().add(maxCharsValue);
-//        maxCharsValue.setLabelFor(maxCharsSlider);
-//
-//        maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-//                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
-//            }
-//        });
         readProperties();
 
+    }
+
+    private void createAddBibleButton() {
+        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"),
+                                                 new ImageView(new Image("file:icons/add.png")));
+        addBibleButton.setOnAction(t -> {
+            
+            FileChooser chooser = new FileChooser();
+            if (QueleaProperties.get().getLastDirectory() != null) {
+                chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
+            }
+            chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
+            File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+            if (file != null) {
+                QueleaProperties.get().setLastDirectory(file.getParentFile());
+                try {
+                    Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
+                    BibleManager.get().refreshAndLoad();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error copying bible file", ex);
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"),
+                                     LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
+                }
+            }
+            
+        });
+        GridPane.setConstraints(addBibleButton, 3, 1);
+        getChildren().add(addBibleButton);
+    }
+
+    private void createDeleteBibleButton() {
+        final Button deleteBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
+                                                    new ImageView(new Image("file:icons/cross.png")));
+        deleteBibleButton.setOnAction(t -> {
+               
+            Bible bible = defaultBibleComboBox.getSelectionModel().getSelectedItem();
+            if (bible!=null && bible.getFilePath()!=null) {
+                    
+                final AtomicBoolean yes = new AtomicBoolean();
+                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
+                                         LabelGrabber.INSTANCE.getLabel("delete.bible.confirmation").replace("$1",bible.getBibleName())).
+                                         addYesButton(ae -> {yes.set(true);}).addNoButton(ae -> {}).build().showAndWait();
+                    
+                if (yes.get()) {                        
+                    try {
+                        Files.delete(Paths.get(bible.getFilePath()));
+                        BibleManager.get().refreshAndLoad();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Error deleting bible file", ex);
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.delete.error.heading"),
+                                         LabelGrabber.INSTANCE.getLabel("bible.delete.error.text"));
+                    }
+                }
+            }            
+        });
+        GridPane.setConstraints(deleteBibleButton, 4, 1);
+        getChildren().add(deleteBibleButton);
     }
 
     /**
@@ -217,7 +231,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         splitBibleVersesBox.setSelected(props.getBibleSplitVerses());
         maxVersesPerSlideBox.setNumber(props.getMaxBibleVerses());
         maxVersesEnable.setSelected(!props.getBibleUsingMaxChars());
-//        maxCharsSlider.setValue(props.getMaxBibleChars());
 
     }
 
@@ -235,8 +248,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setBibleSplitVerses(splitBibleVersesBox.isSelected());
         props.setMaxBibleVerses(maxVersesPerSlideBox.getNumber());
         props.setBibleUsingMaxChars(!maxVersesEnable.isSelected());
-//        int maxCharsPerLine = (int) maxCharsSlider.getValue();
-//        props.setMaxBibleChars(maxCharsPerLine);
         if (changed) {
             if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                 ScheduleList list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
@@ -244,11 +255,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                     if (d != null) {
                         if (d instanceof BiblePassage) {
                             ((BiblePassage) d).updateBibleLines();
-                            int index = list.getListView().itemsProperty().get().indexOf(d);
-                            if (index != -1) {
-                                list.getListView().itemsProperty().get().set(index, d);
-                                list.getListView().selectionModelProperty().get().select(index); //Needed for single item lists
-                            }
                         }
                     }
                 }

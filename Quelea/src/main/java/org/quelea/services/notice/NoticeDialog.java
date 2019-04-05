@@ -17,11 +17,12 @@
  */
 package org.quelea.services.notice;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -40,11 +41,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import org.quelea.services.utils.SerializableColor;
+import org.quelea.services.utils.SerializableFont;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SerializableColor;
-import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.main.DisplayCanvas;
 
 /**
@@ -60,7 +62,10 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
     private Button editNoticeButton;
     private Button doneButton;
     private ListView<Notice> noticeList;
+    private ListView<Notice> noticeTemplates;
     private List<NoticeDrawer> noticeDrawers;
+    private final Text savedNoticesLabel;
+    private Thread noticeTemplatesUpdateThread;
 
     /**
      * Create a new notice dialog.
@@ -75,7 +80,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         newNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                Notice notice = NoticeEntryDialog.getNotice(null);
+                Notice notice = NoticeEntryDialog.getNotice(null, false);
                 if (notice != null) {
                     noticeList.getItems().add(notice);
                     for (NoticeDrawer drawer : noticeDrawers) {
@@ -90,7 +95,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         editNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                Notice notice = NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
+                Notice notice = NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem(), false);
                 if (notice != null) {
                     noticeList.getItems().add(notice);
                     for (NoticeDrawer drawer : noticeDrawers) {
@@ -112,13 +117,18 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
                 }
             }
         });
+        getNoticesFromFile();
         VBox leftPanel = new VBox(5);
         newNoticeButton.setMaxWidth(Double.MAX_VALUE);
         editNoticeButton.setMaxWidth(Double.MAX_VALUE);
         removeNoticeButton.setMaxWidth(Double.MAX_VALUE);
+        noticeTemplates.setMaxWidth(Double.MAX_VALUE);
+        savedNoticesLabel = new Text(LabelGrabber.INSTANCE.getLabel("saved.notices"));
         leftPanel.getChildren().add(newNoticeButton);
         leftPanel.getChildren().add(editNoticeButton);
         leftPanel.getChildren().add(removeNoticeButton);
+        leftPanel.getChildren().add(savedNoticesLabel);
+        leftPanel.getChildren().add(noticeTemplates);
         BorderPane leftPanelBorder = new BorderPane();
         BorderPane.setMargin(leftPanelBorder, new Insets(5));
         leftPanelBorder.setTop(leftPanel);
@@ -149,6 +159,21 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         });
 
         mainPane.setCenter(noticeList);
+
+        noticeTemplates.setOnMouseClicked(e -> {
+            if (noticeTemplates.getSelectionModel().getSelectedItem() != null) {
+                Notice n = noticeTemplates.getSelectionModel().getSelectedItem();
+                n.setTimes(n.getOriginalTimes());
+                Notice notice = NoticeEntryDialog.getNotice(n, true);
+                if (notice != null && NoticeEntryDialog.closed) {
+                    noticeList.getItems().add(notice);
+                    for (NoticeDrawer drawer : noticeDrawers) {
+                        drawer.addNotice(notice);
+                    }
+                }
+                noticeTemplates.getSelectionModel().clearSelection();
+            }
+        });
 
         doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
         doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -205,6 +230,41 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         for (NoticeDrawer drawer : noticeDrawers) {
             drawer.addNotice(notice);
         }
+    }
+
+    /*
+     * Get the list of stored notices.
+     * @return list of notice templates
+     */
+    public ListView<Notice> getTemplates() {
+        return noticeTemplates;
+    }
+
+    /**
+     * Read the stored notice files and add them to the list.
+     */
+    private void getNoticesFromFile() {
+        noticeTemplates = new ListView<>();
+        final File[] files = new File(QueleaProperties.get().getNoticeDir().getAbsolutePath()).listFiles();
+        if (noticeTemplatesUpdateThread != null && noticeTemplatesUpdateThread.isAlive()) {
+            return;
+        }
+        noticeTemplatesUpdateThread = new Thread() {
+            @Override
+            public void run() {
+                if (files != null) {
+                    for (final File file : files) {
+                        Platform.runLater(() -> {
+                            Notice n = NoticeFileHandler.noticeFromFile(file);
+                            if (n != null) {
+                                noticeTemplates.getItems().add(n);
+                            }
+                        });
+                    }
+                }
+            }
+        };
+        noticeTemplatesUpdateThread.start();
     }
 
 }

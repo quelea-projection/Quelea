@@ -21,11 +21,9 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -251,12 +249,10 @@ public class SelectLyricsPanel extends AbstractPanel {
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-            if (currentSection.getTempTheme() != null) {
-                drawer.setTheme(currentSection.getTempTheme());
-            } else {
-                ThemeDTO newTheme = currentSection.getTheme();
-                drawer.setTheme(newTheme);
-            }
+            GlobalThemeStore themeStore = QueleaApp.get().getMainWindow().getGlobalThemeStore();
+            
+            drawer.setTheme(themeStore.getTheme((TextDisplayable)getCurrentDisplayable(), currentSection));
+            
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);
             canvas.setCurrentDisplayable(getCurrentDisplayable());

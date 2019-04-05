@@ -219,7 +219,7 @@ public class Schedule implements Iterable<Displayable> {
                             File tempWriteFile = File.createTempFile("resource", "." + extension);
                             tempWriteFile = Files.move(tempWriteFile.toPath(), Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), writeFile.getName()), StandardCopyOption.REPLACE_EXISTING).toFile();
                             tempWriteFile.deleteOnExit();
-                            LOGGER.log(Level.INFO, "Writing out " + writeFile.getAbsolutePath() + " to " + tempWriteFile.getAbsolutePath());
+                            LOGGER.log(Level.INFO, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
                             fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
                             writeFile = tempWriteFile;
                         }
@@ -230,7 +230,7 @@ public class Schedule implements Iterable<Displayable> {
                             }
                             dest.flush();
                         }
-                        LOGGER.info("Opening schedule - written file " + writeFile.getAbsolutePath());
+                        LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
@@ -325,27 +325,28 @@ public class Schedule implements Iterable<Displayable> {
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 String name = node.getNodeName();
+                //The non-shortcircuit (single bar) "or" is deliberate here, otherwise after "skipped" is set to true, nothing else will get added.
                 if (name.equalsIgnoreCase("song")) {
-                    skipped = skipped || !newSchedule.add(SongDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(SongDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("passage")) {
-                    skipped = skipped || !newSchedule.add(BiblePassage.parseXML(node));
+                    skipped = skipped | !newSchedule.add(BiblePassage.parseXML(node));
                 } else if (name.equalsIgnoreCase("fileimage")) {
-                    skipped = skipped || !newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped | !newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filevideo")) {
-                    skipped = skipped || !newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped | !newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileaudio")) {
-                    skipped = skipped || !newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped | !newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
                     PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
-                    skipped = skipped || !newSchedule.add(disp);
+                    skipped = skipped | !newSchedule.add(disp);
                 } else if (name.equalsIgnoreCase("timer")) {
-                    skipped = skipped || !newSchedule.add(TimerDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(TimerDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepdf")) {
-                    skipped = skipped || !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
+                    skipped = skipped | !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("fileimagegroup")) {
-                    skipped = skipped || !newSchedule.add(ImageGroupDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(ImageGroupDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("url")) {
-                    skipped = skipped || !newSchedule.add(WebDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(WebDisplayable.parseXML(node));
                 }
             }
             if(skipped) {

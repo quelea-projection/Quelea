@@ -57,7 +57,6 @@ import java.util.logging.Logger;
 import ooo.connector.BootstrapSocketConnector;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * A presentation to be displayed using the openoffice API. This requries
@@ -353,6 +352,7 @@ public class OOPresentation implements XEventListener {
      * @throws Throwable if something goes wrong in finalisation.
      */
     @Override
+    @SuppressWarnings( "deprecation" )
     protected void finalize() throws Throwable {
         super.finalize();
         checkDisposed();

@@ -65,8 +65,8 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * The panel that shows the mobile lyrics and remote control options.
@@ -152,14 +152,12 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         HBox mobBox = new HBox(5);
         mobBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.mob.url.label") + ": "));
         Text mobUrlLabel = new Text(getMLURL());
-        if (Desktop.isDesktopSupported() && getMLURL().startsWith("http")) {
+        if (getMLURL().startsWith("http")) {
             mobUrlLabel.setCursor(Cursor.HAND);
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
             mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                ThreadedDesktop.browse(getMLURL(), (ex) -> {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getMLURL());
-                });
+                DesktopApi.browse(getMLURL());
             });
         }
         mobBox.getChildren().add(mobUrlLabel);
@@ -267,14 +265,12 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         HBox rcBox = new HBox(5);
         rcBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.remote.control.label") + ": "));
         Text rcUrlLabel = new Text(getRCURL());
-        if (Desktop.isDesktopSupported() && getRCURL().startsWith("http")) {
+        if (getRCURL().startsWith("http")) {
             rcUrlLabel.setCursor(Cursor.HAND);
             rcUrlLabel.setFill(Color.BLUE);
             rcUrlLabel.setStyle("-fx-underline: true;");
             rcUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                ThreadedDesktop.browse(getRCURL(), (ex) -> {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getMLURL());
-                });
+                DesktopApi.browse(getRCURL());
             });
         }
         rcBox.getChildren().add(rcUrlLabel);
