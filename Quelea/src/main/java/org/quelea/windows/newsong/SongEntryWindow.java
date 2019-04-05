@@ -98,24 +98,24 @@ public class SongEntryWindow extends Stage {
         translateTab.setClosable(false);
         tabPane.getTabs().add(translateTab);
 
-        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
+        basicSongPanel.getLyricsField().getTextArea().textProperty().addListener(new ChangeListener<String>() {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if(!disableTextAreaListeners) {
                     disableTextAreaListeners = true;
-                    translatePanel.getDefaultLyricsArea().replaceText(newValue);
+                    translatePanel.getDefaultLyricsArea().getTextArea().replaceText(newValue);
                     disableTextAreaListeners = false;
                 }
             }
         });
-        translatePanel.getDefaultLyricsArea().textProperty().addListener(new ChangeListener<String>() {
+        translatePanel.getDefaultLyricsArea().getTextArea().textProperty().addListener(new ChangeListener<String>() {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if(!disableTextAreaListeners) {
                     disableTextAreaListeners = true;
-                    basicSongPanel.getLyricsField().replaceText(newValue);
+                    basicSongPanel.getLyricsField().getTextArea().replaceText(newValue);
                     disableTextAreaListeners = false;
                 }
             }
@@ -215,11 +215,11 @@ public class SongEntryWindow extends Stage {
         hide();
     }
 
-    private void saveSong() {
+    public void saveSong() {
         resetChange();
         hide();
         SongDisplayable localSong = getSong();
-        boolean quickInsert = song != null && song.isQuickInSert();
+        boolean quickInsert = song != null && song.isQuickInsert();
         if (shouldSave) {
             if (updateDBOnHide && !quickInsert) {
                 Utils.updateSongInBackground(localSong, true, false);
@@ -236,7 +236,7 @@ public class SongEntryWindow extends Stage {
      * Called by the constructor to initialise the theme panel.
      */
     private void setupThemePanel() {
-        themePanel = new ThemePanel(basicSongPanel.getLyricsField(), confirmButton);
+        themePanel = new ThemePanel(basicSongPanel.getLyricsField().getTextArea(), confirmButton, true);
     }
 
     /**
@@ -251,7 +251,7 @@ public class SongEntryWindow extends Stage {
      */
     private void setupBasicSongPanel() {
         basicSongPanel = new BasicSongPanel();
-        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
+        basicSongPanel.getLyricsField().getTextArea().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();
@@ -382,11 +382,7 @@ public class SongEntryWindow extends Stage {
         if (song == null) {
             song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
-        ThemeDTO tempTheme = null;
-        if (song.getSections().length > 0) {
-            tempTheme = song.getSections()[0].getTempTheme();
-        }
-        song.setLyrics(getBasicSongPanel().getLyricsField().getText());
+        song.setLyrics(getBasicSongPanel().getLyricsField().getTextArea().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
         song.setTranslations(getTranslatePanel().getTranslations());
@@ -399,9 +395,6 @@ public class SongEntryWindow extends Stage {
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
         for (TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
-            if (tempTheme != null) {
-                section.setTempTheme(tempTheme);
-            }
         }
         song.setTheme(themePanel.getTheme());
         return song;

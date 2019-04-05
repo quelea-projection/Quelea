@@ -76,7 +76,7 @@ public class VersionChecker {
     private Version extractVersion(String content) {
         try {
             int startIndex = content.indexOf(PREFIX);
-            return new Version(content.substring(startIndex + PREFIX.length(), content.indexOf('<', startIndex)).trim(), "");
+            return new Version(content.substring(startIndex + PREFIX.length(), content.indexOf('<', startIndex)).trim(), VersionType.RELEASE);
         }
         catch(Exception ex) {
             LOGGER.log(Level.WARNING, "Couldn't extract version from string: " + content, ex);

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,6 +39,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
@@ -49,10 +51,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.awt.AWTFrameGrab;
+import org.jcodec.common.DemuxerTrack;
+import org.jcodec.common.io.FileChannelWrapper;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -146,11 +152,28 @@ public class VideoListPanel extends BorderPane {
                 for (int i = 0; i < files.length; i++) {
                     File file = files[i];
                     if (Utils.fileIsVideo(file) && !file.isDirectory()) {
-                        final ImageView view;
-                        view = new ImageView();
+                        final ImageView view = new ImageView();
+                        final Label fileLabel = new Label(trim17(file.getName()));
                         previewService.submit(() -> {
                             try {
                                 LOGGER.log(Level.INFO, "Grabbing frame for {0}", file);
+
+                                try {
+                                    FileChannelWrapper ch = NIOUtils.readableFileChannel(file.getAbsolutePath());
+                                    MP4Demuxer demuxer = MP4Demuxer.createMP4Demuxer(ch);
+                                    DemuxerTrack video_track = demuxer.getVideoTrack();
+                                    int totalSeconds = (int)video_track.getMeta().getTotalDuration();
+                                    int hours = totalSeconds / 3600;
+                                    int minutes = (totalSeconds % 3600) / 60;
+                                    int seconds = totalSeconds % 60;
+                                    DecimalFormat formatter = new DecimalFormat("00");
+                                    Platform.runLater(() -> {
+                                        fileLabel.setText(fileLabel.getText() + " - " + formatter.format(hours) + ":" + formatter.format(minutes) + ":" + formatter.format(seconds));
+                                    });
+                                } catch (Exception ex) {
+                                    LOGGER.log(Level.INFO, "Couldn't get video length", ex);
+                                }
+
                                 BufferedImage bi = AWTFrameGrab.getFrame(file, 0);
                                 BufferedImage resized = new BufferedImage(160, 90, bi.getType());
                                 Graphics2D g = resized.createGraphics();
@@ -174,7 +197,8 @@ public class VideoListPanel extends BorderPane {
                             previewService.shutdown();
                         }
                         Platform.runLater(() -> {
-                            final HBox viewBox = new HBox();
+                            final VBox viewBox = new VBox();
+                            viewBox.setAlignment(Pos.CENTER);
                             view.setPreserveRatio(true);
                             view.setFitWidth(160);
                             view.setFitHeight(90);
@@ -208,6 +232,7 @@ public class VideoListPanel extends BorderPane {
 //                                t.consume();
 //                            });
                             viewBox.getChildren().add(view);
+                            viewBox.getChildren().add(fileLabel);
                             setupHover(viewBox, file.getName());
                             videoList.getChildren().add(viewBox);
                         });
@@ -234,5 +259,12 @@ public class VideoListPanel extends BorderPane {
 
     public void changeDir(File absoluteFile) {
         dir = absoluteFile.getAbsolutePath();
+    }
+    
+    private static String trim17(String toTrim) {
+        if(toTrim.length()>17) {
+            return toTrim.substring(0,16) + "..";
+        }
+        return toTrim;
     }
 }

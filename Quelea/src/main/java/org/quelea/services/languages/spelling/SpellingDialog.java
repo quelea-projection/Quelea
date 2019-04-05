@@ -101,13 +101,13 @@ public class SpellingDialog {
                 String replaceWord = wordsToCorrect.iterator().next();
                 correctedWords.put(replaceWord, suggestions.getSelectionModel().getSelectedItem());
                 StringBuilder replaceText = new StringBuilder();
-                for(String line : area.getArea().getText().split("\n")) {
+                for(String line : area.getArea().getTextArea().getText().split("\n")) {
                     if(new LineTypeChecker(line).getLineType() != Type.CHORDS) {
                         line = line.replace(replaceWord, suggestions.getSelectionModel().getSelectedItem());
                     }
                     replaceText.append(line).append("\n");
                 }
-                area.getArea().replaceText(replaceText.toString().trim());
+                area.getArea().getTextArea().replaceText(replaceText.toString().trim());
                 wordsToCorrect.remove(replaceWord);
                 nextWord();
             }

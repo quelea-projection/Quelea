@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,15 +42,13 @@ public class TextSection implements Serializable {
     private final String[] lines;
     private final String[] smallLines;
     private ThemeDTO theme;
-    private ThemeDTO tempTheme;
     private final boolean capitaliseFirst;
-    
+
     public TextSection(TextSection orig) {
         this.title = orig.title;
         this.lines = orig.lines;
         this.smallLines = orig.smallLines;
         this.theme = orig.theme;
-        this.tempTheme = orig.tempTheme;
         this.capitaliseFirst = orig.capitaliseFirst;
     }
 
@@ -65,7 +63,7 @@ public class TextSection implements Serializable {
      * a capital, false otherwise.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
-        this(title, lines, smallLines, capitaliseFirst, null, null);
+        this(title, lines, smallLines, capitaliseFirst, null);
     }
 
     /**
@@ -78,9 +76,8 @@ public class TextSection implements Serializable {
      * @param capitaliseFirst true if the first character of each line should be
      * a capital, false otherwise.
      * @param theme the theme of this song section.
-     * @param tempTheme the tempTheme of this song section.
      */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme, ThemeDTO tempTheme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
@@ -89,7 +86,6 @@ public class TextSection implements Serializable {
         }
         this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
         this.theme = theme;
-        this.tempTheme = tempTheme;
     }
 
     /**
@@ -99,7 +95,7 @@ public class TextSection implements Serializable {
      */
     public String getXML() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
+        xml.append("<section ").append("title=\"").append(Utils.escapeXML(getTitle())).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
         if (theme != null) {
             xml.append("<theme>");
             xml.append(Utils.escapeXML(theme.asString()));
@@ -214,20 +210,25 @@ public class TextSection implements Serializable {
     public String[] getText(boolean chords, boolean comments) {
         List<String> ret = new ArrayList<>(lines.length);
         for (String str : lines) {
+            String toAdd = null;
             if (chords) {
                 if (comments) {
-                    ret.add(str);
+                    toAdd = str;
                 } else {
-                    ret.add(removeComments(str));
+                    toAdd = removeComments(str);
                 }
             } else {
                 if (new LineTypeChecker(str).getLineType() != LineTypeChecker.Type.CHORDS) {
                     if (comments) {
-                        ret.add(str);
+                        toAdd = str;
                     } else {
-                        ret.add(removeComments(str));
+                        toAdd = removeComments(str);
                     }
+                    toAdd = toAdd.replace("_", "");
                 }
+            }
+            if (toAdd != null) {
+                ret.add(toAdd);
             }
         }
         return ret.toArray(new String[ret.size()]);
@@ -286,24 +287,6 @@ public class TextSection implements Serializable {
      */
     public ThemeDTO getTheme() {
         return theme;
-    }
-
-    /**
-     * Get the temporary theme of the section.
-     *
-     * @return the temporary theme of the section, or null if none has been set.
-     */
-    public ThemeDTO getTempTheme() {
-        return tempTheme;
-    }
-
-    /**
-     * Set the temporary theme of the section.
-     *
-     * @param tempTheme the temporary theme.
-     */
-    public void setTempTheme(ThemeDTO tempTheme) {
-        this.tempTheme = tempTheme;
     }
 
     /**

@@ -102,7 +102,7 @@ public class ScheduleList extends StackPane {
     public ScheduleList() {
         setAlignment(Pos.TOP_LEFT);
         listView = new ListView<>();
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         getChildren().add(listView);
         markerRect = new Rectangle(200, 3, Color.GRAY);
         markerRect.setVisible(false);
@@ -149,6 +149,7 @@ public class ScheduleList extends StackPane {
 
                             db.setContent(content);
                             event.consume();
+                            db.setDragView(listCell.snapshot(null, null));
                         }
                     }
                 });
@@ -359,7 +360,11 @@ public class ScheduleList extends StackPane {
             if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable || useTempDisp) {
                 Displayable displayable;
                 if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
-                    displayable = (SongDisplayable) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                    displayable = (Displayable) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                    if (!QueleaProperties.get().getDefaultSongDBUpdate() && displayable instanceof SongDisplayable) {
+                        ((SongDisplayable) displayable).setID(-1);
+                        ((SongDisplayable) displayable).setNoDBUpdate();
+                    }
                 } else {
                     displayable = tempDisp;
                     tempDisp = null;

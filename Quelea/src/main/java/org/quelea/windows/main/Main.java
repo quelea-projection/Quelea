@@ -39,7 +39,6 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -47,19 +46,19 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
-import org.quelea.utils.ThreadedDesktop;
 import org.quelea.utils.VLCDiscovery;
 
 /**
  * The main class, sets everything in motion...
- * 
+ *
  * @author Michael
  */
 public final class Main extends Application {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static Logger LOGGER;
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
@@ -77,16 +76,9 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        QueleaProperties.init(getParameters().getNamed().get("userhome"));
+        LOGGER = LoggerUtils.getLogger();
         System.setProperty("glass.accessible.force", "false");
-        if (Utils.isMac()) {
-            BufferedImage img = null;
-            try {
-                img = ImageIO.read(new File("icons/logo64.png"));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            com.apple.eawt.Application.getApplication().setDockIconImage(img);
-        }
         setupExceptionHandling();
         setupTranslator();
         final SplashStage splashWindow = new SplashStage();
@@ -95,7 +87,14 @@ public final class Main extends Application {
         LOGGER.log(Level.INFO, "OS name: {0}", System.getProperty("os.name"));
         LOGGER.log(Level.INFO, "Using JAVA version {0}", System.getProperty("java.version"));
         LOGGER.log(Level.INFO, "64-bit: {0}", Utils.is64Bit());
-
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File("icons/logo64.png"));
+            //Only supported in Java 9+
+//            Taskbar.getTaskbar().setIconImage(img);
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Couldn't set icon, probably an unsupported platform and nothing to worry about: {0}", ex.getMessage());
+        }
         ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
         new Thread() {
@@ -116,7 +115,7 @@ public final class Main extends Application {
                         VLC_INIT = false;
                     }
                     new FontInstaller().setupBundledFonts();
-                    new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
+                    new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
                     LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
@@ -247,7 +246,6 @@ public final class Main extends Application {
 
                     backgroundExecutor.submit(() -> {
                         new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                        PhoneHome.INSTANCE.phone(); //Phone home
                     });
 
                     LOGGER.log(Level.INFO, "Registering canvases");
@@ -275,23 +273,34 @@ public final class Main extends Application {
                     });
                     LOGGER.log(Level.INFO, "Loaded everything.");
 
-                    if (!getParameters().getRaw().isEmpty()) {
-                        String schedulePath = getParameters().getRaw().get(0);
-                        LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
-                        Platform.runLater(() -> {
-                            QueleaApp.get().openSchedule(new File(schedulePath));
-                        });
+                    List<String> cmdParams = getParameters().getRaw();
+                    if (!cmdParams.isEmpty()) {
+                        String schedulePath = cmdParams.get(cmdParams.size() - 1);
+                        if (!schedulePath.contains("--userhome=")) {
+                            LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
+                            Platform.runLater(() -> {
+                                QueleaApp.get().openSchedule(new File(schedulePath));
+                            });
+                        }
                     }
-                    if (Utils.isMac()) {
-                        com.apple.eawt.Application.getApplication().setOpenFileHandler((com.apple.eawt.AppEvent.OpenFilesEvent ofe) -> {
-                            List<File> files = Utils.getFilesFromMacOpenFilesEvent(ofe);
-                            if (files != null && files.size() > 0) {
-                                Platform.runLater(() -> {
-                                    QueleaApp.get().openSchedule(files.get(0));
-                                });
-                            }
-                        });
-                    }
+                    
+                    //Only supported in Java 9+
+//                    if (Desktop.isDesktopSupported()) {
+//                        Desktop desktop = Desktop.getDesktop();
+//                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+//                            desktop.setOpenFileHandler(new OpenFilesHandler() {
+//                                @Override
+//                                public void openFiles(OpenFilesEvent e) {
+//                                    List<File> files = e.getFiles();
+//                                    if (files != null && files.size() > 0) {
+//                                        Platform.runLater(() -> {
+//                                            QueleaApp.get().openSchedule(files.get(0));
+//                                        });
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
 
                     Platform.runLater(() -> {
                         splashWindow.hide();
@@ -321,14 +330,10 @@ public final class Main extends Application {
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), (t) -> {
                                         vlcWarningDialog.hide();
                                     });
-                            if (java.awt.Desktop.isDesktopSupported()) {
-                                vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
-                                    ThreadedDesktop.browse("http://www.videolan.org/vlc/index.html", (ex) -> {
-                                        LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                    });
-                                    vlcWarningDialog.hide();
-                                });
-                            }
+                            vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
+                                DesktopApi.browse("http://www.videolan.org/vlc/index.html");
+                                vlcWarningDialog.hide();
+                            });
                             vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                             vlcWarningDialog.showAndWait();
                         }

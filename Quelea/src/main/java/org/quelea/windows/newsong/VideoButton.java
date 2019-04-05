@@ -20,6 +20,7 @@ package org.quelea.windows.newsong;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.logging.Level;
@@ -140,7 +141,7 @@ public class VideoButton extends Button implements Cancellable {
 
             ByteBuffer buff = ByteBuffer.allocate(4096);
             while (fin.read(buff) != -1 || buff.position() > 0) {
-                buff.flip();
+                ((Buffer) buff).flip();
                 fout.write(buff);
                 buff.compact();
             }
