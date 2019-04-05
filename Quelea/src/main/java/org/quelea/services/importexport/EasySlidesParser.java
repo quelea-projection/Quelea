@@ -56,59 +56,56 @@ public class EasySlidesParser implements SongParser {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new InputSource(new UnicodeReader(new FileInputStream(file), "UTF-8")));
             NodeList songs = doc.getChildNodes().item(0).getChildNodes();
-            for(int i = 0; i < songs.getLength(); i++) {
+            for (int i = 0; i < songs.getLength(); i++) {
                 NodeList attribNodes = songs.item(i).getChildNodes();
                 String title = null, author = "", capo = "", copyright = "", lyrics = "";
-                for(int j = 0; j < attribNodes.getLength(); j++) {
+                for (int j = 0; j < attribNodes.getLength(); j++) {
                     Node curNode = attribNodes.item(j);
-                    if(curNode.getNodeName().equalsIgnoreCase("title1")) {
+                    if (curNode.getNodeName().equalsIgnoreCase("title1")) {
                         title = curNode.getTextContent();
                     }
-                    if(curNode.getNodeName().equalsIgnoreCase("writer")) {
+                    if (curNode.getNodeName().equalsIgnoreCase("writer")) {
                         author = curNode.getTextContent();
                     }
-                    if(curNode.getNodeName().equalsIgnoreCase("capo")) {
+                    if (curNode.getNodeName().equalsIgnoreCase("capo")) {
                         capo = curNode.getTextContent();
                     }
-                    if(curNode.getNodeName().equalsIgnoreCase("copyright")) {
+                    if (curNode.getNodeName().equalsIgnoreCase("copyright")) {
                         copyright = curNode.getTextContent();
                     }
-                    if(curNode.getNodeName().equalsIgnoreCase("contents")) {
+                    if (curNode.getNodeName().equalsIgnoreCase("contents")) {
                         lyrics = curNode.getTextContent();
                     }
                 }
-                if(title == null) {
+                if (title == null) {
                     continue;
                 }
                 SongDisplayable song = new SongDisplayable(title, author);
                 song.setCopyright(copyright);
-                if(!capo.equalsIgnoreCase("-1")) {
+                if (!capo.equalsIgnoreCase("-1")) {
                     song.setCapo(capo);
                 }
-                for(TextSection section : getSections(lyrics)) {
-                    song.addSection(section);
-                }
+                song.setLyrics(getLyrics(lyrics));
                 ret.add(song);
             }
             return ret;
-        }
-        catch(ParserConfigurationException | SAXException | IOException | DOMException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException | DOMException ex) {
             LOGGER.log(Level.WARNING, "Something went wrong importing easyslides songs", ex);
             return null;
         }
     }
 
-    private List<TextSection> getSections(String lyrics) {
+    private String getLyrics(String lyrics) {
         String[] sections = lyrics.split("\\[.+?\\]");
-        List<TextSection> ret = new ArrayList<>();
-        for(String section : sections) {
+        StringBuilder ret = new StringBuilder();
+        for (String section : sections) {
             section = section.trim();
-            if(section.isEmpty()) {
+            if (section.isEmpty()) {
                 continue;
             }
-            ret.add(new TextSection("", section.split("\n"), null, true));
+            ret.append(section).append("\n\n");
         }
-        return ret;
+        return ret.toString().trim();
     }
 
 }

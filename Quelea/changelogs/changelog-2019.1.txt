@@ -1,0 +1,8 @@
+quelea (2019.1) stable
+ 
+  * Fix icon for Mac releases
+  * Fix fop cache permissions on some systems
+  * Fix help links on Linux
+  * Search bibles & songs in diacritic-insensitive manner
+  * Change aspect ratio on global themes panel to 4:3
+  * Fix PDF chord alignment for songs

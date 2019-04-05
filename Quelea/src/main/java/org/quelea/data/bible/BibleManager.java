@@ -157,6 +157,7 @@ public final class BibleManager {
             if(file.getName().toLowerCase().endsWith(".xml") || file.getName().toLowerCase().endsWith(".xmm")) {
                 final Bible bible = Bible.parseBible(file);
                 if(bible != null) {
+                    bible.setFilePath(file.getAbsolutePath());
                     bibles.add(bible);
                 }
             }

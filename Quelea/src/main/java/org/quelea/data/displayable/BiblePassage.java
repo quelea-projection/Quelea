@@ -17,12 +17,15 @@
  */
 package org.quelea.data.displayable;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
@@ -52,6 +55,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private BibleVerse[] verses;
     private ThemeDTO theme;
     private final boolean multi;
+    private Map<Dimension,Double> fontSizeCache;
 
     /**
      * Create a new bible passage.
@@ -74,6 +78,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param theme the theme of the passage.
      */
     public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi) {
+        fontSizeCache = new HashMap<>();
         this.summary = summary;
         this.multi = multi;
         this.smallText = summary.split("\n");
@@ -87,6 +92,16 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
         }
+    }
+    
+    @Override
+    public Double getCachedUniformFontSize(Dimension dimension) {
+        return fontSizeCache.get(dimension);
+    }
+
+    @Override
+    public void setCachedUniformFontSize(Dimension dimension, double size) {
+        fontSizeCache.put(dimension, size);
     }
 
     /**
@@ -122,15 +137,12 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 String[] verseWords = verseText.split(" ");
                 for (String verseWord : verseWords) {
                     if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() + verseWord.length() > MAX_CHARS) {
-                        line.append("\n");
                         section.append(line);
                         lines++;
                         line.setLength(0);
                     }
                     line.append(verseWord).append(" ");
                 }
-//            section.append(line);
-//            line.setLength(0); //Empty
                 count++;
                 if (USE_CHARS) {
                     if (!SPLIT_VERSES) {
@@ -146,7 +158,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
                         }
                         if (lines >= MAX_CHARS / 4) {
                             if (!line.toString().isEmpty()) {
-                                line.append("\n");
                                 section.append(line);
                                 line.setLength(0);
                                 lines++;
@@ -160,7 +171,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 } else { // using verses
                     if (count >= MAX_VERSES && count > 0) {
                         if (!line.toString().isEmpty()) {
-                            line.append("\n");
                             section.append(line);
                             line.setLength(0);
                         }
@@ -174,7 +184,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
         // Clean up anything left by the for loop (possible extra verses)
         if (!line.toString().isEmpty()) {
-            line.append("\n");
+//            line.append("\n");
             section.append(line);
         }
 
@@ -261,6 +271,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public void setTheme(ThemeDTO theme) {
+        fontSizeCache.clear();
         this.theme = theme;
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
@@ -378,6 +389,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     public void updateBibleLines() {
+        fontSizeCache.clear();
         textSections.clear();
         fillTextSections();
         for (TextSection ts : getSections()) {

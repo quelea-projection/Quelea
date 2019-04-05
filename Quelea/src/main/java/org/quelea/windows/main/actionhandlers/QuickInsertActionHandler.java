@@ -45,6 +45,7 @@ public class QuickInsertActionHandler implements EventHandler<ActionEvent> {
         if(!sew.wasCancelled()) {
             SongDisplayable quickSong = sew.getSong();
             quickSong.setQuickInsert();
+            quickSong.setNoDBUpdate();
             if(!quickSong.getTitle().trim().isEmpty()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(quickSong);
             }
