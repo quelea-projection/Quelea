@@ -56,12 +56,8 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         HBox northPanel = new HBox();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
-        bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                updateBooks();
-            }
+        bibles.setOnAction((javafx.event.ActionEvent t) -> {
+            updateBooks();
         });
         BibleManager.get().registerBibleChangeListener(this);
         Label selectBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("bible.heading"));
