@@ -108,28 +108,19 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         this.setMinWidth(500);
 
         // Event handlers
-        bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                searchResults.resetRoot();
-                update();
-            }
+        bibles.setOnAction((javafx.event.ActionEvent t) -> {
+            searchResults.resetRoot();
+            update();
         });
-        searchField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                update();
-            }
+        searchField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            update();
         });
-        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
-                    BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
-                    Bible bib = (Bible) chap.getParent().getParent();
-                    BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false);
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
-                }
+        addToSchedule.setOnAction((ActionEvent t) -> {
+            if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
+                BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
+                Bible bib = (Bible) chap.getParent().getParent();
+                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
         setOnShown((WindowEvent event) -> {
@@ -192,28 +183,25 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                             return;
                         }
                         final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                searchResults.reset();
-                                if (!text.trim().isEmpty()) {
-                                    for (BibleChapter chapter : results) {
-                                        if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                            for (BibleVerse verse : chapter.getVerses()) {
-                                                if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
-                                                    searchResults.add(verse);
-                                                }
+                        Platform.runLater(() -> {
+                            searchResults.reset();
+                            if (!text.trim().isEmpty()) {
+                                for (BibleChapter chapter : results) {
+                                    if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                        for (BibleVerse verse : chapter.getVerses()) {
+                                            if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
+                                                searchResults.add(verse);
                                             }
                                         }
                                     }
                                 }
-                                overlay.hide();
-                                String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
-                                if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
-                                    resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
-                                }
-                                resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
                             }
+                            overlay.hide();
+                            String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
+                            if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
+                                resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
+                            }
+                            resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
                         });
                     }
                 };
