@@ -42,13 +42,9 @@ public class VolumeSlider extends BorderPane {
     public VolumeSlider() {
         volumeSlider = new Slider(0,100,100);
         runners = new ArrayList<>();
-        volumeSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                for(Runnable runner : runners) {
-                    runner.run();
-                }
+        volumeSlider.valueProperty().addListener((ov, n1, n2) -> {
+            for(Runnable runner : runners) {
+                runner.run();
             }
         });
         
