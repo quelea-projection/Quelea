@@ -1096,7 +1096,7 @@ public class RemoteControlServer {
 
     private class FileHandler implements HttpHandler {
 
-        private String file;
+        private final String file;
 
         public FileHandler(String file) {
             this.file = file;
