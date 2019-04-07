@@ -174,11 +174,6 @@ public class SongEntryWindow extends Stage {
             }
         });
 
-//        setMaxWidth(525);
-//        setMaxHeight(600);
-//        setWidth(525);
-//        setHeight(600);
-//        setResizable(false);
         Scene scene = new Scene(mainPane);
         if (QueleaProperties.get().getUseDarkTheme()) {
             scene.getStylesheets().add("org/modena_dark.css");
