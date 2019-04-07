@@ -195,9 +195,9 @@ public class RemoteControlServer {
                 response = RCHandler.addBiblePassage(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -213,9 +213,9 @@ public class RemoteControlServer {
                 response = RCHandler.listBibleTranslations(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -231,9 +231,9 @@ public class RemoteControlServer {
                 response = RCHandler.listBibleBooks(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -260,9 +260,9 @@ public class RemoteControlServer {
             }
             he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            try (OutputStream os = he.getResponseBody()) {
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+            }
         }
     }
 
@@ -295,9 +295,9 @@ public class RemoteControlServer {
                 response = RCHandler.songDisplay(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -319,9 +319,9 @@ public class RemoteControlServer {
                     ImageIO.write(image, "png", output);
                     byte[] byteArray = output.toByteArray();
                     t.sendResponseHeaders(200, byteArray.length);
-                    OutputStream out = t.getResponseBody();
-                    out.write(byteArray);
-                    out.close();
+                    try (OutputStream out = t.getResponseBody()) {
+                        out.write(byteArray);
+                    }
 
                 } catch (IOException e) {
                     System.out.println("Failed saving");
@@ -340,9 +340,9 @@ public class RemoteControlServer {
                 byte[] byteArray = RCHandler.getPresentationSlides(t);
                 t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 t.sendResponseHeaders(200, byteArray.length);
-                OutputStream out = t.getResponseBody();
-                out.write(byteArray);
-                out.close();
+                try (OutputStream out = t.getResponseBody()) {
+                    out.write(byteArray);
+                }
             } else {
                 passwordPage(t);
             }
@@ -358,9 +358,9 @@ public class RemoteControlServer {
                 response = RCHandler.addSongToSchedule(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -377,9 +377,9 @@ public class RemoteControlServer {
                 response = RCHandler.removeItemFromSchedule(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -395,9 +395,9 @@ public class RemoteControlServer {
                 response = RCHandler.databaseSearch(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -413,9 +413,9 @@ public class RemoteControlServer {
                 response = RCHandler.getThemes(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -431,9 +431,9 @@ public class RemoteControlServer {
                 response = RCHandler.setTheme(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -586,9 +586,9 @@ public class RemoteControlServer {
                 final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
                 RCHandler.moveUp(he.getRequestURI().toString());
             } else {
                 reload(he);
@@ -605,9 +605,9 @@ public class RemoteControlServer {
                 final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
                 RCHandler.moveDown(he.getRequestURI().toString());
             } else {
                 reload(he);
