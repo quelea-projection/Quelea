@@ -99,26 +99,18 @@ public class SongEntryWindow extends Stage {
         translateTab.setClosable(false);
         tabPane.getTabs().add(translateTab);
 
-        basicSongPanel.getLyricsField().getTextArea().textProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(!disableTextAreaListeners) {
-                    disableTextAreaListeners = true;
-                    translatePanel.getDefaultLyricsArea().getTextArea().replaceText(newValue);
-                    disableTextAreaListeners = false;
-                }
+        basicSongPanel.getLyricsField().getTextArea().textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!disableTextAreaListeners) {
+                disableTextAreaListeners = true;
+                translatePanel.getDefaultLyricsArea().getTextArea().replaceText(newValue);
+                disableTextAreaListeners = false;
             }
         });
-        translatePanel.getDefaultLyricsArea().getTextArea().textProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(!disableTextAreaListeners) {
-                    disableTextAreaListeners = true;
-                    basicSongPanel.getLyricsField().getTextArea().replaceText(newValue);
-                    disableTextAreaListeners = false;
-                }
+        translatePanel.getDefaultLyricsArea().getTextArea().textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!disableTextAreaListeners) {
+                disableTextAreaListeners = true;
+                basicSongPanel.getLyricsField().getTextArea().replaceText(newValue);
+                disableTextAreaListeners = false;
             }
         });
 
@@ -130,19 +122,13 @@ public class SongEntryWindow extends Stage {
 
         mainPane.setCenter(tabPane);
 
-        confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                cancel = false;
-                saveSong();
-            }
+        confirmButton.setOnAction(t -> {
+            cancel = false;
+            saveSong();
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
-        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                checkSave();
-            }
+        cancelButton.setOnAction(t -> {
+            checkSave();
         });
         addToSchedCBox = new CheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
         HBox checkBoxPanel = new HBox();
@@ -160,18 +146,11 @@ public class SongEntryWindow extends Stage {
         BorderPane.setMargin(bottomPanel, new Insets(10, 0, 5, 0));
         mainPane.setBottom(bottomPanel);
 
-        setOnShowing(new EventHandler<WindowEvent>() {
-
-            @Override
-            public void handle(WindowEvent t) {
-                cancel = true;
-            }
+        setOnShowing(t -> {
+            cancel = true;
         });
-        setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                checkSave();
-            }
+        setOnCloseRequest(t -> {
+            checkSave();
         });
 
         Scene scene = new Scene(mainPane);
