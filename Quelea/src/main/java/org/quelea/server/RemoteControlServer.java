@@ -907,13 +907,13 @@ public class RemoteControlServer {
     private List<String> getLyrics(boolean chords) {
         try {
             if (!checkInitialised()) {
-                List<String> tmp = new ArrayList<String>();
+                List<String> tmp = new ArrayList<>();
                 tmp.add("");
                 return tmp;
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
             if (running && lp.getDisplayable() instanceof TextDisplayable) {
-                ArrayList<String> als = new ArrayList<String>();
+                ArrayList<String> als = new ArrayList<>();
                 for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
                     for (String line : currentSection.getText(chords, false)) {
@@ -933,7 +933,7 @@ public class RemoteControlServer {
                 return als;
             } else {
                 String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
-                ArrayList<String> als = new ArrayList<String>();
+                ArrayList<String> als = new ArrayList<>();
                 als.add(response);
                 return als;
             }
@@ -1031,7 +1031,7 @@ public class RemoteControlServer {
         private void parseGetParameters(HttpExchange exchange)
                 throws UnsupportedEncodingException {
 
-            Map<String, Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<>();
             URI requestedUri = exchange.getRequestURI();
             String query = requestedUri.getRawQuery();
             parseQuery(query, parameters);
@@ -1081,7 +1081,7 @@ public class RemoteControlServer {
                             List<String> values = (List<String>) obj;
                             values.add(value);
                         } else if (obj instanceof String) {
-                            List<String> values = new ArrayList<String>();
+                            List<String> values = new ArrayList<>();
                             values.add((String) obj);
                             values.add(value);
                             parameters.put(key, values);
