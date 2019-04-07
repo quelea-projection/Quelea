@@ -33,8 +33,8 @@ import javafx.scene.layout.BorderPane;
  */
 public class VolumeSlider extends BorderPane {
     
-    private Slider volumeSlider;
-    private List<Runnable> runners;
+    private final Slider volumeSlider;
+    private final List<Runnable> runners;
     
     /**
      * Create the volume slider.
