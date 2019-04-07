@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.timer;
 
-import java.io.File;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
