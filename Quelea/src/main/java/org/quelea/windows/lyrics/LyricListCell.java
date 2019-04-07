@@ -116,16 +116,17 @@ public class LyricListCell extends ListCell<TextSection> {
     }
 
     private void updateState() {
-//        if (selected && focused) {
-//            lyrics.setFill(Color.WHITE);
-//            setStyle("-fx-background-color:#0093ff;");
-//        } else if (selected) {
-//            lyrics.setFill(Color.BLACK);
-//            setStyle("-fx-background-color:#D3D3D3;");
-//        } else {
-//            lyrics.setFill(Color.BLACK);
-//            setStyle("-fx-background-color:none;");
-//        }
-
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            if (selected && focused) {
+                lyrics.setFill(Color.WHITE);
+                setStyle("-fx-background-color:#0093ff;");
+            } else if (selected) {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:#D3D3D3;");
+            } else {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:none;");
+            }
+        }
     }
 }
