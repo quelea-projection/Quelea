@@ -86,23 +86,15 @@ public class AboutDialog extends Stage {
             debugLogText.setCursor(Cursor.HAND);
             debugLogText.setFill(Color.BLUE);
             debugLogText.setStyle("-fx-underline: true;");
-            debugLogText.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent t) {
-                    DesktopApi.open(new File(LoggerUtils.getHandlerFileLocation()));
-                }
+            debugLogText.setOnMouseClicked(t -> {
+                DesktopApi.open(new File(LoggerUtils.getHandlerFileLocation()));
             });
         }
         debugBox.getChildren().add(debugLogText);
         subLayout.getChildren().add(debugBox);
         Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"));
-        closeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                hide();
-            }
+        closeButton.setOnAction(t -> {
+            hide();
         });
         newLayout.setCenter(subLayout);
         BorderPane.setMargin(subLayout, new Insets(10));
