@@ -111,7 +111,6 @@ public class BasicSongPanel extends BorderPane {
 
         centrePanel.getChildren().add(topPanel);
         lyricsArea = new SpellTextArea();
-//        lyricsArea.setStyle("-fx-background-color:black;");
         lyricsArea.setMaxHeight(Double.MAX_VALUE);
 
         final VBox mainPanel = new VBox();
