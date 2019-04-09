@@ -42,10 +42,12 @@ public class LyricListCell extends ListCell<TextSection> {
     public LyricListCell(SelectLyricsList sll) {
         layout = new VBox(3);
         header = new Text();
+        header.getStyleClass().add("text");
         header.setFont(Font.font("Verdana", FontWeight.BOLD, 11.5));
         lyrics = new Text();
+        lyrics.getStyleClass().add("text");
         layout.getChildren().addAll(header, lyrics);
-        lyrics.setFill(Color.BLACK);
+//        lyrics.setFill(Color.BLACK);
         selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             selected = newValue;
             updateState();
@@ -109,20 +111,22 @@ public class LyricListCell extends ListCell<TextSection> {
                 header.setFill(Color.DARKGREEN);
             }
         }
+        lyrics.getStyleClass().add("cell-text");
         setGraphic(layout);
     }
 
     private void updateState() {
-        if (selected && focused) {
-            lyrics.setFill(Color.WHITE);
-            setStyle("-fx-background-color:#0093ff;");
-        } else if (selected) {
-            lyrics.setFill(Color.BLACK);
-            setStyle("-fx-background-color:#D3D3D3;");
-        } else {
-            lyrics.setFill(Color.BLACK);
-            setStyle("-fx-background-color:none;");
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            if (selected && focused) {
+                lyrics.setFill(Color.WHITE);
+                setStyle("-fx-background-color:#0093ff;");
+            } else if (selected) {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:#D3D3D3;");
+            } else {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:none;");
+            }
         }
-
     }
 }

@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The dialog shown to the user when choosing how to transpose the chords of 
@@ -81,8 +82,12 @@ public class TransposeDialog extends Stage {
         buttonPanel.getChildren().add(cancelButton);
         buttonPanel.setAlignment(Pos.BASELINE_LEFT);
         contentPane.getChildren().add(buttonPanel);
-        
-        setScene(new Scene(contentPane));
+
+        Scene scene = new Scene(contentPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**
