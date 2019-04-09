@@ -66,10 +66,12 @@ public class UnicodeReader extends Reader {
         return reader.getEncoding();
     }
 
+    @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
         return reader.read(cbuf, off, len);
     }
 
+    @Override
     public void close() throws IOException {
         reader.close();
     }

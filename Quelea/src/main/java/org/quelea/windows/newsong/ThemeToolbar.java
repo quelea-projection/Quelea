@@ -19,7 +19,6 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;

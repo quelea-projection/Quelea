@@ -27,8 +27,8 @@ import javafx.scene.layout.BorderPane;
  */
 public class VideoStatusPanel extends BorderPane {
     
-    private TimeDisplay timeDisplay;
-    private VolumeSlider volumeSlider;
+    private final TimeDisplay timeDisplay;
+    private final VolumeSlider volumeSlider;
     
     /**
      * Create a new video status panel.
