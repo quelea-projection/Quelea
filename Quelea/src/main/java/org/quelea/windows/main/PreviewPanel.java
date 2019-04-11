@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -56,7 +56,7 @@ public class PreviewPanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView goLiveIV = new ImageView(new Image("file:icons/golivearrow.png"));
+        ImageView goLiveIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/golivearrow-light.png" : "file:icons/golivearrow.png"));
         goLiveIV.setFitHeight(16);
         goLiveIV.setFitWidth(16);
         liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), goLiveIV);
@@ -105,16 +105,17 @@ public class PreviewPanel extends LivePreviewPanel {
     /**
      * Set the given displayable to be shown on the panel.
      * <p/>
-     * @param d the displayable to show.
+     *
+     * @param d     the displayable to show.
      * @param index an index that may be used or ignored depending on the
-     * displayable.
+     *              displayable.
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         liveButton.setDisable(false);
         if (d instanceof WebDisplayable) {
-            final WebDisplayable webDisplayable = (WebDisplayable)d;
+            final WebDisplayable webDisplayable = (WebDisplayable) d;
             Platform.runLater(() -> {
                 if (!webDisplayable.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable())) {
                     getWebPanel().addWebView(webDisplayable);

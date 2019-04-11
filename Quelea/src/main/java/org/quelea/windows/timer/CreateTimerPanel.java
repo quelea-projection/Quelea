@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -56,6 +57,7 @@ import org.quelea.windows.newsong.ThemePanel;
 /**
  * Creates the creation panel for a timer displayable
  * <p/>
+ *
  * @author Ben
  */
 public class CreateTimerPanel extends Stage {
@@ -106,7 +108,11 @@ public class CreateTimerPanel extends Stage {
         durationTextField.setPromptText("5:00");
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (parsable(newValue)) {
-                durationTextField.setStyle("-fx-text-fill: black;");
+                if (!QueleaProperties.get().getUseDarkTheme()) {
+                    durationTextField.setStyle("-fx-text-fill: black;");
+                } else {
+                    durationTextField.setStyle("-fx-text-fill: white;");
+                }
                 confirmButton.setDisable(false);
             } else {
                 durationTextField.setStyle("-fx-text-fill: red;");
@@ -151,6 +157,9 @@ public class CreateTimerPanel extends Stage {
         bp.setBottom(tpConfirm);
         BorderPane.setAlignment(tpConfirm, Pos.CENTER);
         Scene sc = new Scene(bp);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            sc.getStylesheets().add("org/modena_dark.css");
+        }
         tpStage.setScene(sc);
         themeButton.setOnAction((ActionEvent Event) -> {
             tpStage.showAndWait();
@@ -228,7 +237,11 @@ public class CreateTimerPanel extends Stage {
         if (td != null) {
             createEdit(td);
         }
-        setScene(new Scene(grid));
+        Scene scene = new Scene(grid);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     private boolean parsable(String newValue) {
@@ -280,7 +293,7 @@ public class CreateTimerPanel extends Stage {
             SimpleDateFormat ft = new SimpleDateFormat("hh:mmaa");
             Calendar now = Calendar.getInstance();
             Calendar time = Calendar.getInstance();
-            time.setTime(ft.parse(text.toLowerCase().replace(" ","")));
+            time.setTime(ft.parse(text.toLowerCase().replace(" ", "")));
             time.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
             return time;
         } catch (ParseException e) {

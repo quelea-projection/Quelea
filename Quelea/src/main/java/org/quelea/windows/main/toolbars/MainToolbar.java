@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,20 @@
  */
 package org.quelea.windows.main.toolbars;
 
+import java.io.File;
 import java.util.Date;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+
 import javax.swing.Timer;
+
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -60,6 +56,7 @@ import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 /**
  * Quelea's main toolbar.
  * <p/>
+ *
  * @author Michael
  */
 public class MainToolbar extends ToolBar {
@@ -154,7 +151,7 @@ public class MainToolbar extends ToolBar {
 
         add = new MenuButton("");
 
-        ImageView iv = new ImageView(new Image("file:icons/add_item.png"));
+        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/add_item-light.png" : "file:icons/add_item.png"));
         iv.setSmooth(true);
         iv.setFitWidth(20);
         iv.setFitHeight(20);
@@ -217,7 +214,7 @@ public class MainToolbar extends ToolBar {
         if (Utils.isMac()) {
             dvdIV = new ImageView(new Image("file:icons/dvd.png"));
         } else {
-            dvdIV = new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true));
+            dvdIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/dvd-light.png" : "file:icons/dvd.png", 24, 24, false, true));
         }
         dvdIV.setFitWidth(24);
         dvdIV.setFitHeight(24);
@@ -225,7 +222,7 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addDVDButton = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDButton.setOnAction(new AddDVDActionHandler());
-        if(!Utils.isMac()) {
+        if (!Utils.isMac()) {
             add.getItems().add(addDVDButton);
         }
 
@@ -295,6 +292,7 @@ public class MainToolbar extends ToolBar {
         recordingPathTextField.textProperty().addListener((ov, prevText, currText) -> {
             Platform.runLater(() -> {
                 Text text = new Text(currText);
+                text.getStyleClass().add("text");
                 text.setFont(recordingPathTextField.getFont());
                 double width = text.getLayoutBounds().getWidth()
                         + recordingPathTextField.getPadding().getLeft() + recordingPathTextField.getPadding().getRight()
@@ -358,7 +356,7 @@ public class MainToolbar extends ToolBar {
     }
 
     private MenuItem getMenuItemFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
-        ImageView iv = new ImageView(new Image(uri, width, height, preserveRatio, smooth));
+        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? uri.replace(".png", "-light.png") : uri, width, height, preserveRatio, smooth));
         iv.setSmooth(true);
         iv.setFitWidth(24);
         iv.setFitHeight(24);
@@ -366,7 +364,7 @@ public class MainToolbar extends ToolBar {
     }
 
     private ImageView getImageViewForButton(String uri) {
-        ImageView iv = new ImageView(new Image(uri));
+        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? uri.replace(".png", "-light.png") : uri));
         iv.setSmooth(true);
         iv.setFitWidth(24);
         iv.setFitHeight(24);
@@ -376,6 +374,7 @@ public class MainToolbar extends ToolBar {
     /**
      * Set if the DVD is loading.
      * <p>
+     *
      * @param loading true if it's loading, false otherwise.
      */
     public void setDVDLoading(boolean loading) {
@@ -423,7 +422,7 @@ public class MainToolbar extends ToolBar {
      * Method to set elapsed time on ToggleButton
      *
      * @param elapsedTimeMillis Time elapsed recording last was started
-     * @param tb ToggleButton to set time
+     * @param tb                ToggleButton to set time
      */
     private void setTime(long elapsedTimeMillis, ToggleButton tb) {
         float elapsedTimeSec = elapsedTimeMillis / 1000F;

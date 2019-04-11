@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,6 +32,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
@@ -63,7 +64,7 @@ public class ThemePanel extends BorderPane {
     public ThemePanel() {
         this(null, null);
     }
-    
+
     public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton) {
         this(wordsArea, confirmButton, false);
     }
@@ -88,10 +89,13 @@ public class ThemePanel extends BorderPane {
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
-        label.setStyle("-fx-text-fill:#666666;");
-        centrePane.setStyle("-fx-background-color:#dddddd;");
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            label.setStyle("-fx-text-fill:#666666;");
+            centrePane.setStyle("-fx-background-color:#dddddd;");
+        }
         centrePane.getChildren().add(label);
         StackPane themePreviewPane = new StackPane();
+        themePreviewPane.getStyleClass().add("text-area");
         themePreviewPane.getChildren().add(preview);
         themePreviewPane.getChildren().add(positionSelector);
         centrePane.getChildren().add(themePreviewPane);
@@ -122,7 +126,7 @@ public class ThemePanel extends BorderPane {
             wordsArea.textProperty().addListener(cl);
             cl.changed(null, null, wordsArea.getText());
         }
-        
+
         VBox northBox = new VBox();
         HBox themeSelectPanel = new HBox();
         themeSelectPanel.setPadding(new Insets(5));
@@ -130,7 +134,7 @@ public class ThemePanel extends BorderPane {
         themeSelectLabel.setPadding(new Insets(3,0,0,0));
         themeCombo = new ComboBox<>();
         themeCombo.setItems(ThemeUtils.getThemes());
-        
+
         Button copyButton = new Button(LabelGrabber.INSTANCE.getLabel("copy"));
         copyButton.setOnAction(event -> {
             setTheme(themeCombo.getValue());
@@ -143,7 +147,7 @@ public class ThemePanel extends BorderPane {
             northBox.getChildren().add(themeSelectPanel);
         }
         northBox.getChildren().add(themeToolbar);
-        
+
         setTop(northBox);
         updateTheme(false);
         setMaxSize(800, 600);

@@ -272,7 +272,11 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         });
         setResizable(false);
 
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

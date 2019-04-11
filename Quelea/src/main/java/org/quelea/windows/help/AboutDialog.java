@@ -28,6 +28,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -73,15 +74,21 @@ public class AboutDialog extends Stage {
         VBox subLayout = new VBox();
         Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString());
         headingText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        headingText.getStyleClass().add("text");
         subLayout.getChildren().add(headingText);
         subLayout.getChildren().add(new Text(" "));
-        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
-        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
+        Text text1 = new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1"));
+        text1.getStyleClass().add("text");
+        subLayout.getChildren().add(text1);
+        Text text2 = new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2"));
+        text2.getStyleClass().add("text");
+        subLayout.getChildren().add(text2);
         subLayout.getChildren().add(new Text(" "));
-        subLayout.getChildren().add(new Text("Java: " + System.getProperty("java.version")));
+        subLayout.getChildren().add(new Label("Java: " + System.getProperty("java.version")));
         HBox debugBox = new HBox(5);
-        debugBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ":"));
+        debugBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("debug.location") + ":"));
         Text debugLogText = new Text(LoggerUtils.getHandlerFileLocation());
+        debugLogText.getStyleClass().add("text");
         if(Desktop.isDesktopSupported()) {
             debugLogText.setCursor(Cursor.HAND);
             debugLogText.setFill(Color.BLUE);
@@ -102,6 +109,10 @@ public class AboutDialog extends Stage {
         BorderPane.setMargin(closeButton, new Insets(10));
         newLayout.setBottom(closeButton);
 
-        setScene(new Scene(newLayout));
+        Scene scene = new Scene(newLayout);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 }

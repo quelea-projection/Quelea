@@ -33,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A dialog where the user can browse through the installed bibles.
@@ -86,8 +87,12 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         
         mainPane.setCenter(bibleText);
         updateBibles();
-        
-        setScene(new Scene(mainPane));
+
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**
