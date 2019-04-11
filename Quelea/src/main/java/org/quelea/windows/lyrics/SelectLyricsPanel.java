@@ -73,17 +73,11 @@ public class SelectLyricsPanel extends AbstractPanel {
         splitPane.getItems().add(preview);
         setCenter(splitPane);
         registerDisplayCanvas(previewCanvas);
-        lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
-            @Override
-            public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
-                updateCanvas();
-            }
+        lyricsList.getSelectionModel().selectedItemProperty().addListener((ov, t1, t2) -> {
+            updateCanvas();
         });
-        lyricsList.itemsProperty().addListener(new ChangeListener<ObservableList<TextSection>>() {
-            @Override
-            public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
-                updateCanvas();
-            }
+        lyricsList.itemsProperty().addListener((ov, t1, t2) -> {
+            updateCanvas();
         });
 //        
     }
