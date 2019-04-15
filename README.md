@@ -14,6 +14,8 @@
 [**2019.0 - Linux**](https://snapcraft.io/quelea)<br>
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
+**Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**
+
 ![screenshot](screenshot.png)
 
 ## CI releases
