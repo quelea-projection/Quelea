@@ -75,13 +75,16 @@ public class OpenLyricsParser implements SongParser {
                 OpenLyricsObject ol = new OpenLyricsObject(fileContents.toString());
                 String lyrics = getLyrics(ol);
                 String title = getTitle(ol.getProperties().getTitleProperty());
+                String comments = getComments(ol.getProperties().getComments());
+                String copyright = ol.getProperties().getCopyright();
                 String author = getAuthor(ol);
                 if (!lyrics.isEmpty()) {
                     SongDisplayable displayable = new SongDisplayable(title, author);
                     displayable.setLyrics(lyrics);
+                    displayable.setInfo(comments);
+                    displayable.setCopyright(copyright);
                     ret.add(displayable);
-                }
-                else {
+                } else {
                     LOGGER.log(Level.INFO, "Song had empty lyrics");
                 }
             }
@@ -92,23 +95,33 @@ public class OpenLyricsParser implements SongParser {
         }
         return ret;
     }
-    
+
+    private String getComments(List<String> comments) {
+        StringBuilder ret = new StringBuilder();
+        if (comments != null) {
+            for (String comment : comments) {
+                ret.append(comment).append('\n');
+            }
+        }
+        return ret.toString().trim();
+    }
+
     private String getTitle(TitleProperty titleProp) {
         StringBuilder ret = new StringBuilder();
         List<String> titles = new ArrayList<>();
-        for(Locale locale : titleProp.getTitleLocales()) {
+        for (Locale locale : titleProp.getTitleLocales()) {
             titles.add(titleProp.getTitle(locale));
         }
-        for(int i=0 ; i<titles.size() ; i++) {
+        for (int i = 0; i < titles.size(); i++) {
             String title = titles.get(i);
-            if(title.matches("[0-9]+\\.")) { //Deal with "number" titles
-                title = title.substring(0,title.length()-1);
-                while(title.length()<4) {
-                    title = "0"+title;
+            if (title.matches("[0-9]+\\.")) { //Deal with "number" titles
+                title = title.substring(0, title.length() - 1);
+                while (title.length() < 4) {
+                    title = "0" + title;
                 }
             }
             ret.append(title);
-            if(i<titles.size()-1) {
+            if (i < titles.size() - 1) {
                 ret.append(" - ");
             }
         }
