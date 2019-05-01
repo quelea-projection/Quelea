@@ -14,6 +14,8 @@
 [**2019.0 - Linux**](https://snapcraft.io/quelea)<br>
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
+**Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**
+
 ![screenshot](screenshot.png)
 
 ## CI releases
@@ -31,9 +33,6 @@ If you're interested in learning more about how to use Quelea, the documentation
 Please report it so we can fix it! Feel free to [create an issue](https://github.com/quelea-projection/Quelea/issues), and provide as much information as you can on how to reproduce the problem (step by step instructions for recreating the issue after starting Quelea are very useful.) After recreating the problem, you should also attach your [debug log](https://quelea.org/wiki/index.php/Debug_log) - this may give us a few technical clues as to what's going on.
 
 Please note that if we can't recreate a bug, then we can't fix it, so providing as much information as you can here is very important.
-
-## I've got other questions / I'd like to suggest a feature
-[We have a Google group that you're welcome to use to ask questions](https://groups.google.com/forum/#!forum/quelea-discuss). The group is frequented by many Quelea users and the developers, so you may be able to get answers and input here from a variety of people.
 
 ## I'd like to contribute
 Great! Please see our specific [contributing guidelines](CONTRIBUTING.md) for more information.
