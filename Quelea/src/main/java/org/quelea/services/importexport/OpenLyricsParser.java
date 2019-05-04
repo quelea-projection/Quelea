@@ -65,17 +65,12 @@ public class OpenLyricsParser implements SongParser {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
-                StringBuilder fileContents = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(entry), "UTF-8"))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        fileContents.append(line.trim());
-                    }
-                }
-                OpenLyricsObject ol = new OpenLyricsObject(fileContents.toString());
+                
+                OpenLyricsObject ol = new OpenLyricsObject(file.getInputStream(entry));
                 String lyrics = getLyrics(ol);
                 String title = getTitle(ol.getProperties().getTitleProperty());
                 String comments = getComments(ol.getProperties().getComments());
+                String ccli = ol.getProperties().getCcliNo();
                 String copyright = ol.getProperties().getCopyright();
                 String author = getAuthor(ol);
                 if (!lyrics.isEmpty()) {
@@ -83,6 +78,7 @@ public class OpenLyricsParser implements SongParser {
                     displayable.setLyrics(lyrics);
                     displayable.setInfo(comments);
                     displayable.setCopyright(copyright);
+                    displayable.setCcli(ccli);
                     ret.add(displayable);
                 } else {
                     LOGGER.log(Level.INFO, "Song had empty lyrics");
