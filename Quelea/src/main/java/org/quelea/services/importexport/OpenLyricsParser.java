@@ -161,10 +161,10 @@ public class OpenLyricsParser implements SongParser {
     }
 
     /**
-     * Parse verse name as a verse title string.
+     * Parse verse name as a section title string.
      *
      * @param verseName the openlyrics verse name
-     * @return the verse title as a string, or an empty string if the name could not be parsed
+     * @return the section title as a string, or an empty string if the name could not be parsed
      */
     private String parseVerseName(String verseName)
     {
@@ -189,6 +189,13 @@ public class OpenLyricsParser implements SongParser {
                 ret = "Bridge " + verseName.substring(1) + "\n";
             } else {
                 ret = "Bridge\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("p")) {
+            // This is a pre-chorus, e.g. "p1".
+            if (verseName.length() > 1) {
+                ret = "Pre-chorus " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Pre-chorus\n";
             }
         }
         return ret;
