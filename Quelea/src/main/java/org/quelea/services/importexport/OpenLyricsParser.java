@@ -148,6 +148,9 @@ public class OpenLyricsParser implements SongParser {
             LOGGER.log(Level.WARNING, "Couldn't create openlyrics object");
         } else {
             for (Verse verse : ol.getVerses()) {
+                if (!verse.getName().isEmpty()) {
+                    ret.append(parseVerseName(verse.getName()));
+                }
                 for (VerseLine line : verse.getLines()) {
                     ret.append(line.getText().trim()).append('\n');
                 }
@@ -157,4 +160,44 @@ public class OpenLyricsParser implements SongParser {
         return ret.toString().trim();
     }
 
+    /**
+     * Parse verse name as a section title string.
+     *
+     * @param verseName the openlyrics verse name
+     * @return the section title as a string, or an empty string if the name could not be parsed
+     */
+    private String parseVerseName(String verseName)
+    {
+        String ret = "";
+        if (verseName.toLowerCase().startsWith("v")) {
+            // This is a verse, e.g. "v1".
+            if (verseName.length() > 1) {
+                ret = "Verse " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Verse\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("c")) {
+            // This is a chorus, e.g. "c1".
+            if (verseName.length() > 1) {
+                ret = "Chorus " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Chorus\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("b")) {
+            // This is a bridge, e.g. "b1".
+            if (verseName.length() > 1) {
+                ret = "Bridge " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Bridge\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("p")) {
+            // This is a pre-chorus, e.g. "p1".
+            if (verseName.length() > 1) {
+                ret = "Pre-chorus " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Pre-chorus\n";
+            }
+        }
+        return ret;
+    }
 }
