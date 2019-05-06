@@ -186,7 +186,7 @@ dependencies {
     izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
     
     compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4.0'
-    compile 'de.suse.lib:jopenlyricslib:1.3'
+    compile 'de.suse.lib:jopenlyricslib:1.4'
     compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
     compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '4.0.1'
     compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '4.0.1'
