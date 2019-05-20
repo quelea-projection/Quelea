@@ -48,7 +48,7 @@ public class PlatformUtils {
      * up always on top
      */
     public static boolean setFullScreenAlwaysOnTop(Stage stage, boolean fullScreen) {
-        if (!Utils.isLinux()) {
+        if (Utils.isWindows()) {
             return false;
         }
 
