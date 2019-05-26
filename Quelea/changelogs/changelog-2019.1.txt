@@ -10,3 +10,5 @@ quelea (2019.1) stable
   * Add dark theme option
   * Fix full screen issue on Mac
   * Fix plain text parser to use file name as title if no title is given in document
+  * Fix OpenLyrics import to map section titles correctly
+  * Fix logo displaying state bug
