@@ -126,6 +126,10 @@ public class MobileLyricsServer {
 
     private String sortLabels(String content) {
         content = content.replace("[loading.text]", LabelGrabber.INSTANCE.getLabel("loading.text"));
+        content = content.replace("[line.alignment.label]", LabelGrabber.INSTANCE.getLabel("stage.line.alignment"));
+        content = content.replace("[left]", LabelGrabber.INSTANCE.getLabel("left"));
+        content = content.replace("[centre]", LabelGrabber.INSTANCE.getLabel("centre"));
+        content = content.replace("[right]", LabelGrabber.INSTANCE.getLabel("right"));
         content = content.replace("[font.colour.label]", LabelGrabber.INSTANCE.getLabel("font.colour.label"));
         content = content.replace("[background.colour.label]", LabelGrabber.INSTANCE.getLabel("background.colour.label"));
         content = content.replace("[change.graphics.label]", LabelGrabber.INSTANCE.getLabel("change.graphics.label"));
