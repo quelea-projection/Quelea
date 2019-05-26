@@ -42,7 +42,6 @@ public class LyricListCell extends ListCell<TextSection> {
     public LyricListCell(SelectLyricsList sll) {
         layout = new VBox(3);
         header = new Text();
-        header.getStyleClass().add("text");
         header.setFont(Font.font("Verdana", FontWeight.BOLD, 11.5));
         lyrics = new Text();
         lyrics.getStyleClass().add("text");
@@ -104,11 +103,11 @@ public class LyricListCell extends ListCell<TextSection> {
             }
             header.setText(section.getTitle());
             if (section.getTitle().toLowerCase().startsWith("chorus")) {
-                header.setFill(Color.DARKRED);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.RED : Color.DARKRED);
             } else if (section.getTitle().toLowerCase().startsWith("verse")) {
-                header.setFill(Color.DARKBLUE);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTBLUE : Color.DARKBLUE);
             } else {
-                header.setFill(Color.DARKGREEN);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTGREEN : Color.DARKGREEN);
             }
         }
         lyrics.getStyleClass().add("cell-text");
