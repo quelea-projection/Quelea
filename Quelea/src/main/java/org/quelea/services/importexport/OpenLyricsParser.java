@@ -197,6 +197,20 @@ public class OpenLyricsParser implements SongParser {
             } else {
                 ret = "Pre-chorus\n";
             }
+        } else if (verseName.toLowerCase().startsWith("i")) {
+            // This is an intro, e.g. "i1".
+            if (verseName.length() > 1) {
+                ret = "Intro " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Intro\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("e")) {
+            // This is an ending, e.g. "e1".
+            if (verseName.length() > 1) {
+                ret = "Ending " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Ending\n";
+            }
         }
         return ret;
     }
