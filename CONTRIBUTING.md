@@ -22,6 +22,8 @@ We're usually a little more cagey about accepting pull requests for new features
 
 Major refactorings of the project, or a significant part of it, are very unlikely to be accepted unless specifically discussed and agreed in advance. (This is usually something that we'd leave to the core developers though.)
 
+Please see the [Setup Guide](docs/SETUP.md) for information on setting up a local development environment.
+
 ## Final notes
 
 Please don't let any of the above put you off contributing! We love contributions, and we're always happy to work with you where we can. We just can't promise to accept everything - Quelea now has a reasonable user base and the decisions we make around the code have real world implications, so we have to be convinced that contributions are definitely going to have a positive effect on our users before we accept them.
