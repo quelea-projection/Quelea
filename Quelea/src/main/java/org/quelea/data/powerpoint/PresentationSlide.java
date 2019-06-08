@@ -18,11 +18,9 @@
 package org.quelea.data.powerpoint;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,18 +55,10 @@ public class PresentationSlide {
      */
     public PresentationSlide(Slide slide, int numSlide) {
         SlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
             slide.draw(g2);
         } catch (Exception ex) {
             if (QueleaProperties.get().getUsePP()) {
@@ -91,18 +81,10 @@ public class PresentationSlide {
      */
     public PresentationSlide(XSLFSlide slide, int numSlide) {
         org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
             slide.draw(g2);
         } catch (NullPointerException ex) {
             if (QueleaProperties.get().getUsePP()) {
