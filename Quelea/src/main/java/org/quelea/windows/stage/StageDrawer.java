@@ -154,7 +154,7 @@ public class StageDrawer extends WordDrawer {
 
             if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS && i < newText.size() - 1) {
                 List<Chord> chords = Chord.getChordsFromLine(line.getLine());
-                String nextLine = newText.get(i + 1).getLine();
+                String nextLine = widenInitialSpaces(newText.get(i + 1).getLine());
 
                 FormattedText nextLineFt = new FormattedText(nextLine);
                 nextLineFt.setFont(font);
@@ -174,9 +174,9 @@ public class StageDrawer extends WordDrawer {
                 }
 
             } else {
-                FormattedText t = new FormattedText(line.getLine());
+                FormattedText t = new FormattedText(widenInitialSpaces(line.getLine()));
                 t.setFont(font);
-                setPositionX(t, metrics, line.getLine());
+                setPositionX(t, metrics, widenInitialSpaces(line.getLine()));
                 t.setLayoutY(y);
 
                 Color lineColor;
@@ -498,6 +498,23 @@ public class StageDrawer extends WordDrawer {
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
+    }
+    
+    private static String widenInitialSpaces(String str) {
+        StringBuilder ret = new StringBuilder(str.length());
+        boolean initialSpace = true;
+        for (int i = 0; i < str.length() ; i++) {
+            if(initialSpace && str.charAt(i)!=' '){
+                initialSpace = false;
+            }
+            if(initialSpace) {
+                ret.append('\u2000');
+            }
+            else {
+                ret.append(str.charAt(i));
+            }
+        }
+        return ret.toString();
     }
 
 }
