@@ -54,6 +54,7 @@ import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.utils.FXFontMetrics;
+import org.quelea.utils.WrapTextResult;
 
 /**
  * Draw items onto a stage canvas
@@ -103,11 +104,11 @@ public class StageDrawer extends WordDrawer {
 
         List<LyricLine> newText;
         if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
+            if (text.length == 0) {
+                newText = new ArrayList<>();
+            } else {
+                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                newText = result.getNewText();
             }
         } else {
             newText = sanctifyText(text);
