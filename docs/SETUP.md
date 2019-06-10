@@ -19,6 +19,6 @@ If you're not familiar with working on Java desktop applications, you can follow
 9. Ensure that the selection for "Gradle JVM" has a "java version" that starts with `1.8`.
 10. Click OK to import the project.
 11. Navigate to the `src/main/java/org/quelea/windows/main/Main` class.
-12. Right-click on that class in the sidebar and click "Debug 'Main.main()'"
+12. Right-click on that class in the sidebar and click `Debug 'Main.main()'`
 
 If everything's gone smoothly, you should see Quelea launch. You're now ready to make and test changes!
