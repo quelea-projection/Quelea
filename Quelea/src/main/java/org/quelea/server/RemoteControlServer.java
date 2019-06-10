@@ -921,7 +921,7 @@ public class RemoteControlServer {
                             if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                                 ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
                             } else {
-                                ret.append("<span class=\"lyric\">").append(line);
+                                ret.append("<span class=\"lyric\">").append(line.replaceAll("\\s", "&#160;"));
                             }
                             ret.append("</span>").append("<br/>");
                         } else {
