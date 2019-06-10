@@ -6,7 +6,6 @@ import com.sun.jna.platform.unix.X11;
 
 import java.awt.*;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -48,11 +47,8 @@ public class PlatformUtils {
      * up always on top
      */
     public static boolean setFullScreenAlwaysOnTop(Stage stage, boolean fullScreen) {
-        if (Utils.isWindows()) {
+        if (!Utils.isLinux()) {
             return false;
-        }
-        if(Utils.isMac()) {
-            stage.initStyle(StageStyle.DECORATED);
         }
 
         stage.setFullScreenExitHint("");
