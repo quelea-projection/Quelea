@@ -1317,7 +1317,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea discussion forum.
      */
     public String getDiscussLocation() {
-        return getProperty("discuss.location", "https://groups.google.com/group/quelea-discuss");
+        return getProperty("discuss.location", "http://quelea.discourse.group");
     }
 
     /**
