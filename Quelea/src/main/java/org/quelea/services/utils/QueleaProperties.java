@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import com.sun.istack.NotNull;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -2194,29 +2195,26 @@ public final class QueleaProperties extends Properties {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
 
-    public double getDisplayMarginTop () {
-        return Double.parseDouble((getProperty("display.margin.top", "0")));
+    public PercentMargins getDisplayMargin() {
+        String[] parts = getProperty("display.margin", "0,0,0,0").split(",");
+        if (parts.length == 4) {
+            return new PercentMargins(
+                    Double.parseDouble(parts[0]),
+                    Double.parseDouble(parts[1]),
+                    Double.parseDouble(parts[2]),
+                    Double.parseDouble(parts[3])
+            );
+        } else {
+            return new PercentMargins(0,0,0,0);
+        }
     }
-    public double getDisplayMarginLeft () {
-        return Double.parseDouble((getProperty("display.margin.left", "0")));
-    }
-    public double getDisplayMarginBottom() {
-        return Double.parseDouble((getProperty("display.margin.bottom", "0")));
-    }
-    public double getDisplayMarginRight() {
-        return Double.parseDouble((getProperty("display.margin.right", "0")));
+
+    public void setDisplayMargin(@NotNull PercentMargins margins) {
+        setProperty("display.margin", margins.toString());
     }
 
     public Bounds applyDisplayMargins(Bounds coords) {
-        double leftMargin = getDisplayMarginLeft() * coords.getWidth();
-        double topMargin = getDisplayMarginTop() * coords.getHeight();
-
-        return new BoundingBox(
-                coords.getMinX() + leftMargin,
-                coords.getMinY() + topMargin,
-                coords.getWidth() - leftMargin - getDisplayMarginRight()* coords.getWidth(),
-                coords.getHeight() - topMargin - getDisplayMarginBottom()* coords.getHeight()
-        );
+        return getDisplayMargin().applyMargins(coords);
     }
 
     public boolean getDefaultSongDBUpdate() {
