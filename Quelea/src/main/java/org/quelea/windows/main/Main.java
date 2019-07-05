@@ -185,7 +185,12 @@ public final class Main extends Application {
                     if (lyricsHidden) {
                         LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
+                            fullScreenWindow = new DisplayStage(
+                                    QueleaProperties.get().applyDisplayMargins(
+                                        Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds())
+                                    ),
+                                    false
+                            );
                             fullScreenWindow.hide();
                         });
                     } else if (QueleaProperties.get().isProjectorModeCoords()) {
@@ -196,7 +201,12 @@ public final class Main extends Application {
                     } else {
                         LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
+                            fullScreenWindow = new DisplayStage(
+                                    QueleaProperties.get().applyDisplayMargins(
+                                            Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds())
+                                    ),
+                                    false
+                            );
                             fullScreenWindow.setFullScreenAlwaysOnTop(true);
                         });
                     }
