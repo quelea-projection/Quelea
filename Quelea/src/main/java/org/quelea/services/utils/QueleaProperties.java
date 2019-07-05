@@ -1120,6 +1120,19 @@ public final class QueleaProperties extends Properties {
                 Integer.parseInt(prop[3]));
     }
 
+    public Bounds getProjectorCoordsWithMargins() {
+        Bounds baseCoords = getProjectorCoords();
+        double leftMargin = getDisplayMarginLeft() * baseCoords.getWidth();
+        double topMargin = getDisplayMarginTop() * baseCoords.getHeight();
+
+        return new BoundingBox(
+                baseCoords.getMinX() + leftMargin,
+                baseCoords.getMinY() + topMargin,
+                baseCoords.getWidth() - leftMargin - getDisplayMarginRight()* baseCoords.getWidth(),
+                baseCoords.getHeight() - topMargin - getDisplayMarginBottom()* baseCoords.getHeight()
+        );
+    }
+
     /**
      * Set the custom projector co-ordinates.
      * <p>
@@ -2188,6 +2201,19 @@ public final class QueleaProperties extends Properties {
 
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
+    }
+
+    public double getDisplayMarginTop () {
+        return Double.parseDouble((getProperty("display.margin.top", "0")));
+    }
+    public double getDisplayMarginLeft () {
+        return Double.parseDouble((getProperty("display.margin.left", "0")));
+    }
+    public double getDisplayMarginBottom() {
+        return Double.parseDouble((getProperty("display.margin.bottom", "0")));
+    }
+    public double getDisplayMarginRight() {
+        return Double.parseDouble((getProperty("display.margin.right", "0")));
     }
 
     public boolean getDefaultSongDBUpdate() {

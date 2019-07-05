@@ -189,9 +189,9 @@ public final class Main extends Application {
                             fullScreenWindow.hide();
                         });
                     } else if (QueleaProperties.get().isProjectorModeCoords()) {
-                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
+                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoordsWithMargins());
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
+                            fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoordsWithMargins(), false);
                         });
                     } else {
                         LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
