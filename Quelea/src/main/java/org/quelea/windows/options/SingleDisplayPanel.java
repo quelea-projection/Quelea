@@ -51,6 +51,8 @@ public class SingleDisplayPanel extends VBox {
     private NumberTextField customWidth;
     private NumberTextField customHeight;
 
+    private NumberTextField marginTop;
+
     /**
      * Create a new single display panel.
      *
@@ -128,6 +130,23 @@ public class SingleDisplayPanel extends VBox {
             posPanel.setMaxWidth(Double.MAX_VALUE);
             getChildren().add(posPanel);
         }
+
+        Label marginsLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.margins"));
+        getChildren().add(marginsLabel);
+
+        GridPane marginPanel = new GridPane();
+        marginPanel.setVgap(5);
+        marginPanel.setHgap(5);
+
+        marginTop = new NumberTextField(0);
+
+        Label marginTopLabel = new Label(LabelGrabber.INSTANCE.getLabel("top") + ":");
+        GridPane.setConstraints(marginTopLabel, 1, 1);
+        marginPanel.getChildren().add(marginTopLabel);
+        GridPane.setConstraints(marginTop, 2, 1);
+        marginPanel.getChildren().add(marginTop);
+
+        getChildren().add(marginPanel);
     }
 
     /**
