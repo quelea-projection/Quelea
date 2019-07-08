@@ -1076,7 +1076,7 @@ public final class QueleaProperties extends Properties {
      * * <p/>
      *
      * @param extend true if it should automatically move projection screen,
-     *               false otherwise.
+     * false otherwise.
      */
     public void setUseAutoExtend(boolean extend) {
         setProperty("use.auto.extend", Boolean.toString(extend));
@@ -1099,7 +1099,7 @@ public final class QueleaProperties extends Properties {
      * <p>
      *
      * @param maxChars the maximum number of characters allowed on any one line
-     *                 of projected text.
+     * of projected text.
      */
     public void setMaxChars(int maxChars) {
         setProperty("max.chars", Integer.toString(maxChars));
@@ -1611,8 +1611,8 @@ public final class QueleaProperties extends Properties {
     public String[] getGodWords() {
         return getProperty("god.words",
                 "god,God,jesus,Jesus,christ,Christ,you,You,he,He,lamb,Lamb,"
-                        + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
-                        + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
+                + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
+                + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
                 .trim().split(",");
     }
 
@@ -1678,7 +1678,7 @@ public final class QueleaProperties extends Properties {
      * <p>
      *
      * @param val if we should use openoffice, false if we should just use the
-     *            basic POI images.
+     * basic POI images.
      */
     public void setUseOO(boolean val) {
         setProperty("use.oo", Boolean.toString(val));
@@ -1722,7 +1722,7 @@ public final class QueleaProperties extends Properties {
      * <p/>
      *
      * @param val if we should use PowerPoint, false if we should just use the
-     *            basic POI images or openoffice.
+     * basic POI images or openoffice.
      */
     public void setUsePP(boolean val) {
         setProperty("use.pp", Boolean.toString(val));
@@ -1807,7 +1807,7 @@ public final class QueleaProperties extends Properties {
      * <p>
      *
      * @param val if we should use covert to MP#, false if we should just store
-     *            recordings as WAV files.
+     * recordings as WAV files.
      */
     public void setConvertRecordings(boolean val) {
         setProperty("convert.mp3", Boolean.toString(val));
@@ -2045,7 +2045,7 @@ public final class QueleaProperties extends Properties {
      * <p>
      *
      * @param maxChars the maximum number of characters allowed on any one line
-     *                 of bible text.
+     * of bible text.
      */
     public void setMaxBibleChars(int maxChars) {
         setProperty("max.bible.chars", Integer.toString(maxChars));
