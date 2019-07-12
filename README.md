@@ -30,7 +30,7 @@ CI releases are automatically built from the latest code in this repository, and
 If you're interested in learning more about how to use Quelea, the documentation can be found [here](https://quelea-projection.github.io/docs/).
 
 ## I've found a bug!
-Please report it so we can fix it! Feel free to [create an issue](https://github.com/quelea-projection/Quelea/issues), and provide as much information as you can on how to reproduce the problem (step by step instructions for recreating the issue after starting Quelea are very useful.) After recreating the problem, you should also attach your [debug log](https://quelea.org/wiki/index.php/Debug_log) - this may give us a few technical clues as to what's going on.
+Please report it so we can fix it! Feel free to [create an issue](https://github.com/quelea-projection/Quelea/issues), and provide as much information as you can on how to reproduce the problem (step by step instructions for recreating the issue after starting Quelea are very useful.) After recreating the problem, you should also attach your [debug log](https://quelea-projection.github.io/docs/Debug_log) - this may give us a few technical clues as to what's going on.
 
 Please note that if we can't recreate a bug, then we can't fix it, so providing as much information as you can here is very important.
 
