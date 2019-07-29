@@ -182,6 +182,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         QueleaProperties props = QueleaProperties.get();
         props.setControlScreen(monitorPanel.getOutputScreen());
         props.setProjectorCoords(projectorPanel.getCoords());
+        props.setDisplayMargin(projectorPanel.getMargins());
         props.setStageCoords(stagePanel.getCoords());
         if(projectorPanel.customPosition()) {
             props.setProjectorModeCoords();

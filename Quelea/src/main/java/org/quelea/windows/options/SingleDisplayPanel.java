@@ -32,6 +32,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.PercentMargins;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.NumberTextField;
 
@@ -244,6 +245,15 @@ public class SingleDisplayPanel extends VBox {
         customY.setNumber((int) bounds.getMinY());
         customWidth.setNumber((int) bounds.getWidth());
         customHeight.setNumber((int) bounds.getHeight());
+    }
+
+    public PercentMargins getMargins() {
+        return new PercentMargins(
+            marginTop.getNumber() / 100.0,
+            marginRight.getNumber() / 100.0,
+            marginBottom.getNumber() / 100.0,
+            marginLeft.getNumber() / 100.0
+        );
     }
 
     /**
