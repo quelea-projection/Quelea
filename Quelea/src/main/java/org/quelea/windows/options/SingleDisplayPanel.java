@@ -65,9 +65,11 @@ public class SingleDisplayPanel extends VBox {
      * otherwise.
      * @param customPos true if a custom position should be allowed for this
      * display panel.
+     * @param margins true if margins should be allowed for this
+     * display panel.
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
-            boolean customPos) {
+            boolean customPos, boolean margins) {
         setSpacing(10);
         setAlignment(Pos.TOP_CENTER);
         this.none = none;
@@ -134,42 +136,44 @@ public class SingleDisplayPanel extends VBox {
             getChildren().add(posPanel);
         }
 
-        Label marginsLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.margins"));
-        getChildren().add(marginsLabel);
+        if (margins) {
+            Label marginsLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.margins"));
+            getChildren().add(marginsLabel);
 
-        GridPane marginPanel = new GridPane();
-        marginPanel.setVgap(5);
-        marginPanel.setHgap(5);
+            GridPane marginPanel = new GridPane();
+            marginPanel.setVgap(5);
+            marginPanel.setHgap(5);
 
-        marginTop = new NumberTextField(0);
-        Label marginTopLabel = new Label(LabelGrabber.INSTANCE.getLabel("top") + ":");
-        GridPane.setConstraints(marginTopLabel, 1, 1);
-        marginPanel.getChildren().add(marginTopLabel);
-        GridPane.setConstraints(marginTop, 2, 1);
-        marginPanel.getChildren().add(marginTop);
+            marginTop = new NumberTextField(0);
+            Label marginTopLabel = new Label(LabelGrabber.INSTANCE.getLabel("top") + ":");
+            GridPane.setConstraints(marginTopLabel, 1, 1);
+            marginPanel.getChildren().add(marginTopLabel);
+            GridPane.setConstraints(marginTop, 2, 1);
+            marginPanel.getChildren().add(marginTop);
 
-        marginRight = new NumberTextField(0);
-        Label marginRightLabel = new Label(LabelGrabber.INSTANCE.getLabel("right") + ":");
-        GridPane.setConstraints(marginRightLabel, 1, 2);
-        marginPanel.getChildren().add(marginRightLabel);
-        GridPane.setConstraints(marginRight, 2, 2);
-        marginPanel.getChildren().add(marginRight);
+            marginRight = new NumberTextField(0);
+            Label marginRightLabel = new Label(LabelGrabber.INSTANCE.getLabel("right") + ":");
+            GridPane.setConstraints(marginRightLabel, 1, 2);
+            marginPanel.getChildren().add(marginRightLabel);
+            GridPane.setConstraints(marginRight, 2, 2);
+            marginPanel.getChildren().add(marginRight);
 
-        marginBottom = new NumberTextField(0);
-        Label marginBottomLabel = new Label(LabelGrabber.INSTANCE.getLabel("bottom") + ":");
-        GridPane.setConstraints(marginBottomLabel, 1, 3);
-        marginPanel.getChildren().add(marginBottomLabel);
-        GridPane.setConstraints(marginBottom, 2, 3);
-        marginPanel.getChildren().add(marginBottom);
+            marginBottom = new NumberTextField(0);
+            Label marginBottomLabel = new Label(LabelGrabber.INSTANCE.getLabel("bottom") + ":");
+            GridPane.setConstraints(marginBottomLabel, 1, 3);
+            marginPanel.getChildren().add(marginBottomLabel);
+            GridPane.setConstraints(marginBottom, 2, 3);
+            marginPanel.getChildren().add(marginBottom);
 
-        marginLeft = new NumberTextField(0);
-        Label marginLeftLabel = new Label(LabelGrabber.INSTANCE.getLabel("left") + ":");
-        GridPane.setConstraints(marginLeftLabel, 1, 4);
-        marginPanel.getChildren().add(marginLeftLabel);
-        GridPane.setConstraints(marginLeft, 2, 4);
-        marginPanel.getChildren().add(marginLeft);
+            marginLeft = new NumberTextField(0);
+            Label marginLeftLabel = new Label(LabelGrabber.INSTANCE.getLabel("left") + ":");
+            GridPane.setConstraints(marginLeftLabel, 1, 4);
+            marginPanel.getChildren().add(marginLeftLabel);
+            GridPane.setConstraints(marginLeft, 2, 4);
+            marginPanel.getChildren().add(marginLeft);
 
-        getChildren().add(marginPanel);
+            getChildren().add(marginPanel);
+        }
     }
 
     /**

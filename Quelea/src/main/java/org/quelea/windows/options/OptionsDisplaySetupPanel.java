@@ -46,13 +46,13 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         setHgap(30);
         setVgap(10);
         setPadding(new Insets(30));
-        monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label") + ":", "icons/monitor.png", false, false);
+        monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label") + ":", "icons/monitor.png", false, false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
         getChildren().add(monitorPanel);
-        projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label") + ":", "icons/projector.png", true, true);
+        projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label") + ":", "icons/projector.png", true, true, true);
         GridPane.setConstraints(projectorPanel, 2, 1);
         getChildren().add(projectorPanel);
-        stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label") + ":", "icons/stage.png", true, true);
+        stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label") + ":", "icons/stage.png", true, true, false);
         GridPane.setConstraints(stagePanel, 3, 1);
         getChildren().add(stagePanel);
         readProperties();
