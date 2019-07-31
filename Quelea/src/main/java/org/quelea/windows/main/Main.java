@@ -186,7 +186,7 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
                         Platform.runLater(() -> {
                             fullScreenWindow = new DisplayStage(
-                                    QueleaProperties.get().applyDisplayMargins(
+                                    QueleaProperties.get().applyProjectorMargin(
                                         Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds())
                                     ),
                                     false
@@ -202,7 +202,7 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                         Platform.runLater(() -> {
                             fullScreenWindow = new DisplayStage(
-                                    QueleaProperties.get().applyDisplayMargins(
+                                    QueleaProperties.get().applyProjectorMargin(
                                             Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds())
                                     ),
                                     false

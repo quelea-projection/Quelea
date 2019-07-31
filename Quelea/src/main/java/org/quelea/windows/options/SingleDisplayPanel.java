@@ -138,7 +138,7 @@ public class SingleDisplayPanel extends VBox {
         }
 
         if (margins) {
-            Label marginsLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.margins"));
+            Label marginsLabel = new Label(LabelGrabber.INSTANCE.getLabel("projector.margins"));
             getChildren().add(marginsLabel);
 
             GridPane marginPanel = new GridPane();

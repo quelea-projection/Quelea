@@ -102,7 +102,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         stagePanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
-        projectorPanel.setMargins(QueleaProperties.get().getDisplayMargin());
+        projectorPanel.setMargins(QueleaProperties.get().getProjectorMargin());
         if(!QueleaProperties.get().isProjectorModeCoords()) {
             projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
         }
@@ -183,7 +183,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         QueleaProperties props = QueleaProperties.get();
         props.setControlScreen(monitorPanel.getOutputScreen());
         props.setProjectorCoords(projectorPanel.getCoords());
-        props.setDisplayMargin(projectorPanel.getMargins());
+        props.setProjectorMargin(projectorPanel.getMargins());
         props.setStageCoords(stagePanel.getCoords());
         if(projectorPanel.customPosition()) {
             props.setProjectorModeCoords();

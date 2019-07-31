@@ -1122,7 +1122,7 @@ public final class QueleaProperties extends Properties {
     }
 
     public Bounds getProjectorCoordsWithMargins() {
-        return applyDisplayMargins(getProjectorCoords());
+        return applyProjectorMargin(getProjectorCoords());
     }
 
     /**
@@ -2195,8 +2195,8 @@ public final class QueleaProperties extends Properties {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
 
-    public PercentMargins getDisplayMargin() {
-        String[] parts = getProperty("display.margin", "0,0,0,0").split(",");
+    public PercentMargins getProjectorMargin() {
+        String[] parts = getProperty("projector.margin", "0,0,0,0").split(",");
         if (parts.length == 4) {
             return new PercentMargins(
                     Double.parseDouble(parts[0]),
@@ -2209,12 +2209,12 @@ public final class QueleaProperties extends Properties {
         }
     }
 
-    public void setDisplayMargin(@NotNull PercentMargins margins) {
-        setProperty("display.margin", margins.toString());
+    public void setProjectorMargin(@NotNull PercentMargins margins) {
+        setProperty("projector.margin", margins.toString());
     }
 
-    public Bounds applyDisplayMargins(Bounds coords) {
-        return getDisplayMargin().applyMargins(coords);
+    public Bounds applyProjectorMargin(Bounds coords) {
+        return getProjectorMargin().applyMargins(coords);
     }
 
     public boolean getDefaultSongDBUpdate() {

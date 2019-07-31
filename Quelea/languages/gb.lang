@@ -694,4 +694,4 @@ db.song.preview.label=Database song preview
 db.song.preview.label.control=None
 db.song.preview.label.databasepreview=In database pane
 db.song.preview.label.previewpane=In preview pane
-display.margins=Margins: (in %)
+projector.margins=Margins: (in %)
