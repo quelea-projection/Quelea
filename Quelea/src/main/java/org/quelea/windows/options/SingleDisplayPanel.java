@@ -256,6 +256,13 @@ public class SingleDisplayPanel extends VBox {
         );
     }
 
+    public void setMargins(PercentMargins margins) {
+        marginTop.setNumber((int)Math.round(margins.getTop() * 100));
+        marginRight.setNumber((int)Math.round(margins.getRight() * 100));
+        marginBottom.setNumber((int)Math.round(margins.getBottom() * 100));
+        marginLeft.setNumber((int)Math.round(margins.getLeft() * 100));
+    }
+
     /**
      * Set the screen to select on the combo box.
      *

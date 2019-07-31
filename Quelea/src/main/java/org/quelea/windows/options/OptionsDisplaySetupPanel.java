@@ -102,6 +102,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         stagePanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
+        projectorPanel.setMargins(QueleaProperties.get().getDisplayMargin());
         if(!QueleaProperties.get().isProjectorModeCoords()) {
             projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
         }
