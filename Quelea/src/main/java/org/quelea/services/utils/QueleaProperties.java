@@ -1081,6 +1081,86 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    public void setXProjectorCoord(String x) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = x
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setYProjectorCoord(String y) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + y
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setWidthProjectorCoord(String width) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + width
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setHeightProjectorCoord(String height) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + height;
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+  public void setXStageCoord(String x) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = x
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setYStageCoord(String y) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + y
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setWidthStageCoord(String width) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + width
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setHeightStageCoord(String height) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + height;
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
     /**
      * Determine if the projector mode is set to manual co-ordinates or a screen
      * number.

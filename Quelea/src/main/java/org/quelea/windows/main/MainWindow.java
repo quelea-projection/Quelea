@@ -20,7 +20,6 @@ package org.quelea.windows.main;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.dlsc.preferencesfx.PreferencesFx;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -176,8 +175,8 @@ public class MainWindow extends Stage {
      *
      * @return the options dialog.
      */
-    public PreferencesFx getPreferencesDialog() {
-        return preferencesDialog.getPreferenceDialog();
+    public PreferencesDialog getPreferencesDialog() {
+        return preferencesDialog;
     }
 
     /**

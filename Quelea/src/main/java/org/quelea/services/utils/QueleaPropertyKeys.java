@@ -117,5 +117,13 @@ public class QueleaPropertyKeys {
     public static final String webProxyUserKey = "web.proxy.user";
     public static final String webProxyPasswordKey = "web.proxy.password";
     public static final String churchCcliNumKey = "church.ccli.num";
+    public static final String projectorXCoordKey = "projector.x.coord";
+    public static final String projectorYCoordKey = "projector.y.coord";
+    public static final String projectorWCoordKey = "projector.width.coord";
+    public static final String projectorHCoordKey = "projector.height.coord";
+    public static final String stageXCoordKey = "stage.x.coord";
+    public static final String stageYCoordKey = "stage.y.coord";
+    public static final String stageWCoordKey = "stage.width.coord";
+    public static final String stageHCoordKey = "stage.height.coord";
 
 }

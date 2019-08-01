@@ -119,6 +119,17 @@ public class LabelGrabber extends ResourceBundle {
         }
         return ret;
     }
+
+    public String getEngKey(String label) {
+        int pos = 0;
+        for (String s : labels.stringPropertyNames()) {
+            if (getLabel(s).equals(label)) {
+                return engLabels.get(labels.keySet().toArray()[pos]).toString();
+            }
+            pos++;
+        }
+        return null;
+    }
     
     @Override
     public Enumeration<String> getKeys() {
