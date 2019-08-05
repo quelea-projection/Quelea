@@ -87,6 +87,8 @@ public class PreferencesDialog extends Stage {
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
+        mainPane.setMinWidth(1005);
+        mainPane.setMinHeight(600);
         setScene(new Scene(mainPane));
     }
 
