@@ -150,7 +150,7 @@ public class PreferencesDialog extends Stage {
     }
 
     private Category getDisplaySetupTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), new ImageView(new Image("file:icons/monitorsettingsicon.png")), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
                 getDisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), "file:icons/monitor.png", false),
                 getDisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), "file:icons/projector.png", true),
                 getDisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), "file:icons/stage.png", true)
@@ -168,7 +168,7 @@ public class PreferencesDialog extends Stage {
         ObservableList<String> fonts = FXCollections.observableArrayList(Utils.getAllFonts());
         ObjectProperty<String> fontSelection = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), new ImageView(new Image("file:icons/stageviewsettingsicon.png")),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), new SimpleBooleanProperty(QueleaProperties.get().getShowChords())).customKey(stageShowChordsKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignment, alignmentSelection).customKey(stageTextAlignmentKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fonts, fontSelection).customKey(stageFontKey),
@@ -186,7 +186,7 @@ public class PreferencesDialog extends Stage {
         DoubleProperty noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());
         DoubleField noticeSizeField = Field.ofDoubleType(noticeSize).render(new DoubleNoLabelPreference(20, 100, 10));
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), new ImageView(new Image("file:icons/noticessettingsicon.png")),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null).customKey(noticePositionKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()).customKey(noticeBackgroundColourKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeedField, noticeSpeed).customKey(noticeSpeedKey),
@@ -208,14 +208,14 @@ public class PreferencesDialog extends Stage {
                     new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
             bindings.put(directoryFieldPP, usePP.not());
 
-            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image("file:icons/presentationssettingsicon.png")),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOO).customKey(useOoKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOO, directoryChooserOO).customKey(ooPathKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.pp.label"), usePP).customKey(usePpKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("pp.path"), directoryFieldPP, directoryChooserPP).customKey(ppPathKey)
             );
         } else
-            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"),
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image("file:icons/presentationssettingsicon.png")),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOO).customKey(useOoKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOO, directoryChooserOO).customKey(ooPathKey)
             );
@@ -238,7 +238,7 @@ public class PreferencesDialog extends Stage {
         Field maxVerseField = Field.ofIntegerType(QueleaProperties.get().getMaxBibleVerses()).render(new SimpleIntegerControl());
         bindings.put(maxVerseField, useMaxVerses.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), new ImageView(new Image("file:icons/biblesettingsicon.png")),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("default.bible.label"), bibleField, bibleSelection).customKey(defaultBibleKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"), showVerseNum).customKey(showVerseNumbersKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("split.bible.verses"), splitBibleVerse).customKey(splitBibleVersesKey),
@@ -260,7 +260,7 @@ public class PreferencesDialog extends Stage {
 
         StringProperty passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"), new ImageView(new Image("file:icons/serversettingsicon.png")),
                 Group.of(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyrics).customKey(useMobLyricsKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), mobileLyricsField, lyricsPortNumber).customKey(mobLyricsPortKey)
@@ -279,7 +279,7 @@ public class PreferencesDialog extends Stage {
                 new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
 
         BooleanProperty useConvert = new SimpleBooleanProperty(QueleaProperties.get().getConvertRecordings());
-        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), new ImageView(new Image("file:icons/recordingssettingsicon.png")),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("recordings.path"), recordingsDirectoryField, recordingsDirectoryChooser).customKey(recPathKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("convert.mp3"), useConvert).customKey(convertMp3Key)
         );
@@ -418,9 +418,9 @@ public class PreferencesDialog extends Stage {
     private Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind) {
         Setting setting;
         if (horizontal)
-            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue)));
+            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         else
-            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue)));
+            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("top.text.position"), LabelGrabber.INSTANCE.getLabel("bottom.text.position")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
             bindings.put(setting.getField(), booleanBind.not());
         return setting;
