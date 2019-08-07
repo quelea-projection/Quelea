@@ -52,6 +52,7 @@ public class SingleDisplayPanel extends VBox {
     private NumberTextField customWidth;
     private NumberTextField customHeight;
 
+    private boolean hasMargins;
     private NumberTextField marginTop;
     private NumberTextField marginRight;
     private NumberTextField marginBottom;
@@ -71,6 +72,7 @@ public class SingleDisplayPanel extends VBox {
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
             boolean customPos, boolean margins) {
+        this.hasMargins = margins;
         setSpacing(10);
         setAlignment(Pos.TOP_CENTER);
         this.none = none;
@@ -201,7 +203,7 @@ public class SingleDisplayPanel extends VBox {
      */
     public Bounds getOutputBounds() {
         if(custom != null && custom.isSelected()) {
-            return getCoords();
+            return applyMarginToBounds(getCoords());
         }
         ObservableList<Screen> monitors = Screen.getScreens();
         
@@ -210,7 +212,7 @@ public class SingleDisplayPanel extends VBox {
             return null;
         }
         else {
-            return Utils.getBoundsFromRect2D(monitors.get(screen).getBounds());
+            return applyMarginToBounds(Utils.getBoundsFromRect2D(monitors.get(screen).getBounds()));
         }
     }
 
@@ -315,6 +317,15 @@ public class SingleDisplayPanel extends VBox {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
         }
         return descriptions;
+    }
+
+    private Bounds applyMarginToBounds(Bounds input)
+    {
+        if (hasMargins) {
+            return getMargins().applyMargins(input);
+        } else  {
+            return input;
+        }
     }
 
 }
