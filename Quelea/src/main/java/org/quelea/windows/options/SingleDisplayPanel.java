@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.options;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -151,6 +152,7 @@ public class SingleDisplayPanel extends VBox {
             Label marginTopLabel = new Label(LabelGrabber.INSTANCE.getLabel("top") + ":");
             GridPane.setConstraints(marginTopLabel, 1, 1);
             marginPanel.getChildren().add(marginTopLabel);
+            marginTop.numberProperty().addListener(this.onMarginNumberChange);
             GridPane.setConstraints(marginTop, 2, 1);
             marginPanel.getChildren().add(marginTop);
 
@@ -178,6 +180,31 @@ public class SingleDisplayPanel extends VBox {
             getChildren().add(marginPanel);
         }
     }
+
+    private ChangeListener<Integer> onMarginNumberChange = (observable, oldValue, newValue) -> {
+        NumberTextField field;
+        NumberTextField oppositeField;
+        if (observable == marginTop.numberProperty()) {
+            field = marginTop;
+            oppositeField = marginBottom;
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        // make sure the margins only add up to 99 at most, leaving 1% for content
+        int total = field.getNumber() + oppositeField.getNumber();
+        if (total > 99) {
+            int suggestedOpposite = 99 - field.getNumber();
+            if (suggestedOpposite > 0) {
+                oppositeField.setNumber(suggestedOpposite);
+            } else {
+                // A number greater than 99 has been entered in the field
+                // clamp to 99
+                field.setNumber(99);
+                oppositeField.setNumber(0);
+            }
+        }
+    };
 
     /**
      * Get the output screen currently selected in the dialog, or -1 if none is
