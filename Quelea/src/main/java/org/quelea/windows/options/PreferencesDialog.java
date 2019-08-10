@@ -114,7 +114,7 @@ public class PreferencesDialog extends Stage {
         bindings.put(smallSongSizeController, showSmallSong.not());
         bindings.put(smallBibleSizeController, showSmallBible.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")),
                 Group.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItems, languageSelection).customKey(languageFileKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
@@ -141,7 +141,7 @@ public class PreferencesDialog extends Stage {
                         Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSize, 100, 500).customKey(thumbnailSizeKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey)
                 ),
-                Group.of(LabelGrabber.INSTANCE.getLabel(LabelGrabber.INSTANCE.getLabel("text.options.options")),
+                Group.of(LabelGrabber.INSTANCE.getLabel("text.options.options"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst())).customKey(capitalFirstKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize())).customKey(uniformFontSizeKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.font.size.label"), maxFontSize, 12, 300).customKey(maxFontSizeKey),
@@ -184,15 +184,13 @@ public class PreferencesDialog extends Stage {
 
     private Category getNoticesTab() {
         DoubleProperty noticeSpeed = new SimpleDoubleProperty(QueleaProperties.get().getNoticeSpeed());
-        DoubleField noticeSpeedField = Field.ofDoubleType(noticeSpeed).render(new DoubleNoLabelPreference(2, 20, 10));
         DoubleProperty noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());
-        DoubleField noticeSizeField = Field.ofDoubleType(noticeSize).render(new DoubleNoLabelPreference(20, 100, 10));
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), new ImageView(new Image("file:icons/noticessettingsicon.png")),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null).customKey(noticePositionKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()).customKey(noticeBackgroundColourKey),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeedField, noticeSpeed).customKey(noticeSpeedKey),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.font.size"), noticeSizeField, noticeSize).customKey(noticeFontSizeKey)
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 10).customKey(noticeSpeedKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.font.size"), noticeSize, 20, 100, 10).customKey(noticeFontSizeKey)
         );
     }
 
