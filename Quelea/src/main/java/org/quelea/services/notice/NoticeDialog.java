@@ -125,6 +125,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         BorderPane.setMargin(leftPanelBorder, new Insets(5));
         leftPanelBorder.setTop(leftPanel);
         mainPane.setLeft(leftPanelBorder);
+        savedNoticesLabel.getStyleClass().add("text");
 
         noticeList = new ListView<>();
         noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
@@ -177,7 +178,11 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         BorderPane.setAlignment(doneButton, Pos.CENTER);
         BorderPane.setMargin(doneButton, new Insets(5));
         mainPane.setBottom(doneButton);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

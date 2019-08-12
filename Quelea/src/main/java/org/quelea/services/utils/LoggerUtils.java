@@ -59,8 +59,8 @@ public final class LoggerUtils {
      */
     private static void initialise() {
         if(handlerFile == null) {
-            synchronized(LoggerUtils.class) {
-                if(handlerFile == null) {
+            synchronized (LoggerUtils.class) {
+                if (handlerFile == null && QueleaProperties.get() != null) {
                     handlerFile = Utils.getDebugLog();
                     handlerFile.delete();
                 }
