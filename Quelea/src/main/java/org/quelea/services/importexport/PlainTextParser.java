@@ -150,7 +150,11 @@ public class PlainTextParser implements SongParser {
                 if (fileName.endsWith(".txt")) {
                     List<String> section = new ArrayList<>();
                     StringBuilder lyrics = new StringBuilder();
-                    SongDisplayable song = new SongDisplayable(DEFAULT_TITLE, "");
+                    String defaultSongTitle = fileName.substring(0,fileName.length()-4);
+                    if(defaultSongTitle.isEmpty()) {
+                        defaultSongTitle = DEFAULT_TITLE;
+                    }
+                    SongDisplayable song = new SongDisplayable(defaultSongTitle, "");
                     try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(listOfSongs[i]), "UTF-8"))) {
                         String line;
                         while ((line = bfr.readLine()) != null) {
@@ -162,7 +166,7 @@ public class PlainTextParser implements SongParser {
                                     section.add(line);
                                 }
                             } else {
-                                if (song.getTitle().equals(DEFAULT_TITLE) && section.size() == 1) {
+                                if (song.getTitle().equals(defaultSongTitle) && section.size() == 1) {
                                     song.setTitle(section.get(0));
                                 } else if (!isBlankLines(section)) {
                                     addSectionToLyrics(section, lyrics);

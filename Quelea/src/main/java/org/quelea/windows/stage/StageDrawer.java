@@ -54,6 +54,7 @@ import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.utils.FXFontMetrics;
+import org.quelea.utils.WrapTextResult;
 
 /**
  * Draw items onto a stage canvas
@@ -103,11 +104,11 @@ public class StageDrawer extends WordDrawer {
 
         List<LyricLine> newText;
         if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
+            if (text.length == 0) {
+                newText = new ArrayList<>();
+            } else {
+                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                newText = result.getNewText();
             }
         } else {
             newText = sanctifyText(text);
@@ -154,7 +155,7 @@ public class StageDrawer extends WordDrawer {
 
             if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS && i < newText.size() - 1) {
                 List<Chord> chords = Chord.getChordsFromLine(line.getLine());
-                String nextLine = newText.get(i + 1).getLine();
+                String nextLine = widenInitialSpaces(newText.get(i + 1).getLine());
 
                 FormattedText nextLineFt = new FormattedText(nextLine);
                 nextLineFt.setFont(font);
@@ -174,9 +175,9 @@ public class StageDrawer extends WordDrawer {
                 }
 
             } else {
-                FormattedText t = new FormattedText(line.getLine());
+                FormattedText t = new FormattedText(widenInitialSpaces(line.getLine()));
                 t.setFont(font);
-                setPositionX(t, metrics, line.getLine());
+                setPositionX(t, metrics, widenInitialSpaces(line.getLine()));
                 t.setLayoutY(y);
 
                 Color lineColor;
@@ -498,6 +499,23 @@ public class StageDrawer extends WordDrawer {
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
+    }
+    
+    private static String widenInitialSpaces(String str) {
+        StringBuilder ret = new StringBuilder(str.length());
+        boolean initialSpace = true;
+        for (int i = 0; i < str.length() ; i++) {
+            if(initialSpace && str.charAt(i)!=' '){
+                initialSpace = false;
+            }
+            if(initialSpace) {
+                ret.append('\u2000');
+            }
+            else {
+                ret.append(str.charAt(i));
+            }
+        }
+        return ret.toString();
     }
 
 }

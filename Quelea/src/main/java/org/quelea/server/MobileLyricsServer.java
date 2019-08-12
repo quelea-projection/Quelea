@@ -230,8 +230,12 @@ public class MobileLyricsServer {
 
             String ret = "<div class=\"line\">";
             int chordidx = 0;
+            boolean initialWhitespace = true;
             Chord chord = chords.get(chordidx);
             for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) != ' ') {
+                    initialWhitespace = false;
+                }
                 if (chord != null && i == chord.getIdx()) {
                     ret += "<span class=\"chord\">" + chord.getChord() + "</span>";
                     chordidx++;
@@ -241,7 +245,12 @@ public class MobileLyricsServer {
                         chord = null;
                     }
                 }
-                ret += line.charAt(i);
+                if(initialWhitespace && line.charAt(i)==' ') {
+                    ret += "\u2000";
+                }
+                else {
+                    ret += line.charAt(i);                    
+                }
             }
             while (chordidx < chords.size()) {
                 ret += "<span class=\"chord\">" + chords.get(chordidx++).getChord() + "</span>";

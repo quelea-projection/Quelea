@@ -829,7 +829,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                         author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
                 };
             } else {
-                String cpText = copyright.trim();
+                String cpText = null;
+                if(copyright!=null) {
+                    cpText = copyright.trim();
+                }
                 if (cpText != null && !cpText.trim().isEmpty() && !cpText.startsWith("©")) {
                     cpText = "©" + cpText;
                 }
