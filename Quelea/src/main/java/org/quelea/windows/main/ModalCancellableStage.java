@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Cancellable;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A stage displayed when a lengthy, cancellable operation is taking place.
@@ -74,7 +75,11 @@ public class ModalCancellableStage extends Stage {
         items.getChildren().add(buttonPane);
         StackPane.setMargin(items, new Insets(10));
         root.getChildren().add(items);
-        setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     public void showAndAssociate(Cancellable cancellable) {

@@ -62,12 +62,16 @@ public class OpenLPParser implements SongParser {
                 String lyrics = getLyricsFromXML(rs.getString("lyrics"));
                 String title = rs.getString("title");
                 String ccli = rs.getString("ccli_number");
+                String comments = rs.getString("comments");
                 String copyright = rs.getString("copyright");
                 if(title != null && lyrics != null && !title.isEmpty() && !lyrics.isEmpty()) {
                     SongDisplayable displayable = new SongDisplayable(title, "");
                     displayable.setLyrics(lyrics);
                     if(ccli != null) {
                         displayable.setCcli(ccli.trim());
+                    }
+                    if(comments != null) {
+                        displayable.setInfo(comments.trim());
                     }
                     if(copyright != null) {
                         displayable.setCopyright(copyright.trim());

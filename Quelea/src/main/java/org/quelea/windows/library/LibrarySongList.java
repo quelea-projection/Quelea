@@ -41,6 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import org.apache.poi.ss.formula.functions.T;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
@@ -110,18 +111,27 @@ public class LibrarySongList extends StackPane {
                     } else {
                         HBox textBox = new HBox();
                         if (item.getLastSearch() == null) {
-                            textBox.getChildren().add(new Text(item.getTitle()));
+                            Text text = new Text(item.getTitle());
+                            text.getStyleClass().add("text");
+                            textBox.getChildren().add(text);
                         } else {
                             int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
                             if (startIndex == -1) {
-                                textBox.getChildren().add(new Text(item.getTitle()));
+                                Text text = new Text(item.getTitle());
+                                text.getStyleClass().add("text");
+                                textBox.getChildren().add(text);
                             } else {
-                                textBox.getChildren().add(new Text(item.getTitle().substring(0, startIndex)));
+                                Text initText = new Text(item.getTitle().substring(0, startIndex));
+                                initText.getStyleClass().add("text");
+                                textBox.getChildren().add(initText);
                                 String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
                                 Text boldText = new Text(boldTextStr);
                                 boldText.setStyle("-fx-font-weight:bold;");
+                                boldText.getStyleClass().add("text");
                                 textBox.getChildren().add(boldText);
-                                textBox.getChildren().add(new Text(item.getTitle().substring(startIndex + item.getLastSearch().length())));
+                                Text plainText = new Text(item.getTitle().substring(startIndex + item.getLastSearch().length()));
+                                plainText.getStyleClass().add("text");
+                                textBox.getChildren().add(plainText);
                             }
                         }
                         setGraphic(textBox);
