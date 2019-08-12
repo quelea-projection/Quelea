@@ -26,27 +26,28 @@ import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The enum used to represent text position on the lyrics panel.
- * <p/>
+ * 
  * @author Michael
  */
 public enum TextPosition {
 
     TOP("Top", LabelGrabber.INSTANCE.getLabel("top.text.position"), Pos.TOP_CENTER), MIDDLE("Middle",LabelGrabber.INSTANCE.getLabel("middle.text.position"), Pos.CENTER), BOTTOM("Bottom",LabelGrabber.INSTANCE.getLabel("bottom.text.position"), Pos.BOTTOM_CENTER);
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private String description;
-    private String internalName;
-    private Pos layoutPos;
+    private final String description;
+    private final String internalName;
+    private final Pos layoutPos;
 
     public static TextPosition parseTextPosition(String position) {
 
-        if(position.equals("Top")) {
-            return TOP;
-        }
-        else if(position.equals("Middle")) {
-            return MIDDLE;
-        }
-        else if(position.equals("Bottom")) {
-            return BOTTOM;
+        switch (position) {
+            case "Top":
+                return TOP;
+            case "Middle":
+                return MIDDLE;
+            case "Bottom":
+                return BOTTOM;
+            default:
+                break;
         }
         LOGGER.log(Level.WARNING, "Unrecognised text position: {0}. Options are {1}, {2}, {3}", new Object[]{position, LabelGrabber.INSTANCE.getLabel("top.text.position"), LabelGrabber.INSTANCE.getLabel("middle.text.position"), LabelGrabber.INSTANCE.getLabel("bottom.text.position")});
         return MIDDLE;

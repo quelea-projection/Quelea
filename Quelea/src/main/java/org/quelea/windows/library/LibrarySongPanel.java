@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -40,6 +40,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
@@ -48,6 +49,7 @@ import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
  * The panel used for browsing the database of songs and adding any songs to the
  * order of service.
  * <p/>
+ *
  * @author Michael
  */
 public class LibrarySongPanel extends BorderPane {
@@ -62,6 +64,7 @@ public class LibrarySongPanel extends BorderPane {
      * Create and initialise the library song panel.
      */
     public LibrarySongPanel() {
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
         songList = new LibrarySongList(true);
         songList.getListView().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -89,7 +92,7 @@ public class LibrarySongPanel extends BorderPane {
         searchBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.ESCAPE) {
+                if (t.getCode() == KeyCode.ESCAPE) {
                     searchCancelButton.fire();
                 }
             }
@@ -102,7 +105,7 @@ public class LibrarySongPanel extends BorderPane {
             }
         });
         northPanel.getChildren().add(searchBox);
-        searchCancelButton = new Button("", new ImageView(new Image("file:icons/cross.png")));
+        searchCancelButton = new Button("", new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png")));
         Utils.setToolbarButtonStyle(searchCancelButton);
         searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
         searchCancelButton.setDisable(true);
@@ -119,7 +122,7 @@ public class LibrarySongPanel extends BorderPane {
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
 
-        ImageView addIV = new ImageView(new Image("file:icons/newsongdb.png"));
+        ImageView addIV = new ImageView(new Image(darkTheme ? "file:icons/newsongdb-light.png" : "file:icons/newsongdb.png"));
         addIV.setFitWidth(16);
         addIV.setFitHeight(16);
         addButton = new Button("", addIV);
@@ -127,7 +130,7 @@ public class LibrarySongPanel extends BorderPane {
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
         addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
-        ImageView removeIV = new ImageView(new Image("file:icons/removedb.png"));
+        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/removedb-light.png" : "file:icons/removedb.png"));
         removeIV.setFitWidth(16);
         removeIV.setFitHeight(16);
         removeButton = new Button("", removeIV);
@@ -146,10 +149,9 @@ public class LibrarySongPanel extends BorderPane {
      * accordingly.
      */
     private void checkRemoveButton() {
-        if(songList.getListView().getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.getListView().itemsProperty().get().size() == 0) {
+        if (songList.getListView().getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.getListView().itemsProperty().get().size() == 0) {
             removeButton.setDisable(true);
-        }
-        else {
+        } else {
             removeButton.setDisable(false);
         }
     }
@@ -157,6 +159,7 @@ public class LibrarySongPanel extends BorderPane {
     /**
      * Get the song list behind this panel.
      * <p/>
+     *
      * @return the song list.
      */
     public LibrarySongList getSongList() {
@@ -166,6 +169,7 @@ public class LibrarySongPanel extends BorderPane {
     /**
      * Get the search box in this panel.
      * <p/>
+     *
      * @return the search box.
      */
     public TextField getSearchBox() {

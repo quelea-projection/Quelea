@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -43,6 +43,7 @@ import org.quelea.windows.lyrics.LyricsTextArea;
  * The spell text area component - wraps a text area to provide spell check
  * capabilities.
  * <p/>
+ *
  * @author Michael
  */
 public class SpellTextArea extends StackPane {
@@ -159,8 +160,9 @@ public class SpellTextArea extends StackPane {
      * Check the spelling on this text area - called internally to update state,
      * but can be fired externally also.
      * <p/>
+     *
      * @param lastWord true if the last word should be included in the spell
-     * check.
+     *                 check.
      */
     public void updateSpelling(boolean lastWord) {
         spellingOkProperty.set(speller.checkText(getText(), lastWord));
@@ -187,6 +189,7 @@ public class SpellTextArea extends StackPane {
     /**
      * Get the underlying text area object used in this control.
      * <p/>
+     *
      * @return the text area object.
      */
     public LyricsTextArea getArea() {
@@ -196,6 +199,7 @@ public class SpellTextArea extends StackPane {
     /**
      * Get the text on this text area, excluding any chords.
      * <p/>
+     *
      * @return the text area's text, without chord lines.
      */
     public String getText() {
@@ -212,6 +216,7 @@ public class SpellTextArea extends StackPane {
     /**
      * Get the text on this text area, including any chords.
      * <p/>
+     *
      * @return the text area's text, with chord lines.
      */
     public String getTextAndChords() {
@@ -226,6 +231,7 @@ public class SpellTextArea extends StackPane {
     /**
      * Get the key used to run the spell check. F7 by default.
      * <p/>
+     *
      * @return the key used to run the spell check.
      */
     public KeyCode getRunSpellKey() {
@@ -235,6 +241,7 @@ public class SpellTextArea extends StackPane {
     /**
      * Set the keycode used to run the spell check. F7 by default.
      * <p/>
+     *
      * @param runSpellKey the key used to run the spell check.
      */
     public void setRunSpellKey(KeyCode runSpellKey) {
