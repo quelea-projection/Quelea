@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 package org.quelea.windows.main.menus;
 
+import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -26,6 +27,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFScheduleActionHandler;
@@ -54,34 +56,35 @@ public class FileMenu extends Menu {
      */
     public FileMenu() {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
         newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"));
         if (!Utils.isMac()) {
-            newItem.setGraphic(new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
+            newItem.setGraphic(getImage("file:icons/filenew.png"));
         }
         newItem.setOnAction(new NewScheduleActionHandler());
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         getItems().add(newItem);
 
         openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"));
-        if(!Utils.isMac()) {
-            openItem.setGraphic(new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
+        if (!Utils.isMac()) {
+            openItem.setGraphic(getImage("file:icons/fileopen.png"));
         }
         openItem.setOnAction(new OpenScheduleActionHandler());
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         getItems().add(openItem);
 
         saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"));
-        if(!Utils.isMac()) {
-            saveItem.setGraphic(new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
+        if (!Utils.isMac()) {
+            saveItem.setGraphic(getImage("file:icons/filesave.png"));
         }
         saveItem.setOnAction(new SaveScheduleActionHandler(false));
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         getItems().add(saveItem);
 
         saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"));
-        if(!Utils.isMac()) {
-            saveAsItem.setGraphic(new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
+        if (!Utils.isMac()) {
+            saveAsItem.setGraphic(getImage("file:icons/filesaveas.png"));
         }
         saveAsItem.setOnAction(new SaveScheduleActionHandler(true));
         getItems().add(saveAsItem);
@@ -94,8 +97,8 @@ public class FileMenu extends Menu {
         getItems().add(exportToPDFItem);
 
         printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"));
-        if(!Utils.isMac()) {
-            printItem.setGraphic(new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
+        if (!Utils.isMac()) {
+            printItem.setGraphic(getImage("file:icons/fileprint.png"));
         }
         printItem.setOnAction(new PrintScheduleActionHandler());
         printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
@@ -107,6 +110,12 @@ public class FileMenu extends Menu {
         }
         exitItem.setOnAction(new ExitActionHandler());
         getItems().add(exitItem);
+    }
+
+    private ImageView getImage(String path) {
+        if (QueleaProperties.get().getUseDarkTheme())
+            path = path.replace(".png", "-light.png");
+        return new ImageView(new Image(path, 20, 20, true, false));
     }
 
 }

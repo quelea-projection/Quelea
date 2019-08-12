@@ -230,7 +230,7 @@ public class LivePanel extends LivePreviewPanel {
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(clear);
-        ImageView hideIV = new ImageView(new Image("file:icons/cross.png"));
+        ImageView hideIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/cross-light.png" : "file:icons/cross.png"));
         hideIV.setFitWidth(16);
         hideIV.setFitHeight(16);
         hide = new ToggleButton("", hideIV);
@@ -477,6 +477,7 @@ public class LivePanel extends LivePreviewPanel {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
         for (DisplayCanvas canvas : canvases) {
+            canvas.setLogoDisplaying(logo.isSelected());
             canvas.setBlacked(black.isSelected());
             if (canvas.isStageView() && !QueleaProperties.get().getClearStageWithMain()) {
                 canvas.setCleared(false);

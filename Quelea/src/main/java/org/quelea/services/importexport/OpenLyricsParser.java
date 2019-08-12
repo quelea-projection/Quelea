@@ -17,15 +17,13 @@
  */
 package org.quelea.services.importexport;
 
-import de.suse.lib.openlyrics.OpenLyricsException;
-import de.suse.lib.openlyrics.OpenLyricsObject;
-import de.suse.lib.openlyrics.Verse;
-import de.suse.lib.openlyrics.VerseLine;
-import de.suse.lib.openlyrics.properties.TitleProperty;
-import java.io.BufferedReader;
+import com.github.berry120.jopenlyrics.OpenLyricsException;
+import com.github.berry120.jopenlyrics.OpenLyricsObject;
+import com.github.berry120.jopenlyrics.Verse;
+import com.github.berry120.jopenlyrics.VerseLine;
+import com.github.berry120.jopenlyrics.properties.TitleProperty;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -65,23 +63,22 @@ public class OpenLyricsParser implements SongParser {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
-                StringBuilder fileContents = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(entry), "UTF-8"))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        fileContents.append(line.trim());
-                    }
-                }
-                OpenLyricsObject ol = new OpenLyricsObject(fileContents.toString());
+                
+                OpenLyricsObject ol = new OpenLyricsObject(file.getInputStream(entry));
                 String lyrics = getLyrics(ol);
                 String title = getTitle(ol.getProperties().getTitleProperty());
+                String comments = getComments(ol.getProperties().getComments());
+                String ccli = ol.getProperties().getCcliNo();
+                String copyright = ol.getProperties().getCopyright();
                 String author = getAuthor(ol);
                 if (!lyrics.isEmpty()) {
                     SongDisplayable displayable = new SongDisplayable(title, author);
                     displayable.setLyrics(lyrics);
+                    displayable.setInfo(comments);
+                    displayable.setCopyright(copyright);
+                    displayable.setCcli(ccli);
                     ret.add(displayable);
-                }
-                else {
+                } else {
                     LOGGER.log(Level.INFO, "Song had empty lyrics");
                 }
             }
@@ -92,23 +89,33 @@ public class OpenLyricsParser implements SongParser {
         }
         return ret;
     }
-    
+
+    private String getComments(List<String> comments) {
+        StringBuilder ret = new StringBuilder();
+        if (comments != null) {
+            for (String comment : comments) {
+                ret.append(comment).append('\n');
+            }
+        }
+        return ret.toString().trim();
+    }
+
     private String getTitle(TitleProperty titleProp) {
         StringBuilder ret = new StringBuilder();
         List<String> titles = new ArrayList<>();
-        for(Locale locale : titleProp.getTitleLocales()) {
+        for (Locale locale : titleProp.getTitleLocales()) {
             titles.add(titleProp.getTitle(locale));
         }
-        for(int i=0 ; i<titles.size() ; i++) {
+        for (int i = 0; i < titles.size(); i++) {
             String title = titles.get(i);
-            if(title.matches("[0-9]+\\.")) { //Deal with "number" titles
-                title = title.substring(0,title.length()-1);
-                while(title.length()<4) {
-                    title = "0"+title;
+            if (title.matches("[0-9]+\\.")) { //Deal with "number" titles
+                title = title.substring(0, title.length() - 1);
+                while (title.length() < 4) {
+                    title = "0" + title;
                 }
             }
             ret.append(title);
-            if(i<titles.size()-1) {
+            if (i < titles.size() - 1) {
                 ret.append(" - ");
             }
         }
@@ -139,6 +146,9 @@ public class OpenLyricsParser implements SongParser {
             LOGGER.log(Level.WARNING, "Couldn't create openlyrics object");
         } else {
             for (Verse verse : ol.getVerses()) {
+                if (!verse.getName().isEmpty()) {
+                    ret.append(parseVerseName(verse.getName()));
+                }
                 for (VerseLine line : verse.getLines()) {
                     ret.append(line.getText().trim()).append('\n');
                 }
@@ -148,4 +158,58 @@ public class OpenLyricsParser implements SongParser {
         return ret.toString().trim();
     }
 
+    /**
+     * Parse verse name as a section title string.
+     *
+     * @param verseName the openlyrics verse name
+     * @return the section title as a string, or an empty string if the name could not be parsed
+     */
+    private String parseVerseName(String verseName)
+    {
+        String ret = "";
+        if (verseName.toLowerCase().startsWith("v")) {
+            // This is a verse, e.g. "v1".
+            if (verseName.length() > 1) {
+                ret = "Verse " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Verse\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("c")) {
+            // This is a chorus, e.g. "c1".
+            if (verseName.length() > 1) {
+                ret = "Chorus " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Chorus\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("b")) {
+            // This is a bridge, e.g. "b1".
+            if (verseName.length() > 1) {
+                ret = "Bridge " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Bridge\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("p")) {
+            // This is a pre-chorus, e.g. "p1".
+            if (verseName.length() > 1) {
+                ret = "Pre-chorus " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Pre-chorus\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("i")) {
+            // This is an intro, e.g. "i1".
+            if (verseName.length() > 1) {
+                ret = "Intro " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Intro\n";
+            }
+        } else if (verseName.toLowerCase().startsWith("e")) {
+            // This is an ending, e.g. "e1".
+            if (verseName.length() > 1) {
+                ret = "Ending " + verseName.substring(1) + "\n";
+            } else {
+                ret = "Ending\n";
+            }
+        }
+        return ret;
+    }
 }

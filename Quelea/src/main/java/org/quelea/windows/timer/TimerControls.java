@@ -19,8 +19,6 @@
 package org.quelea.windows.timer;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;

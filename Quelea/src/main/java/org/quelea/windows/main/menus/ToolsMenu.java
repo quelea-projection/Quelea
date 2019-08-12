@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package org.quelea.windows.main.menus;
 
 import java.lang.ref.SoftReference;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -29,6 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
@@ -39,6 +41,7 @@ import org.quelea.windows.main.widgets.TestPaneDialog;
 /**
  * Quelea's tools menu.
  * <p>
+ *
  * @author Michael
  */
 public class ToolsMenu extends Menu {
@@ -55,12 +58,13 @@ public class ToolsMenu extends Menu {
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
-        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
         viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
 
-        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
         searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
 
@@ -79,10 +83,10 @@ public class ToolsMenu extends Menu {
         });
         getItems().add(testItem);
 
-        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image("file:icons/live_text.png", 20, 20, false, true)));
+        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image(darkTheme ? "file:icons/live_text-light.png" : "file:icons/live_text.png", 20, 20, false, true)));
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
-        if(QueleaApp.get().getMobileLyricsServer()==null) {
+        if (QueleaApp.get().getMobileLyricsServer() == null) {
             liveTextItem.setDisable(true);
         }
         getItems().add(liveTextItem);

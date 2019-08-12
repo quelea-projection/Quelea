@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -57,6 +58,7 @@ import netscape.javascript.JSObject;
 /**
  * The panel used to get bible verses.
  * <p/>
+ *
  * @author Michael
  */
 public class LibraryBiblePanel extends VBox implements BibleChangeListener {
@@ -93,6 +95,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         chapterPanel.setSpacing(5.0);
         preview = new WebView();
         webEngine = preview.getEngine();
+        clearWebView();
         if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
         } else {
@@ -197,6 +200,14 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         });
     }
 
+    private void clearWebView() {
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            webEngine.loadContent(getBibleViewHead() + "<body/></html>");
+        } else {
+            webEngine.loadContent(getBibleViewHead().replace("#000", "#FFF").replace("white", "black") + "<body/></html>");
+        }
+    }
+
     public ChapterVerseParser getCVP() {
         return cvp;
     }
@@ -267,7 +278,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         }
         StringBuilder previewText = new StringBuilder();
         multi = (sections.length > 1);
-        previewText.append(getBibleViewHead());
+        previewText.append(QueleaProperties.get().getUseDarkTheme() ? getBibleViewHead().replace("#000", "#FFF").replace("white", "black") : getBibleViewHead());
 
         // Setup JavaScript/Java bridge
         webEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) -> {
@@ -332,6 +343,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                         } else {
                             previewText.append("<span onclick=\"java.send('").append(verse.getNum()).append("')\" id=\"").append(id).append("\"><sup>").append(verse.getNum()).append("</sup>").append(' ').append(verse.getText()).append(' ').append("</span>");
                         }
+                    } else {
+                        previewText.append("<body>");
                     }
                 }
                 for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
@@ -352,7 +365,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
             } else {
                 getAddToSchedule().setDisable(true);
-                webEngine.loadContent("");
+                clearWebView();
                 return;
             }
         }
@@ -388,7 +401,12 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 + "             margin-bottom: 0.0em;\n"
                 + "             margin-left: 0;\n"
                 + "             margin-right: 0;\n"
-                + "         }"
+                + "             color: #000;\n"
+                + "         }\n"
+                + "         body {\n" +
+                "               background-color: white;\n" +
+                "               color: #000;\n" +
+                "           }\n"
                 + "     </style>\n"
                 + "     <script>\n"
                 + "     function scrollTo(eleID) {\n"
@@ -446,6 +464,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get all the verses currently shown in this panel.
      * <p/>
+     *
      * @return all the verses in the current preview
      */
     public BibleVerse[] getVerses() {
@@ -455,6 +474,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Return the book, chapter and verse numbers as a string.
      * <p/>
+     *
      * @return the location of the current passage.
      */
     public String getBibleLocation() {
@@ -467,6 +487,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get the bible selector used to select the type of bible to use.
      * <p/>
+     *
      * @return the bible selector used to select the type of bible to use.
      */
     public ComboBox<Bible> getBibleSelector() {
@@ -476,6 +497,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get the preview text area.
      * <p/>
+     *
      * @return the preview text area.
      */
     public WebView getPreview() {
@@ -485,6 +507,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get the add to schedule button.
      * <p/>
+     *
      * @return the add to schedule button.
      */
     public Button getAddToSchedule() {
@@ -494,6 +517,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get the book selector.
      * <p/>
+     *
      * @return the book selector.
      */
     public ComboBox<BibleBook> getBookSelector() {
@@ -503,6 +527,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     /**
      * Get the passage selector.
      * <p/>
+     *
      * @return the passage selector.
      */
     public TextField getPassageSelector() {
