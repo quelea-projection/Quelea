@@ -17,11 +17,11 @@
  */
 package org.quelea.services.importexport;
 
-import de.suse.lib.openlyrics.OpenLyricsException;
-import de.suse.lib.openlyrics.OpenLyricsObject;
-import de.suse.lib.openlyrics.Verse;
-import de.suse.lib.openlyrics.VerseLine;
-import de.suse.lib.openlyrics.properties.TitleProperty;
+import com.github.berry120.jopenlyrics.OpenLyricsException;
+import com.github.berry120.jopenlyrics.OpenLyricsObject;
+import com.github.berry120.jopenlyrics.Verse;
+import com.github.berry120.jopenlyrics.VerseLine;
+import com.github.berry120.jopenlyrics.properties.TitleProperty;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
