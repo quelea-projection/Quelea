@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  *
@@ -61,7 +62,11 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
             loader.setResources(LabelGrabber.INSTANCE);
             loader.setController(this);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineLoginDialog.fxml"));
-            setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            if (QueleaProperties.get().getUseDarkTheme()) {
+                scene.getStylesheets().add("org/modena_dark.css");
+            }
+            setScene(scene);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning center login dialog", e);
         }

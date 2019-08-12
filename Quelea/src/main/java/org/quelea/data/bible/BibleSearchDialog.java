@@ -41,6 +41,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.LoadingPane;
 
@@ -83,6 +84,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         searchResults = new BibleSearchTreeView(scrollPane, bibles);
         resultsField = new Text(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
         resultsField.setFont(Font.font("Sans", 14));
+        resultsField.getStyleClass().add("text");
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
 
         BibleManager.get().registerBibleChangeListener(this);
@@ -132,7 +134,11 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         });
 
         reset();
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

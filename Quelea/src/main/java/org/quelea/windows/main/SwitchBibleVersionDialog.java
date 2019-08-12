@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -76,7 +77,11 @@ public class SwitchBibleVersionDialog extends Stage {
         StackPane containerPane = new StackPane();
         StackPane.setMargin(root, new Insets(10));
         containerPane.getChildren().add(root);
-        setScene(new Scene(containerPane));
+        Scene scene = new Scene(containerPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
         setResizable(false);
     }
 

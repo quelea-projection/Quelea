@@ -41,6 +41,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  *
@@ -72,7 +73,11 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             loader.setController(this);
             loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
-            setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            if (QueleaProperties.get().getUseDarkTheme()) {
+                scene.getStylesheets().add("org/modena_dark.css");
+            }
+            setScene(scene);
                 
             serviceView.getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<TreeItem<String>>() {

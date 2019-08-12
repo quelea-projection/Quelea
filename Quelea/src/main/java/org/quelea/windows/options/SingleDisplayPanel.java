@@ -28,13 +28,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.widgets.NumberSpinner;
 import org.quelea.windows.main.widgets.NumberTextField;
 
 /**

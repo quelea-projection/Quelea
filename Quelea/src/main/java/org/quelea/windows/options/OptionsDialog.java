@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -148,15 +149,19 @@ public class OptionsDialog extends Stage {
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
+            callBeforeHiding();
             for(PropertyPanel panel : propertyPanels) {
                 panel.setProperties();
             }
-            callBeforeHiding();
             hide();
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
     
     /**
@@ -164,6 +169,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
+        generalPanel.resetThemeChanged();
         serverSettingsPanel.resetChanged();
         presentationPanel.resetPresentationChanged();
     }
@@ -174,6 +180,9 @@ public class OptionsDialog extends Stage {
     private void callBeforeHiding() {
         if(generalPanel.hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        if(generalPanel.hasThemeChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("theme.changed"), LabelGrabber.INSTANCE.getLabel("theme.changed.message"), QueleaApp.get().getMainWindow());
         }
         if(serverSettingsPanel.hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
