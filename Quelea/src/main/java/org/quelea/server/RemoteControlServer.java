@@ -195,9 +195,9 @@ public class RemoteControlServer {
                 response = RCHandler.addBiblePassage(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -213,9 +213,9 @@ public class RemoteControlServer {
                 response = RCHandler.listBibleTranslations(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -231,9 +231,9 @@ public class RemoteControlServer {
                 response = RCHandler.listBibleBooks(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -260,9 +260,9 @@ public class RemoteControlServer {
             }
             he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            try (OutputStream os = he.getResponseBody()) {
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+            }
         }
     }
 
@@ -295,9 +295,9 @@ public class RemoteControlServer {
                 response = RCHandler.songDisplay(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -319,9 +319,9 @@ public class RemoteControlServer {
                     ImageIO.write(image, "png", output);
                     byte[] byteArray = output.toByteArray();
                     t.sendResponseHeaders(200, byteArray.length);
-                    OutputStream out = t.getResponseBody();
-                    out.write(byteArray);
-                    out.close();
+                    try (OutputStream out = t.getResponseBody()) {
+                        out.write(byteArray);
+                    }
 
                 } catch (IOException e) {
                     System.out.println("Failed saving");
@@ -340,9 +340,9 @@ public class RemoteControlServer {
                 byte[] byteArray = RCHandler.getPresentationSlides(t);
                 t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 t.sendResponseHeaders(200, byteArray.length);
-                OutputStream out = t.getResponseBody();
-                out.write(byteArray);
-                out.close();
+                try (OutputStream out = t.getResponseBody()) {
+                    out.write(byteArray);
+                }
             } else {
                 passwordPage(t);
             }
@@ -358,9 +358,9 @@ public class RemoteControlServer {
                 response = RCHandler.addSongToSchedule(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -377,9 +377,9 @@ public class RemoteControlServer {
                 response = RCHandler.removeItemFromSchedule(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -395,9 +395,9 @@ public class RemoteControlServer {
                 response = RCHandler.databaseSearch(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -413,9 +413,9 @@ public class RemoteControlServer {
                 response = RCHandler.getThemes(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -431,9 +431,9 @@ public class RemoteControlServer {
                 response = RCHandler.setTheme(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
             } else {
                 passwordPage(he);
             }
@@ -586,9 +586,9 @@ public class RemoteControlServer {
                 final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
                 RCHandler.moveUp(he.getRequestURI().toString());
             } else {
                 reload(he);
@@ -605,9 +605,9 @@ public class RemoteControlServer {
                 final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
                 RCHandler.moveDown(he.getRequestURI().toString());
             } else {
                 reload(he);
@@ -907,13 +907,13 @@ public class RemoteControlServer {
     private List<String> getLyrics(boolean chords) {
         try {
             if (!checkInitialised()) {
-                List<String> tmp = new ArrayList<String>();
+                List<String> tmp = new ArrayList<>();
                 tmp.add("");
                 return tmp;
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
             if (running && lp.getDisplayable() instanceof TextDisplayable) {
-                ArrayList<String> als = new ArrayList<String>();
+                ArrayList<String> als = new ArrayList<>();
                 for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
                     for (String line : currentSection.getText(chords, false)) {
@@ -921,7 +921,7 @@ public class RemoteControlServer {
                             if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                                 ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
                             } else {
-                                ret.append("<span class=\"lyric\">").append(line);
+                                ret.append("<span class=\"lyric\">").append(line.replaceAll("\\s", "&#160;"));
                             }
                             ret.append("</span>").append("<br/>");
                         } else {
@@ -933,7 +933,7 @@ public class RemoteControlServer {
                 return als;
             } else {
                 String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
-                ArrayList<String> als = new ArrayList<String>();
+                ArrayList<String> als = new ArrayList<>();
                 als.add(response);
                 return als;
             }
@@ -1031,7 +1031,7 @@ public class RemoteControlServer {
         private void parseGetParameters(HttpExchange exchange)
                 throws UnsupportedEncodingException {
 
-            Map<String, Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<>();
             URI requestedUri = exchange.getRequestURI();
             String query = requestedUri.getRawQuery();
             parseQuery(query, parameters);
@@ -1081,7 +1081,7 @@ public class RemoteControlServer {
                             List<String> values = (List<String>) obj;
                             values.add(value);
                         } else if (obj instanceof String) {
-                            List<String> values = new ArrayList<String>();
+                            List<String> values = new ArrayList<>();
                             values.add((String) obj);
                             values.add(value);
                             parameters.put(key, values);
@@ -1096,7 +1096,7 @@ public class RemoteControlServer {
 
     private class FileHandler implements HttpHandler {
 
-        private String file;
+        private final String file;
 
         public FileHandler(String file) {
             this.file = file;

@@ -5,7 +5,6 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.platform.unix.X11;
 
 import java.awt.*;
-import java.lang.reflect.Method;
 import javafx.stage.Stage;
 import org.quelea.services.utils.Utils;
 

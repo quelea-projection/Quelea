@@ -39,6 +39,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.ImageManager;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -77,7 +78,9 @@ public class TestPaneDialog extends Stage {
         });
 
         BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color:#dddddd;");
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            root.setStyle("-fx-background-color:#dddddd;");
+        }
         Label explanation = new Label(LabelGrabber.INSTANCE.getLabel("test.patterns.explanation"));
         explanation.setWrapText(true);
         BorderPane.setMargin(explanation, new Insets(20));
@@ -107,7 +110,11 @@ public class TestPaneDialog extends Stage {
         bottomPane.getChildren().add(closeButton);
         root.setBottom(bottomPane);
 
-        setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     private void clearTestImage() {
