@@ -24,6 +24,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.ShortcutManager;
@@ -54,12 +57,13 @@ public class ToolsMenu extends Menu {
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
-        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
         viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
 
-        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
         searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
 
@@ -74,8 +78,8 @@ public class ToolsMenu extends Menu {
         });
         getItems().add(testItem);
 
-        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image("file:icons/live_text.png", 20, 20, false, true)));
-        liveTextItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getLiveTextKeys()));
+        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image(darkTheme ? "file:icons/live_text-light.png" : "file:icons/live_text.png", 20, 20, false, true)));
+        liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
         if (QueleaApp.get().getMobileLyricsServer() == null) {
             liveTextItem.setDisable(true);

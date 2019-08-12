@@ -139,6 +139,9 @@ public class ChordTransposer {
             case "Db":
                 newChord = "C#";
                 break;
+            case "D#":
+                newChord = "Eb";
+                break;
             case "E#":
                 newChord = "F";
                 break;

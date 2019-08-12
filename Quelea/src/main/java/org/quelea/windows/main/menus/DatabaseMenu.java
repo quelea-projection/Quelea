@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 
 /**
@@ -46,7 +47,7 @@ public class DatabaseMenu extends Menu {
     public DatabaseMenu() {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
 
-        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
+        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/newsong-light.png" : "file:icons/newsong.png", 16, 16, false, true)));
         newSongItem.setOnAction(new NewSongActionHandler());
         newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         getItems().add(newSongItem);
