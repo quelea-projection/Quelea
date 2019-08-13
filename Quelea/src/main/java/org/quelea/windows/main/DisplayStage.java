@@ -44,7 +44,7 @@ import org.quelea.utils.PlatformUtils;
  */
 public class DisplayStage extends Stage {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+    protected static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
     private final TestImage testImage;
@@ -109,30 +109,34 @@ public class DisplayStage extends Stage {
             addVLCListeners();
         }
     }
+        
+    protected void windowChanged() {
+        // do nothing on purpose
+    }
 
     private void addVLCListeners() {
         widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
+                windowChanged();
             }
         });
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
+                windowChanged();
             }
         });
         xProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
+                windowChanged();
             }
         });
         yProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
+                windowChanged();
             }
         });
     }

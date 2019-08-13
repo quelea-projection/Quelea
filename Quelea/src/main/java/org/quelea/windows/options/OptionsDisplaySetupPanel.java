@@ -27,7 +27,9 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
+import org.quelea.windows.main.ProjectorWindow;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StageWindow;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -117,19 +119,19 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
-        DisplayStage stageWindow = QueleaApp.get().getStageWindow();
+        ProjectorWindow projectorWindow = QueleaApp.get().getProjectionWindow();
+        StageWindow stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
-            if(appWindow != null) {
-                appWindow.setFullScreenAlwaysOnTopImmediate(false);
-                appWindow.hide();
+            if(projectorWindow != null) {
+                projectorWindow.setFullScreenAlwaysOnTopImmediate(false);
+                projectorWindow.hide();
             }
         }
         else {
-            if(appWindow == null) {
-                appWindow = new DisplayStage(projectorPanel.getOutputBounds(), false);
+            if(projectorWindow == null) {
+                projectorWindow = new ProjectorWindow(projectorPanel.getOutputBounds(), false);
             }
-            final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
+            final DisplayStage fiLyricWindow = projectorWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -152,7 +154,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         else {
             if(stageWindow == null) {
-                stageWindow = new DisplayStage(projectorPanel.getOutputBounds(), true);
+                stageWindow = new StageWindow(projectorPanel.getOutputBounds(), true);
             }
             final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {

@@ -35,8 +35,8 @@ public class QueleaApp {
 
     private static final QueleaApp INSTANCE = new QueleaApp();
     private MainWindow mainWindow;
-    private DisplayStage projectionWindow;
-    private DisplayStage stageWindow;
+    private ProjectorWindow projectionWindow;
+    private StageWindow stageWindow;
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
     private AutoDetectServer ads;
@@ -85,7 +85,7 @@ public class QueleaApp {
      * Get the projection window.
      * @return the projection window.
      */
-    public DisplayStage getProjectionWindow() {
+    public ProjectorWindow getProjectionWindow() {
         return projectionWindow;
     }
 
@@ -93,7 +93,7 @@ public class QueleaApp {
      * Get the stage window.
      * @return the stage window.
      */
-    public DisplayStage getStageWindow() {
+    public StageWindow getStageWindow() {
         return stageWindow;
     }
 
@@ -150,7 +150,7 @@ public class QueleaApp {
      * Set the projection window.
      * @param projectionWindow the projection window.
      */
-    public void setProjectionWindow(DisplayStage projectionWindow) {
+    public void setProjectionWindow(ProjectorWindow projectionWindow) {
         this.projectionWindow = projectionWindow;
     }
 
@@ -158,7 +158,7 @@ public class QueleaApp {
      * Set the stage window.
      * @param lyricWindow the stage window.
      */
-    public void setStageWindow(DisplayStage lyricWindow) {
+    public void setStageWindow(StageWindow lyricWindow) {
         this.stageWindow = lyricWindow;
     }
 
