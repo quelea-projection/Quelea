@@ -241,7 +241,7 @@ public final class Main extends Application {
                     }
                     OOUtils.attemptInit();
                     Platform.runLater(() -> {
-                        mainWindow = new MainWindow(true);
+                        mainWindow = new MainWindow(true, VLC_OK);
                     });
 
                     backgroundExecutor.submit(() -> {
@@ -309,14 +309,10 @@ public final class Main extends Application {
                             mainWindow.show();
                         }
                         showMonitorWarning(monitorNumber);
-                        CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getRecordingSettingsPanel().getConvertRecordingsCheckBox();
                         if (VLC_OK && VLC_INIT) {
                             VLCWindow.INSTANCE.refreshPosition();
-                            convertCheckBox.setDisable(false);
                         } else { //Couldn't find the VLC libraries.
                             QueleaProperties.get().setConvertRecordings(false);
-                            convertCheckBox.setSelected(false);
-                            convertCheckBox.setDisable(true);
                             String message;
                             if (VLC_OK) {
                                 message = LabelGrabber.INSTANCE.getLabel("vlc.version.message");

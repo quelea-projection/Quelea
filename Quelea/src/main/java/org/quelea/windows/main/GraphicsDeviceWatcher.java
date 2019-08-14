@@ -67,13 +67,6 @@ public class GraphicsDeviceWatcher {
                         if (thisDeviceCount > lastDeviceCount && QueleaProperties.get().getUseAutoExtend()) {
                             QueleaProperties.get().setProjectorModeScreen();
                             QueleaProperties.get().setProjectorScreen(thisDeviceCount - 1);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().update();
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().setScreen(thisDeviceCount - 1);
-                                }
-                            });
                         }
                         lastDeviceCount = thisDeviceCount;
                         listener.devicesChanged(monitors);

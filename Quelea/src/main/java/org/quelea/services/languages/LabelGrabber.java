@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by * the Free
@@ -121,26 +121,28 @@ public class LabelGrabber extends ResourceBundle {
     }
 
     public String getEngKey(String label) {
+        if (english)
+            return label;
         int pos = 0;
         for (String s : labels.stringPropertyNames()) {
-            if (getLabel(s).equals(label)) {
+            if (getLabel(s).toLowerCase().equals(label.toLowerCase())) {
                 return engLabels.get(labels.keySet().toArray()[pos]).toString();
             }
             pos++;
         }
         return null;
     }
-    
+
     @Override
     public Enumeration<String> getKeys() {
         return Collections.enumeration(keySet());
     }
-    
+
     @Override
     public Object handleGetObject(String key) {
         return getLabel(key);
     }
-    
+
     // Overrides handleKeySet() so that the getKeys() implementation
     // can rely on the keySet() value.
     @Override
