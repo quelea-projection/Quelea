@@ -125,5 +125,6 @@ public class QueleaPropertyKeys {
     public static final String stageYCoordKey = "stage.y.coord";
     public static final String stageWCoordKey = "stage.width.coord";
     public static final String stageHCoordKey = "stage.height.coord";
+    public static final String darkThemeKey = "use.dark.theme";
 
 }

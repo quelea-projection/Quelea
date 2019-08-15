@@ -172,6 +172,13 @@ public class PreferenceStorageHandler implements StorageHandler {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
                 }
                 return;
+            case QueleaPropertyKeys.darkThemeKey:
+                if ((QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("default.theme.label"))) ||
+                        (!QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")))) {
+                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("theme.changed"), LabelGrabber.INSTANCE.getLabel("theme.changed.message"), QueleaApp.get().getMainWindow());
+                }
+                QueleaProperties.get().setUseDarkTheme(object.toString().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")));
+                break;
             case QueleaPropertyKeys.projectorModeKey:
                 if (Boolean.parseBoolean(object.toString())) {
                     QueleaProperties.get().setProjectorModeCoords();
@@ -286,6 +293,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
                     return property;
+                case QueleaPropertyKeys.darkThemeKey:
+                    return LabelGrabber.INSTANCE.getLabel(QueleaProperties.get().getUseDarkTheme() ? "dark.theme.label" : "default.theme.label");
                 case QueleaPropertyKeys.projectorModeKey:
                     return property.equals("coords");
                 case QueleaPropertyKeys.stageModeKey:

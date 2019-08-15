@@ -34,6 +34,7 @@ import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.options.customprefs.PercentIntegerSliderControl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
@@ -56,8 +57,10 @@ public class OptionsGeneralPanel {
     private IntegerProperty maxFontSizeProperty;
     private IntegerProperty additionalSpacingProperty;
     private IntegerProperty maxCharsProperty;
-    private ObservableList<LanguageFile> languageItems;
-    private ObjectProperty<LanguageFile> languageSelection;
+    private ObservableList<LanguageFile> languageItemsList;
+    private ObjectProperty<LanguageFile> languageSelectionProperty;
+    private ObjectProperty<String> applicationThemeProperty;
+    private ObservableList<String> applicationThemeList;
     private HashMap<Field, ObservableValue> bindings;
 
     /**
@@ -82,8 +85,13 @@ public class OptionsGeneralPanel {
         additionalSpacingProperty = new SimpleIntegerProperty((int) QueleaProperties.get().getAdditionalLineSpacing());
         maxCharsProperty = new SimpleIntegerProperty(QueleaProperties.get().getMaxChars());
 
-        languageItems = FXCollections.observableArrayList(LanguageFileManager.INSTANCE.languageFiles());
-        languageSelection = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile());
+        languageItemsList = FXCollections.observableArrayList(LanguageFileManager.INSTANCE.languageFiles());
+        languageSelectionProperty = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile());
+
+        applicationThemeList = FXCollections.observableArrayList(Arrays.asList(
+                LabelGrabber.INSTANCE.getLabel("default.theme.label"), LabelGrabber.INSTANCE.getLabel("dark.theme.label"))
+        );
+        applicationThemeProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("default.theme.label"));
     }
 
     Category getGeneralTab() {
@@ -92,7 +100,8 @@ public class OptionsGeneralPanel {
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")),
                 Group.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItems, languageSelection).customKey(languageFileKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItemsList, languageSelectionProperty).customKey(languageFileKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(darkThemeKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())).customKey(singleMonitorWarningKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"), new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode())).customKey(oneLineModeKey),

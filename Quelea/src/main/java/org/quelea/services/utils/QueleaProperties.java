@@ -2334,10 +2334,10 @@ public final class QueleaProperties extends Properties {
     }
 
     public boolean getUseDarkTheme() {
-        return Boolean.parseBoolean(getProperty("use.dark.theme", "false"));
+        return Boolean.parseBoolean(getProperty(darkThemeKey, "false"));
     }
 
     public void setUseDarkTheme(boolean useDarkTheme) {
-        setProperty("use.dark.theme", String.valueOf(useDarkTheme));
+        setProperty(darkThemeKey, String.valueOf(useDarkTheme));
     }
 }

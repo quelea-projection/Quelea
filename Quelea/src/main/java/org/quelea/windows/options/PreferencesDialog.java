@@ -110,7 +110,11 @@ public class PreferencesDialog extends Stage {
         mainPane.setMinHeight(600);
         mainPane.setCenter(preferencesFx.getView().getCenter());
 
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
 
         getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, e -> callBeforeHiding());
 
