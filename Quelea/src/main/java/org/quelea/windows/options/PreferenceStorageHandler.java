@@ -265,6 +265,18 @@ public class PreferenceStorageHandler implements StorageHandler {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
                 }
                 break;
+            case QueleaPropertyKeys.dbSongPreviewKey:
+                if (object.toString().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"))) {
+                    QueleaProperties.get().setShowDBSongPreview(true);
+                    QueleaProperties.get().setImmediateSongDBPreview(false);
+                } else if (object.toString().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"))) {
+                    QueleaProperties.get().setShowDBSongPreview(false);
+                    QueleaProperties.get().setImmediateSongDBPreview(true);
+                } else {
+                    QueleaProperties.get().setShowDBSongPreview(false);
+                    QueleaProperties.get().setImmediateSongDBPreview(false);
+                }
+                break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
@@ -332,6 +344,14 @@ public class PreferenceStorageHandler implements StorageHandler {
                 case QueleaPropertyKeys.controlScreenKey:
                     screenNum = QueleaProperties.get().getControlScreen();
                     return LabelGrabber.INSTANCE.getLabel("output.text") + " " + (screenNum + 1);
+                case QueleaPropertyKeys.dbSongPreviewKey:
+                    if (QueleaProperties.get().getShowDBSongPreview()) {
+                        return LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview");
+                    } else if (QueleaProperties.get().getImmediateSongDBPreview()) {
+                        return LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane");
+                    } else {
+                        return LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control");
+                    }
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);

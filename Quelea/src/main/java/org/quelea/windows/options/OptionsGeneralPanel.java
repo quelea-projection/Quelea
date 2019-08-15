@@ -61,6 +61,8 @@ public class OptionsGeneralPanel {
     private ObjectProperty<LanguageFile> languageSelectionProperty;
     private ObjectProperty<String> applicationThemeProperty;
     private ObservableList<String> applicationThemeList;
+    private ObjectProperty<String> dbSongPreviewProperty;
+    private ObservableList<String> dbSongPreviewList;
     private HashMap<Field, ObservableValue> bindings;
 
     /**
@@ -92,6 +94,12 @@ public class OptionsGeneralPanel {
                 LabelGrabber.INSTANCE.getLabel("default.theme.label"), LabelGrabber.INSTANCE.getLabel("dark.theme.label"))
         );
         applicationThemeProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("default.theme.label"));
+
+        dbSongPreviewList = FXCollections.observableArrayList(Arrays.asList(
+                LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"), LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"),
+                LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"))
+        );
+        dbSongPreviewProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
     }
 
     Category getGeneralTab() {
@@ -104,6 +112,7 @@ public class OptionsGeneralPanel {
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.interface.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItemsList, languageSelectionProperty).customKey(languageFileKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(darkThemeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"), dbSongPreviewList, dbSongPreviewProperty).customKey(dbSongPreviewKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey)

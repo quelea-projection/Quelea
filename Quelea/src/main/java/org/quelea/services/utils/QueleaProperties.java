@@ -2283,7 +2283,7 @@ public final class QueleaProperties extends Properties {
     }
 
     public void setShowDBSongPreview(boolean val) {
-        setProperty("db.song.preview", Boolean.toString(val));
+        setProperty(dbSongPreviewKey, Boolean.toString(val));
     }
 
     public boolean getImmediateSongDBPreview() {
