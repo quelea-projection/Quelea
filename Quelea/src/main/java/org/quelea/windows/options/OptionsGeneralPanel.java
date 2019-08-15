@@ -98,42 +98,51 @@ public class OptionsGeneralPanel {
         bindings.put(smallSongSizeControllerField, showSmallSongProperty.not());
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")),
-                Group.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItemsList, languageSelectionProperty).customKey(languageFileKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(darkThemeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())).customKey(singleMonitorWarningKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"), new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode())).customKey(oneLineModeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo())).customKey(autoplayVidKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive())).customKey(advanceOnLiveKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())).customKey(songOverflowKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"), new SimpleBooleanProperty(QueleaProperties.get().getPreviewOnImageUpdate())).customKey(previewOnImageChangeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())).customKey(defaultSongDbUpdateKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())).customKey(clearLiveOnRemoveKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride())).customKey(itemThemeOverrideKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSongProperty).customKey(showSmallSongTextKey),
-                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSongProperty, bindings).customKey(smallSongTextVPositionKey),
-                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSongProperty, bindings).customKey(smallSongTextHPositionKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.song.size.label"), smallSongSizeControllerField, smallSongSizeSpinnerProperty).customKey(smallSongTextSizeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"), showSmallBibleProperty).customKey(showSmallBibleTextKey),
-                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), false, QueleaProperties.get().getSmallBibleTextPositionV(), showSmallBibleProperty, bindings).customKey(smallBibleTextVPositionKey),
-                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBibleProperty, bindings).customKey(smallBibleTextHPositionKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.bible.size.label"), smallBibleSizeControllerField, smallBibleSizeSpinnerProperty).customKey(smallBibleTextSizeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey)
-                ),
-                Group.of(LabelGrabber.INSTANCE.getLabel("text.options.options"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst())).customKey(capitalFirstKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize())).customKey(uniformFontSizeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("max.font.size.label"), maxFontSizeProperty, 12, 300).customKey(maxFontSizeKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"), additionalSpacingProperty, 0, 50).customKey(additionalLineSpacingKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"), maxCharsProperty, 10, 160).customKey(maxCharsKey)
-                )
-        );
+        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")))
+                .subCategories(
+                        Category.of(LabelGrabber.INSTANCE.getLabel("interface.options.options"),
+                                Group.of(
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItemsList, languageSelectionProperty).customKey(languageFileKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(darkThemeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSongProperty).customKey(showSmallSongTextKey),
+                                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), false, QueleaProperties.get().getSmallSongTextPositionV(), showSmallSongProperty, bindings).customKey(smallSongTextVPositionKey),
+                                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.song.position.label"), true, QueleaProperties.get().getSmallSongTextPositionH(), showSmallSongProperty, bindings).customKey(smallSongTextHPositionKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.song.size.label"), smallSongSizeControllerField, smallSongSizeSpinnerProperty).customKey(smallSongTextSizeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"), showSmallBibleProperty).customKey(showSmallBibleTextKey),
+                                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), false, QueleaProperties.get().getSmallBibleTextPositionV(), showSmallBibleProperty, bindings).customKey(smallBibleTextVPositionKey),
+                                        getPositionSelector(LabelGrabber.INSTANCE.getLabel("small.bible.position.label"), true, QueleaProperties.get().getSmallBibleTextPositionH(), showSmallBibleProperty, bindings).customKey(smallBibleTextHPositionKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("small.bible.size.label"), smallBibleSizeControllerField, smallBibleSizeSpinnerProperty).customKey(smallBibleTextSizeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey)
+                                )
+                        ),
+                        Category.of(LabelGrabber.INSTANCE.getLabel("user.options.options"),
+                                Group.of(
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())).customKey(singleMonitorWarningKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"), new SimpleBooleanProperty(QueleaProperties.get().getOneLineMode())).customKey(oneLineModeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo())).customKey(autoplayVidKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive())).customKey(advanceOnLiveKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())).customKey(songOverflowKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"), new SimpleBooleanProperty(QueleaProperties.get().getPreviewOnImageUpdate())).customKey(previewOnImageChangeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())).customKey(defaultSongDbUpdateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())).customKey(clearLiveOnRemoveKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride())).customKey(itemThemeOverrideKey)
+                                )
+                        ),
+                        Category.of(LabelGrabber.INSTANCE.getLabel("text.options.options"),
+                                Group.of(
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst())).customKey(capitalFirstKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize())).customKey(uniformFontSizeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("max.font.size.label"), maxFontSizeProperty, 12, 300).customKey(maxFontSizeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"), additionalSpacingProperty, 0, 50).customKey(additionalLineSpacingKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"), maxCharsProperty, 10, 160).customKey(maxCharsKey)
+                                )
+                        )
+                ).expand();
     }
 
 }

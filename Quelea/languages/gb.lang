@@ -699,3 +699,4 @@ db.song.preview.label.control=None
 db.song.preview.label.databasepreview=In database pane
 db.song.preview.label.previewpane=In preview pane
 mobile.remote.heading=Mobile Remote
+interface.options.options=Interface Options
