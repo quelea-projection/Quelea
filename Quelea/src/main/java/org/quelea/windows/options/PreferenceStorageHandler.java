@@ -171,7 +171,7 @@ public class PreferenceStorageHandler implements StorageHandler {
                     QueleaProperties.get().setLanguageFile(((LanguageFile) object).getFile().getName());
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
                 }
-                return;
+                break;
             case QueleaPropertyKeys.darkThemeKey:
                 if ((QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("default.theme.label"))) ||
                         (!QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")))) {
@@ -250,7 +250,7 @@ public class PreferenceStorageHandler implements StorageHandler {
                 if (breadcrumb.contains("alignment"))
                     pos = pos.toUpperCase();
                 QueleaProperties.get().setProperty(breadcrumb, pos);
-                return;
+                break;
             case QueleaPropertyKeys.mobLyricsPortKey:
             case QueleaPropertyKeys.remoteControlPortKey:
             case QueleaPropertyKeys.remoteControlPasswordKey:

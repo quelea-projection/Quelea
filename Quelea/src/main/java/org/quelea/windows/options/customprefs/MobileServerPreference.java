@@ -50,6 +50,8 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
     private BufferedImage qrImage;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean isLyrics;
+    private String urlMLCache;
+    private String urlRCCache;
 
     public MobileServerPreference(boolean isLyrics) {
         this.isLyrics = isLyrics;
@@ -156,9 +158,6 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
         SwingFXUtils.toFXImage(qrImage, fxImg);
         return fxImg;
     }
-
-    private String urlMLCache;
-    private String urlRCCache;
 
     public String getMLURL() {
         if (urlMLCache == null) {

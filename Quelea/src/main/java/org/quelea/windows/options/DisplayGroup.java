@@ -41,7 +41,7 @@ public class DisplayGroup {
     private boolean displayChange = false;
     private Group group;
 
-    DisplayGroup(String groupName, String image, boolean custom, HashMap<Field, ObservableValue> bindings) {
+    DisplayGroup(String groupName, boolean custom, HashMap<Field, ObservableValue> bindings) {
         BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
         if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
@@ -71,7 +71,7 @@ public class DisplayGroup {
             screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
             group = Group.of(groupName,
                     Setting.of(groupName, customControl, screenSelectProperty).customKey(controlScreenKey)
-            );//.addGroupNode(new ImageView(new Image(image)));}
+            );
         } else {
             int screen;
             Bounds bounds;
@@ -128,7 +128,7 @@ public class DisplayGroup {
                             .customKey(projectorGroup ? projectorXCoordKey : stageXCoordKey),
                     Setting.of("Y", posY, yProperty)
                             .customKey(projectorGroup ? projectorYCoordKey : stageYCoordKey)
-            );//.addGroupNode(new ImageView(new Image(image)));
+            );
 
             bindings.put(sizeWith, useCustomPosition.not());
             bindings.put(sizeHeight, useCustomPosition.not());
@@ -157,11 +157,11 @@ public class DisplayGroup {
         return descriptions;
     }
 
-    boolean isDisplayChange() {
+    public boolean isDisplayChange() {
         return displayChange;
     }
 
-    Group getGroup() {
+    public Group getGroup() {
         return group;
     }
 }

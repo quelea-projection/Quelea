@@ -27,18 +27,18 @@ buildScan {
 }
 
 ext {
-    versionsuffix = System.properties["versionsuffix"] != null ? System.properties["versionsuffix"] : project.queleaversion
+    versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
 
-    CPInstallerName = "quelea-" + versionsuffix + "-crossplatform-install.jar"
-    WindowsInstallerName = "quelea-" + versionsuffix + "-x86-windows-install.exe"
-    WindowsInstaller64Name = "quelea-" + versionsuffix + "-x64-windows-install.exe"
-    MacInstallerName = "quelea-" + versionsuffix + "-mac.zip"
-    DebInstallerName = "quelea-" + versionsuffix + "-deb-install.deb"
+    CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
+    WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
+    WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
+    MacInstallerName="quelea-" + versionsuffix + "-mac.zip"
+    DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
 
-    CPInstaller = "dist/standalone/" + CPInstallerName
-    DebInstaller = "dist/standalone/" + DebInstallerName
-    WindowsInstaller = "dist/standalone/" + ext.WindowsInstallerName
-    WindowsInstaller64 = "dist/standalone/" + ext.WindowsInstaller64Name
+    CPInstaller ="dist/standalone/" + CPInstallerName
+    DebInstaller ="dist/standalone/" + DebInstallerName
+    WindowsInstaller="dist/standalone/" + ext.WindowsInstallerName
+    WindowsInstaller64="dist/standalone/" + ext.WindowsInstaller64Name
 }
 
 tasks.withType(JavaCompile) {
@@ -64,7 +64,7 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "-Dglass.accessible.force=false"]
+    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
     bundledJre64Bit = true
     outfile = "Quelea64.exe"
 }
@@ -83,48 +83,42 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
 
 task copyToDist {
     doLast {
-        copy { from configurations.runtime into project.distdir + "/lib" } //libraries
-        copy { from "themes" into project.distdir + "/themes" }
-        copy { from "icons" into project.distdir + "/icons" }
-        copy { from "bibles" into project.distdir + "/bibles" }
-        copy { from "server" into project.distdir + "/server" }
-        copy { from "vid" into project.distdir + "/vid" }
-        copy { from "vbs" into project.distdir + "/vbs" }
-        copy { from "licenses" into project.distdir + "/licenses" }
-        copy { from "languages" into project.distdir + "/languages" }
-        copy { from "dictionaries" into project.distdir + "/dictionaries" }
-        copy { from "img" into project.distdir + "/img" }
-        copy { from "timer" into project.distdir + "/timer" }
-        copy { from "src" into project.distdir + "/src" }
+        copy {from configurations.runtime into project.distdir + "/lib"} //libraries
+        copy {from "themes" into project.distdir + "/themes"}
+        copy {from "icons" into project.distdir + "/icons"}
+        copy {from "bibles" into project.distdir + "/bibles"}
+        copy {from "server" into project.distdir + "/server"}
+        copy {from "vid" into project.distdir + "/vid"}
+        copy {from "vbs" into project.distdir + "/vbs"}
+        copy {from "licenses" into project.distdir + "/licenses"}
+        copy {from "languages" into project.distdir + "/languages"}
+        copy {from "dictionaries" into project.distdir + "/dictionaries"}
+        copy {from "img" into project.distdir + "/img"}
+        copy {from "timer" into project.distdir + "/timer"}
+        copy {from "src" into project.distdir + "/src"}
 //        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
-        copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
-        copy { from file("build/libs/Quelea.jar") into file(project.distdir) }
-        copy { from file("README.TXT") into file(project.distdir) }
-        copy { from file("quelea.properties") into file(project.distdir) }
-        copy { from file("scheduleformat.xsl") into file(project.distdir) }
-        copy { from file("songformat.xsl") into file(project.distdir) }
-        copy { from file("fopcfg.xml") into file(project.distdir) }
-        copy { from file("Quelea.bat") into file(project.distdir) }
-        copy { from file("quelea.iss") into file(project.distdir) }
-        copy { from file("quelea64.iss") into file(project.distdir) }
-        copy { from file("build-install.bat") into file(project.distdir) }
-        copy { from file("build-install.sh") into file(project.distdir) }
-        copy {
-            from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt" }
-        }
-        copy { from file("launch.sh") into file(project.distdir) }
-        copy { from file("licenses/copyright") into file(project.distdir + "/queleadoc") }
+        copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
+        copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
+        copy {from file("README.TXT") into file(project.distdir)}
+        copy {from file("quelea.properties") into file(project.distdir)}
+        copy {from file("scheduleformat.xsl") into file(project.distdir)}
+        copy {from file("songformat.xsl") into file(project.distdir)}
+        copy {from file("fopcfg.xml") into file(project.distdir)}
+        copy {from file("Quelea.bat") into file(project.distdir)}
+        copy {from file("quelea.iss") into file(project.distdir)}
+        copy {from file("quelea64.iss") into file(project.distdir)}
+        copy {from file("build-install.bat") into file(project.distdir)}
+        copy {from file("build-install.sh") into file(project.distdir)}
+        copy {from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt"}}
+        copy {from file("launch.sh") into file(project.distdir)}
+        copy {from file("licenses/copyright") into file(project.distdir + "/queleadoc")}
     }
 }
 
 task grabNative {
     doLast {
         def f = project.file(project.distdir + '/lib/libAVPlayerJava.jnilib')
-        new URL('https://github.com/quelea-projection/libAVPlayerJava/releases/download/v1.0/libAVPlayerJava.jnilib').withInputStream { i ->
-            f.withOutputStream {
-                it << i
-            }
-        }
+        new URL('https://github.com/quelea-projection/libAVPlayerJava/releases/download/v1.0/libAVPlayerJava.jnilib').withInputStream{ i -> f.withOutputStream{ it << i }}
     }
 }
 copyToDist.finalizedBy(grabNative)
@@ -135,7 +129,7 @@ izpack {
     baseDir = file("dist")
 }
 
-task innosetup(type: Exec) {
+task innosetup (type:Exec) {
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
@@ -146,17 +140,13 @@ task innosetup(type: Exec) {
     }
 
     doLast {
-        copy {
-            from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName }
-        }
-        copy {
-            from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name }
-        }
-        delete(file("Output"))
+        copy {from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName}}
+        copy {from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name}}
+        delete (file("Output"))
     }
 }
 
-task labelcheck(type: JavaExec) {
+task labelcheck(type:JavaExec) {
     main = 'org.quelea.services.languages.LabelChecker'
     classpath = sourceSets.main.runtimeClasspath
 }
@@ -174,7 +164,7 @@ task zipMacPackr(type: Zip) {
     from "out-mac"
 
     doLast {
-        delete(file("out-mac"))
+        delete (file("out-mac"))
     }
 }
 
@@ -211,7 +201,7 @@ dependencies {
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.14'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.8'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.8'
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.3'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.1'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.3'
@@ -251,7 +241,7 @@ repositories {
 
 jar {
     manifest {
-        attributes(
+        attributes (
                 'Main-Class': 'org.quelea.windows.main.Main',
                 "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
         )
@@ -259,6 +249,6 @@ jar {
 }
 
 task releaseSummary(type:JavaExec) {
-   main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
-   classpath = sourceSets.main.runtimeClasspath
+    main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
+    classpath = sourceSets.main.runtimeClasspath
 }

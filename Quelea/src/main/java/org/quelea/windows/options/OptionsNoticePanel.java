@@ -57,7 +57,7 @@ public class OptionsNoticePanel {
         noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());
     }
 
-    Category getNoticesTab() {
+    public Category getNoticesTab() {
         return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), new ImageView(new Image("file:icons/noticessettingsicon.png")),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null, bindings).customKey(noticePositionKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()).customKey(noticeBackgroundColourKey),

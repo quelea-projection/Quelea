@@ -121,11 +121,12 @@ public class LabelGrabber extends ResourceBundle {
     }
 
     public String getEngKey(String label) {
-        if (english)
+        if (english) {
             return label;
+        }
         int pos = 0;
         for (String s : labels.stringPropertyNames()) {
-            if (getLabel(s).toLowerCase().equals(label.toLowerCase())) {
+            if (getLabel(s).equalsIgnoreCase(label)) {
                 return engLabels.get(labels.keySet().toArray()[pos]).toString();
             }
             pos++;

@@ -102,7 +102,7 @@ public class OptionsGeneralPanel {
         dbSongPreviewProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
     }
 
-    Category getGeneralTab() {
+    public Category getGeneralTab() {
         bindings.put(smallSongSizeControllerField, showSmallSongProperty.not());
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
 

@@ -17,7 +17,6 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
      * - slider is the control to change the value.
      * - container holds the control so that it can be styled properly.
      */
-    private Label fieldLabel;
     private Slider slider;
     private Label valueLabel;
     private int min;
@@ -42,9 +41,7 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
     public void initializeParts() {
         super.initializeParts();
 
-        fieldLabel = new Label(field.labelProperty().getValue());
-
-        valueLabel = new Label(String.valueOf(field.getValue().intValue()) + "%");
+        valueLabel = new Label(field.getValue() + "%");
 
         slider = new Slider();
         slider.setMin(min);

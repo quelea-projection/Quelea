@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.control.CheckBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;

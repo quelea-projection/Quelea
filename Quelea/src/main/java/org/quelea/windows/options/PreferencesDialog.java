@@ -125,14 +125,14 @@ public class PreferencesDialog extends Stage {
         ((SimpleControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
     }
 
-    static Setting getColorPicker(String label, Color color) {
+    public static Setting getColorPicker(String label, Color color) {
         StringProperty property = new SimpleStringProperty(QueleaProperties.get().getStr(color));
         StringField field = Field.ofStringType(property).render(
                 new ColorPickerPreference(color));
         return Setting.of(label, field, property);
     }
 
-    static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+    public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
         Setting setting;
         if (horizontal)
             setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));

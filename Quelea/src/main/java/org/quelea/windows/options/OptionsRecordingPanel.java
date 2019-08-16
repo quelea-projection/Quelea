@@ -68,7 +68,7 @@ public class OptionsRecordingPanel {
         useConvertSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("convert.mp3"), useConvertProperty).customKey(convertMp3Key);
     }
 
-    Category getRecordingsTab() {
+    public Category getRecordingsTab() {
         bindings.put(useConvertSetting.getField(), new SimpleBooleanProperty(hasVLC));
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), new ImageView(new Image("file:icons/recordingssettingsicon.png")),

@@ -80,7 +80,7 @@ public class OptionsServerSettingsPanel {
         passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
     }
 
-    Category getServerTab() {
+    public Category getServerTab() {
         return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"), new ImageView(new Image("file:icons/serversettingsicon.png")),
                 Group.of(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyricsProperty).customKey(useMobLyricsKey),

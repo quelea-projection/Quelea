@@ -65,7 +65,7 @@ public class OptionsPresentationPanel {
         directoryChooserPPProperty = new SimpleStringProperty(QueleaProperties.get().getPPPath());
     }
 
-    Category getPresentationsTab() {
+    public Category getPresentationsTab() {
         StringField directoryFieldOOField = Field.ofStringType(directoryChooserOOProperty).render(
                 new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
         bindings.put(directoryFieldOOField, useOOProperty.not());
