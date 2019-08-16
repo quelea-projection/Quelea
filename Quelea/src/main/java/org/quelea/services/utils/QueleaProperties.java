@@ -35,6 +35,8 @@ import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 
+import static org.quelea.services.utils.QueleaPropertyKeys.*;
+
 /**
  * Manages the properties specific to Quelea.
  * <p>
@@ -110,11 +112,11 @@ public final class QueleaProperties extends Properties {
      * @return the languages file for the GUI.
      */
     public File getLanguageFile() {
-        return new File("languages", getProperty("language.file", "gb.lang"));
+        return new File("languages", getProperty(languageFileKey, "gb.lang"));
     }
 
     public boolean isDictionaryEnabled() {
-        return Boolean.parseBoolean(getProperty("enable.dict", "false"));
+        return Boolean.parseBoolean(getProperty(enableDictKey, "false"));
     }
 
     /**
@@ -125,7 +127,7 @@ public final class QueleaProperties extends Properties {
      * @return the languages file for the GUI.
      */
     public Dictionary getDictionary() {
-        String dict = getProperty("language.file", "gb.lang");
+        String dict = getProperty(languageFileKey, "gb.lang");
         String[] parts = dict.split("\\.");
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < parts.length - 1; i++) {
@@ -143,7 +145,7 @@ public final class QueleaProperties extends Properties {
      * @param file the name of the language file to use.
      */
     public void setLanguageFile(String file) {
-        setProperty("language.file", file);
+        setProperty(languageFileKey, file);
         write();
     }
 
@@ -166,14 +168,14 @@ public final class QueleaProperties extends Properties {
      */
     public boolean getDisplayVideoTab() {
         try {
-            return Boolean.parseBoolean(getProperty("video.tab", "false"));
+            return Boolean.parseBoolean(getProperty(videoTabKey, "false"));
         } catch (Exception ex) {
             return true;
         }
     }
 
     public void setDisplayVideoTab(boolean videoTab) {
-        setProperty("video.tab", Boolean.toString(videoTab));
+        setProperty(videoTabKey, Boolean.toString(videoTab));
         write();
     }
 
@@ -186,7 +188,7 @@ public final class QueleaProperties extends Properties {
      */
     public SceneInfo getSceneInfo() {
         try {
-            String[] parts = getProperty("scene.info", "461,15,997,995,false").split(",");
+            String[] parts = getProperty(sceneInfoKey, "461,15,997,995,false").split(",");
             if (parts.length == 4) {
                 return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), false);
             } else if (parts.length == 5) {
@@ -195,7 +197,7 @@ public final class QueleaProperties extends Properties {
                 return null;
             }
         } catch (Exception ex) {
-            LoggerUtils.getLogger().log(Level.WARNING, "Invalid scene info: " + getProperty("scene.info"), ex);
+            LoggerUtils.getLogger().log(Level.WARNING, "Invalid scene info: " + getProperty(sceneInfoKey), ex);
             return null;
         }
     }
@@ -209,7 +211,7 @@ public final class QueleaProperties extends Properties {
      * @param info the scene info.
      */
     public void setSceneInfo(SceneInfo info) {
-        setProperty("scene.info", info.toString());
+        setProperty(sceneInfoKey, info.toString());
         write();
     }
 
@@ -220,11 +222,11 @@ public final class QueleaProperties extends Properties {
      * set.
      */
     public double getMainDivPos() {
-        return Double.parseDouble(getProperty("main.divpos", "-1"));
+        return Double.parseDouble(getProperty(mainDivposKey, "-1"));
     }
 
     public String getElevantoClientId() {
-        return getProperty("elevanto.client.id", "91955");
+        return getProperty(elevantoClientIdKey, "91955");
     }
 
     /**
@@ -234,7 +236,7 @@ public final class QueleaProperties extends Properties {
      * if none is set.
      */
     public double getLibraryDivPos() {
-        return Double.parseDouble(getProperty("library.divpos", "-1"));
+        return Double.parseDouble(getProperty(libraryDivposKey, "-1"));
     }
 
     /**
@@ -244,7 +246,7 @@ public final class QueleaProperties extends Properties {
      * none is set.
      */
     public double getPrevLiveDivPos() {
-        return Double.parseDouble(getProperty("prelive.divpos", "-1"));
+        return Double.parseDouble(getProperty(preliveDivposKey, "-1"));
     }
 
     /**
@@ -253,7 +255,7 @@ public final class QueleaProperties extends Properties {
      * @return the canvas divider position property, or -1 if none is set.
      */
     public double getCanvasDivPos() {
-        return Double.parseDouble(getProperty("canvas.divpos", "-1"));
+        return Double.parseDouble(getProperty(canvasDivposKey, "-1"));
     }
 
     /**
@@ -262,7 +264,7 @@ public final class QueleaProperties extends Properties {
      * @param val the position of the divider 0-1.
      */
     public void setMainDivPos(double val) {
-        setProperty("main.divpos", Double.toString(val));
+        setProperty(mainDivposKey, Double.toString(val));
         write();
     }
 
@@ -272,7 +274,7 @@ public final class QueleaProperties extends Properties {
      * @param val the position of the divider 0-1.
      */
     public void setPrevLiveDivPos(double val) {
-        setProperty("prelive.divpos", Double.toString(val));
+        setProperty(preliveDivposKey, Double.toString(val));
         write();
     }
 
@@ -282,7 +284,7 @@ public final class QueleaProperties extends Properties {
      * @param val the position of the divider 0-1.
      */
     public void setCanvasDivPos(double val) {
-        setProperty("canvas.divpos", Double.toString(val));
+        setProperty(canvasDivposKey, Double.toString(val));
         write();
     }
 
@@ -292,7 +294,7 @@ public final class QueleaProperties extends Properties {
      * @param val the position of the divider 0-1.
      */
     public void setLibraryDivPos(double val) {
-        setProperty("library.divpos", Double.toString(val));
+        setProperty(libraryDivposKey, Double.toString(val));
         write();
     }
 
@@ -303,7 +305,7 @@ public final class QueleaProperties extends Properties {
      * @return a list of user chosen fonts to appear in the theme dialog.
      */
     public List<String> getChosenFonts() {
-        String fontStr = getProperty("chosen.fonts", "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
+        String fontStr = getProperty(chosenFontsKey, "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
         List<String> ret = new ArrayList<>();
         for (String str : fontStr.split("\\|")) {
             if (!str.trim().isEmpty()) {
@@ -327,7 +329,7 @@ public final class QueleaProperties extends Properties {
                 fontBuilder.append("|");
             }
         }
-        setProperty("chosen.fonts", fontBuilder.toString());
+        setProperty(chosenFontsKey, fontBuilder.toString());
         write();
     }
 
@@ -340,7 +342,7 @@ public final class QueleaProperties extends Properties {
      * @return true if the uniform font size should be used, false otherwise.
      */
     public boolean getUseUniformFontSize() {
-        return Boolean.parseBoolean(getProperty("uniform.font.size", "true"));
+        return Boolean.parseBoolean(getProperty(uniformFontSizeKey, "true"));
     }
 
     /**
@@ -352,7 +354,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if the uniform font size should be used, false otherwise.
      */
     public void setUseUniformFontSize(boolean val) {
-        setProperty("uniform.font.size", Boolean.toString(val));
+        setProperty(uniformFontSizeKey, Boolean.toString(val));
     }
 
     /**
@@ -362,7 +364,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should show verse numbers, false otherwise.
      */
     public boolean getShowVerseNumbers() {
-        return Boolean.parseBoolean(getProperty("show.verse.numbers", "true"));
+        return Boolean.parseBoolean(getProperty(showVerseNumbersKey, "true"));
     }
 
     /**
@@ -372,7 +374,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should show verse numbers, false otherwise.
      */
     public void setShowVerseNumbers(boolean val) {
-        setProperty("show.verse.numbers", Boolean.toString(val));
+        setProperty(showVerseNumbersKey, Boolean.toString(val));
     }
 
     /**
@@ -381,7 +383,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour to use for notice backgrounds.
      */
     public Color getNoticeBackgroundColour() {
-        return getColor(getProperty("notice.background.colour", getStr(Color.BROWN)));
+        return getColor(getProperty(noticeBackgroundColourKey, getStr(Color.BROWN)));
     }
 
     /**
@@ -390,7 +392,7 @@ public final class QueleaProperties extends Properties {
      * @param colour the colour to use for notice backgrounds.
      */
     public void setNoticeBackgroundColour(Color colour) {
-        setProperty("notice.background.colour", getStr(colour));
+        setProperty(noticeBackgroundColourKey, getStr(colour));
     }
 
     /**
@@ -399,7 +401,7 @@ public final class QueleaProperties extends Properties {
      * @return the position at which to display the notices.
      */
     public NoticePosition getNoticePosition() {
-        if (getProperty("notice.position", "Bottom").equalsIgnoreCase("top")) {
+        if (getProperty(noticePositionKey, "Bottom").equalsIgnoreCase("top")) {
             return NoticePosition.TOP;
         } else {
             return NoticePosition.BOTTOM;
@@ -412,7 +414,7 @@ public final class QueleaProperties extends Properties {
      * @param position the position at which to display the notices.
      */
     public void setNoticePosition(NoticePosition position) {
-        setProperty("notice.position", position.getText());
+        setProperty(noticePositionKey, position.getText());
     }
 
     /**
@@ -421,7 +423,7 @@ public final class QueleaProperties extends Properties {
      * @return the speed at which to display the notices.
      */
     public double getNoticeSpeed() {
-        return Double.parseDouble(getProperty("notice.speed", "10"));
+        return Double.parseDouble(getProperty(noticeSpeedKey, "10"));
     }
 
     /**
@@ -430,7 +432,7 @@ public final class QueleaProperties extends Properties {
      * @param speed the speed at which to display the notices.
      */
     public void setNoticeSpeed(double speed) {
-        setProperty("notice.speed", Double.toString(speed));
+        setProperty(noticeSpeedKey, Double.toString(speed));
     }
 
     /**
@@ -439,7 +441,7 @@ public final class QueleaProperties extends Properties {
      * @return the last directory used in the general file chooser.
      */
     public File getLastDirectory() {
-        String path = getProperty("last.directory");
+        String path = getProperty(lastDirectoryKey);
         if (path == null) {
             return null;
         }
@@ -458,7 +460,7 @@ public final class QueleaProperties extends Properties {
      * @param directory the last directory used in the general file chooser.
      */
     public void setLastDirectory(File directory) {
-        setProperty("last.directory", directory.getAbsolutePath());
+        setProperty(lastDirectoryKey, directory.getAbsolutePath());
     }
 
     /**
@@ -467,7 +469,7 @@ public final class QueleaProperties extends Properties {
      * @return the last directory used in the schedule file chooser.
      */
     public File getLastScheduleFileDirectory() {
-        String path = getProperty("last.schedulefile.directory");
+        String path = getProperty(lastSchedulefileDirectoryKey);
         if (path == null) {
             return null;
         }
@@ -486,7 +488,7 @@ public final class QueleaProperties extends Properties {
      * @param embed true if should embed, false otherwise
      */
     public void setEmbedMediaInScheduleFile(boolean embed) {
-        setProperty("schedule.embed.media", embed + "");
+        setProperty(scheduleEmbedMediaKey, embed + "");
     }
 
     /**
@@ -495,7 +497,7 @@ public final class QueleaProperties extends Properties {
      * @return true if should embed, false otherwise
      */
     public boolean getEmbedMediaInScheduleFile() {
-        boolean ret = Boolean.parseBoolean(getProperty("schedule.embed.media", "true"));
+        boolean ret = Boolean.parseBoolean(getProperty(scheduleEmbedMediaKey, "true"));
         return ret;
     }
 
@@ -505,7 +507,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if should override, false otherwise
      */
     public void setItemThemeOverride(boolean val) {
-        setProperty("item.theme.override", val + "");
+        setProperty(itemThemeOverrideKey, val + "");
     }
 
     /**
@@ -514,7 +516,7 @@ public final class QueleaProperties extends Properties {
      * @return true if should override, false otherwise
      */
     public boolean getItemThemeOverride() {
-        boolean ret = Boolean.parseBoolean(getProperty("item.theme.override", "false"));
+        boolean ret = Boolean.parseBoolean(getProperty(itemThemeOverrideKey, "false"));
         return ret;
     }
 
@@ -522,10 +524,11 @@ public final class QueleaProperties extends Properties {
      * Set the currently selected global theme file.
      */
     public void setGlobalSongThemeFile(File file) {
-        if (file == null) {
-            setProperty("global.song.theme.file", "");
-        } else {
-            setProperty("global.song.theme.file", file.getAbsolutePath());
+        if(file==null) {
+            setProperty(globalSongThemeFileKey, "");            
+        }
+        else {
+            setProperty(globalSongThemeFileKey, file.getAbsolutePath());            
         }
     }
 
@@ -533,8 +536,8 @@ public final class QueleaProperties extends Properties {
      * Get the currently selected global theme file.
      */
     public File getGlobalSongThemeFile() {
-        String path = getProperty("global.song.theme.file");
-        if (path == null || path.isEmpty()) {
+        String path = getProperty(globalSongThemeFileKey);
+        if(path==null || path.isEmpty()) {
             return null;
         }
         return new File(path);
@@ -544,10 +547,11 @@ public final class QueleaProperties extends Properties {
      * Set the currently selected global theme file.
      */
     public void setGlobalBibleThemeFile(File file) {
-        if (file == null) {
-            setProperty("global.bible.theme.file", "");
-        } else {
-            setProperty("global.bible.theme.file", file.getAbsolutePath());
+        if(file==null) {
+            setProperty(globalBibleThemeFileKey, "");            
+        }
+        else {
+            setProperty(globalBibleThemeFileKey, file.getAbsolutePath());            
         }
     }
 
@@ -555,8 +559,8 @@ public final class QueleaProperties extends Properties {
      * Get the currently selected global theme file.
      */
     public File getGlobalBibleThemeFile() {
-        String path = getProperty("global.bible.theme.file");
-        if (path == null || path.isEmpty()) {
+        String path = getProperty(globalBibleThemeFileKey);
+        if(path==null || path.isEmpty()) {
             return null;
         }
         return new File(path);
@@ -568,7 +572,7 @@ public final class QueleaProperties extends Properties {
      * @param directory the last directory used in the schedule file chooser.
      */
     public void setLastScheduleFileDirectory(File directory) {
-        setProperty("last.schedulefile.directory", directory.getAbsolutePath());
+        setProperty(lastSchedulefileDirectoryKey, directory.getAbsolutePath());
     }
 
     /**
@@ -577,7 +581,7 @@ public final class QueleaProperties extends Properties {
      * @return the last directory used in the video file chooser.
      */
     public File getLastVideoDirectory() {
-        String path = getProperty("last.video.directory");
+        String path = getProperty(lastVideoDirectoryKey);
         if (path == null) {
             return null;
         }
@@ -596,7 +600,7 @@ public final class QueleaProperties extends Properties {
      * @param directory the last directory used in the video file chooser.
      */
     public void setLastVideoDirectory(File directory) {
-        setProperty("last.video.directory", directory.getAbsolutePath());
+        setProperty(lastVideoDirectoryKey, directory.getAbsolutePath());
     }
 
     /**
@@ -606,7 +610,7 @@ public final class QueleaProperties extends Properties {
      * @return true if auto play is enabled, false otherwise.
      */
     public boolean getAutoPlayVideo() {
-        return Boolean.parseBoolean(getProperty("autoplay.vid", "false"));
+        return Boolean.parseBoolean(getProperty(autoplayVidKey, "false"));
     }
 
     /**
@@ -615,7 +619,7 @@ public final class QueleaProperties extends Properties {
      * @param val true to enable auto play, false otherwise.
      */
     public void setAutoPlayVideo(boolean val) {
-        setProperty("autoplay.vid", Boolean.toString(val));
+        setProperty(autoplayVidKey, Boolean.toString(val));
     }
 
     /**
@@ -625,7 +629,7 @@ public final class QueleaProperties extends Properties {
      * @return true if should use java fx for VLC Rendering, false otherwise
      */
     public boolean getUseJavaFXforVLCRendering() {
-        return Boolean.parseBoolean(getProperty("use.vlc.javafx.rendering", "false"));
+        return Boolean.parseBoolean(getProperty(useVlcJavafxRenderingKey, "false"));
     }
 
     /**
@@ -635,7 +639,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if should use java fx for VLC Rendering, false otherwise.
      */
     public void setUseJavaFXforVLCRendering(boolean val) {
-        setProperty("use.vlc.javafx.rendering", Boolean.toString(val));
+        setProperty(useVlcJavafxRenderingKey, Boolean.toString(val));
     }
 
     /**
@@ -644,7 +648,7 @@ public final class QueleaProperties extends Properties {
      * @return the font size at which to display the notices.
      */
     public double getNoticeFontSize() {
-        return Double.parseDouble(getProperty("notice.font.size", "50"));
+        return Double.parseDouble(getProperty(noticeFontSizeKey, "50"));
     }
 
     /**
@@ -653,7 +657,7 @@ public final class QueleaProperties extends Properties {
      * @param fontSize the font size at which to display the notices.
      */
     public void setNoticeFontSize(double fontSize) {
-        setProperty("notice.font.size", Double.toString(fontSize));
+        setProperty(noticeFontSizeKey, Double.toString(fontSize));
     }
 
     /**
@@ -663,7 +667,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should translate automatically, false otherwise.
      */
     public boolean getAutoTranslate() {
-        return Boolean.parseBoolean(getProperty("auto.translate", "true"));
+        return Boolean.parseBoolean(getProperty(autoTranslateKey, "true"));
     }
 
     /**
@@ -673,7 +677,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should translate automatically, false otherwise.
      */
     public void setAutoTranslate(boolean val) {
-        setProperty("auto.translate", Boolean.toString(val));
+        setProperty(autoTranslateKey, Boolean.toString(val));
     }
 
     /**
@@ -683,7 +687,7 @@ public final class QueleaProperties extends Properties {
      * @return the maximum font size used by text displayables.
      */
     public double getMaxFontSize() {
-        return Double.parseDouble(getProperty("max.font.size", "1000"));
+        return Double.parseDouble(getProperty(maxFontSizeKey, "1000"));
     }
 
     /**
@@ -693,7 +697,7 @@ public final class QueleaProperties extends Properties {
      * @param fontSize the maximum font size used by text displayables.
      */
     public void setMaxFontSize(double fontSize) {
-        setProperty("max.font.size", Double.toString(fontSize));
+        setProperty(maxFontSizeKey, Double.toString(fontSize));
     }
 
     /**
@@ -703,7 +707,7 @@ public final class QueleaProperties extends Properties {
      * @return the additional line spacing.
      */
     public double getAdditionalLineSpacing() {
-        return Double.parseDouble(getProperty("additional.line.spacing", "10"));
+        return Double.parseDouble(getProperty(additionalLineSpacingKey, "10"));
     }
 
     /**
@@ -713,7 +717,7 @@ public final class QueleaProperties extends Properties {
      * @param spacing the additional line spacing.
      */
     public void setAdditionalLineSpacing(double spacing) {
-        setProperty("additional.line.spacing", Double.toString(spacing));
+        setProperty(additionalLineSpacingKey, Double.toString(spacing));
     }
 
     /**
@@ -723,7 +727,7 @@ public final class QueleaProperties extends Properties {
      * @return the thumbnail size.
      */
     public int getThumbnailSize() {
-        return Integer.parseInt(getProperty("thumbnail.size", "200"));
+        return Integer.parseInt(getProperty(thumbnailSizeKey, "200"));
     }
 
     /**
@@ -733,7 +737,7 @@ public final class QueleaProperties extends Properties {
      * @param thumbnailSize the thumbnail size.
      */
     public void setThumbnailSize(int thumbnailSize) {
-        setProperty("thumbnail.size", Integer.toString(thumbnailSize));
+        setProperty(thumbnailSizeKey, Integer.toString(thumbnailSize));
     }
 
     /**
@@ -743,7 +747,7 @@ public final class QueleaProperties extends Properties {
      * @return the true to show extra toolbar options.
      */
     public boolean getShowExtraLivePanelToolbarOptions() {
-        return Boolean.parseBoolean(getProperty("show.extra.live.panel.toolbar.options", "false"));
+        return Boolean.parseBoolean(getProperty(showExtraLivePanelToolbarOptionsKey, "false"));
     }
 
     /**
@@ -753,7 +757,7 @@ public final class QueleaProperties extends Properties {
      * @param show the extra options or leave them hidden.
      */
     public void setShowExtraLivePanelToolbarOptions(boolean show) {
-        setProperty("show.extra.live.panel.toolbar.options", Boolean.toString(show));
+        setProperty(showExtraLivePanelToolbarOptionsKey, Boolean.toString(show));
     }
 
     /**
@@ -765,7 +769,7 @@ public final class QueleaProperties extends Properties {
      * @return true if it should be cleared, false otherwise.
      */
     public boolean getClearLiveOnRemove() {
-        return Boolean.parseBoolean(getProperty("clear.live.on.remove", "true"));
+        return Boolean.parseBoolean(getProperty(clearLiveOnRemoveKey, "true"));
     }
 
     /**
@@ -777,7 +781,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if it should be cleared, false otherwise.
      */
     public void setClearLiveOnRemove(boolean val) {
-        setProperty("clear.live.on.remove", Boolean.toString(val));
+        setProperty(clearLiveOnRemoveKey, Boolean.toString(val));
     }
 
     /**
@@ -787,7 +791,7 @@ public final class QueleaProperties extends Properties {
      * @return the location of the facebook page.
      */
     public String getFacebookPageLocation() {
-        return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
+        return getProperty(facebookPageKey, "http://www.facebook.com/quelea.projection");
     }
 
     /**
@@ -797,7 +801,7 @@ public final class QueleaProperties extends Properties {
      * @return the location of the facebook page.
      */
     public String getWikiPageLocation() {
-        return getProperty("wiki.page", "http://quelea.org/wiki/index.php/Main_Page");
+        return getProperty(wikiPageKey, "http://quelea.org/wiki/index.php/Main_Page");
     }
 
     /**
@@ -825,7 +829,7 @@ public final class QueleaProperties extends Properties {
     }
 
     public int getTranslationFontSizeOffset() {
-        return Integer.parseInt(getProperty("translation.font.size.offset", "3"));
+        return Integer.parseInt(getProperty(translationFontSizeOffsetKey, "3"));
     }
 
     /**
@@ -835,7 +839,7 @@ public final class QueleaProperties extends Properties {
      * @return the font to use for stage text.
      */
     public String getStageTextFont() {
-        return getProperty("stage.font", "SansSerif");
+        return getProperty(stageFontKey, "SansSerif");
     }
 
     /**
@@ -845,7 +849,7 @@ public final class QueleaProperties extends Properties {
      * @param font the font to use for stage text.
      */
     public void setStageTextFont(String font) {
-        setProperty("stage.font", font);
+        setProperty(stageFontKey, font);
         write();
     }
 
@@ -856,7 +860,7 @@ public final class QueleaProperties extends Properties {
      * @return the alignment of the text on stage view.
      */
     public String getStageTextAlignment() {
-        return TextAlignment.valueOf(getProperty("stage.text.alignment", "LEFT")).toFriendlyString();
+        return TextAlignment.valueOf(getProperty(stageTextAlignmentKey, "LEFT")).toFriendlyString();
     }
 
     /**
@@ -866,7 +870,7 @@ public final class QueleaProperties extends Properties {
      * @param alignment the alignment of the text on stage view.
      */
     public void setStageTextAlignment(TextAlignment alignment) {
-        setProperty("stage.text.alignment", alignment.toString());
+        setProperty(stageTextAlignmentKey, alignment.toString());
         write();
     }
 
@@ -877,7 +881,7 @@ public final class QueleaProperties extends Properties {
      * @return true if they should be displayed, false otherwise.
      */
     public boolean getShowChords() {
-        return Boolean.parseBoolean(getProperty("stage.show.chords", "true"));
+        return Boolean.parseBoolean(getProperty(stageShowChordsKey, "true"));
     }
 
     /**
@@ -887,7 +891,7 @@ public final class QueleaProperties extends Properties {
      * @param showChords true if they should be displayed, false otherwise.
      */
     public void setShowChords(boolean showChords) {
-        setProperty("stage.show.chords", Boolean.toString(showChords));
+        setProperty(stageShowChordsKey, Boolean.toString(showChords));
         write();
     }
 
@@ -900,7 +904,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should phone home, false otherwise.
      */
     public boolean getPhoneHome() {
-        return Boolean.parseBoolean(getProperty("phonehome", "true"));
+        return Boolean.parseBoolean(getProperty(phonehomeKey, "true"));
     }
 
     /**
@@ -960,7 +964,7 @@ public final class QueleaProperties extends Properties {
      * @return the extension used for quelea schedules.
      */
     public String getScheduleExtension() {
-        return getProperty("quelea.schedule.extension", "qsch");
+        return getProperty(queleaScheduleExtensionKey, "qsch");
     }
 
     /**
@@ -970,7 +974,7 @@ public final class QueleaProperties extends Properties {
      * @return the extension used for quelea song packs.
      */
     public String getSongPackExtension() {
-        return getProperty("quelea.songpack.extension", "qsp");
+        return getProperty(queleaSongpackExtensionKey, "qsp");
     }
 
     /**
@@ -981,7 +985,7 @@ public final class QueleaProperties extends Properties {
      * @return the control screen number.
      */
     public int getControlScreen() {
-        return Integer.parseInt(getProperty("control.screen", "0"));
+        return Integer.parseInt(getProperty(controlScreenKey, "0"));
     }
 
     /**
@@ -991,7 +995,7 @@ public final class QueleaProperties extends Properties {
      * @param screen the number of the screen to use for the output.
      */
     public void setControlScreen(int screen) {
-        setProperty("control.screen", Integer.toString(screen));
+        setProperty(controlScreenKey, Integer.toString(screen));
         write();
     }
 
@@ -1002,7 +1006,7 @@ public final class QueleaProperties extends Properties {
      * @return true if one line mode should be enabled, false otherwise.
      */
     public boolean getOneLineMode() {
-        return Boolean.parseBoolean(getProperty("one.line.mode", "false"));
+        return Boolean.parseBoolean(getProperty(oneLineModeKey, "false"));
     }
 
     /**
@@ -1012,7 +1016,7 @@ public final class QueleaProperties extends Properties {
      * @param val the value of the one linde mode.
      */
     public void setOneLineMode(boolean val) {
-        setProperty("one.line.mode", Boolean.toString(val));
+        setProperty(oneLineModeKey, Boolean.toString(val));
         write();
     }
 
@@ -1023,7 +1027,7 @@ public final class QueleaProperties extends Properties {
      * @return true if text shadows are enabled, false otherwise.
      */
     public boolean getTextShadow() {
-        return Boolean.parseBoolean(getProperty("text.shadow", "false"));
+        return Boolean.parseBoolean(getProperty(textShadowKey, "false"));
     }
 
     /**
@@ -1033,7 +1037,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if text shadows are enabled, false otherwise.
      */
     public void setTextShadow(boolean val) {
-        setProperty("text.shadow", Boolean.toString(val));
+        setProperty(textShadowKey, Boolean.toString(val));
         write();
     }
 
@@ -1045,7 +1049,7 @@ public final class QueleaProperties extends Properties {
      * @return the projector screen number.
      */
     public int getProjectorScreen() {
-        return Integer.parseInt(getProperty("projector.screen", "1"));
+        return Integer.parseInt(getProperty(projectorScreenKey, "1"));
     }
 
     /**
@@ -1055,7 +1059,7 @@ public final class QueleaProperties extends Properties {
      * @param screen the number of the screen to use for the output.
      */
     public void setProjectorScreen(int screen) {
-        setProperty("projector.screen", Integer.toString(screen));
+        setProperty(projectorScreenKey, Integer.toString(screen));
         write();
     }
 
@@ -1067,7 +1071,7 @@ public final class QueleaProperties extends Properties {
      * @return true if the projector screen should be moved, false otherwise.
      */
     public boolean getUseAutoExtend() {
-        return Boolean.parseBoolean(getProperty("use.auto.extend", "false"));
+        return Boolean.parseBoolean(getProperty(useAutoExtendKey, "false"));
     }
 
     /**
@@ -1079,7 +1083,7 @@ public final class QueleaProperties extends Properties {
      * false otherwise.
      */
     public void setUseAutoExtend(boolean extend) {
-        setProperty("use.auto.extend", Boolean.toString(extend));
+        setProperty(useAutoExtendKey, Boolean.toString(extend));
     }
 
     /**
@@ -1091,7 +1095,7 @@ public final class QueleaProperties extends Properties {
      * projected text.
      */
     public int getMaxChars() {
-        return Integer.parseInt(getProperty("max.chars", "30"));
+        return Integer.parseInt(getProperty(maxCharsKey, "30"));
     }
 
     /**
@@ -1102,7 +1106,7 @@ public final class QueleaProperties extends Properties {
      * of projected text.
      */
     public void setMaxChars(int maxChars) {
-        setProperty("max.chars", Integer.toString(maxChars));
+        setProperty(maxCharsKey, Integer.toString(maxChars));
         write();
     }
 
@@ -1113,7 +1117,7 @@ public final class QueleaProperties extends Properties {
      * @return the co-ordinates.
      */
     public Bounds getProjectorCoords() {
-        String[] prop = getProperty("projector.coords", "0,0,0,0").trim().split(",");
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
         return new BoundingBox(Integer.parseInt(prop[0]),
                 Integer.parseInt(prop[1]),
                 Integer.parseInt(prop[2]),
@@ -1132,7 +1136,87 @@ public final class QueleaProperties extends Properties {
                 + "," + Integer.toString((int) coords.getWidth())
                 + "," + Integer.toString((int) coords.getHeight());
 
-        setProperty("projector.coords", rectStr);
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setXProjectorCoord(String x) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = x
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setYProjectorCoord(String y) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + y
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setWidthProjectorCoord(String width) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + width
+                + "," + prop[3];
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+    public void setHeightProjectorCoord(String height) {
+        String[] prop = getProperty(projectorCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + height;
+        setProperty(projectorCoordsKey, rectStr);
+        write();
+    }
+
+  public void setXStageCoord(String x) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = x
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setYStageCoord(String y) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + y
+                + "," + prop[2]
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setWidthStageCoord(String width) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + width
+                + "," + prop[3];
+        setProperty(stageCoordsKey, rectStr);
+        write();
+    }
+
+    public void setHeightStageCoord(String height) {
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
+        String rectStr = prop[0]
+                + "," + prop[1]
+                + "," + prop[2]
+                + "," + height;
+        setProperty(stageCoordsKey, rectStr);
         write();
     }
 
@@ -1145,14 +1229,14 @@ public final class QueleaProperties extends Properties {
      * number.
      */
     public boolean isProjectorModeCoords() {
-        return "coords".equals(getProperty("projector.mode"));
+        return "coords".equals(getProperty(projectorModeKey));
     }
 
     /**
      * Set the projector mode to be manual co-ordinates.
      */
     public void setProjectorModeCoords() {
-        setProperty("projector.mode", "coords");
+        setProperty(projectorModeKey, "coords");
         write();
     }
 
@@ -1160,7 +1244,7 @@ public final class QueleaProperties extends Properties {
      * Set the projector mode to be a screen number.
      */
     public void setProjectorModeScreen() {
-        setProperty("projector.mode", "screen");
+        setProperty(projectorModeKey, "screen");
         write();
     }
 
@@ -1172,7 +1256,7 @@ public final class QueleaProperties extends Properties {
      * @return the stage screen number.
      */
     public int getStageScreen() {
-        return Integer.parseInt(getProperty("stage.screen", "-1"));
+        return Integer.parseInt(getProperty(stageScreenKey, "-1"));
     }
 
     /**
@@ -1182,7 +1266,7 @@ public final class QueleaProperties extends Properties {
      * @param screen the number of the screen to use for the output.
      */
     public void setStageScreen(int screen) {
-        setProperty("stage.screen", Integer.toString(screen));
+        setProperty(stageScreenKey, Integer.toString(screen));
         write();
     }
 
@@ -1193,7 +1277,7 @@ public final class QueleaProperties extends Properties {
      * @return the co-ordinates.
      */
     public Bounds getStageCoords() {
-        String[] prop = getProperty("stage.coords", "0,0,0,0").trim().split(",");
+        String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
         return new BoundingBox(Integer.parseInt(prop[0]),
                 Integer.parseInt(prop[1]),
                 Integer.parseInt(prop[2]),
@@ -1212,7 +1296,7 @@ public final class QueleaProperties extends Properties {
                 + "," + Integer.toString((int) coords.getWidth())
                 + "," + Integer.toString((int) coords.getHeight());
 
-        setProperty("stage.coords", rectStr);
+        setProperty(stageCoordsKey, rectStr);
         write();
     }
 
@@ -1225,14 +1309,14 @@ public final class QueleaProperties extends Properties {
      * number.
      */
     public boolean isStageModeCoords() {
-        return "coords".equals(getProperty("stage.mode"));
+        return "coords".equals(getProperty(stageModeKey));
     }
 
     /**
      * Set the stage mode to be manual co-ordinates.
      */
     public void setStageModeCoords() {
-        setProperty("stage.mode", "coords");
+        setProperty(stageModeKey, "coords");
         write();
     }
 
@@ -1240,7 +1324,7 @@ public final class QueleaProperties extends Properties {
      * Set the stage mode to be a screen number.
      */
     public void setStageModeScreen() {
-        setProperty("stage.mode", "screen");
+        setProperty(stageModeKey, "screen");
         write();
     }
 
@@ -1254,7 +1338,7 @@ public final class QueleaProperties extends Properties {
      * @return the minimum line count.
      */
     public int getMinLines() {
-        return Integer.parseInt(getProperty("min.lines", "10"));
+        return Integer.parseInt(getProperty(minLinesKey, "10"));
     }
 
     /**
@@ -1264,7 +1348,7 @@ public final class QueleaProperties extends Properties {
      * @param minLines the minimum line count.
      */
     public void setMinLines(int minLines) {
-        setProperty("min.lines", Integer.toString(minLines));
+        setProperty(minLinesKey, Integer.toString(minLines));
         write();
     }
 
@@ -1276,7 +1360,7 @@ public final class QueleaProperties extends Properties {
      * @return true if the warning should be shown, false otherwise.
      */
     public boolean showSingleMonitorWarning() {
-        return Boolean.parseBoolean(getProperty("single.monitor.warning", "true"));
+        return Boolean.parseBoolean(getProperty(singleMonitorWarningKey, "true"));
     }
 
     /**
@@ -1286,7 +1370,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if the warning should be shown, false otherwise.
      */
     public void setSingleMonitorWarning(boolean val) {
-        setProperty("single.monitor.warning", Boolean.toString(val));
+        setProperty(singleMonitorWarningKey, Boolean.toString(val));
         write();
     }
 
@@ -1307,7 +1391,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea website.
      */
     public String getWebsiteLocation() {
-        return getProperty("website.location", "http://www.quelea.org/");
+        return getProperty(websiteLocationKey, "http://www.quelea.org/");
     }
 
     /**
@@ -1317,7 +1401,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea discussion forum.
      */
     public String getDiscussLocation() {
-        return getProperty("discuss.location", "http://quelea.discourse.group");
+        return getProperty(discussLocationKey, "https://groups.google.com/group/quelea-discuss");
     }
 
     /**
@@ -1327,7 +1411,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea feedback form.
      */
     public String getFeedbackLocation() {
-        return getProperty("feedback.location", "https://quelea.org/feedback/");
+        return getProperty(feedbackLocationKey, "https://quelea.org/feedback/");
     }
 
     /**
@@ -1348,7 +1432,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should check for updates, false otherwise.
      */
     public boolean checkUpdate() {
-        return Boolean.parseBoolean(getProperty("check.update", "true"));
+        return Boolean.parseBoolean(getProperty(checkUpdateKey, "true"));
     }
 
     /**
@@ -1358,7 +1442,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should check for updates, false otherwise.
      */
     public void setCheckUpdate(boolean val) {
-        setProperty("check.update", Boolean.toString(val));
+        setProperty(checkUpdateKey, Boolean.toString(val));
         write();
     }
 
@@ -1370,7 +1454,7 @@ public final class QueleaProperties extends Properties {
      * @return true if it should be a capital, false otherwise.
      */
     public boolean checkCapitalFirst() {
-        return Boolean.parseBoolean(getProperty("capital.first", "false"));
+        return Boolean.parseBoolean(getProperty(capitalFirstKey, "false"));
     }
 
     /**
@@ -1380,7 +1464,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if it should be a capital, false otherwise.
      */
     public void setCapitalFirst(boolean val) {
-        setProperty("capital.first", Boolean.toString(val));
+        setProperty(capitalFirstKey, Boolean.toString(val));
         write();
     }
 
@@ -1391,7 +1475,7 @@ public final class QueleaProperties extends Properties {
      * @return true if it should be a displayed, false otherwise.
      */
     public boolean checkDisplaySongInfoText() {
-        return Boolean.parseBoolean(getProperty("display.songinfotext", "true"));
+        return Boolean.parseBoolean(getProperty(displaySonginfotextKey, "true"));
     }
 
     /**
@@ -1401,7 +1485,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if it should be displayed, false otherwise.
      */
     public void setDisplaySongInfoText(boolean val) {
-        setProperty("display.songinfotext", Boolean.toString(val));
+        setProperty(displaySonginfotextKey, Boolean.toString(val));
         write();
     }
 
@@ -1412,7 +1496,7 @@ public final class QueleaProperties extends Properties {
      * @return the default bible.
      */
     public String getDefaultBible() {
-        return getProperty("default.bible");
+        return getProperty(defaultBibleKey);
     }
 
     /**
@@ -1422,7 +1506,7 @@ public final class QueleaProperties extends Properties {
      * @param bible the default bible.
      */
     public void setDefaultBible(Bible bible) {
-        setProperty("default.bible", bible.getName());
+        setProperty(defaultBibleKey, bible.getName());
         write();
     }
 
@@ -1433,7 +1517,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour used to display chords in stage view.
      */
     public Color getStageChordColor() {
-        return getColor(getProperty("stage.chord.color", "200,200,200"));
+        return getColor(getProperty(stageChordColorKey, "200,200,200"));
     }
 
     /**
@@ -1443,7 +1527,7 @@ public final class QueleaProperties extends Properties {
      * @param color the colour used to display chords in stage view.
      */
     public void setStageChordColor(Color color) {
-        setProperty("stage.chord.color", getStr(color));
+        setProperty(stageChordColorKey, getStr(color));
     }
 
     /**
@@ -1453,7 +1537,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour used to display lyrics in stage view.
      */
     public Color getStageLyricsColor() {
-        return getColor(getProperty("stage.lyrics.color", "255,255,255"));
+        return getColor(getProperty(stageLyricsColorKey, "255,255,255"));
     }
 
     /**
@@ -1463,7 +1547,7 @@ public final class QueleaProperties extends Properties {
      * @param color the colour used to display lyrics in stage view.
      */
     public void setStageLyricsColor(Color color) {
-        setProperty("stage.lyrics.color", getStr(color));
+        setProperty(stageLyricsColorKey, getStr(color));
     }
 
     /**
@@ -1473,7 +1557,7 @@ public final class QueleaProperties extends Properties {
      * @param color the colour used for the background in stage view.
      */
     public void setStageBackgroundColor(Color color) {
-        setProperty("stage.background.color", getStr(color));
+        setProperty(stageBackgroundColorKey, getStr(color));
     }
 
     /**
@@ -1483,7 +1567,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour used for the background in stage view.
      */
     public Color getStageBackgroundColor() {
-        return getColor(getProperty("stage.background.color", "0,0,0"));
+        return getColor(getProperty(stageBackgroundColorKey, "0,0,0"));
     }
 
     /**
@@ -1513,7 +1597,7 @@ public final class QueleaProperties extends Properties {
      * @param color the color to get as a string.
      * @return the color as a string.
      */
-    private String getStr(Color color) {
+    public String getStr(Color color) {
         return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
     }
 
@@ -1524,7 +1608,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour used to signify an active list.
      */
     public Color getActiveSelectionColor() {
-        return getColor(getProperty("active.selection.color", "30,160,225"));
+        return getColor(getProperty(activeSelectionColorKey, "30,160,225"));
     }
 
     /**
@@ -1534,7 +1618,7 @@ public final class QueleaProperties extends Properties {
      * @return the colour used to signify an active list.
      */
     public Color getInactiveSelectionColor() {
-        return getColor(getProperty("inactive.selection.color", "150,150,150"));
+        return getColor(getProperty(inactiveSelectionColorKey, "150,150,150"));
     }
 
     /**
@@ -1544,7 +1628,7 @@ public final class QueleaProperties extends Properties {
      * @return the outline thickness in pixels.
      */
     public int getOutlineThickness() {
-        return Integer.parseInt(getProperty("outline.thickness", "2"));
+        return Integer.parseInt(getProperty(outlineThicknessKey, "2"));
     }
 
     /**
@@ -1554,7 +1638,7 @@ public final class QueleaProperties extends Properties {
      * @param px the outline thickness in pixels.
      */
     public void setOutlineThickness(int px) {
-        setProperty("outline.thickness", Integer.toString(px));
+        setProperty(outlineThicknessKey, Integer.toString(px));
         write();
     }
 
@@ -1565,7 +1649,7 @@ public final class QueleaProperties extends Properties {
      * @return the notice box height.
      */
     public int getNoticeBoxHeight() {
-        return Integer.parseInt(getProperty("notice.box.height", "40"));
+        return Integer.parseInt(getProperty(noticeBoxHeightKey, "40"));
     }
 
     /**
@@ -1575,7 +1659,7 @@ public final class QueleaProperties extends Properties {
      * @param height the notice box height.
      */
     public void setNoticeBoxHeight(int height) {
-        setProperty("notice.box.height", Integer.toString(height));
+        setProperty(noticeBoxHeightKey, Integer.toString(height));
         write();
     }
 
@@ -1586,7 +1670,7 @@ public final class QueleaProperties extends Properties {
      * @return the notice box speed.
      */
     public int getNoticeBoxSpeed() {
-        return Integer.parseInt(getProperty("notice.box.speed", "8"));
+        return Integer.parseInt(getProperty(noticeBoxSpeedKey, "8"));
     }
 
     /**
@@ -1596,7 +1680,7 @@ public final class QueleaProperties extends Properties {
      * @param speed the notice box speed.
      */
     public void setNoticeBoxSpeed(int speed) {
-        setProperty("notice.box.speed", Integer.toString(speed));
+        setProperty(noticeBoxSpeedKey, Integer.toString(speed));
         write();
     }
 
@@ -1609,7 +1693,7 @@ public final class QueleaProperties extends Properties {
      * file.
      */
     public String[] getGodWords() {
-        return getProperty("god.words",
+        return getProperty(godWordsKey,
                 "god,God,jesus,Jesus,christ,Christ,you,You,he,He,lamb,Lamb,"
                 + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
                 + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
@@ -1624,7 +1708,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should auto-advance, false otherwise.
      */
     public boolean getAdvanceOnLive() {
-        return Boolean.parseBoolean(getProperty("advance.on.live", "false"));
+        return Boolean.parseBoolean(getProperty(advanceOnLiveKey, "false"));
     }
 
     /**
@@ -1635,7 +1719,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should auto-advance, false otherwise.
      */
     public void setAdvanceOnLive(boolean val) {
-        setProperty("advance.on.live", Boolean.toString(val));
+        setProperty(advanceOnLiveKey, Boolean.toString(val));
         write();
     }
 
@@ -1647,7 +1731,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should preview, false otherwise.
      */
     public boolean getPreviewOnImageUpdate() {
-        return Boolean.parseBoolean(getProperty("preview.on.image.change", "false"));
+        return Boolean.parseBoolean(getProperty(previewOnImageChangeKey, "false"));
     }
 
     /**
@@ -1658,7 +1742,7 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should preview, false otherwise.
      */
     public void setPreviewOnImageUpdate(boolean val) {
-        setProperty("preview.on.image.change", Boolean.toString(val));
+        setProperty(previewOnImageChangeKey, Boolean.toString(val));
         write();
     }
 
@@ -1670,7 +1754,7 @@ public final class QueleaProperties extends Properties {
      * basic POI images.
      */
     public boolean getUseOO() {
-        return Boolean.parseBoolean(getProperty("use.oo", "false"));
+        return Boolean.parseBoolean(getProperty(useOoKey, "false"));
     }
 
     /**
@@ -1681,7 +1765,7 @@ public final class QueleaProperties extends Properties {
      * basic POI images.
      */
     public void setUseOO(boolean val) {
-        setProperty("use.oo", Boolean.toString(val));
+        setProperty(useOoKey, Boolean.toString(val));
         write();
     }
 
@@ -1692,7 +1776,7 @@ public final class QueleaProperties extends Properties {
      * @return the path to the openoffice installation on this machine.
      */
     public String getOOPath() {
-        return getProperty("oo.path", "");
+        return getProperty(ooPathKey, "");
     }
 
     /**
@@ -1702,7 +1786,7 @@ public final class QueleaProperties extends Properties {
      * @param path the path to the openoffice installation on this machine.
      */
     public void setOOPath(String path) {
-        setProperty("oo.path", path);
+        setProperty(ooPathKey, path);
         write();
     }
 
@@ -1714,7 +1798,7 @@ public final class QueleaProperties extends Properties {
      * basic POI images or openoffice.
      */
     public boolean getUsePP() {
-        return Boolean.parseBoolean(getProperty("use.pp", "false"));
+        return Boolean.parseBoolean(getProperty(usePpKey, "false"));
     }
 
     /**
@@ -1725,7 +1809,7 @@ public final class QueleaProperties extends Properties {
      * basic POI images or openoffice.
      */
     public void setUsePP(boolean val) {
-        setProperty("use.pp", Boolean.toString(val));
+        setProperty(usePpKey, Boolean.toString(val));
         write();
     }
 
@@ -1736,7 +1820,7 @@ public final class QueleaProperties extends Properties {
      * @return the path to the PowerPoint installation on this machine.
      */
     public String getPPPath() {
-        return getProperty("pp.path", "");
+        return getProperty(ppPathKey, "");
     }
 
     /**
@@ -1746,7 +1830,7 @@ public final class QueleaProperties extends Properties {
      * @param path the path to the PowerPoint installation on this machine.
      */
     public void setPPPath(String path) {
-        setProperty("pp.path", path);
+        setProperty(ppPathKey, path);
         write();
     }
 
@@ -1757,7 +1841,7 @@ public final class QueleaProperties extends Properties {
      * @return the path to the desired direcotry for recordings.
      */
     public String getRecordingsPath() {
-        return getProperty("rec.path", "");
+        return getProperty(recPathKey, "");
     }
 
     /**
@@ -1767,7 +1851,7 @@ public final class QueleaProperties extends Properties {
      * @param path the path to the desired direcotry for recordings.
      */
     public void setRecordingsPath(String path) {
-        setProperty("rec.path", path);
+        setProperty(recPathKey, path);
         write();
     }
 
@@ -1778,7 +1862,7 @@ public final class QueleaProperties extends Properties {
      * @return the path to the desired directory for recordings.
      */
     public String getDownloadPath() {
-        return getProperty("download.path", "");
+        return getProperty(downloadPathKey, "");
     }
 
     /**
@@ -1788,7 +1872,7 @@ public final class QueleaProperties extends Properties {
      * @param path the path to the desired directory for downloading.
      */
     public void setDownloadPath(String path) {
-        setProperty("download.path", path);
+        setProperty(downloadPathKey, path);
         write();
     }
 
@@ -1799,7 +1883,7 @@ public final class QueleaProperties extends Properties {
      * @return true if recordings should be converted, false otherwise.
      */
     public boolean getConvertRecordings() {
-        return Boolean.parseBoolean(getProperty("convert.mp3", "false"));
+        return Boolean.parseBoolean(getProperty(convertMp3Key, "false"));
     }
 
     /**
@@ -1810,7 +1894,7 @@ public final class QueleaProperties extends Properties {
      * recordings as WAV files.
      */
     public void setConvertRecordings(boolean val) {
-        setProperty("convert.mp3", Boolean.toString(val));
+        setProperty(convertMp3Key, Boolean.toString(val));
         write();
     }
 
@@ -1823,7 +1907,7 @@ public final class QueleaProperties extends Properties {
      * otherwise.
      */
     public boolean getOOPresOnTop() {
-        return Boolean.parseBoolean(getProperty("oo.ontop", "true"));
+        return Boolean.parseBoolean(getProperty(ooOntopKey, "true"));
     }
 
     /**
@@ -1833,7 +1917,7 @@ public final class QueleaProperties extends Properties {
      * @param location File location
      */
     public void setLogoImage(String location) {
-        setProperty("logo.image.location", location);
+        setProperty(logoImageLocationKey, location);
         write();
     }
 
@@ -1844,7 +1928,7 @@ public final class QueleaProperties extends Properties {
      * @return the logo image
      */
     public String getLogoImageURI() {
-        return "file:" + getProperty("logo.image.location", "icons/logo default.png");
+        return "file:" + getProperty(logoImageLocationKey, "icons/logo default.png");
     }
 
     /**
@@ -1854,7 +1938,7 @@ public final class QueleaProperties extends Properties {
      * @param port the port used for mobile lyrics display.
      */
     public void setMobLyricsPort(int port) {
-        setProperty("mob.lyrics.port", Integer.toString(port));
+        setProperty(mobLyricsPortKey, Integer.toString(port));
         write();
     }
 
@@ -1865,7 +1949,7 @@ public final class QueleaProperties extends Properties {
      * @return the port used for mobile lyrics display.
      */
     public int getMobLyricsPort() {
-        return Integer.parseInt(getProperty("mob.lyrics.port", "1111"));
+        return Integer.parseInt(getProperty(mobLyricsPortKey, "1111"));
     }
 
     /**
@@ -1875,7 +1959,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should, false otherwise.
      */
     public boolean getUseMobLyrics() {
-        return Boolean.parseBoolean(getProperty("use.mob.lyrics", "false"));
+        return Boolean.parseBoolean(getProperty(useMobLyricsKey, "false"));
     }
 
     /**
@@ -1885,12 +1969,12 @@ public final class QueleaProperties extends Properties {
      * @param val true if we should, false otherwise.
      */
     public void setUseMobLyrics(boolean val) {
-        setProperty("use.mob.lyrics", Boolean.toString(val));
+        setProperty(useMobLyricsKey, Boolean.toString(val));
         write();
     }
 
     public void setUseRemoteControl(boolean val) {
-        setProperty("use.remote.control", Boolean.toString(val));
+        setProperty(useRemoteControlKey, Boolean.toString(val));
         write();
     }
 
@@ -1901,7 +1985,7 @@ public final class QueleaProperties extends Properties {
      * @return true if we should, false otherwise.
      */
     public boolean getUseRemoteControl() {
-        return Boolean.parseBoolean(getProperty("use.remote.control", "false"));
+        return Boolean.parseBoolean(getProperty(useRemoteControlKey, "false"));
     }
 
     /**
@@ -1911,92 +1995,92 @@ public final class QueleaProperties extends Properties {
      * @return the port used for mobile lyrics display.
      */
     public int getRemoteControlPort() {
-        return Integer.parseInt(getProperty("remote.control.port", "1112"));
+        return Integer.parseInt(getProperty(remoteControlPortKey, "1112"));
     }
 
     public void setRemoteControlPort(int port) {
-        setProperty("remote.control.port", Integer.toString(port));
+        setProperty(remoteControlPortKey, Integer.toString(port));
         write();
     }
 
     public void setRemoteControlPassword(String text) {
-        setProperty("remote.control.password", text);
+        setProperty(remoteControlPasswordKey, text);
         write();
     }
 
     public String getRemoteControlPassword() {
-        return getProperty("remote.control.password", "quelea");
+        return getProperty(remoteControlPasswordKey, "quelea");
     }
 
     public String getSmallSongTextPositionH() {
-        return getProperty("small.song.text.h.position", "right");
+        return getProperty(smallSongTextHPositionKey, "right");
     }
 
     public void setSmallSongTextPositionH(String position) {
-        setProperty("small.song.text.h.position", position);
+        setProperty(smallSongTextHPositionKey, position);
         write();
     }
 
     public String getSmallSongTextPositionV() {
-        return getProperty("small.song.text.v.position", "bottom");
+        return getProperty(smallSongTextVPositionKey, "bottom");
     }
 
     public void setSmallSongTextPositionV(String position) {
-        setProperty("small.song.text.v.position", position);
+        setProperty(smallSongTextVPositionKey, position);
         write();
     }
 
     public Double getSmallSongTextSize() {
-        return Double.parseDouble(getProperty("small.song.text.size", "0.1"));
+        return Double.parseDouble(getProperty(smallSongTextSizeKey, "0.1"));
     }
 
     public void setSmallSongTextSize(double size) {
-        setProperty("small.song.text.size", Double.toString(size));
+        setProperty(smallSongTextSizeKey, Double.toString(size));
         write();
     }
 
     public String getSmallBibleTextPositionH() {
-        return getProperty("small.bible.text.h.position", "right");
+        return getProperty(smallBibleTextHPositionKey, "right");
     }
 
     public void setSmallBibleTextPositionH(String position) {
-        setProperty("small.bible.text.h.position", position);
+        setProperty(smallBibleTextHPositionKey, position);
         write();
     }
 
     public String getSmallBibleTextPositionV() {
-        return getProperty("small.bible.text.v.position", "bottom");
+        return getProperty(smallBibleTextVPositionKey, "bottom");
     }
 
     public void setSmallBibleTextPositionV(String position) {
-        setProperty("small.bible.text.v.position", position);
+        setProperty(smallBibleTextVPositionKey, position);
         write();
     }
 
     public Double getSmallBibleTextSize() {
-        return Double.parseDouble(getProperty("small.bible.text.size", "0.1"));
+        return Double.parseDouble(getProperty(smallBibleTextSizeKey, "0.1"));
     }
 
     public void setSmallBibleTextSize(double size) {
-        setProperty("small.bible.text.size", Double.toString(size));
+        setProperty(smallBibleTextSizeKey, Double.toString(size));
         write();
     }
 
     public boolean getSmallSongTextShow() {
-        return Boolean.parseBoolean(getProperty("show.small.song.text", "true"));
+        return Boolean.parseBoolean(getProperty(showSmallSongTextKey, "true"));
     }
 
     public void setSmallSongTextShow(boolean show) {
-        setProperty("show.small.song.text", Boolean.toString(show));
+        setProperty(showSmallSongTextKey, Boolean.toString(show));
         write();
     }
 
     public boolean getSmallBibleTextShow() {
-        return Boolean.parseBoolean(getProperty("show.small.bible.text", "true"));
+        return Boolean.parseBoolean(getProperty(showSmallBibleTextKey, "true"));
     }
 
     public void setSmallBibleTextShow(boolean show) {
-        setProperty("show.small.bible.text", Boolean.toString(show));
+        setProperty(showSmallBibleTextKey, Boolean.toString(show));
         write();
     }
 
@@ -2006,11 +2090,11 @@ public final class QueleaProperties extends Properties {
      * @return number of words or verses (depends on use.max.bible.verses)
      */
     public int getMaxBibleVerses() {
-        return Integer.parseInt(getProperty("max.bible.verses", "5"));
+        return Integer.parseInt(getProperty(maxBibleVersesKey, "5"));
     }
 
     public void setMaxBibleVerses(int number) {
-        setProperty("max.bible.verses", Integer.toString(number));
+        setProperty(maxBibleVersesKey, Integer.toString(number));
         write();
     }
 
@@ -2020,11 +2104,11 @@ public final class QueleaProperties extends Properties {
      * @return true if using maximum verses per slide
      */
     public boolean getBibleUsingMaxChars() {
-        return Boolean.parseBoolean(getProperty("use.max.bible.chars", "true"));
+        return Boolean.parseBoolean(getProperty(useMaxBibleCharsKey, "true"));
     }
 
     public void setBibleUsingMaxChars(boolean useChars) {
-        setProperty("use.max.bible.chars", Boolean.toString(useChars));
+        setProperty(useMaxBibleCharsKey, Boolean.toString(useChars));
         write();
     }
 
@@ -2037,7 +2121,7 @@ public final class QueleaProperties extends Properties {
      * text.
      */
     public int getMaxBibleChars() {
-        return Integer.parseInt(getProperty("max.bible.chars", "80"));
+        return Integer.parseInt(getProperty(maxBibleCharsKey, "80"));
     }
 
     /**
@@ -2048,7 +2132,7 @@ public final class QueleaProperties extends Properties {
      * of bible text.
      */
     public void setMaxBibleChars(int maxChars) {
-        setProperty("max.bible.chars", Integer.toString(maxChars));
+        setProperty(maxBibleCharsKey, Integer.toString(maxChars));
         write();
     }
 
@@ -2059,10 +2143,10 @@ public final class QueleaProperties extends Properties {
      * @return the duration of the fade in milliseconds text.
      */
     public int getLogoFadeDuration() {
-        String t = getProperty("logo.fade.duration", "");
+        String t = getProperty(logoFadeDurationKey, "");
         if (t.equals("")) {
             t = "1000";
-            setProperty("logo.fade.duration", t);
+            setProperty(logoFadeDurationKey, t);
             write();
         }
         return Integer.parseInt(t);
@@ -2075,10 +2159,10 @@ public final class QueleaProperties extends Properties {
      * @return the duration of the fade in milliseconds text.
      */
     public int getBlackFadeDuration() {
-        String t = getProperty("black.fade.duration", "");
+        String t = getProperty(blackFadeDurationKey, "");
         if (t.equals("")) {
             t = "1000";
-            setProperty("black.fade.duration", t);
+            setProperty(blackFadeDurationKey, t);
             write();
         }
         return Integer.parseInt(t);
@@ -2091,10 +2175,10 @@ public final class QueleaProperties extends Properties {
      * @return the duration of the fade in milliseconds text.
      */
     public int getClearFadeDuration() {
-        String t = getProperty("clear.fade.duration", "");
+        String t = getProperty(clearFadeDurationKey, "");
         if (t.equals("")) {
             t = "1000";
-            setProperty("clear.fade.duration", t);
+            setProperty(clearFadeDurationKey, t);
             write();
         }
         return Integer.parseInt(t);
@@ -2107,10 +2191,10 @@ public final class QueleaProperties extends Properties {
      * @return the translate ID
      */
     public String getTranslateClientID() {
-        String t = getProperty("translate.client.id", "");
+        String t = getProperty(translateClientIdKey, "");
         if (t.equals("")) {
             t = "quelea-projection";
-            setProperty("translate.client.id", t);
+            setProperty(translateClientIdKey, t);
             write();
         }
         return t;
@@ -2123,21 +2207,21 @@ public final class QueleaProperties extends Properties {
      * @return the translate secret key
      */
     public String getTranslateClientSecret() {
-        String t = getProperty("translate.client.secret", "");
+        String t = getProperty(translateClientSecretKey, "");
         if (t.equals("")) {
             t = "wk4+wd9YJkjIHmz2qwD1oR7pP9/kuHOL6OsaOKEi80U=";
-            setProperty("translate.client.secret", t);
+            setProperty(translateClientSecretKey, t);
             write();
         }
         return t;
     }
 
     public boolean getClearStageWithMain() {
-        return Boolean.parseBoolean(getProperty("clear.stageview.with.main", "true"));
+        return Boolean.parseBoolean(getProperty(clearStageviewWithMainKey, "true"));
     }
 
     public void setClearStageWithMain(boolean clear) {
-        setProperty("clear.stageview.with.main", Boolean.toString(clear));
+        setProperty(clearStageviewWithMainKey, Boolean.toString(clear));
         write();
     }
 
@@ -2152,54 +2236,54 @@ public final class QueleaProperties extends Properties {
     }
 
     public boolean getSongOverflow() {
-        return Boolean.parseBoolean(getProperty("song.overflow", "false"));
+        return Boolean.parseBoolean(getProperty(songOverflowKey, "false"));
     }
 
     public void setSongOverflow(boolean overflow) {
-        setProperty("song.overflow", Boolean.toString(overflow));
+        setProperty(songOverflowKey, Boolean.toString(overflow));
         write();
     }
 
     public int getAutoDetectPort() {
-        return Integer.parseInt(getProperty("auto.detect.port", "50015"));
+        return Integer.parseInt(getProperty(autoDetectPortKey, "50015"));
     }
 
     public boolean getUse24HourClock() {
-        return Boolean.parseBoolean(getProperty("use.24h.clock", "true"));
+        return Boolean.parseBoolean(getProperty(use24hClockKey, "true"));
     }
 
     public void setUse24HourClock(boolean s24h) {
-        setProperty("use.24h.clock", Boolean.toString(s24h));
+        setProperty(use24hClockKey, Boolean.toString(s24h));
         write();
     }
 
     public boolean getBibleSplitVerses() {
-        return Boolean.parseBoolean(getProperty("split.bible.verses", "false"));
+        return Boolean.parseBoolean(getProperty(splitBibleVersesKey, "false"));
     }
 
     public void setBibleSplitVerses(boolean selected) {
-        setProperty("split.bible.verses", Boolean.toString(selected));
+        setProperty(splitBibleVersesKey, Boolean.toString(selected));
         write();
     }
 
     public double getLyricWidthBounds() {
-        return Double.parseDouble(getProperty("lyric.width.bound", "0.92"));
+        return Double.parseDouble(getProperty(lyricWidthBoundKey, "0.92"));
     }
 
     public double getLyricHeightBounds() {
-        return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
+        return Double.parseDouble(getProperty(lyricHeightBoundKey, "0.9"));
     }
 
     public boolean getDefaultSongDBUpdate() {
-        return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
+        return Boolean.parseBoolean(getProperty(defaultSongDbUpdateKey, "true"));
     }
 
     public boolean getShowDBSongPreview() {
-        return Boolean.parseBoolean(getProperty("db.song.preview", "false"));
+        return Boolean.parseBoolean(getProperty(dbSongPreviewKey, "false"));
     }
 
     public void setShowDBSongPreview(boolean val) {
-        setProperty("db.song.preview", Boolean.toString(val));
+        setProperty(dbSongPreviewKey, Boolean.toString(val));
     }
 
     public boolean getImmediateSongDBPreview() {
@@ -2211,32 +2295,32 @@ public final class QueleaProperties extends Properties {
     }
 
     public void setDefaultSongDBUpdate(boolean updateInDB) {
-        setProperty("default.song.db.update", Boolean.toString(updateInDB));
+        setProperty(defaultSongDbUpdateKey, Boolean.toString(updateInDB));
         write();
     }
 
     public int getWebDisplayableRefreshRate() {
-        return Integer.parseInt(getProperty("web.refresh.rate", "500"));
+        return Integer.parseInt(getProperty(webRefreshRateKey, "500"));
     }
 
     public String getWebProxyHost() {
-        return getProperty("web.proxy.host", null);
+        return getProperty(webProxyHostKey, null);
     }
 
     public String getWebProxyPort() {
-        return getProperty("web.proxy.port", null);
+        return getProperty(webProxyPortKey, null);
     }
 
     public String getWebProxyUser() {
-        return getProperty("web.proxy.user", null);
+        return getProperty(webProxyUserKey, null);
     }
 
     public String getWebProxyPassword() {
-        return getProperty("web.proxy.password", null);
+        return getProperty(webProxyPasswordKey, null);
     }
 
     public String getChurchCcliNum() {
-        return getProperty("church.ccli.num", null);
+        return getProperty(churchCcliNumKey, null);
     }
 
     /**
@@ -2250,10 +2334,10 @@ public final class QueleaProperties extends Properties {
     }
 
     public boolean getUseDarkTheme() {
-        return Boolean.parseBoolean(getProperty("use.dark.theme", "false"));
+        return Boolean.parseBoolean(getProperty(darkThemeKey, "false"));
     }
 
     public void setUseDarkTheme(boolean useDarkTheme) {
-        setProperty("use.dark.theme", String.valueOf(useDarkTheme));
+        setProperty(darkThemeKey, String.valueOf(useDarkTheme));
     }
 }

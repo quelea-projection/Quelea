@@ -25,7 +25,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -67,13 +66,6 @@ public class GraphicsDeviceWatcher {
                         if (thisDeviceCount > lastDeviceCount && QueleaProperties.get().getUseAutoExtend()) {
                             QueleaProperties.get().setProjectorModeScreen();
                             QueleaProperties.get().setProjectorScreen(thisDeviceCount - 1);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().update();
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().setScreen(thisDeviceCount - 1);
-                                }
-                            });
                         }
                         lastDeviceCount = thisDeviceCount;
                         listener.devicesChanged(monitors);

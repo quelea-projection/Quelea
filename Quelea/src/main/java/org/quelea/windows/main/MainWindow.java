@@ -40,7 +40,7 @@ import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
-import org.quelea.windows.options.OptionsDialog;
+import org.quelea.windows.options.PreferencesDialog;
 
 import javafx.scene.Parent;
 
@@ -59,7 +59,7 @@ public class MainWindow extends Stage {
     private final NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
-    private final OptionsDialog optionsDialog;
+    private final PreferencesDialog preferencesDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
     private final GlobalThemeStore globalThemeStore;
@@ -71,7 +71,7 @@ public class MainWindow extends Stage {
      * @param setApplicationWindow true if this main window should be set as the
      *                             application-wide main window, false otherwise.
      */
-    public MainWindow(boolean setApplicationWindow) {
+    public MainWindow(boolean setApplicationWindow, boolean hasVLC) {
         setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
         Utils.addIconsToStage(this);
         BorderPane mainPane = new BorderPane();
@@ -89,7 +89,7 @@ public class MainWindow extends Stage {
             }
         });
         LOGGER.log(Level.INFO, "Creating options dialog");
-        optionsDialog = new OptionsDialog();
+        preferencesDialog = new PreferencesDialog(QueleaApp.get().getClass(), hasVLC);
 
         LOGGER.log(Level.INFO, "Creating bible search dialog");
         bibleSearchDialog = new BibleSearchDialog();
@@ -184,8 +184,8 @@ public class MainWindow extends Stage {
      *
      * @return the options dialog.
      */
-    public OptionsDialog getOptionsDialog() {
-        return optionsDialog;
+    public PreferencesDialog getPreferencesDialog() {
+        return preferencesDialog;
     }
 
     /**
