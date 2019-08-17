@@ -359,7 +359,7 @@ vlc.version.message=Vaše verze VLC je příliš stará. Abyste mohli přehráva
 dont.save.text=Neukládat
 vlc.warning.title=Nepodařilo se najít VLC
 filefilters.description.xml.bibles=Bible XML
-startup.error.text=Promiňte, ale z nějakého důvodu se Queleu na vašem systému nepodařilo spustit. Pokud byste chtěli s pokusem o její zprovoznění pomoci, pošlete, prosím, e-mail na adresu support@quelea.org a připojte soubor s ladicím zápisem ($1).\n\n Popřípadě se zeptejte v diskusní skupině programu (http://goo.gl/NXvIDG).startup.error.title=Chyba při spuštění
+startup.error.text=Promiňte, ale z nějakého důvodu se Queleu na vašem systému nepodařilo spustit. Pokud byste chtěli s pokusem o její zprovoznění pomoci, pošlete, prosím, e-mail na adresu support@quelea.org a připojte soubor s ladicím zápisem ($1).\n\n Popřípadě se zeptejte v diskusní skupině programu (https://quelea.discourse.group).startup.error.title=Chyba při spuštění
 filefilters.description.plain.text.song=Píseň v prostém textu
 filefilters.description.xml.easyslide=Soubory XML Easyslide
 confirm.entry.exit.text=Chcete uložit své změny do této písně?
