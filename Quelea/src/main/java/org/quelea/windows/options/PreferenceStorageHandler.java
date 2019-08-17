@@ -165,6 +165,9 @@ public class PreferenceStorageHandler implements StorageHandler {
      */
     // asciidoctor Documentation - tag::storageHandlerSave[]
     public void saveObject(String breadcrumb, Object object) {
+        if (object == null) {
+            object = "";
+        }
         switch (breadcrumb) {
             case QueleaPropertyKeys.languageFileKey:
                 if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
@@ -256,14 +259,16 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.remoteControlPasswordKey:
             case QueleaPropertyKeys.useRemoteControlKey:
             case QueleaPropertyKeys.useMobLyricsKey:
-                if (!QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
+                if (QueleaProperties.get().getProperty(breadcrumb) != null && !QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
                 }
+                QueleaProperties.get().setProperty(breadcrumb, object.toString());
                 break;
             case QueleaPropertyKeys.usePpKey:
-                if (!QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
+                if (QueleaProperties.get().getUsePP() != Boolean.parseBoolean(object.toString())) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
                 }
+                QueleaProperties.get().setProperty(breadcrumb, object.toString());
                 break;
             case QueleaPropertyKeys.dbSongPreviewKey:
                 if (object.toString().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"))) {
@@ -277,6 +282,9 @@ public class PreferenceStorageHandler implements StorageHandler {
                     QueleaProperties.get().setImmediateSongDBPreview(false);
                 }
                 break;
+            case QueleaPropertyKeys.smallBibleTextSizeKey:
+            case QueleaPropertyKeys.smallSongTextSizeKey:
+                QueleaProperties.get().setProperty(breadcrumb, String.valueOf(Double.parseDouble(object.toString())/10));
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }

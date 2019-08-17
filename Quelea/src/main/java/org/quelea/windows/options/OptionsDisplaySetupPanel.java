@@ -22,6 +22,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.GraphicsDeviceWatcher;
+import org.quelea.windows.main.QueleaApp;
 
 import java.util.HashMap;
 
@@ -33,7 +35,6 @@ import java.util.HashMap;
  */
 public class OptionsDisplaySetupPanel {
     private HashMap<Field, ObservableValue> bindings;
-    private boolean displayChange = false;
     private DisplayGroup controlScreen;
     private DisplayGroup projectorScreen;
     private DisplayGroup stageScreen;
@@ -48,6 +49,10 @@ public class OptionsDisplaySetupPanel {
         controlScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), false, bindings);
         projectorScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), true, bindings);
         stageScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), true, bindings);
+
+        GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(devices -> {
+            QueleaApp.get().getMainWindow().getPreferencesDialog().updatePos();
+        });
     }
 
     Category getDisplaySetupTab() {
@@ -60,13 +65,14 @@ public class OptionsDisplaySetupPanel {
 
 
     boolean isDisplayChange() {
-        return controlScreen.isDisplayChange() &&
-                projectorScreen.isDisplayChange() &&
-                stageScreen.isDisplayChange() &&
-                displayChange;
+        return controlScreen.isDisplayChange() ||
+                projectorScreen.isDisplayChange() ||
+                stageScreen.isDisplayChange();
     }
 
     public void setDisplayChange(boolean displayChange) {
-        this.displayChange = displayChange;
+        controlScreen.setDisplayChange(displayChange);
+        projectorScreen.setDisplayChange(displayChange);
+        stageScreen.setDisplayChange(displayChange);
     }
 }

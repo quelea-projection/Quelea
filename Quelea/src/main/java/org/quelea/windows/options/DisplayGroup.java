@@ -112,7 +112,9 @@ public class DisplayGroup {
                 displayChange = true;
             });
 
-            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
+            screen++; // Compensate for "none" value in available screens
+
+            screenSelectProperty.setValue(screen > 0 && screen < availableScreens.size() ? availableScreens.get(screen) : availableScreens.get(0));
             boolean projectorGroup = groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"));
 
             group = Group.of(groupName,
@@ -159,6 +161,10 @@ public class DisplayGroup {
 
     public boolean isDisplayChange() {
         return displayChange;
+    }
+
+    public void setDisplayChange(boolean displayChange) {
+        this.displayChange = displayChange;
     }
 
     public Group getGroup() {

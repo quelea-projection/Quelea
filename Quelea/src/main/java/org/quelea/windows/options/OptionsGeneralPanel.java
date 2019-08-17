@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.options;
 
+import com.dlsc.formsfx.model.structure.DoubleField;
 import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.IntegerField;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -32,7 +32,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.options.customprefs.PercentIntegerSliderControl;
+import org.quelea.windows.options.customprefs.PercentSliderControl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,11 +48,11 @@ import static org.quelea.windows.options.PreferencesDialog.getPositionSelector;
  */
 public class OptionsGeneralPanel {
     private BooleanProperty showSmallSongProperty;
-    private IntegerProperty smallSongSizeSpinnerProperty;
-    private IntegerField smallSongSizeControllerField;
+    private DoubleProperty smallSongSizeSpinnerProperty;
+    private DoubleField smallSongSizeControllerField;
     private BooleanProperty showSmallBibleProperty;
-    private IntegerProperty smallBibleSizeSpinnerProperty;
-    private IntegerField smallBibleSizeControllerField;
+    private DoubleProperty smallBibleSizeSpinnerProperty;
+    private DoubleField smallBibleSizeControllerField;
     private IntegerProperty thumbnailSizeProperty;
     private IntegerProperty maxFontSizeProperty;
     private IntegerProperty additionalSpacingProperty;
@@ -73,14 +73,14 @@ public class OptionsGeneralPanel {
     OptionsGeneralPanel(HashMap<Field, ObservableValue> bindings) {
         this.bindings = bindings;
         showSmallSongProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
-        smallSongSizeSpinnerProperty = new SimpleIntegerProperty((int) (QueleaProperties.get().getSmallSongTextSize() * 100));
-        smallSongSizeControllerField = Field.ofIntegerType(smallSongSizeSpinnerProperty).render(
-                new PercentIntegerSliderControl(0.1, 0.5));
+        smallSongSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallSongTextSize());
+        smallSongSizeControllerField = Field.ofDoubleType(smallSongSizeSpinnerProperty).render(
+                new PercentSliderControl(0.1, 0.5, 10));
 
         showSmallBibleProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallBibleTextShow());
-        smallBibleSizeSpinnerProperty = new SimpleIntegerProperty((int) (100 * QueleaProperties.get().getSmallBibleTextSize()));
-        smallBibleSizeControllerField = Field.ofIntegerType(smallBibleSizeSpinnerProperty).render(
-                new PercentIntegerSliderControl(0.1, 0.5));
+        smallBibleSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallBibleTextSize());
+        smallBibleSizeControllerField = Field.ofDoubleType(smallBibleSizeSpinnerProperty).render(
+                new PercentSliderControl(0.1, 0.5, 10));
 
         thumbnailSizeProperty = new SimpleIntegerProperty(QueleaProperties.get().getThumbnailSize());
         maxFontSizeProperty = new SimpleIntegerProperty((int) QueleaProperties.get().getMaxFontSize());
