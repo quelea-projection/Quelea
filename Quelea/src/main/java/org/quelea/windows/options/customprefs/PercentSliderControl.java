@@ -1,6 +1,10 @@
 package org.quelea.windows.options.customprefs;
 
-import com.dlsc.formsfx.model.structure.IntegerField;
+import com.dlsc.formsfx.model.structure.DoubleField;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,29 +13,52 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBox> {
+/**
+ * Provides an implementation of a percent slider control for an {@link DoubleField}.
+ *
+ * @author François Martin
+ * @author Marco Sanfratello
+ * @author Arvid Nyström
+ */
+public class PercentSliderControl extends SimpleControl<DoubleField, HBox> {
     public static final int VALUE_LABEL_PADDING = 25;
     /**
      * - fieldLabel is the container that displays the label property of the
      * field.
      * - slider is the control to change the value.
-     * - container holds the control so that it can be styled properly.
+     * - node holds the control so that it can be styled properly.
      */
     private Slider slider;
     private Label valueLabel;
-    private int min;
-    private int max;
+    private double min;
+    private double max;
+    private int precision;
 
     /**
-     * Creates a slider for integer values.
+     * Creates a slider for double values with a minimum and maximum value, with a set precision.
      *
-     * @param min minimum slider value
-     * @param max maximum slider value
+     * @param min       minimum slider value
+     * @param max       maximum slider value
+     * @param precision number of digits after the decimal point
      */
-    public PercentIntegerSliderControl(double min, double max) {
+    public PercentSliderControl(double min, double max, int precision) {
         super();
-        this.min = (int) (min * 100);
-        this.max = (int) (max * 100);
+        this.min = min;
+        this.max = max;
+        this.precision = precision;
+    }
+
+    /**
+     * Rounds a value to a given precision, using {@link RoundingMode#HALF_UP}.
+     *
+     * @param value     value to be rounded
+     * @param precision number of digits after the decimal point
+     * @return
+     */
+    private double round(double value, int precision) {
+        return BigDecimal.valueOf(value)
+                .setScale(precision, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     /**
@@ -41,7 +68,9 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
     public void initializeParts() {
         super.initializeParts();
 
-        valueLabel = new Label(field.getValue() + "%");
+        fieldLabel = new Label(field.labelProperty().getValue());
+
+        valueLabel = new Label((int) (100 * field.getValue()) + "%");
 
         slider = new Slider();
         slider.setMin(min);
@@ -51,7 +80,7 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
         slider.setValue(field.getValue());
 
         node = new HBox();
-        node.getStyleClass().add("integer-slider-control");
+        node.getStyleClass().add("double-slider-control");
     }
 
     /**
@@ -82,9 +111,9 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
     public void setupValueChangedListeners() {
         super.setupValueChangedListeners();
         field.userInputProperty().addListener((observable, oldValue, newValue) -> {
-            int sliderValue = Integer.parseInt(field.getUserInput());
+            double sliderValue = round(Double.parseDouble(field.getUserInput()), precision);
             slider.setValue(sliderValue);
-            valueLabel.setText(String.valueOf(sliderValue) + "%");
+            valueLabel.setText((int) (100 * field.getValue()) + "%");
         });
 
         field.errorMessagesProperty().addListener(
@@ -102,8 +131,7 @@ public class PercentIntegerSliderControl extends SimpleControl<IntegerField, HBo
     @Override
     public void setupEventHandlers() {
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            field.userInputProperty().setValue(String.valueOf(newValue.intValue()));
+            field.userInputProperty().setValue(String.valueOf(round(newValue.doubleValue(), precision)));
         });
     }
-
 }

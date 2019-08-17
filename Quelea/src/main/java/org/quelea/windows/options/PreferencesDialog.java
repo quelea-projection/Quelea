@@ -26,7 +26,9 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -36,12 +38,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.options.customprefs.*;
 
 import java.util.HashMap;
@@ -97,8 +102,9 @@ public class PreferencesDialog extends Stage {
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
             preferencesFx.saveSettings();
-            if (displayPanel.isDisplayChange())
+            if (displayPanel.isDisplayChange()) {
                 updatePos();
+            }
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
             hide();
@@ -116,9 +122,14 @@ public class PreferencesDialog extends Stage {
         }
         setScene(scene);
 
+        getScene().getWindow().addEventFilter(WindowEvent.WINDOW_SHOWN, e -> callBeforeShowing());
         getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, e -> callBeforeHiding());
 
         bindings.forEach(this::bind);
+    }
+
+    private void callBeforeShowing() {
+        getDisplaySetupPanel().setDisplayChange(false);
     }
 
     private void bind(Field field, ObservableValue<? extends Boolean> booleanProperty) {
@@ -143,25 +154,39 @@ public class PreferencesDialog extends Stage {
         return setting;
     }
 
-    private void updatePos() {
+    public void updatePos() {
         DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
         DisplayStage stageWindow = QueleaApp.get().getStageWindow();
         if (appWindow == null) {
             appWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
         }
         final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
+        final ObservableList<Screen> monitors = Screen.getScreens();
         Platform.runLater(() -> {
-            fiLyricWindow.setAreaImmediate(QueleaProperties.get().getProjectorCoords());
+            int projectorScreen = QueleaProperties.get().getProjectorScreen();
+            Bounds bounds;
+            if (QueleaProperties.get().isProjectorModeCoords()) {
+                bounds = QueleaProperties.get().getProjectorCoords();
+            } else {
+                bounds = Utils.getBoundsFromRect2D(
+                        monitors.get(projectorScreen < 0 || projectorScreen >= monitors.size() ? 0 : projectorScreen)
+                                .getBounds());
+            }
+            fiLyricWindow.setAreaImmediate(bounds);
             if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
                 fiLyricWindow.show();
             }
 
             // non-custom positioned windows are fullscreen
             if (!QueleaProperties.get().isProjectorModeCoords()) {
-                if (QueleaProperties.get().getProjectorScreen() == -1)
+                if (QueleaProperties.get().getProjectorScreen() == -1) {
                     fiLyricWindow.hide();
-                else
+                    VLCWindow.INSTANCE.refreshPosition();
+                } else {
                     fiLyricWindow.setFullScreenAlwaysOnTop(true);
+                }
+            } else {
+                fiLyricWindow.setFullScreenAlwaysOnTop(false);
             }
         });
         if (stageWindow == null) {
@@ -169,7 +194,17 @@ public class PreferencesDialog extends Stage {
         }
         final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
         Platform.runLater(() -> {
-            fiStageWindow.setAreaImmediate(QueleaProperties.get().getStageCoords());
+            int stageScreen = QueleaProperties.get().getStageScreen();
+            Bounds bounds;
+            if (QueleaProperties.get().isStageModeCoords()) {
+                bounds = QueleaProperties.get().getStageCoords();
+            } else {
+                bounds = Utils.getBoundsFromRect2D(
+                        monitors.get(stageScreen < 0 || stageScreen >= monitors.size() ? 0 : stageScreen)
+                                .getBounds());
+            }
+            fiStageWindow.setAreaImmediate(bounds);
+
             if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
                 fiStageWindow.show();
             }
