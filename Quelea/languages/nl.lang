@@ -539,7 +539,6 @@ edit.timer.text=Wijzig aftelklok
 epicworship.import.line1=Dit zorgt voor de import van een EpicWorship liederen (.epc) bestand.
 epicworship.button=EpicWorship
 filefilters.description.txt.files=.txt bestanden
-edit.timer.text=Wijzig aftelklok
 kingsway.range.import.heading=Importeer een serie Kingsway liederen
 kingsway.range.import.text=Geef de serie van liederen in om te downloaden vanaf de Kingsway's website.\nHet huidige maximum is rond de 3600.
 library.timer.heading=Aftelklokken
