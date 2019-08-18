@@ -709,7 +709,6 @@ theme.changed.message=Vous devez redémarrer Quelea avant que le changement de t
 choose.translations.text=Choisissez les traductions
 dark.theme.label=Sombre
 copy=Copie
-center=centre
 projector.menu=Projecteur
 centre=Centré
 general.user.options=Options général de l'utilisateur
