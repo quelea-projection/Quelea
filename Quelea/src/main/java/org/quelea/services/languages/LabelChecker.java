@@ -90,7 +90,7 @@ public class LabelChecker {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Checking language files:");
-        boolean ok = true;
+        boolean someLabelsMissing = false;
         Map<String, List<String>> missingMap = new HashMap<>();
         for (File file : new File("languages").listFiles()) {
             if (file.getName().endsWith("lang")
@@ -100,7 +100,7 @@ public class LabelChecker {
                 List<String> missingLabels = lc.getMissingLabels();
                 missingMap.put(lc.langName, missingLabels);
                 if (!missingLabels.isEmpty()) {
-                    ok = false;
+                    someLabelsMissing = true;
                 }
             }
         }
@@ -113,7 +113,7 @@ public class LabelChecker {
             out.println("var mls = " + json + ";");
         }
         
-        if (!ok) {
+        if (someLabelsMissing) {
             System.err.println("\nWARNING: Some language files have missing labels. "
                     + "This is normal for intermediate builds and development releases, "
                     + "but for final releases this should be fixed if possible. ");
