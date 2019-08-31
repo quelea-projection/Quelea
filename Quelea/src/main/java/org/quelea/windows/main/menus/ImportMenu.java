@@ -42,7 +42,6 @@ import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SoFImportDialog;
 import org.quelea.services.importexport.SongBeamerImportDialog;
 import org.quelea.services.importexport.SongProImportDialog;
-import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
@@ -76,7 +75,6 @@ public class ImportMenu extends Menu {
     private final ImportDialog freeWorshipImportDialog;
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
-    private final ImportDialog songSelectImportDialog;
     private final ImportDialog songproImportDialog;
     private final ImportDialog videoPsalmImportDialog;
     private final ImportDialog mediaShoutImportDialog;
@@ -109,7 +107,6 @@ public class ImportMenu extends Menu {
     private final MenuItem easyWorshipItem;
     private final MenuItem songproItem;
     private final MenuItem vsItem;
-    private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
     private final MenuItem pcoItem;
     private final MenuItem elevantoItem;
@@ -135,7 +132,6 @@ public class ImportMenu extends Menu {
         songproImportDialog = new SongProImportDialog();
         videoPsalmImportDialog = new VideoPsalmImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
-        songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
         worshipHimImportDialog = new WorshipHimImportDialog();
         songBeamerImportDialog = new SongBeamerImportDialog();
@@ -201,11 +197,6 @@ public class ImportMenu extends Menu {
         ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
         ssItem.setOnAction((ActionEvent t) -> {
             sImportDialog.show();
-        });
-
-        songSelectItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songselect.button"), new ImageView(new Image("file:icons/songselect.png", 16, 16, false, true)));
-        songSelectItem.setOnAction((ActionEvent t) -> {
-            songSelectImportDialog.show();
         });
 
         mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
@@ -295,7 +286,6 @@ public class ImportMenu extends Menu {
         getItems().add(smItem);
         getItems().add(sbItem);
         getItems().add(songproItem);
-        getItems().add(songSelectItem);
         getItems().add(sofItem);
         getItems().add(spItem);
         getItems().add(ssItem);

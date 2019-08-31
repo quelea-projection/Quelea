@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
  * 
- * Copyright (C) 2012 Michael Berry
+ * Copyright (C) 2019 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import org.quelea.utils.NoDuplicateProperties;
 
 /**
  * Run as a standalone script - checks to see whether the language files are
@@ -40,15 +40,15 @@ import java.util.Properties;
  */
 public class LabelChecker {
 
-    private Properties labels;
-    private Properties engLabels;
+    private NoDuplicateProperties labels;
+    private NoDuplicateProperties engLabels;
     private String name;
     private String langName;
 
     public LabelChecker(String name) {
         this.name = name;
-        labels = new Properties();
-        engLabels = new Properties();
+        labels = new NoDuplicateProperties();
+        engLabels = new NoDuplicateProperties();
         File langFile = new File("languages", name);
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(langFile), "UTF-8")) {
             labels.load(reader);
@@ -90,17 +90,18 @@ public class LabelChecker {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Checking language files:");
-        boolean ok = true;
+        boolean someLabelsMissing = false;
         Map<String, List<String>> missingMap = new HashMap<>();
         for (File file : new File("languages").listFiles()) {
             if (file.getName().endsWith("lang")
                     && !file.getName().equals("gb.lang")
                     && !file.getName().equals("us.lang")) { //Exclude GB english file since this is what we work from, and US file because it gets translated automatically!
+                System.out.println("Checking " + file.getName());
                 LabelChecker lc = new LabelChecker(file.getName());
                 List<String> missingLabels = lc.getMissingLabels();
                 missingMap.put(lc.langName, missingLabels);
                 if (!missingLabels.isEmpty()) {
-                    ok = false;
+                    someLabelsMissing = true;
                 }
             }
         }
@@ -113,7 +114,7 @@ public class LabelChecker {
             out.println("var mls = " + json + ";");
         }
         
-        if (!ok) {
+        if (someLabelsMissing) {
             System.err.println("\nWARNING: Some language files have missing labels. "
                     + "This is normal for intermediate builds and development releases, "
                     + "but for final releases this should be fixed if possible. ");

@@ -17,143 +17,71 @@
  */
 package org.quelea.windows.options;
 
-import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
+import com.dlsc.formsfx.model.structure.Field;
+import com.dlsc.preferencesfx.model.Category;
+import com.dlsc.preferencesfx.model.Setting;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static org.quelea.services.utils.QueleaPropertyKeys.*;
+import static org.quelea.services.utils.QueleaPropertyKeys.use24hClockKey;
+import static org.quelea.windows.options.PreferencesDialog.getColorPicker;
 
 /**
  * The panel that shows the stage view options.
  *
- * @author mjrb5
+ * @author Arvid
  */
-public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
+public class OptionsStageViewPanel {
+    private HashMap<Field, ObservableValue> bindings;
+    private ObservableList<String> lineAlignmentList;
+    private ObjectProperty<String> alignmentSelectionProperty;
 
-    private CheckBox showChordsCheckBox;
-    private ComboBox<String> lineAlignment;
-    private ComboBox<String> fontSelection;
-    private ColorPicker backgroundColorPicker;
-    private ColorPicker chordColorPicker;
-    private ColorPicker lyricsColorPicker;
-    private final CheckBox clearWithMainBox;
-    private final CheckBox use24HCheckBox;
+    private ObservableList<String> fontsList;
+    private ObjectProperty<String> fontSelectionProperty;
 
     /**
      * Create the stage view options panel.
+     * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    public OptionsStageViewPanel() {  
-        setVgap(5);
-        setHgap(10);
-        setPadding(new Insets(5));
-        
-        Label chordsLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
-        GridPane.setConstraints(chordsLabel, 1, 1);
-        getChildren().add(chordsLabel);
-        showChordsCheckBox = new CheckBox();
-        GridPane.setConstraints(showChordsCheckBox, 2, 1);
-        getChildren().add(showChordsCheckBox);
-
-        Label alignmentLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"));
-        GridPane.setConstraints(alignmentLabel, 1, 2);
-        getChildren().add(alignmentLabel);
-        lineAlignment = new ComboBox<>();
-        lineAlignment.setEditable(false);
-        for(TextAlignment alignment : TextAlignment.values()) {
-            lineAlignment.itemsProperty().get().add(alignment.toFriendlyString());
+    OptionsStageViewPanel(HashMap<Field, ObservableValue> bindings) {
+        this.bindings = bindings;
+        ArrayList<String> textAlignment = new ArrayList<>();
+        for (TextAlignment alignment : TextAlignment.values()) {
+            textAlignment.add(alignment.toFriendlyString());
         }
-        GridPane.setConstraints(lineAlignment, 2, 2);
-        getChildren().add(lineAlignment);
+        lineAlignmentList = FXCollections.observableArrayList(textAlignment);
+        alignmentSelectionProperty = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextAlignment());
 
-        Label fontLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.font.selection"));
-        GridPane.setConstraints(fontLabel, 1, 3);
-        getChildren().add(fontLabel);
-        fontSelection = new ComboBox<>();
-        fontSelection.setEditable(false);
-        for(String font : Utils.getAllFonts()) {
-            fontSelection.itemsProperty().get().add(font);
-        }
-        GridPane.setConstraints(fontSelection, 2, 3);
-        getChildren().add(fontSelection);
-
-        Label backgroundLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.background.colour"));
-        GridPane.setConstraints(backgroundLabel, 1, 4);
-        getChildren().add(backgroundLabel);
-        backgroundColorPicker = new ColorPicker(Color.BLACK);
-        GridPane.setConstraints(backgroundColorPicker, 2, 4);
-        getChildren().add(backgroundColorPicker);
-
-        Label colourLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"));
-        GridPane.setConstraints(colourLabel, 1, 5);
-        getChildren().add(colourLabel);
-        lyricsColorPicker = new ColorPicker(Color.BLACK);
-        GridPane.setConstraints(lyricsColorPicker, 2, 5);
-        getChildren().add(lyricsColorPicker);
-
-        Label chordColourLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"));
-        GridPane.setConstraints(chordColourLabel, 1, 6);
-        getChildren().add(chordColourLabel);
-        chordColorPicker = new ColorPicker(Color.BLACK);
-        GridPane.setConstraints(chordColorPicker, 2, 6);
-        getChildren().add(chordColorPicker);
-
-        Label clearWithMain = new Label(LabelGrabber.INSTANCE.getLabel("clear.stage.view"));
-        GridPane.setConstraints(clearWithMain, 1, 7);
-        getChildren().add(clearWithMain);
-        clearWithMainBox = new CheckBox();
-        GridPane.setConstraints(clearWithMainBox, 2, 7);
-        getChildren().add(clearWithMainBox);
-        
-        Label use24HClock = new Label(LabelGrabber.INSTANCE.getLabel("use.24h.clock"));
-        GridPane.setConstraints(use24HClock, 1, 8);
-        getChildren().add(use24HClock);
-        use24HCheckBox = new CheckBox();
-        GridPane.setConstraints(use24HCheckBox, 2, 8);
-        getChildren().add(use24HCheckBox);
-        
-        
-        
-        readProperties();
+        fontsList = FXCollections.observableArrayList(Utils.getAllFonts());
+        fontSelectionProperty = new SimpleObjectProperty<>(QueleaProperties.get().getStageTextFont());
     }
 
-    /**
-     * Set the properties based on the values in this frame.
-     */
-    @Override
-    public void setProperties() {
-        QueleaProperties.get().setShowChords(showChordsCheckBox.isSelected());
-        QueleaProperties.get().setStageTextAlignment(TextAlignment.parse(lineAlignment.itemsProperty().get().get(lineAlignment.getSelectionModel().getSelectedIndex())));
-        QueleaProperties.get().setStageTextFont(fontSelection.itemsProperty().get().get(fontSelection.getSelectionModel().getSelectedIndex()));
-        QueleaProperties.get().setStageBackgroundColor(backgroundColorPicker.getValue());
-        QueleaProperties.get().setStageChordColor(chordColorPicker.getValue());
-        QueleaProperties.get().setStageLyricsColor(lyricsColorPicker.getValue());
-        QueleaProperties.get().setClearStageWithMain(clearWithMainBox.isSelected());
-        QueleaProperties.get().setUse24HourClock(use24HCheckBox.isSelected());
+    public Category getStageViewTab() {
+        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), new ImageView(new Image("file:icons/stageviewsettingsicon.png")),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), new SimpleBooleanProperty(QueleaProperties.get().getShowChords())).customKey(stageShowChordsKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignmentList, alignmentSelectionProperty).customKey(stageTextAlignmentKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fontsList, fontSelectionProperty).customKey(stageFontKey),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.background.colour"), QueleaProperties.get().getStageBackgroundColor()).customKey(stageBackgroundColorKey),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()).customKey(stageLyricsColorKey),
+                getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()).customKey(stageChordColorKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain())).customKey(clearStageviewWithMainKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock())).customKey(use24hClockKey)
+        );
     }
 
-    /**
-     * Read the properties into this frame.
-     */
-    @Override
-    public final void readProperties() {
-        showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
-        lyricsColorPicker.setValue(QueleaProperties.get().getStageLyricsColor());
-        lyricsColorPicker.fireEvent(new ActionEvent());
-        backgroundColorPicker.setValue(QueleaProperties.get().getStageBackgroundColor());
-        backgroundColorPicker.fireEvent(new ActionEvent());
-        chordColorPicker.setValue(QueleaProperties.get().getStageChordColor());
-        chordColorPicker.fireEvent(new ActionEvent());
-        fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
-        lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
-        clearWithMainBox.setSelected(QueleaProperties.get().getClearStageWithMain());
-        use24HCheckBox.setSelected(QueleaProperties.get().getUse24HourClock());
-    }
+
 }

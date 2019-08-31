@@ -28,13 +28,13 @@ buildScan {
 
 ext {
     versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
-    
+
     CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
     WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
     WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
     MacInstallerName="quelea-" + versionsuffix + "-mac.zip"
     DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
-    
+
     CPInstaller ="dist/standalone/" + CPInstallerName
     DebInstaller ="dist/standalone/" + DebInstallerName
     WindowsInstaller="dist/standalone/" + ext.WindowsInstallerName
@@ -138,7 +138,7 @@ task innosetup (type:Exec) {
             commandLine = ['sh', './build-install.sh', project.queleaversion]
         }
     }
-    
+
     doLast {
         copy {from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName}}
         copy {from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name}}
@@ -147,8 +147,8 @@ task innosetup (type:Exec) {
 }
 
 task labelcheck(type:JavaExec) {
-   main = 'org.quelea.services.languages.LabelChecker'
-   classpath = sourceSets.main.runtimeClasspath
+    main = 'org.quelea.services.languages.LabelChecker'
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 task runPackr(type: JavaExec) {
@@ -160,9 +160,9 @@ task runPackr(type: JavaExec) {
 task zipMacPackr(type: Zip) {
     archiveName = MacInstallerName
     destinationDir = file("dist/standalone")
-    
+
     from "out-mac"
-    
+
     doLast {
         delete (file("out-mac"))
     }
@@ -175,18 +175,12 @@ task dist(type: GradleBuild) {
 }
 build.finalizedBy(dist)
 
-repositories {
-    maven {
-        url  "https://dl.bintray.com/berry120/openlyrics" 
-    }
-    jcenter()
-}
 
 dependencies {
     izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
-    
+
     compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4.0'
-    compile 'de.suse.lib:jopenlyricslib:1.4'
+    compile 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
     compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
     compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '4.0.1'
     compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '4.0.1'
@@ -207,7 +201,7 @@ dependencies {
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.14'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.8'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.8'
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.3'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.1'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.3'
@@ -228,25 +222,33 @@ dependencies {
 
     compile group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
     compile group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
-    
+
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
     compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
     compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
     compile group: 'javax.activation', name: 'activation', version: '1.1.1'
-    
+
+    compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+repositories {
+    maven {
+        url "http://maven.bestsolution.at/efxclipse-releases"
+    }
 }
 
 jar {
     manifest {
         attributes (
-            'Main-Class': 'org.quelea.windows.main.Main',
-            "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
+                'Main-Class': 'org.quelea.windows.main.Main',
+                "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
         )
     }
 }
 
 task releaseSummary(type:JavaExec) {
-   main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
-   classpath = sourceSets.main.runtimeClasspath
+    main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
+    classpath = sourceSets.main.runtimeClasspath
 }
