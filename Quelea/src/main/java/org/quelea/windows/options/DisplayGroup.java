@@ -33,6 +33,7 @@ import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,17 +43,23 @@ public class DisplayGroup {
     private boolean displayChange = false;
     private Group group;
 
-    /**
-     * @param custom true if a custom position should be allowed for this
-     * display panel.
-     * @param margins true if margins should be allowed for this
-     * display panel.
-     */
-    DisplayGroup(String groupName, boolean custom, boolean margins, HashMap<Field, ObservableValue> bindings) {
+    DisplayGroup(String groupName, HashMap<Field, ObservableValue> bindings) {
+
+        boolean isControl = groupName.equals(LabelGrabber.INSTANCE.getLabel(("control.screen.label")));
+        boolean isProjector = groupName.equals(LabelGrabber.INSTANCE.getLabel(("projector.screen.label")));
+        boolean isStage = groupName.equals(LabelGrabber.INSTANCE.getLabel("stage.screen.label"));
+
+        // can be disabled?
+        boolean noScreen = isProjector || isStage;
+        // Support a custom position?
+        boolean custom = isProjector || isStage;
+        // Support display margins?
+        boolean margins = isProjector;
+
         BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
-        if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
+        if (isProjector) {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
-        } else if (groupName.equals(LabelGrabber.INSTANCE.getLabel("stage.screen.label"))) {
+        } else if (isStage) {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
         }
         useCustomPosition.addListener(e -> {
@@ -75,19 +82,39 @@ public class DisplayGroup {
 
         ArrayList<Setting> settings = new ArrayList<>();
 
-        if (!custom) {
-            int screen = QueleaProperties.get().getControlScreen();
-            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
-            settings.add(Setting.of(groupName, customControl, screenSelectProperty).customKey(controlScreenKey));
+        int screen;
+        String screenKey;
+        if (isControl)
+        {
+            screen = QueleaProperties.get().getControlScreen();
+            screenKey = controlScreenKey;
+        } else if (isProjector) {
+            screen = QueleaProperties.get().getProjectorScreen();
+            screenKey = projectorScreenKey;
+        } else if (isStage) {
+            screen = QueleaProperties.get().getStageScreen();
+            screenKey = stageScreenKey;
         } else {
-            int screen;
+            throw new IllegalArgumentException("Unsupported groupName: " + groupName);
+        }
+
+        if (noScreen) {
+            screen++; // Compensate for "none" value in available screens
+            screenSelectProperty.setValue(screen > 0 && screen < availableScreens.size() ? availableScreens.get(screen) : availableScreens.get(0));
+        } else {
+            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
+        }
+
+        settings.add(Setting.of(groupName, customControl, screenSelectProperty).customKey(screenKey));
+
+        if (custom) {
             Bounds bounds;
-            if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
-                screen = QueleaProperties.get().getProjectorScreen();
+            if (isProjector) {
                 bounds = QueleaProperties.get().getProjectorCoords();
-            } else {
-                screen = QueleaProperties.get().getStageScreen();
+            } else if (isStage) {
                 bounds = QueleaProperties.get().getStageCoords();
+            } else {
+                throw new IllegalArgumentException("Unsupported groupName: " + groupName);
             }
 
             IntegerProperty widthProperty = new SimpleIntegerProperty((int) bounds.getWidth());
@@ -119,23 +146,17 @@ public class DisplayGroup {
                 displayChange = true;
             });
 
-            screen++; // Compensate for "none" value in available screens
 
-            screenSelectProperty.setValue(screen > 0 && screen < availableScreens.size() ? availableScreens.get(screen) : availableScreens.get(0));
-            boolean projectorGroup = groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"));
-
-            settings.add(Setting.of(groupName, customControl, screenSelectProperty)
-                            .customKey(projectorGroup ? projectorScreenKey : stageScreenKey));
             settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
-                            .customKey(projectorGroup ? projectorModeKey : stageModeKey));
+                            .customKey(isProjector ? projectorModeKey : stageModeKey));
             settings.add(Setting.of("W", sizeWith, widthProperty)
-                            .customKey(projectorGroup ? projectorWCoordKey : stageWCoordKey));
+                            .customKey(isProjector ? projectorWCoordKey : stageWCoordKey));
             settings.add(Setting.of("H", sizeHeight, heightProperty)
-                            .customKey(projectorGroup ? projectorHCoordKey : stageHCoordKey));
+                            .customKey(isProjector ? projectorHCoordKey : stageHCoordKey));
             settings.add(Setting.of("X", posX, xProperty)
-                            .customKey(projectorGroup ? projectorXCoordKey : stageXCoordKey));
+                            .customKey(isProjector ? projectorXCoordKey : stageXCoordKey));
             settings.add(Setting.of("Y", posY, yProperty)
-                            .customKey(projectorGroup ? projectorYCoordKey : stageYCoordKey));
+                            .customKey(isProjector ? projectorYCoordKey : stageYCoordKey));
 
             bindings.put(sizeWith, useCustomPosition.not());
             bindings.put(sizeHeight, useCustomPosition.not());
