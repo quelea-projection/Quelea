@@ -149,14 +149,15 @@ public class SingleDisplayPanel extends VBox {
             marginPanel.setHgap(5);
 
             marginTop = new NumberTextField(0);
+            marginTop.numberProperty().addListener(this.onMarginNumberChange);
             Label marginTopLabel = new Label(LabelGrabber.INSTANCE.getLabel("top") + ":");
             GridPane.setConstraints(marginTopLabel, 1, 1);
             marginPanel.getChildren().add(marginTopLabel);
-            marginTop.numberProperty().addListener(this.onMarginNumberChange);
             GridPane.setConstraints(marginTop, 2, 1);
             marginPanel.getChildren().add(marginTop);
 
             marginRight = new NumberTextField(0);
+            marginRight.numberProperty().addListener(this.onMarginNumberChange);
             Label marginRightLabel = new Label(LabelGrabber.INSTANCE.getLabel("right") + ":");
             GridPane.setConstraints(marginRightLabel, 1, 2);
             marginPanel.getChildren().add(marginRightLabel);
@@ -164,6 +165,7 @@ public class SingleDisplayPanel extends VBox {
             marginPanel.getChildren().add(marginRight);
 
             marginBottom = new NumberTextField(0);
+            marginBottom.numberProperty().addListener(this.onMarginNumberChange);
             Label marginBottomLabel = new Label(LabelGrabber.INSTANCE.getLabel("bottom") + ":");
             GridPane.setConstraints(marginBottomLabel, 1, 3);
             marginPanel.getChildren().add(marginBottomLabel);
@@ -171,6 +173,7 @@ public class SingleDisplayPanel extends VBox {
             marginPanel.getChildren().add(marginBottom);
 
             marginLeft = new NumberTextField(0);
+            marginLeft.numberProperty().addListener(this.onMarginNumberChange);
             Label marginLeftLabel = new Label(LabelGrabber.INSTANCE.getLabel("left") + ":");
             GridPane.setConstraints(marginLeftLabel, 1, 4);
             marginPanel.getChildren().add(marginLeftLabel);
@@ -187,6 +190,15 @@ public class SingleDisplayPanel extends VBox {
         if (observable == marginTop.numberProperty()) {
             field = marginTop;
             oppositeField = marginBottom;
+        } else if (observable == marginRight.numberProperty()) {
+            field = marginRight;
+            oppositeField = marginLeft;
+        } else if (observable == marginBottom.numberProperty()) {
+            field = marginBottom;
+            oppositeField = marginTop;
+        } else if (observable == marginLeft.numberProperty()) {
+            field = marginLeft;
+            oppositeField = marginRight;
         } else {
             throw new IllegalArgumentException();
         }
