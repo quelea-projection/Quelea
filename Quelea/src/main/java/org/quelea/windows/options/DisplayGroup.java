@@ -33,6 +33,7 @@ import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
@@ -41,7 +42,13 @@ public class DisplayGroup {
     private boolean displayChange = false;
     private Group group;
 
-    DisplayGroup(String groupName, boolean custom, HashMap<Field, ObservableValue> bindings) {
+    /**
+     * @param custom true if a custom position should be allowed for this
+     * display panel.
+     * @param margins true if margins should be allowed for this
+     * display panel.
+     */
+    DisplayGroup(String groupName, boolean custom, boolean margins, HashMap<Field, ObservableValue> bindings) {
         BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
         if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
@@ -66,12 +73,12 @@ public class DisplayGroup {
             displayChange = true;
         });
 
+        ArrayList<Setting> settings = new ArrayList<>();
+
         if (!custom) {
             int screen = QueleaProperties.get().getControlScreen();
             screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
-            group = Group.of(groupName,
-                    Setting.of(groupName, customControl, screenSelectProperty).customKey(controlScreenKey)
-            );
+            settings.add(Setting.of(groupName, customControl, screenSelectProperty).customKey(controlScreenKey));
         } else {
             int screen;
             Bounds bounds;
@@ -117,20 +124,18 @@ public class DisplayGroup {
             screenSelectProperty.setValue(screen > 0 && screen < availableScreens.size() ? availableScreens.get(screen) : availableScreens.get(0));
             boolean projectorGroup = groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"));
 
-            group = Group.of(groupName,
-                    Setting.of(groupName, customControl, screenSelectProperty)
-                            .customKey(projectorGroup ? projectorScreenKey : stageScreenKey),
-                    Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
-                            .customKey(projectorGroup ? projectorModeKey : stageModeKey),
-                    Setting.of("W", sizeWith, widthProperty)
-                            .customKey(projectorGroup ? projectorWCoordKey : stageWCoordKey),
-                    Setting.of("H", sizeHeight, heightProperty)
-                            .customKey(projectorGroup ? projectorHCoordKey : stageHCoordKey),
-                    Setting.of("X", posX, xProperty)
-                            .customKey(projectorGroup ? projectorXCoordKey : stageXCoordKey),
-                    Setting.of("Y", posY, yProperty)
-                            .customKey(projectorGroup ? projectorYCoordKey : stageYCoordKey)
-            );
+            settings.add(Setting.of(groupName, customControl, screenSelectProperty)
+                            .customKey(projectorGroup ? projectorScreenKey : stageScreenKey));
+            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
+                            .customKey(projectorGroup ? projectorModeKey : stageModeKey));
+            settings.add(Setting.of("W", sizeWith, widthProperty)
+                            .customKey(projectorGroup ? projectorWCoordKey : stageWCoordKey));
+            settings.add(Setting.of("H", sizeHeight, heightProperty)
+                            .customKey(projectorGroup ? projectorHCoordKey : stageHCoordKey));
+            settings.add(Setting.of("X", posX, xProperty)
+                            .customKey(projectorGroup ? projectorXCoordKey : stageXCoordKey));
+            settings.add(Setting.of("Y", posY, yProperty)
+                            .customKey(projectorGroup ? projectorYCoordKey : stageYCoordKey));
 
             bindings.put(sizeWith, useCustomPosition.not());
             bindings.put(sizeHeight, useCustomPosition.not());
@@ -138,6 +143,12 @@ public class DisplayGroup {
             bindings.put(posY, useCustomPosition.not());
             bindings.put(customControl, useCustomPosition);
         }
+
+
+        Setting[] settingsArray = new Setting[settings.size()];
+        group = Group.of(groupName,
+                settings.toArray(settingsArray)
+        );
     }
 
 
