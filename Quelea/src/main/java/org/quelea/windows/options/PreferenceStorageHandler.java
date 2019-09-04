@@ -339,6 +339,14 @@ public class PreferenceStorageHandler implements StorageHandler {
                     return QueleaProperties.get().getProjectorCoords().getMinX();
                 case QueleaPropertyKeys.projectorYCoordKey:
                     return QueleaProperties.get().getProjectorCoords().getMinY();
+                case QueleaPropertyKeys.projectorMarginTopKey:
+                    return QueleaProperties.get().getProjectorMargin().getTop() * 100;
+                case QueleaPropertyKeys.projectorMarginRightKey:
+                    return QueleaProperties.get().getProjectorMargin().getRight() * 100;
+                case QueleaPropertyKeys.projectorMarginBottomKey:
+                    return QueleaProperties.get().getProjectorMargin().getBottom() * 100;
+                case QueleaPropertyKeys.projectorMarginLeftKey:
+                    return QueleaProperties.get().getProjectorMargin().getLeft() * 100;
                 case QueleaPropertyKeys.stageHCoordKey:
                     return QueleaProperties.get().getStageCoords().getHeight();
                 case QueleaPropertyKeys.stageWCoordKey:

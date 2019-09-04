@@ -172,10 +172,10 @@ public class DisplayGroup {
                 throw new IllegalArgumentException("Unsupported groupName: " + groupName);
             }
 
-            IntegerProperty marginTopProperty = new SimpleIntegerProperty((int) margins.getTop());
-            IntegerProperty marginRightProperty = new SimpleIntegerProperty((int) margins.getRight());
-            IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int) margins.getBottom());
-            IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int) margins.getLeft());
+            IntegerProperty marginTopProperty = new SimpleIntegerProperty((int)(margins.getTop() * 100));
+            IntegerProperty marginRightProperty = new SimpleIntegerProperty((int)(margins.getRight() * 100));
+            IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int)(margins.getBottom() * 100));
+            IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int)(margins.getLeft() * 100));
             IntegerField marginTop = Field.ofIntegerType(marginTopProperty).render(
                     new SimpleIntegerControl());
             IntegerField marginRight = Field.ofIntegerType(marginRightProperty).render(
