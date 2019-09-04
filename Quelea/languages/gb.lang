@@ -700,3 +700,6 @@ general.user.options=General User Options
 theme.options=Theme Options
 schedule.options=Schedule Options
 projector.margin.top=Margin Top %
+projector.margin.right=Margin Right %
+projector.margin.bottom=Margin Bottom %
+projector.margin.left=Margin Left %

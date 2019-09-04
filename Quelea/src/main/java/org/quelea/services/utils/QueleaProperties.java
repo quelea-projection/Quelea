@@ -2303,6 +2303,25 @@ public final class QueleaProperties extends Properties {
         setProjectorMargin(newProp);
     }
 
+    public void setProjectorMarginRight(int value)  {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), value / 100.0, prop.getBottom(), prop.getLeft());
+        setProjectorMargin(newProp);
+    }
+
+    public void setProjectorMarginBottom(int value)  {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), value / 100.0, prop.getLeft());
+        setProjectorMargin(newProp);
+    }
+
+    public void setProjectorMarginLeft(int value)  {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), prop.getBottom(), value / 100.0);
+        setProjectorMargin(newProp);
+    }
+
+
     public Bounds applyProjectorMargin(Bounds coords) {
         return getProjectorMargin().applyMargins(coords);
     }

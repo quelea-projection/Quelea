@@ -173,15 +173,41 @@ public class DisplayGroup {
             }
 
             IntegerProperty marginTopProperty = new SimpleIntegerProperty((int) margins.getTop());
+            IntegerProperty marginRightProperty = new SimpleIntegerProperty((int) margins.getRight());
+            IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int) margins.getBottom());
+            IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int) margins.getLeft());
             IntegerField marginTop = Field.ofIntegerType(marginTopProperty).render(
                     new SimpleIntegerControl());
+            IntegerField marginRight = Field.ofIntegerType(marginRightProperty).render(
+                    new SimpleIntegerControl());
+            IntegerField marginBottom = Field.ofIntegerType(marginBottomProperty).render(
+                    new SimpleIntegerControl());
+            IntegerField marginLeft = Field.ofIntegerType(marginLeftProperty).render(
+                    new SimpleIntegerControl());
+
 
             marginTopProperty.addListener(e -> {
                 displayChange = true;
             });
+            marginRightProperty.addListener(e -> {
+                displayChange = true;
+            });
+            marginBottomProperty.addListener(e -> {
+                displayChange = true;
+            });
+            marginLeftProperty.addListener(e -> {
+                displayChange = true;
+            });
+
 
             settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTop, marginTopProperty)
                     .customKey(projectorMarginTopKey));
+            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.right"), marginRight, marginRightProperty)
+                    .customKey(projectorMarginRightKey));
+            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.bottom"), marginBottom, marginBottomProperty)
+                    .customKey(projectorMarginBottomKey));
+            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.left"), marginLeft, marginLeftProperty)
+                    .customKey(projectorMarginLeftKey));
         }
 
 
