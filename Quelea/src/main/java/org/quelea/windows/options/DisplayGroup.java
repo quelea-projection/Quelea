@@ -31,6 +31,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.PercentMargins;
 import org.quelea.services.utils.QueleaProperties;
 
 import java.awt.*;
@@ -52,21 +53,11 @@ public class DisplayGroup {
         // can be disabled?
         boolean noScreen = isProjector || isStage;
         // Support a custom position?
-        boolean custom = isProjector || isStage;
+        boolean useCustom = isProjector || isStage;
         // Support display margins?
-        boolean margins = isProjector;
+        boolean useMargins = isProjector;
 
-        BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
-        if (isProjector) {
-            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
-        } else if (isStage) {
-            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
-        }
-        useCustomPosition.addListener(e -> {
-            displayChange = true;
-        });
-
-        ObservableList<String> availableScreens = getAvailableScreens(custom);
+        ObservableList<String> availableScreens = getAvailableScreens(useCustom);
         ListProperty<String> screenListProperty = new SimpleListProperty<>(availableScreens);
         ObjectProperty<String> screenSelectProperty = new SimpleObjectProperty<>(availableScreens.get(0));
         Field customControl = Field.ofSingleSelectionType(screenListProperty, screenSelectProperty).render(
@@ -107,15 +98,19 @@ public class DisplayGroup {
 
         settings.add(Setting.of(groupName, customControl, screenSelectProperty).customKey(screenKey));
 
-        if (custom) {
+        if (useCustom) {
             Bounds bounds;
+            BooleanProperty useCustomPosition;
             if (isProjector) {
                 bounds = QueleaProperties.get().getProjectorCoords();
+                useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
             } else if (isStage) {
                 bounds = QueleaProperties.get().getStageCoords();
+                useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
             } else {
                 throw new IllegalArgumentException("Unsupported groupName: " + groupName);
             }
+
 
             IntegerProperty widthProperty = new SimpleIntegerProperty((int) bounds.getWidth());
             IntegerProperty heightProperty = new SimpleIntegerProperty((int) bounds.getHeight());
@@ -146,6 +141,10 @@ public class DisplayGroup {
                 displayChange = true;
             });
 
+            useCustomPosition.addListener(e -> {
+                displayChange = true;
+            });
+
 
             settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
                             .customKey(isProjector ? projectorModeKey : stageModeKey));
@@ -163,6 +162,26 @@ public class DisplayGroup {
             bindings.put(posX, useCustomPosition.not());
             bindings.put(posY, useCustomPosition.not());
             bindings.put(customControl, useCustomPosition);
+        }
+
+        if (useMargins) {
+            PercentMargins margins;
+            if (isProjector) {
+                margins = QueleaProperties.get().getProjectorMargin();
+            } else {
+                throw new IllegalArgumentException("Unsupported groupName: " + groupName);
+            }
+
+            IntegerProperty marginTopProperty = new SimpleIntegerProperty((int) margins.getTop());
+            IntegerField marginTop = Field.ofIntegerType(marginTopProperty).render(
+                    new SimpleIntegerControl());
+
+            marginTopProperty.addListener(e -> {
+                displayChange = true;
+            });
+
+            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTop, marginTopProperty)
+                    .customKey(projectorMarginTopKey));
         }
 
 

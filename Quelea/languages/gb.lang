@@ -699,4 +699,4 @@ small.bible.text.options=Small Bible Text Options
 general.user.options=General User Options
 theme.options=Theme Options
 schedule.options=Schedule Options
-projector.margins=Margins: (in %)
+projector.margin.top=Margin Top %

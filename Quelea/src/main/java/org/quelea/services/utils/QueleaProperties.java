@@ -2280,7 +2280,7 @@ public final class QueleaProperties extends Properties {
     }
 
     public PercentMargins getProjectorMargin() {
-        String[] parts = getProperty("projector.margin", "0,0,0,0").split(",");
+        String[] parts = getProperty(projectorMarginKey, "0,0,0,0").split(",");
         if (parts.length == 4) {
             return new PercentMargins(
                     Double.parseDouble(parts[0]),
@@ -2294,7 +2294,13 @@ public final class QueleaProperties extends Properties {
     }
 
     public void setProjectorMargin(@NotNull PercentMargins margins) {
-        setProperty("projector.margin", margins.toString());
+        setProperty(projectorMarginKey, margins.toString());
+    }
+
+    public void setProjectorMarginTop(int value)  {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(value / 100.0, prop.getRight(), prop.getBottom(), prop.getLeft());
+        setProjectorMargin(newProp);
     }
 
     public Bounds applyProjectorMargin(Bounds coords) {

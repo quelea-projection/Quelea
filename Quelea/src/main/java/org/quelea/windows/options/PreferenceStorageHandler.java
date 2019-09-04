@@ -208,6 +208,9 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.projectorYCoordKey:
                 QueleaProperties.get().setYProjectorCoord(object.toString());
                 break;
+            case QueleaPropertyKeys.projectorMarginTopKey:
+                QueleaProperties.get().setProjectorMarginTop((Integer) object);
+                break;
             case QueleaPropertyKeys.stageHCoordKey:
                 QueleaProperties.get().setHeightStageCoord(object.toString());
                 break;
