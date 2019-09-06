@@ -19,11 +19,13 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
+import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleIntegerControl;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -172,6 +174,7 @@ public class DisplayGroup {
                 throw new IllegalArgumentException("Unsupported groupName: " + groupName);
             }
 
+            IntegerRangeValidator validator = IntegerRangeValidator.upTo(99, "Maximum value of 99");
             IntegerProperty marginTopProperty = new SimpleIntegerProperty((int)(margins.getTop() * 100));
             IntegerProperty marginRightProperty = new SimpleIntegerProperty((int)(margins.getRight() * 100));
             IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int)(margins.getBottom() * 100));
@@ -185,19 +188,52 @@ public class DisplayGroup {
             IntegerField marginLeft = Field.ofIntegerType(marginLeftProperty).render(
                     new SimpleIntegerControl());
 
+            marginTop.validate(validator);
+            marginRight.validate(validator);
+            marginBottom.validate(validator);
 
-            marginTopProperty.addListener(e -> {
+            ChangeListener<Number> onMarginNumberChange = (observable, oldValue, newValue) -> {
+                IntegerField field;
+                IntegerField oppositeField;
+                if (observable == marginTopProperty) {
+                    field = marginTop;
+                    oppositeField = marginBottom;
+                } else if (observable == marginRightProperty) {
+                    field = marginRight;
+                    oppositeField = marginLeft;
+                } else if (observable == marginBottomProperty) {
+                    field = marginBottom;
+                    oppositeField = marginTop;
+                } else if (observable == marginLeftProperty) {
+                    field = marginLeft;
+                    oppositeField = marginRight;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
                 displayChange = true;
-            });
-            marginRightProperty.addListener(e -> {
-                displayChange = true;
-            });
-            marginBottomProperty.addListener(e -> {
-                displayChange = true;
-            });
-            marginLeftProperty.addListener(e -> {
-                displayChange = true;
-            });
+
+                // make sure the margins only add up to 99 at most, leaving 1% for content
+                int total = field.getValue() + oppositeField.getValue();
+                if (total > 99) {
+                    int suggestedOpposite = 99 - field.getValue();
+                    if (suggestedOpposite > 0) {
+                        oppositeField.valueProperty().set(suggestedOpposite);
+//                        oppositeField.setValue(suggestedOpposite);
+                    } else {
+                        // A number greater than 99 has been entered in the field
+                        // clamp to 99
+                        field.valueProperty().set(99);
+                        oppositeField.valueProperty().set(0);
+                    }
+                }
+            };
+
+
+            marginTopProperty.addListener(onMarginNumberChange);
+            marginRightProperty.addListener(onMarginNumberChange);
+            marginBottomProperty.addListener(onMarginNumberChange);
+            marginLeftProperty.addListener(onMarginNumberChange);
 
 
             settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTop, marginTopProperty)
