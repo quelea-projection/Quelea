@@ -100,149 +100,11 @@ public class DisplayGroup {
         settings.add(Setting.of(groupName, customControl, screenSelectProperty).customKey(screenKey));
 
         if (useCustom) {
-            Bounds bounds;
-            BooleanProperty useCustomPosition;
-            if (isProjector) {
-                bounds = QueleaProperties.get().getProjectorCoords();
-                useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
-            } else if (isStage) {
-                bounds = QueleaProperties.get().getStageCoords();
-                useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
-            } else {
-                throw new IllegalArgumentException("Unsupported groupName: " + groupName);
-            }
-
-
-            IntegerProperty widthProperty = new SimpleIntegerProperty((int) bounds.getWidth());
-            IntegerProperty heightProperty = new SimpleIntegerProperty((int) bounds.getHeight());
-            IntegerProperty xProperty = new SimpleIntegerProperty((int) bounds.getMinX());
-            IntegerProperty yProperty = new SimpleIntegerProperty((int) bounds.getMinY());
-            IntegerField sizeWith = Field.ofIntegerType(widthProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField sizeHeight = Field.ofIntegerType(heightProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField posX = Field.ofIntegerType(xProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField posY = Field.ofIntegerType(yProperty).render(
-                    new SimpleIntegerControl());
-
-            widthProperty.addListener(e -> {
-                displayChange = true;
-            });
-
-            heightProperty.addListener(e -> {
-                displayChange = true;
-            });
-
-            xProperty.addListener(e -> {
-                displayChange = true;
-            });
-
-            yProperty.addListener(e -> {
-                displayChange = true;
-            });
-
-            useCustomPosition.addListener(e -> {
-                displayChange = true;
-            });
-
-
-            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
-                            .customKey(isProjector ? projectorModeKey : stageModeKey));
-            settings.add(Setting.of("W", sizeWith, widthProperty)
-                            .customKey(isProjector ? projectorWCoordKey : stageWCoordKey));
-            settings.add(Setting.of("H", sizeHeight, heightProperty)
-                            .customKey(isProjector ? projectorHCoordKey : stageHCoordKey));
-            settings.add(Setting.of("X", posX, xProperty)
-                            .customKey(isProjector ? projectorXCoordKey : stageXCoordKey));
-            settings.add(Setting.of("Y", posY, yProperty)
-                            .customKey(isProjector ? projectorYCoordKey : stageYCoordKey));
-
-            bindings.put(sizeWith, useCustomPosition.not());
-            bindings.put(sizeHeight, useCustomPosition.not());
-            bindings.put(posX, useCustomPosition.not());
-            bindings.put(posY, useCustomPosition.not());
-            bindings.put(customControl, useCustomPosition);
+            setupCustomPosition(bindings, isProjector, isStage, customControl, settings);
         }
 
         if (useMargins) {
-            PercentMargins margins;
-            if (isProjector) {
-                margins = QueleaProperties.get().getProjectorMargin();
-            } else {
-                throw new IllegalArgumentException("Unsupported groupName: " + groupName);
-            }
-
-            IntegerRangeValidator validator = IntegerRangeValidator.upTo(99, "Maximum value of 99");
-            IntegerProperty marginTopProperty = new SimpleIntegerProperty((int)(margins.getTop() * 100));
-            IntegerProperty marginRightProperty = new SimpleIntegerProperty((int)(margins.getRight() * 100));
-            IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int)(margins.getBottom() * 100));
-            IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int)(margins.getLeft() * 100));
-            IntegerField marginTop = Field.ofIntegerType(marginTopProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField marginRight = Field.ofIntegerType(marginRightProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField marginBottom = Field.ofIntegerType(marginBottomProperty).render(
-                    new SimpleIntegerControl());
-            IntegerField marginLeft = Field.ofIntegerType(marginLeftProperty).render(
-                    new SimpleIntegerControl());
-
-            marginTop.validate(validator);
-            marginRight.validate(validator);
-            marginBottom.validate(validator);
-
-            ChangeListener<Number> onMarginNumberChange = (observable, oldValue, newValue) -> {
-                IntegerField field;
-                IntegerField oppositeField;
-                if (observable == marginTopProperty) {
-                    field = marginTop;
-                    oppositeField = marginBottom;
-                } else if (observable == marginRightProperty) {
-                    field = marginRight;
-                    oppositeField = marginLeft;
-                } else if (observable == marginBottomProperty) {
-                    field = marginBottom;
-                    oppositeField = marginTop;
-                } else if (observable == marginLeftProperty) {
-                    field = marginLeft;
-                    oppositeField = marginRight;
-                } else {
-                    throw new IllegalArgumentException();
-                }
-
-                displayChange = true;
-
-                // make sure the margins only add up to 99 at most, leaving 1% for content
-                int total = field.getValue() + oppositeField.getValue();
-                if (total > 99) {
-                    int suggestedOpposite = 99 - field.getValue();
-                    if (suggestedOpposite > 0) {
-                        oppositeField.valueProperty().set(suggestedOpposite);
-//                        oppositeField.setValue(suggestedOpposite);
-                    } else {
-                        // A number greater than 99 has been entered in the field
-                        // clamp to 99
-                        field.valueProperty().set(99);
-                        oppositeField.valueProperty().set(0);
-                    }
-                }
-            };
-
-
-            marginTopProperty.addListener(onMarginNumberChange);
-            marginRightProperty.addListener(onMarginNumberChange);
-            marginBottomProperty.addListener(onMarginNumberChange);
-            marginLeftProperty.addListener(onMarginNumberChange);
-
-
-            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTop, marginTopProperty)
-                    .customKey(projectorMarginTopKey));
-            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.right"), marginRight, marginRightProperty)
-                    .customKey(projectorMarginRightKey));
-            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.bottom"), marginBottom, marginBottomProperty)
-                    .customKey(projectorMarginBottomKey));
-            settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.left"), marginLeft, marginLeftProperty)
-                    .customKey(projectorMarginLeftKey));
+            setupMargins(isProjector, settings);
         }
 
 
@@ -250,6 +112,152 @@ public class DisplayGroup {
         group = Group.of(groupName,
                 settings.toArray(settingsArray)
         );
+    }
+
+    private void setupMargins(boolean isProjector, ArrayList<Setting> settings) {
+        PercentMargins margins;
+        if (isProjector) {
+            margins = QueleaProperties.get().getProjectorMargin();
+        } else {
+            throw new IllegalArgumentException("Unsupported groupName (isn't projector)");
+        }
+
+        IntegerRangeValidator validator = IntegerRangeValidator.upTo(99, "Maximum value of 99");
+        IntegerProperty marginTopProperty = new SimpleIntegerProperty((int)(margins.getTop() * 100));
+        IntegerProperty marginRightProperty = new SimpleIntegerProperty((int)(margins.getRight() * 100));
+        IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int)(margins.getBottom() * 100));
+        IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int)(margins.getLeft() * 100));
+        IntegerField marginTop = Field.ofIntegerType(marginTopProperty).render(
+                new SimpleIntegerControl());
+        IntegerField marginRight = Field.ofIntegerType(marginRightProperty).render(
+                new SimpleIntegerControl());
+        IntegerField marginBottom = Field.ofIntegerType(marginBottomProperty).render(
+                new SimpleIntegerControl());
+        IntegerField marginLeft = Field.ofIntegerType(marginLeftProperty).render(
+                new SimpleIntegerControl());
+
+        marginTop.validate(validator);
+        marginRight.validate(validator);
+        marginBottom.validate(validator);
+
+        ChangeListener<Number> onMarginNumberChange = (observable, oldValue, newValue) -> {
+            IntegerField field;
+            IntegerField oppositeField;
+            if (observable == marginTopProperty) {
+                field = marginTop;
+                oppositeField = marginBottom;
+            } else if (observable == marginRightProperty) {
+                field = marginRight;
+                oppositeField = marginLeft;
+            } else if (observable == marginBottomProperty) {
+                field = marginBottom;
+                oppositeField = marginTop;
+            } else if (observable == marginLeftProperty) {
+                field = marginLeft;
+                oppositeField = marginRight;
+            } else {
+                throw new IllegalArgumentException();
+            }
+
+            displayChange = true;
+
+            // make sure the margins only add up to 99 at most, leaving 1% for content
+            int total = field.getValue() + oppositeField.getValue();
+            if (total > 99) {
+                int suggestedOpposite = 99 - field.getValue();
+                if (suggestedOpposite > 0) {
+                    oppositeField.valueProperty().set(suggestedOpposite);
+//                        oppositeField.setValue(suggestedOpposite);
+                } else {
+                    // A number greater than 99 has been entered in the field
+                    // clamp to 99
+                    field.valueProperty().set(99);
+                    oppositeField.valueProperty().set(0);
+                }
+            }
+        };
+
+
+        marginTopProperty.addListener(onMarginNumberChange);
+        marginRightProperty.addListener(onMarginNumberChange);
+        marginBottomProperty.addListener(onMarginNumberChange);
+        marginLeftProperty.addListener(onMarginNumberChange);
+
+
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTop, marginTopProperty)
+                .customKey(projectorMarginTopKey));
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.right"), marginRight, marginRightProperty)
+                .customKey(projectorMarginRightKey));
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.bottom"), marginBottom, marginBottomProperty)
+                .customKey(projectorMarginBottomKey));
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.left"), marginLeft, marginLeftProperty)
+                .customKey(projectorMarginLeftKey));
+    }
+
+    private void setupCustomPosition( HashMap<Field, ObservableValue> bindings, boolean isProjector, boolean isStage, Field customControl, ArrayList<Setting> settings) {
+        Bounds bounds;
+        BooleanProperty useCustomPosition;
+        if (isProjector) {
+            bounds = QueleaProperties.get().getProjectorCoords();
+            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
+        } else if (isStage) {
+            bounds = QueleaProperties.get().getStageCoords();
+            useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isStageModeCoords());
+        } else {
+            throw new IllegalArgumentException("Unsupported groupName - is neither projector nor stage");
+        }
+
+
+        IntegerProperty widthProperty = new SimpleIntegerProperty((int) bounds.getWidth());
+        IntegerProperty heightProperty = new SimpleIntegerProperty((int) bounds.getHeight());
+        IntegerProperty xProperty = new SimpleIntegerProperty((int) bounds.getMinX());
+        IntegerProperty yProperty = new SimpleIntegerProperty((int) bounds.getMinY());
+        IntegerField sizeWith = Field.ofIntegerType(widthProperty).render(
+                new SimpleIntegerControl());
+        IntegerField sizeHeight = Field.ofIntegerType(heightProperty).render(
+                new SimpleIntegerControl());
+        IntegerField posX = Field.ofIntegerType(xProperty).render(
+                new SimpleIntegerControl());
+        IntegerField posY = Field.ofIntegerType(yProperty).render(
+                new SimpleIntegerControl());
+
+        widthProperty.addListener(e -> {
+            displayChange = true;
+        });
+
+        heightProperty.addListener(e -> {
+            displayChange = true;
+        });
+
+        xProperty.addListener(e -> {
+            displayChange = true;
+        });
+
+        yProperty.addListener(e -> {
+            displayChange = true;
+        });
+
+        useCustomPosition.addListener(e -> {
+            displayChange = true;
+        });
+
+
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("custom.position.text"), useCustomPosition)
+                        .customKey(isProjector ? projectorModeKey : stageModeKey));
+        settings.add(Setting.of("W", sizeWith, widthProperty)
+                        .customKey(isProjector ? projectorWCoordKey : stageWCoordKey));
+        settings.add(Setting.of("H", sizeHeight, heightProperty)
+                        .customKey(isProjector ? projectorHCoordKey : stageHCoordKey));
+        settings.add(Setting.of("X", posX, xProperty)
+                        .customKey(isProjector ? projectorXCoordKey : stageXCoordKey));
+        settings.add(Setting.of("Y", posY, yProperty)
+                        .customKey(isProjector ? projectorYCoordKey : stageYCoordKey));
+
+        bindings.put(sizeWith, useCustomPosition.not());
+        bindings.put(sizeHeight, useCustomPosition.not());
+        bindings.put(posX, useCustomPosition.not());
+        bindings.put(posY, useCustomPosition.not());
+        bindings.put(customControl, useCustomPosition);
     }
 
 
