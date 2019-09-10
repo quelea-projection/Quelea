@@ -20,7 +20,6 @@ package org.quelea.windows.options;
 import com.dlsc.formsfx.model.structure.DoubleField;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
-import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleIntegerControl;
 import com.dlsc.preferencesfx.model.Group;
