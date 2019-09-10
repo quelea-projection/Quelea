@@ -36,7 +36,6 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PercentMargins;
 import org.quelea.services.utils.QueleaProperties;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 

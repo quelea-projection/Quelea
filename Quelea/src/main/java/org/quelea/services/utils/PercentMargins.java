@@ -20,7 +20,6 @@ package org.quelea.services.utils;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 
 /**
  * Percentage-based (0-1) margins to be applied to a display
