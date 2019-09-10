@@ -209,16 +209,16 @@ public class PreferenceStorageHandler implements StorageHandler {
                 QueleaProperties.get().setYProjectorCoord(object.toString());
                 break;
             case QueleaPropertyKeys.projectorMarginTopKey:
-                QueleaProperties.get().setProjectorMarginTop((Integer) object);
+                QueleaProperties.get().setProjectorMarginTop((Double) object);
                 break;
             case QueleaPropertyKeys.projectorMarginRightKey:
-                QueleaProperties.get().setProjectorMarginRight((Integer) object);
+                QueleaProperties.get().setProjectorMarginRight((Double) object);
                 break;
             case QueleaPropertyKeys.projectorMarginBottomKey:
-                QueleaProperties.get().setProjectorMarginBottom((Integer) object);
+                QueleaProperties.get().setProjectorMarginBottom((Double) object);
                 break;
             case QueleaPropertyKeys.projectorMarginLeftKey:
-                QueleaProperties.get().setProjectorMarginLeft((Integer) object);
+                QueleaProperties.get().setProjectorMarginLeft((Double) object);
                 break;
             case QueleaPropertyKeys.stageHCoordKey:
                 QueleaProperties.get().setHeightStageCoord(object.toString());
@@ -340,13 +340,13 @@ public class PreferenceStorageHandler implements StorageHandler {
                 case QueleaPropertyKeys.projectorYCoordKey:
                     return QueleaProperties.get().getProjectorCoords().getMinY();
                 case QueleaPropertyKeys.projectorMarginTopKey:
-                    return QueleaProperties.get().getProjectorMargin().getTop() * 100;
+                    return QueleaProperties.get().getProjectorMargin().getTop();
                 case QueleaPropertyKeys.projectorMarginRightKey:
-                    return QueleaProperties.get().getProjectorMargin().getRight() * 100;
+                    return QueleaProperties.get().getProjectorMargin().getRight();
                 case QueleaPropertyKeys.projectorMarginBottomKey:
-                    return QueleaProperties.get().getProjectorMargin().getBottom() * 100;
+                    return QueleaProperties.get().getProjectorMargin().getBottom();
                 case QueleaPropertyKeys.projectorMarginLeftKey:
-                    return QueleaProperties.get().getProjectorMargin().getLeft() * 100;
+                    return QueleaProperties.get().getProjectorMargin().getLeft();
                 case QueleaPropertyKeys.stageHCoordKey:
                     return QueleaProperties.get().getStageCoords().getHeight();
                 case QueleaPropertyKeys.stageWCoordKey:

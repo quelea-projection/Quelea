@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.options;
 
+import com.dlsc.formsfx.model.structure.DoubleField;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
 import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
@@ -35,6 +36,7 @@ import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PercentMargins;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.options.customprefs.PercentSliderControl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,14 +190,23 @@ public class DisplayGroup {
             throw new IllegalArgumentException("Unsupported groupName (isn't projector)");
         }
 
-        IntegerProperty marginTopProperty = new SimpleIntegerProperty((int)(margins.getTop() * 100));
-        IntegerProperty marginRightProperty = new SimpleIntegerProperty((int)(margins.getRight() * 100));
-        IntegerProperty marginBottomProperty = new SimpleIntegerProperty((int)(margins.getBottom() * 100));
-        IntegerProperty marginLeftProperty = new SimpleIntegerProperty((int)(margins.getLeft() * 100));
+        DoubleProperty marginTopProperty = new SimpleDoubleProperty(margins.getTop());
+        DoubleProperty marginRightProperty = new SimpleDoubleProperty(margins.getRight());
+        DoubleProperty marginBottomProperty = new SimpleDoubleProperty(margins.getBottom());
+        DoubleProperty marginLeftProperty = new SimpleDoubleProperty(margins.getLeft());
+
+        DoubleField marginTopField = Field.ofDoubleType(marginTopProperty).render(
+                new PercentSliderControl(0.0, 0.99, 2));
+        DoubleField marginRightField = Field.ofDoubleType(marginRightProperty).render(
+                new PercentSliderControl(0.0, 0.99, 2));
+        DoubleField marginBottomField = Field.ofDoubleType(marginBottomProperty).render(
+                new PercentSliderControl(0.0, 0.99, 2));
+        DoubleField marginLeftField = Field.ofDoubleType(marginLeftProperty).render(
+                new PercentSliderControl(0.0, 0.99, 2));
 
         ChangeListener<Number> onMarginNumberChange = (observable, oldValue, newValue) -> {
-            IntegerProperty property;
-            IntegerProperty opposite;
+            DoubleProperty property;
+            DoubleProperty opposite;
             if (observable == marginTopProperty) {
                 property = marginTopProperty;
                 opposite = marginBottomProperty;
@@ -215,15 +226,15 @@ public class DisplayGroup {
             displayChange = true;
 
             // make sure the margins only add up to 99 at most, leaving 1% for content
-            int total = property.getValue() + opposite.getValue();
-            if (total > 99) {
-                int suggestedOpposite = 99 - property.getValue();
+            double total = property.getValue() + opposite.getValue();
+            if (total > 0.99) {
+                double suggestedOpposite = 0.99 - property.getValue();
                 if (suggestedOpposite > 0) {
                     opposite.set(suggestedOpposite);
                 } else {
                     // A number greater than 99 has been selected
                     // clamp to 99
-                    property.set(99);
+                    property.set(0.99);
                     opposite.set(0);
                 }
             }
@@ -236,13 +247,13 @@ public class DisplayGroup {
         marginLeftProperty.addListener(onMarginNumberChange);
 
 
-        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTopProperty, 0, 99)
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.top"), marginTopField, marginTopProperty)
                 .customKey(projectorMarginTopKey));
-        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.right"), marginRightProperty, 0, 99)
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.right"), marginRightField, marginRightProperty)
                 .customKey(projectorMarginRightKey));
-        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.bottom"), marginBottomProperty, 0, 99)
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.bottom"), marginBottomField, marginBottomProperty)
                 .customKey(projectorMarginBottomKey));
-        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.left"), marginLeftProperty, 0, 99)
+        settings.add(Setting.of(LabelGrabber.INSTANCE.getLabel("projector.margin.left"), marginLeftField, marginLeftProperty)
                 .customKey(projectorMarginLeftKey));
     }
 

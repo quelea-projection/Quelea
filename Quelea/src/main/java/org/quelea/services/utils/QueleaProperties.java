@@ -2297,27 +2297,27 @@ public final class QueleaProperties extends Properties {
         setProperty(projectorMarginKey, margins.toString());
     }
 
-    public void setProjectorMarginTop(int value)  {
+    public void setProjectorMarginTop(double value)  {
         PercentMargins prop = getProjectorMargin();
-        PercentMargins newProp = new PercentMargins(value / 100.0, prop.getRight(), prop.getBottom(), prop.getLeft());
+        PercentMargins newProp = new PercentMargins(value, prop.getRight(), prop.getBottom(), prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginRight(int value)  {
+    public void setProjectorMarginRight(double value)  {
         PercentMargins prop = getProjectorMargin();
-        PercentMargins newProp = new PercentMargins(prop.getTop(), value / 100.0, prop.getBottom(), prop.getLeft());
+        PercentMargins newProp = new PercentMargins(prop.getTop(), value, prop.getBottom(), prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginBottom(int value)  {
+    public void setProjectorMarginBottom(double value)  {
         PercentMargins prop = getProjectorMargin();
-        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), value / 100.0, prop.getLeft());
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), value, prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginLeft(int value)  {
+    public void setProjectorMarginLeft(double value)  {
         PercentMargins prop = getProjectorMargin();
-        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), prop.getBottom(), value / 100.0);
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), prop.getBottom(), value);
         setProjectorMargin(newProp);
     }
 
