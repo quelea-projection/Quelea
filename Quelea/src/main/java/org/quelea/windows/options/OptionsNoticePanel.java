@@ -61,8 +61,8 @@ public class OptionsNoticePanel {
         return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), new ImageView(new Image("file:icons/noticessettingsicon.png")),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null, bindings).customKey(noticePositionKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()).customKey(noticeBackgroundColourKey),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 10).customKey(noticeSpeedKey),
-                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.font.size"), noticeSize, 20, 100, 10).customKey(noticeFontSizeKey)
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 1).customKey(noticeSpeedKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("notice.font.size"), noticeSize, 20, 100, 1).customKey(noticeFontSizeKey)
         );
     }
 }
