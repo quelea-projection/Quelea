@@ -285,6 +285,10 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.smallBibleTextSizeKey:
             case QueleaPropertyKeys.smallSongTextSizeKey:
                 QueleaProperties.get().setProperty(breadcrumb, String.valueOf(Double.parseDouble(object.toString())/10));
+                break;
+            case QueleaPropertyKeys.defaultSongDbUpdateKey:
+                QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
+                break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
@@ -360,6 +364,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                     } else {
                         return LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control");
                     }
+                case QueleaPropertyKeys.defaultSongDbUpdateKey:
+                    return !QueleaProperties.get().getDefaultSongDBUpdate();
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);
