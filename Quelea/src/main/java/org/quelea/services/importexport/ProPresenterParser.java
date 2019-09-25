@@ -133,7 +133,7 @@ public class ProPresenterParser implements SongParser {
 			StringBuilder ret = new StringBuilder();
 			XPathExpression expr = xPathfactory.newXPath().compile(".//RVTextElement");
 			NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
-			LOGGER.log(Level.INFO, "Found " + lines.getLength() + " lines");
+			LOGGER.log(Level.INFO, "Found {0} lines", lines.getLength());
 			for (int j = 0; j < lines.getLength(); j++) {
 				Node lineNode = lines.item(j);
 				String line = new String(Base64.getDecoder().decode(lineNode.getAttributes().getNamedItem("RTFData").getTextContent()), Charset.forName("UTF-8"));
