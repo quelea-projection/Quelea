@@ -79,13 +79,15 @@ public class ProPresenterParser implements SongParser {
             NodeList slideList = doc.getElementsByTagName("RVDisplaySlide");
             LOGGER.log(Level.INFO, "Found {0} slides", slideList.getLength());
             for (int i = 0; i < slideList.getLength(); i++) {
+				Optional<String> slideText;
                 if (ppVersion == 5 || ppVersion == 4) {
-                    lyrics.append(getSectionTextLegacy(slideList.item(i)));
+                    slideText = getSectionTextLegacy(slideList.item(i)).map(this::appendNewline);
                 } else if (ppVersion == 6) {
-                    lyrics.append(getSectionText6(slideList.item(i)));
-                }
-
-                lyrics.append('\n');
+                    slideText = getSectionText6(slideList.item(i)).map(this::appendNewline);
+                } else {
+					slideText = Optional.empty();
+				}
+				slideText.ifPresent(lyrics::append);
             }
             SongDisplayable song = new SongDisplayable(title, author);
             song.setLyrics(lyrics.toString().trim());
@@ -116,7 +118,7 @@ public class ProPresenterParser implements SongParser {
 		return Optional.empty();
 	}
 
-    private String getSectionTextLegacy(Node slideNode) {
+    private Optional<String> getSectionTextLegacy(Node slideNode) {
         try {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             StringBuilder ret = new StringBuilder();
@@ -129,14 +131,14 @@ public class ProPresenterParser implements SongParser {
                 line = stripRtfTags(line).trim();
                 ret.append(line).append('\n');
             }
-            return ret.toString();
+            return Optional.of(ret.toString());
         } catch (XPathExpressionException | DOMException ex) {
             LOGGER.log(Level.SEVERE, "Error with import legacy", ex);
-            return null;
+            return Optional.empty();
         }
     }
 
-    private String getSectionText6(Node slideNode) {
+    private Optional<String> getSectionText6(Node slideNode) {
         try {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             StringBuilder ret = new StringBuilder();
@@ -147,10 +149,10 @@ public class ProPresenterParser implements SongParser {
                 String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName("UTF-8"));
                 ret.append(line).append('\n');
             }
-            return ret.toString();
+            return Optional.of(ret.toString());
         } catch (XPathExpressionException | DOMException ex) {
             LOGGER.log(Level.SEVERE, "Error with import v6", ex);
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -174,5 +176,9 @@ public class ProPresenterParser implements SongParser {
             return text;
         }
     }
+	
+	private String appendNewline(String text) {
+		return text + "\n";
+	}
 
 }
