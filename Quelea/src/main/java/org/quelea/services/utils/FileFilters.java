@@ -125,6 +125,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
     /**
+     * The file filter used for ProPresenter songs.
+     */
+    public static final FileChooser.ExtensionFilter PROPRESENTER = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.propresenter") + " (*.pro4, *.pro5, *.pro6)", "*.pro4", "*.pro5", "*.pro6");
+    /**
      * The file filter used for Songs.MB (the easyworship database.)
      */
     public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
