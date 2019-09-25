@@ -29,7 +29,7 @@ public class SundayPlusImportDialog extends ImportDialog {
     public SundayPlusImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("sundayplus.import.line1"),
-                }, FileFilters.SUNDAY_PLUS, new SundayPlusParser(), false, false);
+                }, FileFilters.SUNDAY_PLUS, new SundayPlusParser(), ImportDialogOptions.allowZip().withAllowMultiple());
     }
     
 }

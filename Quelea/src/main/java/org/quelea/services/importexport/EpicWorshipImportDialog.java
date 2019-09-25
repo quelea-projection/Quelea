@@ -29,7 +29,7 @@ public class EpicWorshipImportDialog extends ImportDialog {
     public EpicWorshipImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("epicworship.import.line1")
-                }, FileFilters.EPC, new EpicWorshipParser(), false, false);
+                }, FileFilters.EPC, new EpicWorshipParser(), ImportDialogOptions.allowZip());
     }
     
 }

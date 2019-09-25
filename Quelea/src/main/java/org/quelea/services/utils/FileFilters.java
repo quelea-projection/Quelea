@@ -45,6 +45,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_EASYSLIDES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.easyslide") + " (*.xml)", "*.xml");
     /**
+     * Accept openlyrics XML files.
+     */
+    public static final FileChooser.ExtensionFilter XML_OPENLYRICS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.openlyrics") + " (*.xml)", "*.xml");
+    /**
      * Accept generic XML files.
      */
     public static final FileChooser.ExtensionFilter XML_GENERIC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.files") + " (*.xml)", "*.xml");

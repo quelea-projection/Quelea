@@ -408,6 +408,7 @@ filefilters.description.survivor.songbook=Survivor acetates file
 filefilters.description.xml.bibles=XML Bibles
 filefilters.description.xml.easyslide=XML Easyslide files
 filefilters.description.xml.files=XML files
+filefilters.description.xml.openlyrics=XML openlyrics files
 filefilters.description.video.files=Video files
 filefilters.description.pmsong.files=Presentation Manager Songs
 filefilters.description.vs.files=VideoPsalm databases

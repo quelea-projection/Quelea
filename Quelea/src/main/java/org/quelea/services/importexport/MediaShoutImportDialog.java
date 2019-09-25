@@ -33,6 +33,6 @@ public class MediaShoutImportDialog extends ImportDialog {
     public MediaShoutImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("mediashout.import.line1")
-        }, FileFilters.TXT, new MediaShoutParser(), false, false);
+        }, FileFilters.TXT, new MediaShoutParser(), ImportDialogOptions.allowZip());
     }
 }

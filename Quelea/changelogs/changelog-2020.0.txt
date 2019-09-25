@@ -6,3 +6,4 @@ quelea (2020.0) stable
   * Add Propresenter import (4, 5 and 6 supported at present)
   * Add ability to export song list
   * Fix title bug on plain text import song that only contain one section
+  * Add ability for importers to use zip file or regular file
