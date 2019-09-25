@@ -118,8 +118,8 @@ public class ProPresenterParser implements SongParser {
 	}
 
 	private Optional<String> tryAttrs(Element ele, String[] attrsToTry) {
-		for (int i = 0; i < attrsToTry.length; i++) {
-			String attrValue = ele.getAttribute(attrsToTry[i]);
+		for (String attrToTry : attrsToTry) {
+			String attrValue = ele.getAttribute(attrToTry);
 			if (attrValue != null && !attrValue.isEmpty()) {
 				return Optional.of(attrValue);
 			}
