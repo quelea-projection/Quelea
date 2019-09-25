@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
 public class ProPresenterParser implements SongParser {
 
 	private static final Logger LOGGER = LoggerUtils.getLogger();
-	private Map<Integer, Function<Node, Optional<String>>> slideTransformers;
+	private final Map<Integer, Function<Node, Optional<String>>> slideTransformers;
 
 	public ProPresenterParser() {
 		Map<Integer, Function<Node, Optional<String>>> transformers = new HashMap<>();
