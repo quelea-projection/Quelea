@@ -33,6 +33,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SURVIVOR_SONGBOOK = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.survivor.songbook") + " (acetates.pdf)", "acetates.pdf");
     /**
+     * The file filter used for the sunday plus files.
+     */
+    public static final FileChooser.ExtensionFilter SUNDAY_PLUS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.sunday.plus") + " (*.ptf)", "*.ptf");
+    /**
      * Accept XML bbibles.
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.bibles") + " (*.xml, *.xmm)", "*.xml", "*.xmm");
