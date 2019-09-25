@@ -120,8 +120,4 @@ public class VideoPsalmParser implements SongParser {
         }
     }
 
-    public static void main(String[] args) {
-        new VideoPsalmParser().getSongs(new File("C:\\users\\michael\\desktop\\x.vpc"), null);
-    }
-
 }
