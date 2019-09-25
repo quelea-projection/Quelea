@@ -24,8 +24,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
@@ -49,134 +52,140 @@ import org.xml.sax.SAXException;
 
 /**
  * Parses ProPrsenter 4, 5 and 6 XML files.
+ *
  * @author Michael
  */
 public class ProPresenterParser implements SongParser {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+	private static final Logger LOGGER = LoggerUtils.getLogger();
+	private Map<Integer, Function<Node, Optional<String>>> slideTransformers;
 
-    @Override
-    public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-        return getSong(file).map(Collections::singletonList).orElse(Collections.<SongDisplayable>emptyList());
-    }
+	public ProPresenterParser() {
+		Map<Integer, Function<Node, Optional<String>>> transformers = new HashMap<>();
+		transformers.put(4, n -> getSectionTextLegacy(n));
+		transformers.put(5, n -> getSectionTextLegacy(n));
+		transformers.put(6, n -> getSectionText6(n));
+		this.slideTransformers = Collections.unmodifiableMap(transformers);
+	}
 
-    private Optional<SongDisplayable> getSong(File file) {
-        int ppVersion = getVersion(file.getAbsolutePath());
-        if (ppVersion < 4 || ppVersion > 6) {
-            LOGGER.log(Level.WARNING, "Can only parse versions 4-6");
-            return Optional.empty();
-        }
+	@Override
+	public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
+		return getSong(file).map(Collections::singletonList).orElse(Collections.<SongDisplayable>emptyList());
+	}
 
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(file);
-            String title = getTitle(doc.getDocumentElement());
-            String author = getAuthor(doc.getDocumentElement());
+	private Optional<SongDisplayable> getSong(File file) {
+		int ppVersion = getVersion(file.getAbsolutePath());
+		if (ppVersion < 4 || ppVersion > 6) {
+			LOGGER.log(Level.WARNING, "Can only parse versions 4-6");
+			return Optional.empty();
+		}
 
-            StringBuilder lyrics = new StringBuilder();
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+			String title = getTitle(doc.getDocumentElement());
+			String author = getAuthor(doc.getDocumentElement());
 
-            NodeList slideList = doc.getElementsByTagName("RVDisplaySlide");
-            LOGGER.log(Level.INFO, "Found {0} slides", slideList.getLength());
-            for (int i = 0; i < slideList.getLength(); i++) {
-				Optional<String> slideText;
-                if (ppVersion == 5 || ppVersion == 4) {
-                    slideText = getSectionTextLegacy(slideList.item(i)).map(this::appendNewline);
-                } else if (ppVersion == 6) {
-                    slideText = getSectionText6(slideList.item(i)).map(this::appendNewline);
-                } else {
-					slideText = Optional.empty();
-				}
-				slideText.ifPresent(lyrics::append);
-            }
-            SongDisplayable song = new SongDisplayable(title, author);
-            song.setLyrics(lyrics.toString().trim());
-            return Optional.of(song);
-        } catch (IOException | ParserConfigurationException | DOMException | SAXException ex) {
-            LOGGER.log(Level.SEVERE, "Error with import", ex);
-            return Optional.empty();
-        }
-    }
-	
+			StringBuilder lyrics = new StringBuilder();
+
+			NodeList slideList = doc.getElementsByTagName("RVDisplaySlide");
+			LOGGER.log(Level.INFO, "Found {0} slides", slideList.getLength());
+			for (int i = 0; i < slideList.getLength(); i++) {
+				slideTransformers
+						.getOrDefault(ppVersion, n -> Optional.empty())
+						.apply(slideList.item(i))
+						.map(this::appendNewline)
+						.ifPresent(lyrics::append);
+			}
+			SongDisplayable song = new SongDisplayable(title, author);
+			song.setLyrics(lyrics.toString().trim());
+			return Optional.of(song);
+		} catch (IOException | ParserConfigurationException | DOMException | SAXException ex) {
+			LOGGER.log(Level.SEVERE, "Error with import", ex);
+			return Optional.empty();
+		}
+	}
+
 	private String getAuthor(Element rootElement) {
 		String[] attrsToTry = {"artist", "CCLIAuthor", "CCLIArtistCredits"};
 		return tryAttrs(rootElement, attrsToTry).orElse("");
 	}
-	
+
 	private String getTitle(Element rootElement) {
 		String[] attrsToTry = {"CCLISongTitle"};
 		return tryAttrs(rootElement, attrsToTry).orElse("Unknown");
 	}
-	
+
 	private Optional<String> tryAttrs(Element ele, String[] attrsToTry) {
-		for(int i=0 ; i<attrsToTry.length ; i++) {
+		for (int i = 0; i < attrsToTry.length; i++) {
 			String attrValue = ele.getAttribute(attrsToTry[i]);
-			if(attrValue!=null && !attrValue.isEmpty()) {
+			if (attrValue != null && !attrValue.isEmpty()) {
 				return Optional.of(attrValue);
 			}
 		}
 		return Optional.empty();
 	}
 
-    private Optional<String> getSectionTextLegacy(Node slideNode) {
-        try {
-            XPathFactory xPathfactory = XPathFactory.newInstance();
-            StringBuilder ret = new StringBuilder();
-            XPathExpression expr = xPathfactory.newXPath().compile(".//RVTextElement");
-            NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
-            LOGGER.log(Level.INFO, "Found " + lines.getLength() + " lines");
-            for (int j = 0; j < lines.getLength(); j++) {
-                Node lineNode = lines.item(j);
-                String line = new String(Base64.getDecoder().decode(lineNode.getAttributes().getNamedItem("RTFData").getTextContent()), Charset.forName("UTF-8"));
-                line = stripRtfTags(line).trim();
-                ret.append(line).append('\n');
-            }
-            return Optional.of(ret.toString());
-        } catch (XPathExpressionException | DOMException ex) {
-            LOGGER.log(Level.SEVERE, "Error with import legacy", ex);
-            return Optional.empty();
-        }
-    }
+	private Optional<String> getSectionTextLegacy(Node slideNode) {
+		try {
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			StringBuilder ret = new StringBuilder();
+			XPathExpression expr = xPathfactory.newXPath().compile(".//RVTextElement");
+			NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
+			LOGGER.log(Level.INFO, "Found " + lines.getLength() + " lines");
+			for (int j = 0; j < lines.getLength(); j++) {
+				Node lineNode = lines.item(j);
+				String line = new String(Base64.getDecoder().decode(lineNode.getAttributes().getNamedItem("RTFData").getTextContent()), Charset.forName("UTF-8"));
+				line = stripRtfTags(line).trim();
+				ret.append(line).append('\n');
+			}
+			return Optional.of(ret.toString());
+		} catch (XPathExpressionException | DOMException ex) {
+			LOGGER.log(Level.SEVERE, "Error with import legacy", ex);
+			return Optional.empty();
+		}
+	}
 
-    private Optional<String> getSectionText6(Node slideNode) {
-        try {
-            XPathFactory xPathfactory = XPathFactory.newInstance();
-            StringBuilder ret = new StringBuilder();
-            XPathExpression expr = xPathfactory.newXPath().compile(".//NSString[@rvXMLIvarName=\"PlainText\"]");
-            NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
-            for (int j = 0; j < lines.getLength(); j++) {
-                Node lineNode = lines.item(j);
-                String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName("UTF-8"));
-                ret.append(line).append('\n');
-            }
-            return Optional.of(ret.toString());
-        } catch (XPathExpressionException | DOMException ex) {
-            LOGGER.log(Level.SEVERE, "Error with import v6", ex);
-            return Optional.empty();
-        }
-    }
+	private Optional<String> getSectionText6(Node slideNode) {
+		try {
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			StringBuilder ret = new StringBuilder();
+			XPathExpression expr = xPathfactory.newXPath().compile(".//NSString[@rvXMLIvarName=\"PlainText\"]");
+			NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
+			for (int j = 0; j < lines.getLength(); j++) {
+				Node lineNode = lines.item(j);
+				String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName("UTF-8"));
+				ret.append(line).append('\n');
+			}
+			return Optional.of(ret.toString());
+		} catch (XPathExpressionException | DOMException ex) {
+			LOGGER.log(Level.SEVERE, "Error with import v6", ex);
+			return Optional.empty();
+		}
+	}
 
-    private int getVersion(String filePath) {
-        try {
-            return Integer.parseInt(Character.toString(filePath.charAt(filePath.length() - 1)));
-        } catch (NumberFormatException ex) {
-            LOGGER.log(Level.SEVERE, "Can''t work out version of {0}", filePath);
-            return -1;
-        }
-    }
+	private int getVersion(String filePath) {
+		try {
+			return Integer.parseInt(Character.toString(filePath.charAt(filePath.length() - 1)));
+		} catch (NumberFormatException ex) {
+			LOGGER.log(Level.SEVERE, "Can''t work out version of {0}", filePath);
+			return -1;
+		}
+	}
 
-    private String stripRtfTags(String text) {
-        RTFEditorKit rtfParser = new RTFEditorKit();
-        javax.swing.text.Document document = rtfParser.createDefaultDocument();
-        try {
-            rtfParser.read(new ByteArrayInputStream(text.getBytes("UTF-8")), document, 0);
-            return document.getText(0, document.getLength());
-        } catch (IOException | BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Error stripping RTF tags", ex);
-            return text;
-        }
-    }
-	
+	private String stripRtfTags(String text) {
+		RTFEditorKit rtfParser = new RTFEditorKit();
+		javax.swing.text.Document document = rtfParser.createDefaultDocument();
+		try {
+			rtfParser.read(new ByteArrayInputStream(text.getBytes("UTF-8")), document, 0);
+			return document.getText(0, document.getLength());
+		} catch (IOException | BadLocationException ex) {
+			LOGGER.log(Level.SEVERE, "Error stripping RTF tags", ex);
+			return text;
+		}
+	}
+
 	private String appendNewline(String text) {
 		return text + "\n";
 	}
