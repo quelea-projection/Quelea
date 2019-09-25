@@ -18,19 +18,29 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.importexport.OpenLyricsExporter;
 import org.quelea.services.importexport.PDFExporter;
 import org.quelea.services.importexport.QSPExporter;
 import org.quelea.services.importexport.SelectExportedSongsDialog;
+import org.quelea.services.importexport.SongListExporter;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Quelea's export menu.
@@ -41,6 +51,7 @@ public class ExportMenu extends Menu {
 
     private final MenuItem qspItem;
     private final MenuItem pdfItem;
+    private final MenuItem listItem;
     private final MenuItem openLyricsItem;
 
     /**
@@ -75,6 +86,15 @@ public class ExportMenu extends Menu {
 			dialog.showAndWait(); //This line is what takes the time for a large number of songs.
 		});
         getItems().add(pdfItem);
+
+        listItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("song.list"), new ImageView(new Image("file:icons/list.png", 16, 16, false, true)));
+        listItem.setOnAction(evt -> {
+			FileChooser fc = new FileChooser();
+			fc.getExtensionFilters().add(FileFilters.CSV);
+			fc.setSelectedExtensionFilter(FileFilters.CSV);
+			new SongListExporter().exportToFile(fc.showSaveDialog(QueleaApp.get().getMainWindow()));
+		});
+        getItems().add(listItem);
     }
 
 }

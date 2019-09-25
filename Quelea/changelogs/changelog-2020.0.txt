@@ -4,3 +4,4 @@ quelea (2020.0) stable
   * New options dialog
   * Remove USR songselect import (USR files no longer offered)
   * Add Propresenter import (4, 5 and 6 supported at present)
+  * Add ability to export song list
