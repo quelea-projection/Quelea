@@ -75,12 +75,12 @@ public class OptionsGeneralPanel {
         showSmallSongProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
         smallSongSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallSongTextSize());
         smallSongSizeControllerField = Field.ofDoubleType(smallSongSizeSpinnerProperty).render(
-                new PercentSliderControl(0.1, 0.5, 10));
+                new PercentSliderControl(0.01, 0.5, 10));
 
         showSmallBibleProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallBibleTextShow());
         smallBibleSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallBibleTextSize());
         smallBibleSizeControllerField = Field.ofDoubleType(smallBibleSizeSpinnerProperty).render(
-                new PercentSliderControl(0.1, 0.5, 10));
+                new PercentSliderControl(0.01, 0.5, 10));
 
         thumbnailSizeProperty = new SimpleIntegerProperty(QueleaProperties.get().getThumbnailSize());
         maxFontSizeProperty = new SimpleIntegerProperty((int) QueleaProperties.get().getMaxFontSize());
