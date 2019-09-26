@@ -28,7 +28,7 @@ public class ProPresenterImportDialog extends ImportDialog {
     public ProPresenterImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("propresenter.import.line1")
-                }, FileFilters.PROPRESENTER, new ProPresenterParser(), ImportDialogOptions.allowZip().withAllowMultiple());
+                }, FileFilters.PROPRESENTER, new ProPresenterParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }

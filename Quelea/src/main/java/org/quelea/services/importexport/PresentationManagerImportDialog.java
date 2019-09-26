@@ -34,7 +34,7 @@ public class PresentationManagerImportDialog extends ImportDialog {
      */
     public PresentationManagerImportDialog() {
         super(new String[]{LabelGrabber.INSTANCE.getLabel("pm.import.line1")
-        }, FileFilters.PM_SONG, new PresentationManagerParser(), ImportDialogOptions.allowZip().withAllowMultiple());
+        }, FileFilters.PM_SONG, new PresentationManagerParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 
 }

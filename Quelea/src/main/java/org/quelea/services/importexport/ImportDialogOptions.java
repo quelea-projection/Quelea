@@ -31,11 +31,11 @@ public class ImportDialogOptions {
 		return new ImportDialogOptions(false, true);
 	}
 	
-	public ImportDialogOptions withAllowMultiple() {
+	public ImportDialogOptions andAllowMultiple() {
 		return new ImportDialogOptions(true, allowZipFileSelection);
 	}
 	
-	public ImportDialogOptions withAllowZip() {
+	public ImportDialogOptions andAllowZip() {
 		return new ImportDialogOptions(allowMultipleFileSelection, true);
 	}
 
