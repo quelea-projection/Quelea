@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -1032,11 +1033,39 @@ public final class Utils {
 		return out.toString();
 	}
 
+	/**
+	 * Extract a zip file to a temporary location and retrieve a list of all
+	 * extracted files.
+	 *
+	 * @param zip the zip file to extract
+	 * @return a list of all extracted files.
+	 */
 	public static List<File> extractZip(File zip) {
-		LOGGER.log(Level.INFO, "Extracting zip file {0}", zip.getAbsolutePath());
 		try {
+			return extractZipWithCharset(zip, null);
+		} catch (Exception ex) {
+			return extractZipWithCharset(zip, Charset.forName("CP866"));
+		}
+	}
+
+	/**
+	 * Extract a zip file to a temporary location and retrieve a list of all
+	 * extracted files.
+	 *
+	 * @param zip the zip file to extract
+	 * @param charset the charset to use on this zip file
+	 * @return a list of all extracted files.
+	 */
+	private static List<File> extractZipWithCharset(File zip, Charset charset) {
+		try {
+			LOGGER.log(Level.INFO, "Extracting zip file {0}", zip.getAbsolutePath());
 			int BUFFER = 2048;
-			ZipFile zipFile = new ZipFile(zip);
+			ZipFile zipFile;
+			if (charset == null) {
+				zipFile = new ZipFile(zip);
+			} else {
+				zipFile = new ZipFile(zip, charset);
+			}
 
 			File tempFolder = Files.createTempDirectory("qzipextract").toFile();
 			tempFolder.deleteOnExit();
