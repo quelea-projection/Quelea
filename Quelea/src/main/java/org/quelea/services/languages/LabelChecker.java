@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.quelea.utils.NoDuplicateProperties;
+import org.quelea.utils.TrackDuplicateProperties;
 
 /**
  * Run as a standalone script - checks to see whether the language files are
@@ -40,25 +40,25 @@ import org.quelea.utils.NoDuplicateProperties;
  */
 public class LabelChecker {
 
-    private NoDuplicateProperties labels;
-    private NoDuplicateProperties engLabels;
+    private TrackDuplicateProperties labels;
+    private TrackDuplicateProperties engLabels;
     private String name;
     private String langName;
 
     public LabelChecker(String name) {
         this.name = name;
-        labels = new NoDuplicateProperties();
-        engLabels = new NoDuplicateProperties();
+        labels = new TrackDuplicateProperties();
+        engLabels = new TrackDuplicateProperties();
         File langFile = new File("languages", name);
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(langFile), "UTF-8")) {
-            labels.load(reader);
+            labels.loadNoDuplicates(reader);
             langName = labels.getProperty("LANGUAGENAME");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         File englangFile = new File("languages", "gb.lang");
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(englangFile), "UTF-8")) {
-            engLabels.load(reader);
+            engLabels.loadNoDuplicates(reader);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
