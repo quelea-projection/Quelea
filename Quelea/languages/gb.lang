@@ -707,3 +707,5 @@ filefilters.description.sunday.plus=Sunday plus songs
 song.list=Song list
 password.empty.label=Empty password found
 password.empty.message=The server password cannot be empty. The default password "quelea" will be used unless you enter something in the password box.
+click.to.add=Click to add
+bible.version=Bible Version
