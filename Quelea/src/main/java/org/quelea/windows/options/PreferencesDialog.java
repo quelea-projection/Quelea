@@ -23,7 +23,10 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,7 +50,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.VLCWindow;
-import org.quelea.windows.options.customprefs.*;
+import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
 
