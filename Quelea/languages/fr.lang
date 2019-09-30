@@ -731,4 +731,4 @@ propresenter.import.line1=Cela importera des chants à partir d'un fichier de ch
 propresenter.button=ProPresenter
 song.list=Liste de chant
 password.empty.message=Le mot de passe du serveur ne peut-être vide. Le mot de passe par défaut sera "quelea" sauf si vous entrez un mot de passe différent.
-password.empty.label=Empty password found
+password.empty.label=Mot de passe vide
