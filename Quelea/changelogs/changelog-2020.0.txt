@@ -8,3 +8,4 @@ quelea (2020.0) stable
   * Fix title bug on plain text import song that only contain one section
   * Add ability for importers to use zip file or regular file
   * Fix importers to accept windows-encoded zip files
+  * Fix export to PDF fonts issues (# instead of some characters)
