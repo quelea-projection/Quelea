@@ -9,3 +9,4 @@ quelea (2020.0) stable
   * Add ability for importers to use zip file or regular file
   * Fix importers to accept windows-encoded zip files
   * Fix export to PDF fonts issues (# instead of some characters)
+  * Fix non-Latin and accented character input for song lyrics on Linux systems
