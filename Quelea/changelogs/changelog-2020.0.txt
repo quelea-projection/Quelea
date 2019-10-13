@@ -10,4 +10,4 @@ quelea (2020.0) stable
   * Fix importers to accept windows-encoded zip files
   * Fix export to PDF fonts issues (# instead of some characters)
   * Fix non-Latin and accented character input for song lyrics on Linux systems
-  * Increase maximum thumbnail previews from 500 to 1000
+  * Increase maximum thumbnail preview size from 500 to 1000
