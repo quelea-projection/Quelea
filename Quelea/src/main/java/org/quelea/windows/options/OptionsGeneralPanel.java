@@ -115,7 +115,7 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"), dbSongPreviewList, dbSongPreviewProperty).customKey(dbSongPreviewKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 1000).customKey(thumbnailSizeKey)
                                 ),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("small.song.text.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSongProperty).customKey(showSmallSongTextKey),
