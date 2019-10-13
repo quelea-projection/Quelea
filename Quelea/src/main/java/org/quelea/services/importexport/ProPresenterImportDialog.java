@@ -1,7 +1,6 @@
 /* 
  * This file is part of Quelea, free projection software for churches.
  * 
- * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,15 +20,15 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 
 /**
- * The songselect import dialog, used for importing USR files from songselect.
+ * The propresenter import dialog, used for importing songs from propresenter.
  * @author Michael
  */
-public class SongSelectImportDialog extends ImportDialog {
+public class ProPresenterImportDialog extends ImportDialog {
     
-    public SongSelectImportDialog() {
+    public ProPresenterImportDialog() {
         super(new String[]{
-                    LabelGrabber.INSTANCE.getLabel("songselect.import.line1")
-                }, FileFilters.USR_SS, new SongSelectParser(), false, true);
+                    LabelGrabber.INSTANCE.getLabel("propresenter.import.line1")
+                }, FileFilters.PROPRESENTER, new ProPresenterParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }

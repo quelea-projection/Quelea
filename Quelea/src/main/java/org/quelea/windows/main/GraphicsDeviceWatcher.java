@@ -25,8 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.stage.Screen;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 //import sun.awt.X11.Screen;
@@ -54,30 +54,18 @@ public class GraphicsDeviceWatcher {
         lastDeviceCount = javafx.stage.Screen.getScreens().size();
         listeners = new ArrayList<>();
         poller = Executors.newScheduledThreadPool(1);
-        poller.scheduleAtFixedRate(new Runnable() {
-
-            @Override
-            public void run() {
-                //GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-                ObservableList<javafx.stage.Screen> monitors = javafx.stage.Screen.getScreens();
-                int thisDeviceCount = monitors.size();  // devices.length;
-                if(thisDeviceCount != lastDeviceCount) {
-                    for(GraphicsDeviceListener listener : listeners) {
-                        LOGGER.log(Level.INFO, "Number of devices changed, was {0} now {1}", new Object[]{lastDeviceCount, thisDeviceCount});
-                        if (thisDeviceCount > lastDeviceCount && QueleaProperties.get().getUseAutoExtend()) {
-                            QueleaProperties.get().setProjectorModeScreen();
-                            QueleaProperties.get().setProjectorScreen(thisDeviceCount - 1);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().update();
-                                    QueleaApp.get().getMainWindow().getOptionsDialog().getDisplaySetupPanel().getProjectorPanel().setScreen(thisDeviceCount - 1);
-                                }
-                            });
-                        }
-                        lastDeviceCount = thisDeviceCount;
-                        listener.devicesChanged(monitors);
+        poller.scheduleAtFixedRate(() -> {
+            //GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            ObservableList<Screen> monitors = Screen.getScreens();
+            int thisDeviceCount = monitors.size();  // devices.length;
+            if(thisDeviceCount != lastDeviceCount) {
+                for(GraphicsDeviceListener listener : listeners) {
+                    LOGGER.log(Level.INFO, "Number of devices changed, was {0} now {1}", new Object[]{lastDeviceCount, thisDeviceCount});
+                    if (thisDeviceCount > lastDeviceCount && QueleaProperties.get().getUseAutoExtend()) {
+                        QueleaProperties.get().setProjectorScreen(thisDeviceCount - 1);
                     }
+                    lastDeviceCount = thisDeviceCount;
+                    listener.devicesChanged(monitors);
                 }
             }
         }, 0, 3, TimeUnit.SECONDS);

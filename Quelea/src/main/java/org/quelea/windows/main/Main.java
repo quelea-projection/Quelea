@@ -27,12 +27,10 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.control.CheckBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
@@ -47,9 +45,9 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
-import org.quelea.utils.ThreadedDesktop;
 import org.quelea.utils.VLCDiscovery;
 
 /**
@@ -242,7 +240,7 @@ public final class Main extends Application {
                     }
                     OOUtils.attemptInit();
                     Platform.runLater(() -> {
-                        mainWindow = new MainWindow(true);
+                        mainWindow = new MainWindow(true, VLC_OK);
                     });
 
                     backgroundExecutor.submit(() -> {
@@ -310,14 +308,10 @@ public final class Main extends Application {
                             mainWindow.show();
                         }
                         showMonitorWarning(monitorNumber);
-                        CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getRecordingSettingsPanel().getConvertRecordingsCheckBox();
                         if (VLC_OK && VLC_INIT) {
                             VLCWindow.INSTANCE.refreshPosition();
-                            convertCheckBox.setDisable(false);
                         } else { //Couldn't find the VLC libraries.
                             QueleaProperties.get().setConvertRecordings(false);
-                            convertCheckBox.setSelected(false);
-                            convertCheckBox.setDisable(true);
                             String message;
                             if (VLC_OK) {
                                 message = LabelGrabber.INSTANCE.getLabel("vlc.version.message");
@@ -331,14 +325,10 @@ public final class Main extends Application {
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), (t) -> {
                                         vlcWarningDialog.hide();
                                     });
-                            if (java.awt.Desktop.isDesktopSupported()) {
-                                vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
-                                    ThreadedDesktop.browse("http://www.videolan.org/vlc/index.html", (ex) -> {
-                                        LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                    });
-                                    vlcWarningDialog.hide();
-                                });
-                            }
+                            vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
+                                DesktopApi.browse("http://www.videolan.org/vlc/index.html");
+                                vlcWarningDialog.hide();
+                            });
                             vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                             vlcWarningDialog.showAndWait();
                         }

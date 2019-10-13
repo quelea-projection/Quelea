@@ -46,6 +46,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A dialog where given songs can be selected.
@@ -118,7 +119,11 @@ public class SelectSongsDialog extends Stage {
         VBox.setMargin(stackAdd, new Insets(10));
         mainPanel.getChildren().add(stackAdd);
 
-        setScene(new Scene(mainPanel, 800, 600));
+        Scene scene = new Scene(mainPanel, 800, 600);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

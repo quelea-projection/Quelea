@@ -29,7 +29,7 @@ public class SongBeamerImportDialog extends ImportDialog {
     public SongBeamerImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("songbeamer.import.line1")
-                }, FileFilters.SNG, new SongBeamerParser(), false, true);
+                }, FileFilters.SNG, new SongBeamerParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }

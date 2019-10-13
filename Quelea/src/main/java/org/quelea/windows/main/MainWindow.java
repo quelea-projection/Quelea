@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -39,11 +40,14 @@ import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
-import org.quelea.windows.options.OptionsDialog;
+import org.quelea.windows.options.PreferencesDialog;
+
+import javafx.scene.Parent;
 
 /**
  * The main window used to control the projection.
  * <p/>
+ *
  * @author Michael
  */
 public class MainWindow extends Stage {
@@ -55,7 +59,7 @@ public class MainWindow extends Stage {
     private final NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
-    private final OptionsDialog optionsDialog;
+    private final PreferencesDialog preferencesDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
     private final GlobalThemeStore globalThemeStore;
@@ -63,10 +67,11 @@ public class MainWindow extends Stage {
     /**
      * Create a new main window.
      * <p/>
+     *
      * @param setApplicationWindow true if this main window should be set as the
-     * application-wide main window, false otherwise.
+     *                             application-wide main window, false otherwise.
      */
-    public MainWindow(boolean setApplicationWindow) {
+    public MainWindow(boolean setApplicationWindow, boolean hasVLC) {
         setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
         Utils.addIconsToStage(this);
         BorderPane mainPane = new BorderPane();
@@ -84,7 +89,7 @@ public class MainWindow extends Stage {
             }
         });
         LOGGER.log(Level.INFO, "Creating options dialog");
-        optionsDialog = new OptionsDialog();
+        preferencesDialog = new PreferencesDialog(QueleaApp.get().getClass(), hasVLC);
 
         LOGGER.log(Level.INFO, "Creating bible search dialog");
         bibleSearchDialog = new BibleSearchDialog();
@@ -114,10 +119,11 @@ public class MainWindow extends Stage {
         menuBox.getChildren().add(mainPane);
 
         mainPane.setCenter(mainpanel);
+        
         LOGGER.log(Level.INFO, "Setting scene info");
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
-            setScene(new Scene(menuBox, (double)sceneInfo.getWidth(), (double)sceneInfo.getHeight()));
+            setScene(getScene(menuBox, (double)sceneInfo.getWidth(), (double)sceneInfo.getHeight()));
             setWidth(sceneInfo.getWidth());
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
@@ -130,12 +136,32 @@ public class MainWindow extends Stage {
                 setMaximized(sceneInfo.isMaximised());
             }
         }
+        else {
+            setScene(getScene(menuBox));
+        }
         LOGGER.log(Level.INFO, "Created main window.");
+    }
+
+    private Scene getScene(Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        return scene;
+    }
+
+    private Scene getScene(Parent root) {
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        return scene;
     }
 
     /**
      * Get the main panel on this window.
      * <p/>
+     *
      * @return the main panel part of this window.
      */
     public MainPanel getMainPanel() {
@@ -145,6 +171,7 @@ public class MainWindow extends Stage {
     /**
      * Get the notice dialog on this main window.
      * <p/>
+     *
      * @return the notice dialog.
      */
     public NoticeDialog getNoticeDialog() {
@@ -154,15 +181,17 @@ public class MainWindow extends Stage {
     /**
      * Get the options dialog on this main window.
      * <p/>
+     *
      * @return the options dialog.
      */
-    public OptionsDialog getOptionsDialog() {
-        return optionsDialog;
+    public PreferencesDialog getPreferencesDialog() {
+        return preferencesDialog;
     }
 
     /**
      * Get the toolbar.
      * <p>
+     *
      * @return the toolbar.
      */
     public MainToolbar getMainToolbar() {
@@ -181,6 +210,7 @@ public class MainWindow extends Stage {
     /**
      * Get the bible search dialog on this main window.
      * <p/>
+     *
      * @return the bible search dialog.
      */
     public BibleSearchDialog getBibleSearchDialog() {
@@ -190,6 +220,7 @@ public class MainWindow extends Stage {
     /**
      * Get the bible browse dialog on this main window.
      * <p/>
+     *
      * @return the bible browse dialog.
      */
     public BibleBrowseDialog getBibleBrowseDialog() {
@@ -199,6 +230,7 @@ public class MainWindow extends Stage {
     /**
      * Get the new song window used for this window.
      * <p/>
+     *
      * @return the song entry window.
      */
     public SongEntryWindow getSongEntryWindow() {

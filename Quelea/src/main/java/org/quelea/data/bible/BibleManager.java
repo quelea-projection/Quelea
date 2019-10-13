@@ -112,6 +112,14 @@ public final class BibleManager {
         return bibles.toArray(new Bible[bibles.size()]);
     }
 
+    public Bible getBibleFromName(String name) {
+        for (Bible b : bibles) {
+            if (b.getName().equals(name))
+                return b;
+        }
+        return null;
+    }
+
     /**
      * Get the underlying search index used by this bible manager.
      * <p/>

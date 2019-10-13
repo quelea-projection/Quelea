@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Michael
  */
-public class LevenshteinDistance {
+public class AparapiLevenshteinDistance {
 
     public int leastCompare(String s1, String[] s2) {
         String[] arr = new String[s2.length];

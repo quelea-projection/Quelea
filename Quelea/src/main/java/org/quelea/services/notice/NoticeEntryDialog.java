@@ -208,7 +208,11 @@ public class NoticeEntryDialog extends Stage {
         BorderPane.setMargin(mainPanel, new Insets(5));
         mainPane.setCenter(mainPanel);
         mainPane.setBottom(southPanel);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     private void setNoticeRemoved() {

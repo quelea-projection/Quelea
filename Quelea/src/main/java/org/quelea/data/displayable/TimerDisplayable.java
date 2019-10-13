@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,6 +34,7 @@ import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.timer.TimerDrawer;
 import org.w3c.dom.DOMException;
@@ -42,6 +44,7 @@ import org.w3c.dom.NodeList;
 /**
  * A displayable that's a countdown timer.
  * <p>
+ *
  * @author Ben Goodwin
  */
 public class TimerDisplayable implements MultimediaDisplayable, Serializable {
@@ -60,12 +63,13 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Create a new timer displayable.
      * <p>
+     *
      * @param name
      * @param background The background of the timer
-     * @param seconds the duration of the countdown timer
-     * @param pretext any text to go before the timer
-     * @param posttext and text to go after the timer
-     * @param theme the theme to use for this displayable when displayed
+     * @param seconds    the duration of the countdown timer
+     * @param pretext    any text to go before the timer
+     * @param posttext   and text to go after the timer
+     * @param theme      the theme to use for this displayable when displayed
      */
     public TimerDisplayable(String name, Background background, int seconds, String pretext, String posttext, ThemeDTO theme) {
         this.name = name;
@@ -80,10 +84,11 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Create a new timer displayable.
      * <p/>
-     * @param seconds the duration of the countdown timer
-     * @param pretext any text to go before the timer
+     *
+     * @param seconds  the duration of the countdown timer
+     * @param pretext  any text to go before the timer
      * @param posttext and text to go after the timer
-     * @param theme the theme to use for this displayable when displayed
+     * @param theme    the theme to use for this displayable when displayed
      */
     public TimerDisplayable(String name, int seconds, String pretext, String posttext, ThemeDTO theme) {
         this(name, theme.getBackground(), seconds, pretext, posttext, theme);
@@ -92,12 +97,13 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Create a new timer displayable.
      * <p>
+     *
      * @param name
-     * @param background The background of the timer
+     * @param background   The background of the timer
      * @param timeToFinish The time to countdown to
-     * @param pretext any text to go before the timer
-     * @param posttext and text to go after the timer
-     * @param theme the theme to use for this displayable when displayed
+     * @param pretext      any text to go before the timer
+     * @param posttext     and text to go after the timer
+     * @param theme        the theme to use for this displayable when displayed
      */
     public TimerDisplayable(String name, Background background, Calendar timeToFinish, String pretext, String posttext, ThemeDTO theme) {
         this.name = name;
@@ -115,7 +121,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * @param seconds the duration of the countdown timer
      * @param pretext any text to go before the timer
      * @param posttext and text to go after the timer
-     * @param theme the theme to use for this displayable when displayed
+     * @param theme    the theme to use for this displayable when displayed
      */
     public TimerDisplayable(String name, Calendar timeToFinish, String pretext, String posttext, ThemeDTO theme) {
         this(name, theme.getBackground(), timeToFinish, pretext, posttext, theme);
@@ -124,6 +130,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Get the displayable location.
      * <p>
+     *
      * @return the displayable location.
      */
     @Override
@@ -134,6 +141,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Get the displayable name.
      * <p>
+     *
      * @return the displayable name.
      */
     @Override
@@ -141,10 +149,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         if (name != null || !name.equals("")) {
             return name;
         } else {
-            if(seconds < 0) {
+            if (seconds < 0) {
                 return timeToFinish.get(Calendar.HOUR) + ":" + (timeToFinish.get(Calendar.MINUTE) > 9 ? "" : "0") + timeToFinish.get(Calendar.AM_PM) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
-            }
-            else {
+            } else {
                 return secondsToTime(seconds) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
             }
         }
@@ -154,6 +161,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * Parse some XML representing this object and return the object it
      * represents.
      * <p>
+     *
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
@@ -198,6 +206,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Get the XML that forms this image displayable.
      * <p>
+     *
      * @return the XML.
      */
     @Override
@@ -232,16 +241,18 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Get the preview icon of this video.
      * <p>
+     *
      * @return the timer's preview icon.
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/timer-light.png", 30, 30, false, true));
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/timer-small-light.png" : "file:icons/timer-small.png", 30, 30, false, true));
     }
 
     /**
      * Get the preview text for the image.
      * <p>
+     *
      * @return the file name.
      */
     @Override
@@ -252,6 +263,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Get any resources this displayable needs.
      * <p>
+     *
      * @return the image backing this displayable.
      */
     @Override
@@ -267,6 +279,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Determine whether videos support clearing, which they don't.
      * <p>
+     *
      * @return false, always.
      */
     @Override

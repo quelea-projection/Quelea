@@ -33,6 +33,6 @@ public class WorshipHimImportDialog extends ImportDialog {
     public WorshipHimImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("worshiphim.import.line1")
-        }, FileFilters.WORSHIP_HYMN_MDB, new WorshipHimParser(), false, false);
+        }, FileFilters.WORSHIP_HYMN_MDB, new WorshipHimParser(), ImportDialogOptions.disallow());
     }
 }

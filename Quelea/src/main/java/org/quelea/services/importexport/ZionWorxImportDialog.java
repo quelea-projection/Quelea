@@ -33,7 +33,7 @@ public class ZionWorxImportDialog extends ImportDialog {
      */
     public ZionWorxImportDialog() {
         super(new String[]{LabelGrabber.INSTANCE.getLabel("zw.import.line1"), LabelGrabber.INSTANCE.getLabel("zw.import.line2")
-        }, FileFilters.MAINTABLE_DAT, new ZionWorxParser(), false, false);
+        }, FileFilters.MAINTABLE_DAT, new ZionWorxParser(), ImportDialogOptions.disallow());
     }
 
 }

@@ -38,6 +38,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
@@ -123,7 +124,11 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         hb.getChildren().addAll(confirmButton, cancelButton);
         bp.setBottom(hb);
 
-        s.setScene(new Scene(bp));
+        Scene scene = new Scene(bp);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        s.setScene(scene);
         s.setMinHeight(600);
         s.setMinWidth(250);
         s.showAndWait();

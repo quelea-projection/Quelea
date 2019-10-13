@@ -92,7 +92,7 @@ public class ThemePreviewPanel extends VBox {
                 updateThemePreviewCanvas(updateTheme);
             }
         }, Priority.LOW);
-        canvas.setPrefSize(200, 200);
+        canvas.setPrefSize(200, 160);
         updateThemePreviewCanvas(theme);
         String name;
         if (theme == ThemeDTO.DEFAULT_THEME) {
@@ -220,7 +220,7 @@ public class ThemePreviewPanel extends VBox {
     }
 
     public Image getThemePreviewImage() {
-        previewImage = new WritableImage(200, 200);
+        previewImage = new WritableImage(200, 150);
         canvas.snapshot(new SnapshotParameters(), previewImage);
         BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
         SwingFXUtils.toFXImage(bi, previewImage);

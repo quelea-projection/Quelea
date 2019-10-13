@@ -33,6 +33,6 @@ public class SurvivorImportDialog extends ImportDialog {
         super(new String[]{
                 LabelGrabber.INSTANCE.getLabel("survivor.import.line1"),
                 LabelGrabber.INSTANCE.getLabel("survivor.import.line2")
-        }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), false, false);
+        }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 }
