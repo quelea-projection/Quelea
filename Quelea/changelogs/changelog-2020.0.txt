@@ -12,3 +12,4 @@ quelea (2020.0) stable
   * Fix non-Latin and accented character input for song lyrics on Linux systems
   * Increase maximum thumbnail preview size from 500 to 1000
   * Update "Support / Discussion" link from the previous Quelea Google Group to the current Quelea Community
+  * Fix wrapping bug for Bible passages and other single-line sections in the selection lists
