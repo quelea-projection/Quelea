@@ -1,7 +1,6 @@
 /* 
  * This file is part of Quelea, free projection software for churches.
  * 
- * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,18 +20,15 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 
 /**
- * The VideoPsalm import dialog, used for importing songs from the VideoPsalm
- * library.
+ * The propresenter import dialog, used for importing songs from propresenter.
  * @author Michael
  */
-public class VideoPsalmImportDialog extends ImportDialog {
+public class ProPresenterImportDialog extends ImportDialog {
     
-    /**
-     * Create a new VideoPsalm import dialog.
-     */
-    public VideoPsalmImportDialog() {
+    public ProPresenterImportDialog() {
         super(new String[]{
-            LabelGrabber.INSTANCE.getLabel("videopsalm.import.line1")
-        }, FileFilters.VS_DB, new VideoPsalmParser(), ImportDialogOptions.allowZip().andAllowMultiple());
+                    LabelGrabber.INSTANCE.getLabel("propresenter.import.line1")
+                }, FileFilters.PROPRESENTER, new ProPresenterParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
+    
 }

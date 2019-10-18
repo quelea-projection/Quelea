@@ -306,7 +306,7 @@ public final class QueleaProperties extends Properties {
      * @return a list of user chosen fonts to appear in the theme dialog.
      */
     public List<String> getChosenFonts() {
-        String fontStr = getProperty(chosenFontsKey, "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
+        String fontStr = getProperty(chosenFontsKey, "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur|Roboto Mono|Ubuntu Mono");
         List<String> ret = new ArrayList<>();
         for (String str : fontStr.split("\\|")) {
             if (!str.trim().isEmpty()) {
@@ -1406,7 +1406,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea discussion forum.
      */
     public String getDiscussLocation() {
-        return getProperty(discussLocationKey, "https://groups.google.com/group/quelea-discuss");
+        return getProperty(discussLocationKey, "https://quelea.discourse.group/");
     }
 
     /**

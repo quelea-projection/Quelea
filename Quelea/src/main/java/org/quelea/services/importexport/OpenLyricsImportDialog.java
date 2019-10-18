@@ -33,6 +33,6 @@ public class OpenLyricsImportDialog extends ImportDialog {
     public OpenLyricsImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("openlyrics.import.line1")
-        }, FileFilters.ZIP, new OpenLyricsParser(), false, false);
+        }, FileFilters.XML_OPENLYRICS, new OpenLyricsParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 }

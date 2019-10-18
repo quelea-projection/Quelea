@@ -274,7 +274,12 @@ public class PreferenceStorageHandler implements StorageHandler {
                 if (QueleaProperties.get().getProperty(breadcrumb) != null && !QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
                 }
-                QueleaProperties.get().setProperty(breadcrumb, object.toString());
+                if (breadcrumb.equals(QueleaPropertyKeys.remoteControlPasswordKey) && object.toString().trim().isEmpty()) {
+                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("password.empty.label"), LabelGrabber.INSTANCE.getLabel("password.empty.message"), QueleaApp.get().getMainWindow());
+                    QueleaProperties.get().setProperty(breadcrumb, "quelea");
+                } else {
+                    QueleaProperties.get().setProperty(breadcrumb, object.toString());
+                }
                 break;
             case QueleaPropertyKeys.usePpKey:
                 if (QueleaProperties.get().getUsePP() != Boolean.parseBoolean(object.toString())) {
@@ -297,6 +302,10 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.smallBibleTextSizeKey:
             case QueleaPropertyKeys.smallSongTextSizeKey:
                 QueleaProperties.get().setProperty(breadcrumb, String.valueOf(Double.parseDouble(object.toString())/10));
+                break;
+            case QueleaPropertyKeys.defaultSongDbUpdateKey:
+                QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
+                break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
@@ -380,6 +389,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                     } else {
                         return LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control");
                     }
+                case QueleaPropertyKeys.defaultSongDbUpdateKey:
+                    return !QueleaProperties.get().getDefaultSongDBUpdate();
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);

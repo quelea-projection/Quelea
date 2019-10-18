@@ -33,6 +33,6 @@ public class SongProImportDialog extends ImportDialog {
     public SongProImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("songpro.import.line1")
-        }, FileFilters.SDB, new SongProParser(), false, false);
+        }, FileFilters.SDB, new SongProParser(), ImportDialogOptions.disallow());
     }
 }

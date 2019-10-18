@@ -146,7 +146,7 @@ public class NoticeDrawer {
             overlay.getChildren().add(textGroup);
             Timeline timeline = new Timeline(25);
             timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
-            double baseDuration = QueleaProperties.get().getNoticeSpeed();
+            double baseDuration = 30.0/QueleaProperties.get().getNoticeSpeed();
             if (excessWidth <= 0) {
                 timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration), new KeyValue(textGroup.translateXProperty(), 0)));
                 timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration + baseDuration / (displayWidth / width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));

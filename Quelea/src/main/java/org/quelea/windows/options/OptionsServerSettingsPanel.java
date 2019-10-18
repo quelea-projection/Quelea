@@ -81,15 +81,21 @@ public class OptionsServerSettingsPanel {
     }
 
     public Category getServerTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"), new ImageView(new Image("file:icons/serversettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"),
+                new ImageView(new Image("file:icons/serversettingsicon.png")),
                 Group.of(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyricsProperty).customKey(useMobLyricsKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), mobileLyricsField, lyricsPortNumberProperty).customKey(mobLyricsPortKey)
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyricsProperty)
+                                .customKey(useMobLyricsKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), mobileLyricsField, lyricsPortNumberProperty)
+                                .customKey(mobLyricsPortKey)
                 ),
                 Group.of(LabelGrabber.INSTANCE.getLabel("mobile.remote.heading"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.remote.control.label"), useMobileRemoteProperty).customKey(useRemoteControlKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), remoteField, remotePortNumberProperty).customKey(remoteControlPortKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("remote.control.password"), passwordProperty).customKey(remoteControlPasswordKey)
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.remote.control.label"), useMobileRemoteProperty)
+                                .customKey(useRemoteControlKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), remoteField, remotePortNumberProperty)
+                                .customKey(remoteControlPortKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("remote.control.password"), passwordProperty)
+                                .customKey(remoteControlPasswordKey)
                 )
         );
     }

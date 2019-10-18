@@ -20,16 +20,14 @@ package org.quelea.services.importexport;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
 import org.quelea.data.displayable.SongDisplayable;
@@ -46,14 +44,9 @@ public class SundayPlusParser implements SongParser {
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     @Override
-    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        final ZipFile file = new ZipFile(location);
+    public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        try {
-            final Enumeration<? extends ZipEntry> entries = file.entries();
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                String title = new File(entry.getName()).getName();
+                String title = file.getName();
                 LOGGER.log(Level.INFO, "Found {0}", title);
                 if (title.contains(".")) {
                     String[] parts = title.split("\\.");
@@ -70,7 +63,7 @@ public class SundayPlusParser implements SongParser {
                     }
                 }
 
-                try (java.util.Scanner s = new java.util.Scanner(file.getInputStream(entry))) {
+                try (java.util.Scanner s = new java.util.Scanner(new FileInputStream(file))) {
                     //This gets the string from the inputstream without messing up line endings...
                     String fileContents = s.useDelimiter("\\A").hasNext() ? s.next() : "";
                     //And this replaces all "pard" RTF control words with "par" control words, so Swing's RTF parser can understand it and extract the plain text.
@@ -83,12 +76,6 @@ public class SundayPlusParser implements SongParser {
                         ret.add(displayable);
                     }
                 }
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Error importing sunday plus", ex);
-        } finally {
-            file.close();
-        }
         return ret;
     }
 

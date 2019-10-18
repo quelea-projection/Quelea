@@ -75,12 +75,12 @@ public class OptionsGeneralPanel {
         showSmallSongProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
         smallSongSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallSongTextSize());
         smallSongSizeControllerField = Field.ofDoubleType(smallSongSizeSpinnerProperty).render(
-                new PercentSliderControl(0.1, 0.5, 10));
+                new PercentSliderControl(0.01, 0.5, 10));
 
         showSmallBibleProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallBibleTextShow());
         smallBibleSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallBibleTextSize());
         smallBibleSizeControllerField = Field.ofDoubleType(smallBibleSizeSpinnerProperty).render(
-                new PercentSliderControl(0.1, 0.5, 10));
+                new PercentSliderControl(0.01, 0.5, 10));
 
         thumbnailSizeProperty = new SimpleIntegerProperty(QueleaProperties.get().getThumbnailSize());
         maxFontSizeProperty = new SimpleIntegerProperty((int) QueleaProperties.get().getMaxFontSize());
@@ -115,7 +115,7 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"), dbSongPreviewList, dbSongPreviewProperty).customKey(dbSongPreviewKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 1000).customKey(thumbnailSizeKey)
                                 ),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("small.song.text.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSongProperty).customKey(showSmallSongTextKey),

@@ -50,6 +50,7 @@ import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
 import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
 import org.quelea.services.importexport.ElevantoImportDialog;
+import org.quelea.services.importexport.ProPresenterImportDialog;
 import org.quelea.services.importexport.ScreenMonkeyImportDialog;
 import org.quelea.services.importexport.WorshipHimImportDialog;
 import org.quelea.services.languages.LabelGrabber;
@@ -72,6 +73,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog sourceImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
+    private final ImportDialog proPresenterImportDialog;
     private final ImportDialog freeWorshipImportDialog;
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
@@ -104,6 +106,7 @@ public class ImportMenu extends Menu {
     private final MenuItem worshipHimItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
+    private final MenuItem proPresenterItem;
     private final MenuItem easyWorshipItem;
     private final MenuItem songproItem;
     private final MenuItem vsItem;
@@ -127,6 +130,7 @@ public class ImportMenu extends Menu {
         sourceImportDialog = new SourceImportDialog();
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
+        proPresenterImportDialog = new ProPresenterImportDialog();
         freeWorshipImportDialog = new FreeWorshipImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         songproImportDialog = new SongProImportDialog();
@@ -224,6 +228,11 @@ public class ImportMenu extends Menu {
             easySlidesImportDialog.show();
         });
 
+        proPresenterItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("propresenter.button"), new ImageView(new Image("file:icons/propresenter.png", 16, 16, false, true)));
+        proPresenterItem.setOnAction((ActionEvent t) -> {
+            proPresenterImportDialog.show();
+        });
+
         freeWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("freeworship.button"), new ImageView(new Image("file:icons/freeworship.png", 16, 16, false, true)));
         freeWorshipItem.setOnAction((ActionEvent t) -> {
             freeWorshipImportDialog.show();
@@ -282,6 +291,7 @@ public class ImportMenu extends Menu {
         getItems().add(pcoItem);
         getItems().add(plainTextItem);
         getItems().add(pmItem);
+        getItems().add(proPresenterItem);
         getItems().add(qspItem);
         getItems().add(smItem);
         getItems().add(sbItem);

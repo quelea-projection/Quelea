@@ -5,7 +5,7 @@ buildscript {
     dependencies {
         classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.0'
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.24.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.25.0"
     }
 }
 
@@ -198,9 +198,9 @@ dependencies {
     compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.2.0'
     compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.2.0'
     compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.2.0'
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.16'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
-    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.9'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.2'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
