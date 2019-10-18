@@ -2297,30 +2297,34 @@ public final class QueleaProperties extends Properties {
         setProperty(projectorMarginKey, margins.toString());
     }
 
-    public void setProjectorMarginTop(double value)  {
+    public void setProjectorMarginTop(double value) {
         PercentMargins prop = getProjectorMargin();
         PercentMargins newProp = new PercentMargins(value, prop.getRight(), prop.getBottom(), prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginRight(double value)  {
+    public void setProjectorMarginRight(double value) {
         PercentMargins prop = getProjectorMargin();
         PercentMargins newProp = new PercentMargins(prop.getTop(), value, prop.getBottom(), prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginBottom(double value)  {
+    public void setProjectorMarginBottom(double value) {
         PercentMargins prop = getProjectorMargin();
         PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), value, prop.getLeft());
         setProjectorMargin(newProp);
     }
 
-    public void setProjectorMarginLeft(double value)  {
+    public void setProjectorMarginLeft(double value) {
         PercentMargins prop = getProjectorMargin();
         PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), prop.getBottom(), value);
         setProjectorMargin(newProp);
     }
 
+    public boolean hasProjectorMargin() {
+        PercentMargins margins = getProjectorMargin();
+        return margins.getTop() > 0 || margins.getLeft() > 0 || margins.getBottom() > 0 || margins.getRight() > 0;
+    }
 
     public Bounds applyProjectorMargin(Bounds coords) {
         return getProjectorMargin().applyMargins(coords);

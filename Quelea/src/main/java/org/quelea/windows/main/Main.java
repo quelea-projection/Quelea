@@ -206,7 +206,9 @@ public final class Main extends Application {
                                     ),
                                     false
                             );
-                            fullScreenWindow.setFullScreenAlwaysOnTop(true);
+                            if (!QueleaProperties.get().hasProjectorMargin()) {
+                                fullScreenWindow.setFullScreenAlwaysOnTop(true);
+                            }
                         });
                     }
 
