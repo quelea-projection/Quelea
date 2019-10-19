@@ -185,12 +185,14 @@ public class PreferencesDialog extends Stage {
             }
 
             // non-custom positioned windows are fullscreen
-            if (!QueleaProperties.get().isProjectorModeCoords() && !QueleaProperties.get().hasProjectorMargin()) {
+            if (!QueleaProperties.get().isProjectorModeCoords()) {
                 if (QueleaProperties.get().getProjectorScreen() == -1) {
                     fiLyricWindow.hide();
                     VLCWindow.INSTANCE.refreshPosition();
                 } else {
-                    fiLyricWindow.setFullScreenAlwaysOnTop(true);
+                    if (!QueleaProperties.get().hasProjectorMargin()) {
+                        fiLyricWindow.setFullScreenAlwaysOnTop(true);
+                    }
                 }
             } else {
                 fiLyricWindow.setFullScreenAlwaysOnTop(false);
