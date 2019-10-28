@@ -33,6 +33,6 @@ public class VideoPsalmImportDialog extends ImportDialog {
     public VideoPsalmImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("videopsalm.import.line1")
-        }, FileFilters.VS_DB, new VideoPsalmParser(), false, false);
+        }, FileFilters.VS_DB, new VideoPsalmParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 }

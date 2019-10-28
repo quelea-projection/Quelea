@@ -55,6 +55,7 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.InputMethodRequestsObject;
 import org.quelea.windows.lyrics.LyricsTextArea;
 import org.quelea.windows.main.QueleaApp;
 
@@ -115,6 +116,12 @@ public class BasicSongPanel extends BorderPane {
         centrePanel.getChildren().add(topPanel);
         lyricsArea = new SpellTextArea();
         lyricsArea.setMaxHeight(Double.MAX_VALUE);
+        lyricsArea.getArea().getTextArea().setInputMethodRequests(new InputMethodRequestsObject(lyricsArea.getArea().getTextArea()));
+        lyricsArea.getArea().getTextArea().setOnInputMethodTextChanged(e -> {
+            if (!e.getCommitted().equals("")) {
+                lyricsArea.getArea().getTextArea().insertText(lyricsArea.getArea().getTextArea().getCaretPosition(), e.getCommitted());
+            }
+        });
 
         sequenceField = new TextField();
         sequenceButton = getSequenceButton();

@@ -26,7 +26,6 @@
         "dist/scheduleformat.xsl",
         "dist/songformat.xsl"
     ],
-    "minimizejre": "soft",
     "icon": "dist/icons/mac-logo.icns",
     "output": "out-mac/Quelea.app"
 }

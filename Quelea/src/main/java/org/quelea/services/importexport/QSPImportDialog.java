@@ -33,6 +33,6 @@ public class QSPImportDialog extends ImportDialog {
     public QSPImportDialog() {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
-        }, FileFilters.SONG_PACK, new QSPParser(), false, false);
+        }, FileFilters.SONG_PACK, new QSPParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 }
