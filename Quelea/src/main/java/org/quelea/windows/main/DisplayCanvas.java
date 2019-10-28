@@ -62,7 +62,7 @@ public class DisplayCanvas extends StackPane {
     private final Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
-    private Priority dravingPriority = Priority.LOW;
+    private Priority drawingPriority = Priority.LOW;
     private final boolean playVideo;
 
     public enum Type {
@@ -71,8 +71,6 @@ public class DisplayCanvas extends StackPane {
         PREVIEW,
         FULLSCREEN
     }
-
-    ;
 
     public enum Priority {
 
@@ -90,8 +88,6 @@ public class DisplayCanvas extends StackPane {
         }
     }
 
-    ;
-
     /**
      * Create a new canvas where the lyrics should be displayed.
      * <p/>
@@ -103,14 +99,14 @@ public class DisplayCanvas extends StackPane {
      * @param playVideo       true if this canvas should play video. (At present, only
      *                        one canvas can do this due to VLC limitations.)
      * @param updater         the updater that will update this canvas.
-     * @param dravingPriority the drawing priority of this canvas when it's
+     * @param drawingPriority the drawing priority of this canvas when it's
      *                        updating.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority drawingPriority) {
         setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
         this.playVideo = playVideo;
         this.stageView = stageView;
-        this.dravingPriority = dravingPriority;
+        this.drawingPriority = drawingPriority;
         setMinHeight(0);
         setMinWidth(0);
         background = getNewImageView();
@@ -238,10 +234,10 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
-     * @return the dravingPriority
+     * @return the drawingPriority
      */
-    public Priority getDravingPriority() {
-        return dravingPriority;
+    public Priority getDrawingPriority() {
+        return drawingPriority;
     }
 
     public interface CanvasUpdater {
