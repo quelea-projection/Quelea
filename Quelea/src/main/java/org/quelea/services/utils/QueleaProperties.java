@@ -2339,7 +2339,7 @@ public final class QueleaProperties extends Properties {
      * @param useFade true if fade should be used
      */
     public void setUseSlideTransition(boolean useFade) {
-        setProperty("use.fade", Boolean.toString(useFade));
+        setProperty(useSlideTransitionKey, Boolean.toString(useFade));
     }
 
     /**
@@ -2348,7 +2348,7 @@ public final class QueleaProperties extends Properties {
      * @return true if fade is enabled, false otherwise.
      */
     public boolean getUseSlideTransition() {
-        return Boolean.parseBoolean(getProperty("use.fade", "false"));
+        return Boolean.parseBoolean(getProperty(useSlideTransitionKey, "false"));
     }
 
     /**
@@ -2357,7 +2357,7 @@ public final class QueleaProperties extends Properties {
      * @param millis milliseconds for fade-in effect.
      */
     public void setSlideTransitionInDuration(int millis) {
-        setProperty("slide.transition.duration.in", Integer.toString(millis));
+        setProperty(slideTransitionInDurationKey, Integer.toString(millis));
     }
 
     /**
@@ -2366,7 +2366,7 @@ public final class QueleaProperties extends Properties {
      * @return milliseconds for fade-in effect.
      */
     public int getSlideTransitionInDuration() {
-        return Integer.parseInt(getProperty("slide.transition.duration.in", "750"));
+        return Integer.parseInt(getProperty(slideTransitionInDurationKey, "750"));
     }
 
     /**
@@ -2375,7 +2375,7 @@ public final class QueleaProperties extends Properties {
      * @return milliseconds for fade-out effect.
      */
     public int getSlideTransitionOutDuration() {
-        return Integer.parseInt(getProperty("slide.transition.duration.out", "400"));
+        return Integer.parseInt(getProperty(slideTransitionOutDurationKey, "400"));
     }
 
     /**
@@ -2384,7 +2384,7 @@ public final class QueleaProperties extends Properties {
      * @param millis milliseconds for fade-out effect.
      */
     public void setSlideTransitionOutDuration(int millis) {
-        setProperty("slide.transition.duration.out", Integer.toString(millis));
+        setProperty(slideTransitionOutDurationKey, Integer.toString(millis));
     }
 
     public boolean getUseDarkTheme() {
