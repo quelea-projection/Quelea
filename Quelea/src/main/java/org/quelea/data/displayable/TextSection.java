@@ -43,6 +43,7 @@ public class TextSection implements Serializable {
     private final String[] smallLines;
     private ThemeDTO theme;
     private final boolean capitaliseFirst;
+    private final boolean allUppercase;
 
     public TextSection(TextSection orig) {
         this.title = orig.title;
@@ -50,6 +51,7 @@ public class TextSection implements Serializable {
         this.smallLines = orig.smallLines;
         this.theme = orig.theme;
         this.capitaliseFirst = orig.capitaliseFirst;
+        this.allUppercase = orig.allUppercase;
     }
 
     /**
@@ -61,9 +63,13 @@ public class TextSection implements Serializable {
      * canvas for this text section
      * @param capitaliseFirst true if the first character of each line should be
      * a capital, false otherwise.
+     * @param allUppercase true if entire section should be uppercase
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
-        this(title, lines, smallLines, capitaliseFirst, null);
+        this(title, lines, smallLines, capitaliseFirst, false, null);
+    }
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, boolean allUppercase) {
+        this(title, lines, smallLines, capitaliseFirst, allUppercase, null);
     }
 
     /**
@@ -77,8 +83,9 @@ public class TextSection implements Serializable {
      * a capital, false otherwise.
      * @param theme the theme of this song section.
      */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, boolean allUppercase, ThemeDTO theme) {
         this.capitaliseFirst = capitaliseFirst;
+        this.allUppercase = allUppercase;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
         if (smallLines == null) { //Guard against NPE
@@ -228,7 +235,8 @@ public class TextSection implements Serializable {
                 }
             }
             if (toAdd != null) {
-                ret.add(toAdd);
+                if(this.allUppercase) ret.add(toAdd.toUpperCase());
+                else ret.add(toAdd);
             }
         }
         return ret.toArray(new String[ret.size()]);
@@ -355,5 +363,14 @@ public class TextSection implements Serializable {
      */
     public boolean shouldCapitaliseFirst() {
         return capitaliseFirst;
+    }
+
+    /**
+     * Determine whether all characters should be UPPERCASE
+     *
+     * @return whether this text section should be entirely uppercase or not
+     */
+    public boolean shouldUppercase() {
+        return allUppercase;
     }
 }

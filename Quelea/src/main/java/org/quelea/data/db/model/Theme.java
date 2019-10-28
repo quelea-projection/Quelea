@@ -31,6 +31,7 @@ public class Theme {
     private String backgroundimage;
     private Boolean fontBold;
     private Boolean fontItalic;
+    private Boolean fontUpperCase;
     private Boolean translateFontBold;
     private Boolean translateFontItalic;
     private Double videoHue;
@@ -44,7 +45,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isFontUpperCase, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -56,6 +57,7 @@ public class Theme {
         this.textShadow = shadow;
         this.fontBold = isFontBold;
         this.fontItalic = isFontitalic;
+        this.fontUpperCase = isFontUpperCase;
         this.translateFontBold = isTranslateFontBold;
         this.translateFontItalic = isTranslateFontitalic;
         this.videoHue = videoHue;
@@ -76,6 +78,7 @@ public class Theme {
         this.textShadow = theme.textShadow;
         this.fontBold = theme.fontBold;
         this.fontItalic = theme.fontItalic;
+        this.fontUpperCase = theme.fontUpperCase;
         this.translateFontBold = theme.translateFontBold;
         this.translateFontItalic = theme.translateFontItalic;
         this.videoHue = theme.videoHue;
@@ -312,6 +315,21 @@ public class Theme {
      */
     public void setFontItalic(Boolean isFontItalic) {
         this.fontItalic = isFontItalic;
+    }
+
+    /**
+     * @return the isFontUpperCase
+     */
+    @Column(name = "isfontuppercase")
+    public Boolean isFontUppercase() {
+        return fontUpperCase == null ? false : fontUpperCase;
+    }
+
+    /**
+     * @param isFontUppercase the isFontUppercase to set
+     */
+    public void setFontUppercase(Boolean isFontUppercase) {
+        this.fontUpperCase = isFontUppercase;
     }
 
     /**

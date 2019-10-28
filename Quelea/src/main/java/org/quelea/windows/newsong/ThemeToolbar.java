@@ -19,6 +19,7 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
@@ -79,6 +80,7 @@ public class ThemeToolbar extends HBox {
     private final FontOptionsDialog moreFontOptionsDialog;
     private final ToggleButton boldButton;
     private final ToggleButton italicButton;
+    private final ToggleButton uppercaseButton;
     private final ToggleButton leftAlignButton;
     private final ToggleButton centreAlignButton;
     private final ToggleButton rightAlignButton;
@@ -163,6 +165,14 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
+        uppercaseButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/infobig-light.png" : "file:icons/infobig.png", 15, 15, false, true)));
+        Utils.setToolbarButtonStyle(uppercaseButton);
+        uppercaseButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                themePanel.updateTheme(false);
+            }
+        });
         ToggleGroup alignGroup = new ToggleGroup();
         leftAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/leftalign-light.png" : "file:icons/leftalign.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(leftAlignButton);
@@ -202,6 +212,7 @@ public class ThemeToolbar extends HBox {
         });
         fontMid.getChildren().add(boldButton);
         fontMid.getChildren().add(italicButton);
+        fontMid.getChildren().add(uppercaseButton);
         fontMid.getChildren().add(leftAlignButton);
         fontMid.getChildren().add(centreAlignButton);
         fontMid.getChildren().add(rightAlignButton);
@@ -391,6 +402,7 @@ public class ThemeToolbar extends HBox {
         fontColor.fireEvent(new ActionEvent());
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
+        uppercaseButton.setSelected(theme.isUppercase());
         int align = theme.getTextAlignment();
         if (align == -1) {
             leftAlignButton.setSelected(true);
@@ -451,7 +463,7 @@ public class ThemeToolbar extends HBox {
         }
         final SerializableDropShadow shadow = moreFontOptionsDialog.getShadow();
         ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), moreFontOptionsDialog.getTranslateFont(), moreFontOptionsDialog.getTranslateColour(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), uppercaseButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
         return resultTheme;
     }
 

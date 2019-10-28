@@ -67,7 +67,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     public BiblePassage(String biblename, String location, BibleVerse[] verses, boolean multi) {
         this(location + "\n" + biblename, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1), multi);
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false,false, true, 3, -1), multi);
     }
 
     /**

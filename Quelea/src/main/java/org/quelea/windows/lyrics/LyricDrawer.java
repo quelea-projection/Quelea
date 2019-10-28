@@ -516,6 +516,7 @@ public class LyricDrawer extends WordDrawer {
             if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
                 line = Utils.capitaliseFirst(line);
             }
+            if(theme.isUppercase()) line=line.toUpperCase();
             sections.add(line);
         }
         return sections;
