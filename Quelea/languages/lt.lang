@@ -616,32 +616,18 @@ add.pdf.tooltip=Pridėti PDF
 importexport.options.heading=Importavimas/Eksportavimas
 preview.failed=Peržiūra nepavyko
 set.loop.manually.title=PowerPoint nerasta
-set.loop.manually.message=Pateiktis buvo užverta. Jeigu jūs norite su
-PowerPoint peržiūros programa naudoti programos Quelea ciklo funkciją,
-tuomet jums, kuriant pateiktį, reikės rankiniu būdu nustatyti, kad
-pateiktis būtų kartojama tol, kol ji bus sustabdyta.
-presentation.changed.message=Tam, kad įsigaliotų nauji pateikčių
-nustatymai, jums reikės iš naujo paleisti Quelea.
+set.loop.manually.message=Pateiktis buvo užverta. Jeigu jūs norite su PowerPoint peržiūros programa naudoti programos Quelea ciklo funkciją, tuomet jums, kuriant pateiktį, reikės rankiniu būdu nustatyti, kad pateiktis būtų kartojama tol, kol ji bus sustabdyta.
+presentation.changed.message=Tam, kad įsigaliotų nauji pateikčių nustatymai, jums reikės iš naujo paleisti Quelea.
 presentation.changed.label=Pateikčių nustatymai pakeisti
 presentation.not.started.label=PowerPoint nebuvo paleista
-presentation.not.started.message=Deja, jūsų pateikties nepavyko paleisti
-su PowerPoint. Galbūt, failas yra pažeistas?
+presentation.not.started.message=Deja, jūsų pateikties nepavyko paleisti su PowerPoint. Galbūt, failas yra pažeistas?
 pp.already.running.label=PowerPoint jau yra vykdoma
-pp.already.running.message=Buvo rastas kitas PowerPoint egzempliorius.
-Prašome, prieš programoje Quelea paleidžiant pateiktį, užverti visus
-PowerPoint programos egzempliorius, kad išvengtumėte duomenų praradimo.
+pp.already.running.message=Buvo rastas kitas PowerPoint egzempliorius. Prašome, prieš programoje Quelea paleidžiant pateiktį, užverti visus PowerPoint programos egzempliorius, kad išvengtumėte duomenų praradimo.
 pp.path.label=Kelias iki PowerPoint programos
 use.pp.label=Pateiktims naudoti PowerPoint
 close.all.presentations.label=Užverkite visas pateiktis
-close.all.presentations.message=Prašome, prieš nuspaudžiant Gerai,
-užverti visus atvertus PowerPoint langus arba kitu atveju tai bus
-atlikta automatiškai, kad būtų išvengta signalų siuntimo į klaidingą langą.
-live.text.message=Bet koks žemiau parašytas tekstas, esant tuščiam
-ekranui, bus matomas mobilių giesmės žodžių naudotojams.\n\nNorėdami
-pradėti naujoje skaidrėje, naudokite tuščią eilutę. Jūs taip pat galite
-naudoti išvalymo mygtuką (arba CTRL + Return (Vald + Įved)), kad
-atstatytumėte abiejuose galuose. Daugiau nei 200 simbolių skaidrėje,
-naudotojui bus automatiškai sutrumpinami.
+close.all.presentations.message=Prašome, prieš nuspaudžiant Gerai, užverti visus atvertus PowerPoint langus arba kitu atveju tai bus atlikta automatiškai, kad būtų išvengta signalų siuntimo į klaidingą langą.
+live.text.message=Bet koks žemiau parašytas tekstas, esant tuščiam ekranui, bus matomas mobilių giesmės žodžių naudotojams.\n\nNorėdami pradėti naujoje skaidrėje, naudokite tuščią eilutę. Jūs taip pat galite naudoti išvalymo mygtuką (arba CTRL + Return (Vald + Įved)), kad atstatytumėte abiejuose galuose. Daugiau nei 200 simbolių skaidrėje, naudotojui bus automatiškai sutrumpinami.
 live.text.title=Gyvas tekstas
 exit.live.text=Išeiti iš gyvo teksto
 clear.live.text=Išvalyti
@@ -659,8 +645,7 @@ add.multimedia.tooltip=Pridėti multimediją
 filefilters.description.multimedia.files=Multimedijos failai
 thumbnail.size.label=Miniatiūrų dydis
 focus.switcher.title=Quelea fokusavimo perjungiklis
-focus.switcher.message=Pristatymo metu, jei reikia, čia galite perjungti
-lango fokusavimą.
+focus.switcher.message=Pristatymo metu, jei reikia, čia galite perjungti lango fokusavimą.
 focus.pp=Nukreipti fokusavimą į PowerPoint
 focus.quelea=Nukreipti fokusavimą į Quelea
 website.dialog.title=Svetainės URL

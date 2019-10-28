@@ -166,7 +166,7 @@ public class PlainTextParser implements SongParser {
                                     section.add(line);
                                 }
                             } else {
-                                if (song.getTitle().equals(defaultSongTitle) && section.size() == 1) {
+                                if (song.getTitle().equals(DEFAULT_TITLE) && section.size() == 1) {
                                     song.setTitle(section.get(0));
                                 } else if (!isBlankLines(section)) {
                                     addSectionToLyrics(section, lyrics);

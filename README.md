@@ -21,7 +21,7 @@
 ## CI releases
 You can see the latest CI release [here](https://github.com/quelea-projection/Quelea/releases/tag/CI-RELEASE). Windows, Mac and Crossplatform installers are provided.
 
-If you're using Linux, then no separate download is needed. Just run `sudo snap install --edge quelea` to install the latest CI version. (You'll need to install the snappy package manager first if it's not already present on your system.)
+If you're using Linux, then no separate download is needed. Just [install snapd](https://snapcraft.io/docs/installing-snapd) and run `sudo snap install --edge quelea` to install the latest CI version.
 
 CI releases are automatically built from the latest code in this repository, and thus are not fully tested. **They should not be used in production settings.**
 

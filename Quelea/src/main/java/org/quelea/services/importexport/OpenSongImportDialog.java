@@ -34,7 +34,7 @@ public class OpenSongImportDialog extends ImportDialog {
      */
     public OpenSongImportDialog() {
         super(new String[]{LabelGrabber.INSTANCE.getLabel("os.import.line1")
-        }, FileFilters.ZIP, new OpensongParser(), false, false);
+        }, FileFilters.ZIP, new OpensongParser(), ImportDialogOptions.disallow());
     }
 
 }

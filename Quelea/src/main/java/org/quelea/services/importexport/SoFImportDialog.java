@@ -29,7 +29,7 @@ public class SoFImportDialog extends ImportDialog {
     public SoFImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("sof.import.line1")
-                }, FileFilters.RTF, new SoFParser(), false, false);
+                }, FileFilters.RTF, new SoFParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }
