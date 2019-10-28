@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
@@ -45,8 +44,9 @@ public class LyricListCell extends ListCell<TextSection> {
         header = new Text();
         header.setFont(Font.font("Verdana", FontWeight.BOLD, 11.5));
         lyrics = new Text();
+        lyrics.getStyleClass().add("text");
         layout.getChildren().addAll(header, lyrics);
-        lyrics.setFill(Color.BLACK);
+//        lyrics.setFill(Color.BLACK);
         selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             selected = newValue;
             updateState();
@@ -103,27 +103,29 @@ public class LyricListCell extends ListCell<TextSection> {
             }
             header.setText(section.getTitle());
             if (section.getTitle().toLowerCase().startsWith("chorus")) {
-                header.setFill(Color.DARKRED);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.RED : Color.DARKRED);
             } else if (section.getTitle().toLowerCase().startsWith("verse")) {
-                header.setFill(Color.DARKBLUE);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTBLUE : Color.DARKBLUE);
             } else {
-                header.setFill(Color.DARKGREEN);
+                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTGREEN : Color.DARKGREEN);
             }
         }
+        lyrics.getStyleClass().add("cell-text");
         setGraphic(layout);
     }
 
     private void updateState() {
-        if (selected && focused) {
-            lyrics.setFill(Color.WHITE);
-            setStyle("-fx-background-color:#0093ff;");
-        } else if (selected) {
-            lyrics.setFill(Color.BLACK);
-            setStyle("-fx-background-color:#D3D3D3;");
-        } else {
-            lyrics.setFill(Color.BLACK);
-            setStyle("-fx-background-color:none;");
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            if (selected && focused) {
+                lyrics.setFill(Color.WHITE);
+                setStyle("-fx-background-color:#0093ff;");
+            } else if (selected) {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:#D3D3D3;");
+            } else {
+                lyrics.setFill(Color.BLACK);
+                setStyle("-fx-background-color:none;");
+            }
         }
-
     }
 }

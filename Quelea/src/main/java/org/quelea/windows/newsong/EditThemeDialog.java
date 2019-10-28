@@ -19,23 +19,29 @@
 package org.quelea.windows.newsong;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.ThemeUtils;
 
 /**
  * A modal dialog where a theme can be edited.
@@ -50,6 +56,7 @@ public class EditThemeDialog extends Stage {
     private Button confirmButton;
     private Button cancelButton;
     private TextField nameField;
+    private ComboBox<ThemeDTO> themeCombo;
 
     /**
      * Create a new edit theme dialog.
@@ -61,16 +68,32 @@ public class EditThemeDialog extends Stage {
         setResizable(false);
 
         BorderPane mainPane = new BorderPane();
-        mainPane.setStyle("-fx-background-color:#dddddd;");
-        HBox northPanel = new HBox(5);
-        northPanel.setPadding(new Insets(5));
-        mainPane.setTop(northPanel);
-        Label themeNameLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label") + ": ");
-        themeNameLabel.setMaxHeight(Integer.MAX_VALUE);
-        themeNameLabel.setAlignment(Pos.CENTER);
-        northPanel.getChildren().add(themeNameLabel);
+        if (!QueleaProperties.get().getUseDarkTheme()) {
+            mainPane.setStyle("-fx-background-color:#dddddd;");
+        }
+
+        VBox northBox = new VBox();
+        HBox themeSelectPanel = new HBox();
+        themeSelectPanel.setPadding(new Insets(5));
+        Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.label") + ": ");
+        themeCombo = new ComboBox<>();
+        themeCombo.setOnAction(event -> {
+            setTheme(themeCombo.getSelectionModel().getSelectedItem());
+        });
+        themeCombo.setItems(ThemeUtils.getThemes());
+        ThemeDTO newTheme = ThemeDTO.DEFAULT_THEME;
+        newTheme.setThemeName("New...");
+        themeCombo.getItems().add(newTheme);
+        themeSelectPanel.getChildren().addAll(themeSelectLabel, themeCombo);
+
+        HBox themeNamePanel = new HBox(5);
+        northBox.getChildren().addAll(themeSelectPanel, themeNamePanel);
+
+        themeNamePanel.setPadding(new Insets(5));
+        mainPane.setTop(northBox);
         nameField = new TextField();
-        northPanel.getChildren().add(nameField);
+        nameField.setPromptText(LabelGrabber.INSTANCE.getLabel("theme.name.label"));
+        themeNamePanel.getChildren().add(nameField);
         panel = new ThemePanel();
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
@@ -80,10 +103,9 @@ public class EditThemeDialog extends Stage {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 String themeName;
-                if(nameField.getText().trim().isEmpty()) {
+                if (nameField.getText().trim().isEmpty()) {
                     themeName = LabelGrabber.INSTANCE.getLabel("untitled.theme.text");
-                }
-                else {
+                } else {
                     themeName = nameField.getText();
                 }
                 theme = panel.getTheme();
@@ -109,7 +131,11 @@ public class EditThemeDialog extends Stage {
         southPanel.getChildren().add(cancelButton);
         mainPane.setBottom(southPanel);
 
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**
@@ -131,13 +157,18 @@ public class EditThemeDialog extends Stage {
             theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                     ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0);
             theme.setThemeName("");
+        }
+        if (theme.getFile() == null) {
             File file;
             int filenum = 1;
             do {
-                file = new File(new File(QueleaProperties.getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
+                file = new File(new File(QueleaProperties.get().getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
                 filenum++;
             } while (file.exists());
             theme.setFile(file);
+        }
+        if (!theme.equals(themeCombo.getValue())) {
+            themeCombo.setValue(theme);
         }
         themeFile = theme.getFile();
         nameField.setText(theme.getThemeName());

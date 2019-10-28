@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.stage;
 
-import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,10 +49,12 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.Chord;
 import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.multimedia.VLCWindow;
-import org.quelea.utils.FontMetricsWrapper;
+import org.quelea.utils.FXFontMetrics;
+import org.quelea.utils.WrapTextResult;
 
 /**
  * Draw items onto a stage canvas
@@ -103,11 +104,11 @@ public class StageDrawer extends WordDrawer {
 
         List<LyricLine> newText;
         if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
+            if (text.length == 0) {
+                newText = new ArrayList<>();
+            } else {
+                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                newText = result.getNewText();
             }
         } else {
             newText = sanctifyText(text);
@@ -126,8 +127,8 @@ public class StageDrawer extends WordDrawer {
         smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
-        FontMetricsWrapper metrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(font));
-        FontMetricsWrapper smallTextMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont));
+        FXFontMetrics metrics = new FXFontMetrics(font);
+        FXFontMetrics smallTextMetrics = new FXFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
         shadow.setOffsetX(metrics.getLineHeight() * shadow.getOffsetX() * 0.003);
         shadow.setOffsetY(metrics.getLineHeight() * shadow.getOffsetY() * 0.003);
@@ -136,7 +137,7 @@ public class StageDrawer extends WordDrawer {
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
         StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
-        
+
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
             if (node instanceof Group) {
@@ -149,31 +150,51 @@ public class StageDrawer extends WordDrawer {
 
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
-        for (LyricLine line : newText) {
-            FontMetricsWrapper loopMetrics;
-            loopMetrics = metrics;
-            FormattedText t;
-            t = new FormattedText(line.getLine());
-            
-            t.setFont(font);
+        for (int i = 0; i < newText.size(); i++) {
+            LyricLine line = newText.get(i);
 
-            setPositionX(t, loopMetrics, line.getLine(), curDisplayable instanceof BiblePassage);
-            t.setLayoutY(y);
+            if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS && i < newText.size() - 1) {
+                List<Chord> chords = Chord.getChordsFromLine(line.getLine());
+                String nextLine = widenInitialSpaces(newText.get(i + 1).getLine());
 
-            Color lineColor;
-            if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS) {
-                lineColor = QueleaProperties.get().getStageChordColor();
+                FormattedText nextLineFt = new FormattedText(nextLine);
+                nextLineFt.setFont(font);
+                setPositionX(nextLineFt, metrics, nextLine);
+                
+                while (nextLine.length() < line.getLine().length()) {
+                    nextLine += " ";
+                }
+
+                for (Chord chord : chords) {
+                    FormattedText t = new FormattedText(chord.getChord());
+                    t.setFont(font);
+                    t.setLayoutX(nextLineFt.getLayoutX() + metrics.computeStringWidth(nextLine.substring(0, chord.getIdx())));
+                    t.setLayoutY(y);
+                    t.setFill(QueleaProperties.get().getStageChordColor());
+                    newTextGroup.getChildren().add(t);
+                }
+
             } else {
-                lineColor = QueleaProperties.get().getStageLyricsColor();
-            }
-            if (lineColor == null) {
-                LOGGER.log(Level.WARNING, "Warning: Font Color not initialised correctly. Using default font colour.");
-                lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
-            }
-            t.setFill(lineColor);
-            y += loopMetrics.getLineHeight() + getLineSpacing();
+                FormattedText t = new FormattedText(widenInitialSpaces(line.getLine()));
+                t.setFont(font);
+                setPositionX(t, metrics, widenInitialSpaces(line.getLine()));
+                t.setLayoutY(y);
 
-            newTextGroup.getChildren().add(t);
+                Color lineColor;
+                if (new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS) {
+                    lineColor = QueleaProperties.get().getStageChordColor();
+                } else {
+                    lineColor = QueleaProperties.get().getStageLyricsColor();
+                }
+                if (lineColor == null) {
+                    LOGGER.log(Level.WARNING, "Warning: Font Color not initialised correctly. Using default font colour.");
+                    lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
+                }
+                t.setFill(lineColor);
+                newTextGroup.getChildren().add(t);
+            }
+
+            y += metrics.getLineHeight() + getLineSpacing();
         }
 
         int sy = 0;
@@ -219,13 +240,11 @@ public class StageDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetricsWrapper metrics, String line, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FXFontMetrics metrics, String line) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
-        double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
-        double rightOffset = (getCanvas().getWidth() - width);
         if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("left"))) {
             t.setLayoutX(getCanvas().getWidth());
         } else {
@@ -259,7 +278,7 @@ public class StageDrawer extends WordDrawer {
         Image image;
         ColorAdjust colourAdjust = null;
         image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
-        
+
         Node newBackground;
         if (image == null) {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
@@ -373,40 +392,6 @@ public class StageDrawer extends WordDrawer {
     }
 
     /**
-     * Given a line of any length, sensibly split it up into several lines.
-     * <p/>
-     * @param line the line to split.
-     * @return the split line (or the unaltered line if it is less than or equal
-     * to the allowed length.
-     */
-    private List<String> splitLine(String line, int maxLength) {
-        List<String> sections = new ArrayList<>();
-        if (line.length() > maxLength) {
-            if (containsNotAtEnd(line, ";")) {
-                for (String s : splitMiddle(line, ';')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            } else if (containsNotAtEnd(line, ",")) {
-                for (String s : splitMiddle(line, ',')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            } else if (containsNotAtEnd(line, " ")) {
-                for (String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            } else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
-            }
-        } else {
-            if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
-                line = Utils.capitaliseFirst(line);
-            }
-            sections.add(line);
-        }
-        return sections;
-    }
-
-    /**
      * Determine the largest font size we can safely use for every section of a
      * text displayable.
      * <p>
@@ -515,4 +500,22 @@ public class StageDrawer extends WordDrawer {
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
     }
+    
+    private static String widenInitialSpaces(String str) {
+        StringBuilder ret = new StringBuilder(str.length());
+        boolean initialSpace = true;
+        for (int i = 0; i < str.length() ; i++) {
+            if(initialSpace && str.charAt(i)!=' '){
+                initialSpace = false;
+            }
+            if(initialSpace) {
+                ret.append('\u2000');
+            }
+            else {
+                ret.append(str.charAt(i));
+            }
+        }
+        return ret.toString();
+    }
+
 }

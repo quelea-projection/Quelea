@@ -36,6 +36,7 @@ import javafx.stage.StageStyle;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -91,14 +92,14 @@ public class QuickEditDialog extends Stage {
             public void handle(javafx.event.ActionEvent t) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 String[] sectionLyrics = sectionArea.getText().replace("<>", " ").split("\n\n");
-                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()), currentIndex);
+                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
                 for(int i = 1; i < sectionLyrics.length; i++) {
                     String[] lyrics = sectionLyrics[i].split("\n");
                     String newTitle = "";
                     if(oldSection.getTitle() != null && !oldSection.getTitle().trim().isEmpty()) {
                         newTitle = oldSection.getTitle() + " (" + LabelGrabber.INSTANCE.getLabel("part") + " " + (i + 1) + ")";
                     }
-                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()));
+                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()));
                 }
                 if(sectionArea.getText().trim().isEmpty()) {
                     currentSong.removeSection(currentIndex);
@@ -119,8 +120,12 @@ public class QuickEditDialog extends Stage {
         buttonPanel.getChildren().add(okButton);
         buttonPanel.getChildren().add(cancelButton);
         mainPane.setBottom(buttonPanel);
-        
-        setScene(new Scene(mainPane));
+
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

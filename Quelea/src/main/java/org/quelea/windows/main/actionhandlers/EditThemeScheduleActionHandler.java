@@ -32,11 +32,13 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.quelea.data.ColourBackground;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
@@ -79,10 +81,12 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         s.initOwner(QueleaApp.get().getMainWindow());
         s.resizableProperty().setValue(false);
         final BorderPane bp = new BorderPane();
-        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
+        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
-        tp.setTheme(firstSelected.getTheme());
-        confirmButton.setOnAction((ActionEvent event) -> {
+        if (firstSelected.getSections().length > 0) {
+            tp.setTheme(firstSelected.getSections()[0].getTheme());
+        }
+        confirmButton.setOnAction(e -> {
             if (tp.getTheme() != null) {
                 ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
                 tp.updateTheme(false);
@@ -108,7 +112,7 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
             }
             s.hide();
         });
-        cancelButton.setOnAction((ActionEvent event) -> {
+        cancelButton.setOnAction(e -> {
             s.hide();
         });
         bp.setCenter(tp);
@@ -120,7 +124,11 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         hb.getChildren().addAll(confirmButton, cancelButton);
         bp.setBottom(hb);
 
-        s.setScene(new Scene(bp));
+        Scene scene = new Scene(bp);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        s.setScene(scene);
         s.setMinHeight(600);
         s.setMinWidth(250);
         s.showAndWait();

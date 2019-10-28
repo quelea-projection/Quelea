@@ -29,6 +29,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -42,6 +43,7 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The spelling dialog used for correcting misspelt words.
@@ -101,13 +103,13 @@ public class SpellingDialog {
                 String replaceWord = wordsToCorrect.iterator().next();
                 correctedWords.put(replaceWord, suggestions.getSelectionModel().getSelectedItem());
                 StringBuilder replaceText = new StringBuilder();
-                for(String line : area.getArea().getText().split("\n")) {
+                for(String line : area.getArea().getTextArea().getText().split("\n")) {
                     if(new LineTypeChecker(line).getLineType() != Type.CHORDS) {
                         line = line.replace(replaceWord, suggestions.getSelectionModel().getSelectedItem());
                     }
                     replaceText.append(line).append("\n");
                 }
-                area.getArea().replaceText(replaceText.toString().trim());
+                area.getArea().getTextArea().replaceText(replaceText.toString().trim());
                 wordsToCorrect.remove(replaceWord);
                 nextWord();
             }
@@ -144,7 +146,11 @@ public class SpellingDialog {
         centrePanel.getChildren().add(suggestions);
         mainPane.setLeft(centrePanel);
         mainPane.setPadding(new Insets(5));
-        dialogStage.setScene(new Scene(mainPane, 300, 200));
+        Scene scene = new Scene(mainPane, 300, 200);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        dialogStage.setScene(scene);
     }
 
     /**
@@ -183,11 +189,15 @@ public class SpellingDialog {
             });
             doneSpellingStage.initModality(Modality.WINDOW_MODAL);
             VBox spellingBox = new VBox();
-            spellingBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")));
+            spellingBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")));
             spellingBox.getChildren().add(ok);
             spellingBox.setAlignment(Pos.CENTER);
             spellingBox.setPadding(new Insets(15));
-            doneSpellingStage.setScene(new Scene(spellingBox));
+            Scene scene = new Scene(spellingBox);
+            if (QueleaProperties.get().getUseDarkTheme()) {
+                scene.getStylesheets().add("org/modena_dark.css");
+            }
+            doneSpellingStage.setScene(scene);
             doneSpellingStage.show();
             return;
         }
@@ -203,15 +213,16 @@ public class SpellingDialog {
             upper = origPieces.size() - 1;
         }
         textPane.getChildren().clear();
-        textPane.getChildren().add(new Text("..."));
+        textPane.getChildren().add(new Label("..."));
         for(String str : origPieces.subList(lower, upper + 1)) {
             Text text = new Text(str + " ");
+            text.getStyleClass().add("text");
             if(str.equals(replaceWord)) {
                 text.setFill(Color.RED);
             }
             textPane.getChildren().add(text);
         }
-        textPane.getChildren().add(new Text("..."));
+        textPane.getChildren().add(new Label("..."));
         suggestions.getItems().clear();
         for(String suggestion : speller.getSuggestions(replaceWord)) {
             suggestions.getItems().add(suggestion);

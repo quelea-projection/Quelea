@@ -17,7 +17,7 @@
  */
 package org.quelea.services.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 
@@ -44,7 +44,7 @@ public class SongDuplicateChecker {
             //System.out.println(i + " of " + newSongs.length);
             SongDisplayable newSong = newSongs[i];
             String newLyrics = newSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
-            int distance = new LevenshteinDistance().leastCompare(newLyrics, songLyrics);
+            int distance = new AparapiLevenshteinDistance().leastCompare(newLyrics, songLyrics);
             if(distance<30) {
                 sameArr[i] = true;
             }
@@ -74,7 +74,7 @@ public class SongDuplicateChecker {
             else {
                 maxDistance = databaseLyrics.length() / 10;
             }
-            if(StringUtils.getLevenshteinDistance(databaseLyrics, newLyrics) <= maxDistance) {
+            if(new LevenshteinDistance().apply(databaseLyrics, newLyrics) <= maxDistance) {
                 return true;
             }
         }

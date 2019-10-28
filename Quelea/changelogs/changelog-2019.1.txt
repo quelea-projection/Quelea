@@ -1,0 +1,19 @@
+quelea (2019.1) stable
+ 
+  * Fix icon for Mac releases
+  * Fix permission on Mac release
+  * Fix fop cache permissions on some systems
+  * Fix help links on Linux
+  * Search bibles & songs in diacritic-insensitive manner
+  * Change aspect ratio on global themes panel to 4:3 rather than square
+  * Fix PDF chord alignment for songs
+  * Add dark theme option
+  * Fix full screen issue on Mac
+  * Fix plain text parser to use file name as title if no title is given in document
+  * Fix OpenLyrics import to map section titles correctly
+  * Fix logo displaying state bug
+  * Add missing attributes for OpenLP databases
+  * Fix unreadable bible text bug on stage view
+  * Fix chord alignment for lines that had chords before the lyrics started
+  * Fix presentation scaling bug
+  * Fix transpose error for D#

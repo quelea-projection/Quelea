@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
@@ -79,7 +80,6 @@ public class Dialog extends Stage {
 
         public Builder create() {
             stage = new Dialog();
-            stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setIconified(false);
             stage.centerOnScreen();
@@ -118,6 +118,9 @@ public class Dialog extends Stage {
             });
 
             stage.scene = new Scene(stage.borderPanel);
+            if (QueleaProperties.get().getUseDarkTheme()) {
+                stage.scene.getStylesheets().add("org/modena_dark.css");
+            }
             stage.setScene(stage.scene);
             return this;
         }

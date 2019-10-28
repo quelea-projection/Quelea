@@ -21,11 +21,9 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -70,22 +68,15 @@ public class SelectLyricsPanel extends AbstractPanel {
         lyricsList = new SelectLyricsList();
         previewCanvas = new DisplayCanvas(false, false, false, this::updateCanvas, Priority.LOW);
         DisplayPreview preview = new DisplayPreview(previewCanvas);
-        splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(preview);
         setCenter(splitPane);
         registerDisplayCanvas(previewCanvas);
-        lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
-            @Override
-            public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
-                updateCanvas();
-            }
+        lyricsList.getSelectionModel().selectedItemProperty().addListener((ov, t1, t2) -> {
+            updateCanvas();
         });
-        lyricsList.itemsProperty().addListener(new ChangeListener<ObservableList<TextSection>>() {
-            @Override
-            public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
-                updateCanvas();
-            }
+        lyricsList.itemsProperty().addListener((ov, t1, t2) -> {
+            updateCanvas();
         });
 //        
     }
@@ -251,12 +242,10 @@ public class SelectLyricsPanel extends AbstractPanel {
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-            if (currentSection.getTempTheme() != null) {
-                drawer.setTheme(currentSection.getTempTheme());
-            } else {
-                ThemeDTO newTheme = currentSection.getTheme();
-                drawer.setTheme(newTheme);
-            }
+            GlobalThemeStore themeStore = QueleaApp.get().getMainWindow().getGlobalThemeStore();
+            
+            drawer.setTheme(themeStore.getTheme((TextDisplayable)getCurrentDisplayable(), currentSection));
+            
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);
             canvas.setCurrentDisplayable(getCurrentDisplayable());

@@ -358,7 +358,7 @@ public final class SequenceSelectionDialog extends Stage {
     }
 
     private List<String> getAllSections() {
-        String lyrics = QueleaApp.get().getMainWindow().getSongEntryWindow().getBasicSongPanel().getLyricsField().getText();
+        String lyrics = QueleaApp.get().getMainWindow().getSongEntryWindow().getBasicSongPanel().getLyricsField().getTextArea().getText();
         List<String> list = new ArrayList<>();
         for (String s : lyrics.split("\n")) {
             if (new LineTypeChecker(s).getLineType() == LineTypeChecker.Type.TITLE) {

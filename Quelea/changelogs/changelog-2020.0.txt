@@ -1,0 +1,3 @@
+quelea (2020.0) stable
+ 
+  * Fix Openlyrics import when more than one "lines" tag specified per verse

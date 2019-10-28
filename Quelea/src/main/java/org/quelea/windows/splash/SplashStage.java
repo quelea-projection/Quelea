@@ -17,19 +17,13 @@
  */
 package org.quelea.windows.splash;
 
-import com.sun.javafx.tk.Toolkit;
+import java.io.File;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -37,7 +31,6 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.utils.FontMetricsWrapper;
 
 /**
  * The splash screen to display when the program starts.
@@ -54,25 +47,15 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Image splashImage;
-        if (QueleaProperties.VERSION.getUnstableName().toLowerCase().startsWith("beta")) {
-            splashImage = new Image("file:icons/splash-beta.png");
-        } else {
-            splashImage = new Image("file:icons/splash-bare.png");
-        }
+        Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
         ImageView imageView = new ImageView(splashImage);
-        Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
-        FontMetricsWrapper loadingMetrics = new FontMetricsWrapper(Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont));
-        LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#ffffff")));
-        loadingText.setFill(loadingGrad);
-        loadingText.setFont(loadingFont);
-        loadingText.setLayoutX(splashImage.getWidth() / 2 - loadingMetrics.computeStringWidth(loadingText.getText()) / 2);
-        loadingText.setLayoutY(270);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
-        mainPane.getChildren().add(loadingText);
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
 
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;

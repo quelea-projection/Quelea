@@ -3,6 +3,7 @@ package org.quelea.windows.newsong;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -28,6 +29,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import org.apache.poi.ss.formula.functions.T;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -36,6 +38,7 @@ import org.quelea.services.utils.Utils;
  * The dialog that allows the user to select a subset of fonts to display in the
  * theme panel.
  * <p>
+ *
  * @author Michael
  */
 public class FontSelectionDialog extends Stage {
@@ -60,7 +63,11 @@ public class FontSelectionDialog extends Stage {
             }
         });
         BorderPane mainPane = new BorderPane();
-        setScene(new Scene(mainPane));
+        Scene scene = new Scene(mainPane);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
 
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("chosen.fonts.explanation"));
         label.setWrapText(true);
@@ -76,7 +83,9 @@ public class FontSelectionDialog extends Stage {
         allFontSelection.setMaxHeight(Integer.MAX_VALUE);
         VBox allFontBox = new VBox(5);
         allFontBox.setPadding(new Insets(5));
-        allFontBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("ignored.fonts.label") + ": "));
+        Text text = new Text(LabelGrabber.INSTANCE.getLabel("ignored.fonts.label") + ": ");
+        text.getStyleClass().add("text");
+        allFontBox.getChildren().add(text);
         allFontBox.getChildren().add(allFontSelection);
         centrePane.getChildren().add(allFontBox);
 
@@ -84,7 +93,9 @@ public class FontSelectionDialog extends Stage {
         chosenFontSelection.setMaxHeight(Integer.MAX_VALUE);
         VBox chosenFontBox = new VBox(5);
         chosenFontBox.setPadding(new Insets(5));
-        chosenFontBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("chosen.fonts.label") + ": "));
+        Text choseFontLabel = new Text(LabelGrabber.INSTANCE.getLabel("chosen.fonts.label") + ": ");
+        choseFontLabel.getStyleClass().add("text");
+        chosenFontBox.getChildren().add(choseFontLabel);
         chosenFontBox.getChildren().add(chosenFontSelection);
         centrePane.getChildren().add(chosenFontBox);
 
@@ -104,8 +115,8 @@ public class FontSelectionDialog extends Stage {
         String[] allFonts = Utils.getAllFonts();
         List<String> chosenFontsList = QueleaProperties.get().getChosenFonts();
         List<String> allFontsList = new ArrayList<>();
-        for(String fontName : allFonts) {
-            if(!chosenFontsList.contains(fontName)) {
+        for (String fontName : allFonts) {
+            if (!chosenFontsList.contains(fontName)) {
                 allFontsList.add(fontName);
             }
         }
@@ -123,10 +134,9 @@ public class FontSelectionDialog extends Stage {
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
                         setGraphic(null);
-                        if(empty) {
+                        if (empty) {
                             setText(null);
-                        }
-                        else {
+                        } else {
                             setText(item);
                         }
                     }
@@ -155,10 +165,9 @@ public class FontSelectionDialog extends Stage {
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
                         setGraphic(null);
-                        if(empty) {
+                        if (empty) {
                             setText(null);
-                        }
-                        else {
+                        } else {
                             setText(item);
                         }
                     }
@@ -183,7 +192,7 @@ public class FontSelectionDialog extends Stage {
         allFontSelection.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                if(event.getDragboard().getString() != null) {
+                if (event.getDragboard().getString() != null) {
                     event.acceptTransferModes(TransferMode.ANY);
                 }
             }
@@ -192,9 +201,9 @@ public class FontSelectionDialog extends Stage {
 
             @Override
             public void handle(DragEvent t) {
-                if(!dragFromLeft) {
+                if (!dragFromLeft) {
                     String font = t.getDragboard().getString();
-                    if(font != null) {
+                    if (font != null) {
                         chosenFontSelection.getItems().remove(font);
                         allFontSelection.getItems().add(font);
                         Collections.sort(allFontSelection.getItems());
@@ -205,7 +214,7 @@ public class FontSelectionDialog extends Stage {
         chosenFontSelection.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                if(event.getDragboard().getString() != null) {
+                if (event.getDragboard().getString() != null) {
                     event.acceptTransferModes(TransferMode.ANY);
                 }
             }
@@ -214,9 +223,9 @@ public class FontSelectionDialog extends Stage {
 
             @Override
             public void handle(DragEvent t) {
-                if(dragFromLeft) {
+                if (dragFromLeft) {
                     String font = t.getDragboard().getString();
-                    if(font != null) {
+                    if (font != null) {
                         chosenFontSelection.getItems().add(font);
                         Collections.sort(chosenFontSelection.getItems());
                         allFontSelection.getItems().remove(font);
@@ -230,6 +239,7 @@ public class FontSelectionDialog extends Stage {
 
     /**
      * Get a list of the user chosen fonts.
+     *
      * @return the user chosen fonts.
      */
     public List<String> getChosenFonts() {

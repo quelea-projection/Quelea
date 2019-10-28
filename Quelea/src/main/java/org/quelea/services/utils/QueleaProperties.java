@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -37,31 +38,43 @@ import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 /**
  * Manages the properties specific to Quelea.
  * <p>
+ *
  * @author Michael
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2018.1", "");
-    private static final QueleaProperties INSTANCE = new QueleaProperties();
+    public static final Version VERSION = new Version("2020.0", VersionType.RELEASE);
+    private static QueleaProperties INSTANCE;
+    private String userHome;
 
-    /**
-     * Load the properties from the properties file.
-     */
-    private QueleaProperties() {
+    public static void init(String userHome) {
+        INSTANCE = new QueleaProperties(userHome);
         try {
-            if (!getPropFile().exists()) {
-                getPropFile().createNewFile();
+            if (!get().getPropFile().exists()) {
+                get().getPropFile().createNewFile();
             }
-            try (StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
-                load(reader);
+            try (StringReader reader = new StringReader(Utils.getTextFromFile(get().getPropFile().getAbsolutePath(), ""))) {
+                get().load(reader);
             }
         } catch (IOException ex) { //Never mind.
         }
     }
 
     /**
+     * Load the properties from the properties file.
+     */
+    private QueleaProperties(String userHome) {
+        if (userHome != null && !userHome.isEmpty()) {
+            this.userHome = userHome;
+        } else {
+            this.userHome = System.getProperty("user.home");
+        }
+    }
+
+    /**
      * Get the properties file.
      * <p>
+     *
      * @return the properties file.
      */
     private File getPropFile() {
@@ -82,6 +95,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the singleton instance of this class.
      * <p>
+     *
      * @return the instance.
      */
     public static QueleaProperties get() {
@@ -92,20 +106,22 @@ public final class QueleaProperties extends Properties {
      * Get the languages file that should be used as specified in the properties
      * file.
      * <p>
+     *
      * @return the languages file for the GUI.
      */
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
-    
+
     public boolean isDictionaryEnabled() {
         return Boolean.parseBoolean(getProperty("enable.dict", "false"));
     }
-    
+
     /**
      * Get the languages file that should be used as specified in the properties
      * file.
      * <p>
+     *
      * @return the languages file for the GUI.
      */
     public Dictionary getDictionary() {
@@ -123,18 +139,20 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the name of the language file to use.
      * <p>
+     *
      * @param file the name of the language file to use.
      */
     public void setLanguageFile(String file) {
         setProperty("language.file", file);
         write();
     }
-    
+
     /**
      * Get the english languages file that should be present on all
      * installations. We can default to this if labels are missing in other
      * languages.
      * <p>
+     *
      * @return the english languages file for the GUI.
      */
     public File getEnglishLanguageFile() {
@@ -163,6 +181,7 @@ public final class QueleaProperties extends Properties {
      * Get the scene info as stored from the last exit of Quelea (or some
      * default values if it doesn't exist in the properties file.)
      * <p>
+     *
      * @return the scene info.
      */
     public SceneInfo getSceneInfo() {
@@ -186,6 +205,7 @@ public final class QueleaProperties extends Properties {
      * before exit so the next invocation of the program can display the window
      * in the same position.
      * <p>
+     *
      * @param info the scene info.
      */
     public void setSceneInfo(SceneInfo info) {
@@ -201,6 +221,10 @@ public final class QueleaProperties extends Properties {
      */
     public double getMainDivPos() {
         return Double.parseDouble(getProperty("main.divpos", "-1"));
+    }
+
+    public String getElevantoClientId() {
+        return getProperty("elevanto.client.id", "91955");
     }
 
     /**
@@ -275,6 +299,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get a list of user chosen fonts to appear in the theme dialog.
      * <p>
+     *
      * @return a list of user chosen fonts to appear in the theme dialog.
      */
     public List<String> getChosenFonts() {
@@ -291,6 +316,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set a list of user chosen fonts to appear in the theme dialog.
      * <p>
+     *
      * @param fonts the list of user chosen fonts to appear in the theme dialog.
      */
     public void setChosenFonts(List<String> fonts) {
@@ -310,6 +336,7 @@ public final class QueleaProperties extends Properties {
      * displayable - this can stop the sizes jumping all over the place
      * depending on how much text there is per slide.
      * <p>
+     *
      * @return true if the uniform font size should be used, false otherwise.
      */
     public boolean getUseUniformFontSize() {
@@ -321,6 +348,7 @@ public final class QueleaProperties extends Properties {
      * displayable - this can stop the sizes jumping all over the place
      * depending on how much text there is per slide.
      * <p>
+     *
      * @param val true if the uniform font size should be used, false otherwise.
      */
     public void setUseUniformFontSize(boolean val) {
@@ -330,6 +358,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Determine if we should show verse numbers for bible passages.
      * <p>
+     *
      * @return true if we should show verse numbers, false otherwise.
      */
     public boolean getShowVerseNumbers() {
@@ -339,6 +368,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set if we should show verse numbers for bible passages.
      * <p>
+     *
      * @param val true if we should show verse numbers, false otherwise.
      */
     public void setShowVerseNumbers(boolean val) {
@@ -470,6 +500,69 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Sets whether item themes can override the global theme.
+     *
+     * @param val true if should override, false otherwise
+     */
+    public void setItemThemeOverride(boolean val) {
+        setProperty("item.theme.override", val + "");
+    }
+
+    /**
+     * Gets whether item themes can override the global theme.
+     *
+     * @return true if should override, false otherwise
+     */
+    public boolean getItemThemeOverride() {
+        boolean ret = Boolean.parseBoolean(getProperty("item.theme.override", "false"));
+        return ret;
+    }
+
+    /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalSongThemeFile(File file) {
+        if (file == null) {
+            setProperty("global.song.theme.file", "");
+        } else {
+            setProperty("global.song.theme.file", file.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalSongThemeFile() {
+        String path = getProperty("global.song.theme.file");
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the currently selected global theme file.
+     */
+    public void setGlobalBibleThemeFile(File file) {
+        if (file == null) {
+            setProperty("global.bible.theme.file", "");
+        } else {
+            setProperty("global.bible.theme.file", file.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Get the currently selected global theme file.
+     */
+    public File getGlobalBibleThemeFile() {
+        String path = getProperty("global.bible.theme.file");
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
      * Set the last directory used in the schedule file chooser.
      *
      * @param directory the last directory used in the schedule file chooser.
@@ -566,6 +659,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Determine if we should attempt to fetch translations automatically.
      * <p>
+     *
      * @return true if we should translate automatically, false otherwise.
      */
     public boolean getAutoTranslate() {
@@ -575,6 +669,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set if we should attempt to fetch translations automatically.
      * <p>
+     *
      * @param val true if we should translate automatically, false otherwise.
      */
     public void setAutoTranslate(boolean val) {
@@ -584,6 +679,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the maximum font size used by text displayables.
      * <p>
+     *
      * @return the maximum font size used by text displayables.
      */
     public double getMaxFontSize() {
@@ -593,6 +689,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the maximum font size used by text displayables.
      * <p>
+     *
      * @param fontSize the maximum font size used by text displayables.
      */
     public void setMaxFontSize(double fontSize) {
@@ -602,6 +699,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the additional line spacing (in pixels) to be used between each line.
      * <p>
+     *
      * @return the additional line spacing.
      */
     public double getAdditionalLineSpacing() {
@@ -611,6 +709,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the additional line spacing (in pixels) to be used between each line.
      * <p>
+     *
      * @param spacing the additional line spacing.
      */
     public void setAdditionalLineSpacing(double spacing) {
@@ -620,6 +719,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the thumbnail size.
      * <p>
+     *
      * @return the thumbnail size.
      */
     public int getThumbnailSize() {
@@ -629,15 +729,17 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the thumbnail size.
      * <p>
+     *
      * @param thumbnailSize the thumbnail size.
      */
     public void setThumbnailSize(int thumbnailSize) {
         setProperty("thumbnail.size", Integer.toString(thumbnailSize));
     }
-    
+
     /**
      * Get the show extra live panel toolbar options setting.
      * <p>
+     *
      * @return the true to show extra toolbar options.
      */
     public boolean getShowExtraLivePanelToolbarOptions() {
@@ -647,17 +749,19 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the show extra live panel toolbar options setting.
      * <p>
+     *
      * @param show the extra options or leave them hidden.
      */
     public void setShowExtraLivePanelToolbarOptions(boolean show) {
         setProperty("show.extra.live.panel.toolbar.options", Boolean.toString(show));
     }
-    
+
     /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
      * until something replaces it.
      * <p>
+     *
      * @return true if it should be cleared, false otherwise.
      */
     public boolean getClearLiveOnRemove() {
@@ -669,6 +773,7 @@ public final class QueleaProperties extends Properties {
      * live view, whether it should be removed from the live view or kept until
      * something replaces it.
      * <p>
+     *
      * @param val true if it should be cleared, false otherwise.
      */
     public void setClearLiveOnRemove(boolean val) {
@@ -678,6 +783,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the location of Quelea's Facebook page.
      * <p>
+     *
      * @return the location of the facebook page.
      */
     public String getFacebookPageLocation() {
@@ -687,6 +793,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the location of Quelea's Facebook page.
      * <p>
+     *
      * @return the location of the facebook page.
      */
     public String getWikiPageLocation() {
@@ -696,10 +803,11 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the Quelea home directory in the user's directory.
      * <p>
+     *
      * @return the Quelea home directory.
      */
-    public static File getQueleaUserHome() {
-        File ret = new File(new File(System.getProperty("user.home")), ".quelea");
+    public File getQueleaUserHome() {
+        File ret = new File(new File(userHome), ".quelea");
         if (!ret.exists()) {
             ret.mkdir();
         }
@@ -709,29 +817,11 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the user's turbo db exe converter file.
      * <p>
+     *
      * @return the user's turbo db exe converter.
      */
-    public static File getTurboDBExe() {
-        return new File(QueleaProperties.getQueleaUserHome(), "TdbDataX.exe");
-    }
-
-    /**
-     * Get the number of the next kingsway song that should be imported.
-     * <p>
-     * @return the number of the next song.
-     */
-    public int getNextKingswaySong() {
-        return Integer.parseInt(getProperty("next.kingsway.song", "1"));
-    }
-
-    /**
-     * Set the number of the next kingsway song that should be imported.
-     * <p>
-     * @param num the number of the next song.
-     */
-    public void setNextKingswaySong(int num) {
-        setProperty("next.kingsway.song", Integer.toString(num));
-        write();
+    public File getTurboDBExe() {
+        return new File(getQueleaUserHome(), "TdbDataX.exe");
     }
 
     public int getTranslationFontSizeOffset() {
@@ -741,6 +831,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the font to use for stage text.
      * <p>
+     *
      * @return the font to use for stage text.
      */
     public String getStageTextFont() {
@@ -750,6 +841,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the font to use for stage text.
      * <p>
+     *
      * @param font the font to use for stage text.
      */
     public void setStageTextFont(String font) {
@@ -760,6 +852,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the alignment of the text on stage view.
      * <p>
+     *
      * @return the alignment of the text on stage view.
      */
     public String getStageTextAlignment() {
@@ -769,6 +862,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the alignment of the text on stage view.
      * <p>
+     *
      * @param alignment the alignment of the text on stage view.
      */
     public void setStageTextAlignment(TextAlignment alignment) {
@@ -779,6 +873,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get whether we should display the chords in stage view.
      * <p>
+     *
      * @return true if they should be displayed, false otherwise.
      */
     public boolean getShowChords() {
@@ -788,6 +883,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether we should display the chords in stage view.
      * <p>
+     *
      * @param showChords true if they should be displayed, false otherwise.
      */
     public void setShowChords(boolean showChords) {
@@ -800,6 +896,7 @@ public final class QueleaProperties extends Properties {
      * information. Simply put phonehome=false in the properties file to disable
      * phonehome.
      * <p>
+     *
      * @return true if we should phone home, false otherwise.
      */
     public boolean getPhoneHome() {
@@ -809,6 +906,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the directory used for storing the bibles.
      * <p>
+     *
      * @return the bibles directory.
      */
     public File getBibleDir() {
@@ -818,6 +916,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the directory used for storing images.
      * <p>
+     *
      * @return the img directory
      */
     public File getImageDir() {
@@ -827,6 +926,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the directory used for storing dictionaries.
      * <p>
+     *
      * @return the dictionaries directory
      */
     public File getDictionaryDir() {
@@ -836,15 +936,17 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the directory used for storing videos.
      * <p>
+     *
      * @return the vid directory
      */
     public File getVidDir() {
         return new File(getQueleaUserHome(), "vid");
     }
-    
+
     /**
      * Get the directory used for storing temporary recordings.
      * <p>
+     *
      * @return the temp directory
      */
     public File getTempDir() {
@@ -854,6 +956,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the extension used for quelea schedules.
      * <p>
+     *
      * @return the extension used for quelea schedules.
      */
     public String getScheduleExtension() {
@@ -863,6 +966,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the extension used for quelea song packs.
      * <p>
+     *
      * @return the extension used for quelea song packs.
      */
     public String getSongPackExtension() {
@@ -873,6 +977,7 @@ public final class QueleaProperties extends Properties {
      * Get the number of the screen used for the control screen. This is the
      * screen that the main Quelea operator window will be displayed on.
      * <p>
+     *
      * @return the control screen number.
      */
     public int getControlScreen() {
@@ -882,6 +987,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the control screen output.
      * <p>
+     *
      * @param screen the number of the screen to use for the output.
      */
     public void setControlScreen(int screen) {
@@ -892,6 +998,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the one line mode.
      * <p>
+     *
      * @return true if one line mode should be enabled, false otherwise.
      */
     public boolean getOneLineMode() {
@@ -901,6 +1008,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the one line mode property.
      * <p>
+     *
      * @param val the value of the one linde mode.
      */
     public void setOneLineMode(boolean val) {
@@ -911,6 +1019,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the text shadow property.
      * <p>
+     *
      * @return true if text shadows are enabled, false otherwise.
      */
     public boolean getTextShadow() {
@@ -920,6 +1029,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the text shadow property.
      * <p>
+     *
      * @param val true if text shadows are enabled, false otherwise.
      */
     public void setTextShadow(boolean val) {
@@ -931,6 +1041,7 @@ public final class QueleaProperties extends Properties {
      * Get the number of the projector screen. This is the screen that the
      * projected output will be displayed on.
      * <p>
+     *
      * @return the projector screen number.
      */
     public int getProjectorScreen() {
@@ -940,17 +1051,19 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the control screen output.
      * <p>
+     *
      * @param screen the number of the screen to use for the output.
      */
     public void setProjectorScreen(int screen) {
         setProperty("projector.screen", Integer.toString(screen));
         write();
     }
-    
+
     /**
      * Determine whether the projection screen automatically should be moved to
      * a recently inserted monitor.
      * * <p/>
+     *
      * @return true if the projector screen should be moved, false otherwise.
      */
     public boolean getUseAutoExtend() {
@@ -961,6 +1074,7 @@ public final class QueleaProperties extends Properties {
      * Set whether the projection screen automatically should be moved to a
      * recently inserted monitor.
      * * <p/>
+     *
      * @param extend true if it should automatically move projection screen,
      * false otherwise.
      */
@@ -972,6 +1086,7 @@ public final class QueleaProperties extends Properties {
      * Get the maximum number of characters allowed on any one line of projected
      * text. If the line is longer than this, it will be split up intelligently.
      * <p>
+     *
      * @return the maximum number of characters allowed on any one line of
      * projected text.
      */
@@ -982,6 +1097,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the max chars value.
      * <p>
+     *
      * @param maxChars the maximum number of characters allowed on any one line
      * of projected text.
      */
@@ -993,6 +1109,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the custom projector co-ordinates.
      * <p>
+     *
      * @return the co-ordinates.
      */
     public Bounds getProjectorCoords() {
@@ -1006,6 +1123,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the custom projector co-ordinates.
      * <p>
+     *
      * @param coords the co-ordinates to set.
      */
     public void setProjectorCoords(Bounds coords) {
@@ -1022,6 +1140,7 @@ public final class QueleaProperties extends Properties {
      * Determine if the projector mode is set to manual co-ordinates or a screen
      * number.
      * <p>
+     *
      * @return true if it's set to manual co-ordinates, false if it's a screen
      * number.
      */
@@ -1049,6 +1168,7 @@ public final class QueleaProperties extends Properties {
      * Get the number of the stage screen. This is the screen that the projected
      * output will be displayed on.
      * <p>
+     *
      * @return the stage screen number.
      */
     public int getStageScreen() {
@@ -1058,6 +1178,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the stage screen output.
      * <p>
+     *
      * @param screen the number of the screen to use for the output.
      */
     public void setStageScreen(int screen) {
@@ -1068,6 +1189,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the custom stage screen co-ordinates.
      * <p>
+     *
      * @return the co-ordinates.
      */
     public Bounds getStageCoords() {
@@ -1081,6 +1203,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the custom stage screen co-ordinates.
      * <p>
+     *
      * @param coords the co-ordinates to set.
      */
     public void setStageCoords(Bounds coords) {
@@ -1097,6 +1220,7 @@ public final class QueleaProperties extends Properties {
      * Determine if the stage mode is set to manual co-ordinates or a screen
      * number.
      * <p>
+     *
      * @return true if it's set to manual co-ordinates, false if it's a screen
      * number.
      */
@@ -1126,6 +1250,7 @@ public final class QueleaProperties extends Properties {
      * amount of lines can fit on. This stops small lines becoming huge in the
      * preview window rather than displaying normally.
      * <p>
+     *
      * @return the minimum line count.
      */
     public int getMinLines() {
@@ -1135,6 +1260,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the min lines value.
      * <p>
+     *
      * @param minLines the minimum line count.
      */
     public void setMinLines(int minLines) {
@@ -1146,6 +1272,7 @@ public final class QueleaProperties extends Properties {
      * Determine whether the single monitor warning should be shown (this warns
      * the user they only have one monitor installed.)
      * <p>
+     *
      * @return true if the warning should be shown, false otherwise.
      */
     public boolean showSingleMonitorWarning() {
@@ -1155,6 +1282,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether the single monitor warning should be shown.
      * <p>
+     *
      * @param val true if the warning should be shown, false otherwise.
      */
     public void setSingleMonitorWarning(boolean val) {
@@ -1165,6 +1293,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the URL to download Quelea.
      * <p>
+     *
      * @return the URL to download Quelea.
      */
     public String getDownloadLocation() {
@@ -1174,6 +1303,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the URL to the Quelea website.
      * <p>
+     *
      * @return the URL to the Quelea website.
      */
     public String getWebsiteLocation() {
@@ -1183,15 +1313,17 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the URL to the Quelea discussion forum.
      * <p>
+     *
      * @return the URL to the Quelea discussion forum.
      */
     public String getDiscussLocation() {
-        return getProperty("discuss.location", "https://groups.google.com/group/quelea-discuss");
+        return getProperty("discuss.location", "http://quelea.discourse.group");
     }
 
     /**
      * Get the URL to the Quelea feedback form.
      * <p>
+     *
      * @return the URL to the Quelea feedback form.
      */
     public String getFeedbackLocation() {
@@ -1201,16 +1333,18 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the URL used for checking the latest version.
      * <p>
+     *
      * @return the URL used for checking the latest version.
      */
     public String getUpdateURL() {
-        return "http://quelea.org/update/index.html";
+        return "https://quelea-projection.github.io/changelog";
     }
 
     /**
      * Determine whether we should check for updates each time the program
      * starts.
      * <p>
+     *
      * @return true if we should check for updates, false otherwise.
      */
     public boolean checkUpdate() {
@@ -1220,6 +1354,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether we should check for updates each time the program starts.
      * <p>
+     *
      * @param val true if we should check for updates, false otherwise.
      */
     public void setCheckUpdate(boolean val) {
@@ -1231,6 +1366,7 @@ public final class QueleaProperties extends Properties {
      * Determine whether the first letter of all displayed lines should be a
      * capital.
      * <p>
+     *
      * @return true if it should be a capital, false otherwise.
      */
     public boolean checkCapitalFirst() {
@@ -1240,6 +1376,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether the first letter of all displayed lines should be a capital.
      * <p>
+     *
      * @param val true if it should be a capital, false otherwise.
      */
     public void setCapitalFirst(boolean val) {
@@ -1250,6 +1387,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Determine whether the song info text should be displayed.
      * <p>
+     *
      * @return true if it should be a displayed, false otherwise.
      */
     public boolean checkDisplaySongInfoText() {
@@ -1259,6 +1397,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether the song info text should be displayed.
      * <p>
+     *
      * @param val true if it should be displayed, false otherwise.
      */
     public void setDisplaySongInfoText(boolean val) {
@@ -1269,6 +1408,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the default bible to use.
      * <p>
+     *
      * @return the default bible.
      */
     public String getDefaultBible() {
@@ -1278,6 +1418,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the default bible.
      * <p>
+     *
      * @param bible the default bible.
      */
     public void setDefaultBible(Bible bible) {
@@ -1288,6 +1429,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the colour used to display chords in stage view.
      * <p>
+     *
      * @return the colour used to display chords in stage view.
      */
     public Color getStageChordColor() {
@@ -1297,6 +1439,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the colour used to display chords in stage view.
      * <p>
+     *
      * @param color the colour used to display chords in stage view.
      */
     public void setStageChordColor(Color color) {
@@ -1306,6 +1449,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the colour used to display lyrics in stage view.
      * <p>
+     *
      * @return the colour used to display lyrics in stage view.
      */
     public Color getStageLyricsColor() {
@@ -1315,6 +1459,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the colour used to display lyrics in stage view.
      * <p>
+     *
      * @param color the colour used to display lyrics in stage view.
      */
     public void setStageLyricsColor(Color color) {
@@ -1324,6 +1469,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the colour used for the background in stage view.
      * <p>
+     *
      * @param color the colour used for the background in stage view.
      */
     public void setStageBackgroundColor(Color color) {
@@ -1333,6 +1479,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the colour used for the background in stage view.
      * <p>
+     *
      * @return the colour used for the background in stage view.
      */
     public Color getStageBackgroundColor() {
@@ -1342,6 +1489,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get a color from a string.
      * <p>
+     *
      * @param str the string to use to get the color value.
      * @return the color.
      */
@@ -1361,6 +1509,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get a color value as a string.
      * <p>
+     *
      * @param color the color to get as a string.
      * @return the color as a string.
      */
@@ -1371,6 +1520,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the colour used to signify an active list.
      * <p>
+     *
      * @return the colour used to signify an active list.
      */
     public Color getActiveSelectionColor() {
@@ -1380,6 +1530,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the colour used to signify an active list.
      * <p>
+     *
      * @return the colour used to signify an active list.
      */
     public Color getInactiveSelectionColor() {
@@ -1389,6 +1540,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the thickness of the outline to use for displaying the text.
      * <p>
+     *
      * @return the outline thickness in pixels.
      */
     public int getOutlineThickness() {
@@ -1398,6 +1550,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the outline thickness.
      * <p>
+     *
      * @param px the outline thickness in pixels.
      */
     public void setOutlineThickness(int px) {
@@ -1408,6 +1561,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the notice box height (px).
      * <p>
+     *
      * @return the notice box height.
      */
     public int getNoticeBoxHeight() {
@@ -1417,6 +1571,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the notice box height (px).
      * <p>
+     *
      * @param height the notice box height.
      */
     public void setNoticeBoxHeight(int height) {
@@ -1427,6 +1582,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the notice box speed.
      * <p>
+     *
      * @return the notice box speed.
      */
     public int getNoticeBoxSpeed() {
@@ -1436,6 +1592,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the notice box speed.
      * <p>
+     *
      * @param speed the notice box speed.
      */
     public void setNoticeBoxSpeed(int speed) {
@@ -1447,6 +1604,7 @@ public final class QueleaProperties extends Properties {
      * Get the specially treated words that are auto-capitalised by the song
      * importer when deciding how to un-caps-lock a line of text.
      * <p>
+     *
      * @return the array of God words, separated by commas in the properties
      * file.
      */
@@ -1462,6 +1620,7 @@ public final class QueleaProperties extends Properties {
      * Determine whether to advance the scheudle item when the current item is
      * sent live.
      * <p>
+     *
      * @return true if we should auto-advance, false otherwise.
      */
     public boolean getAdvanceOnLive() {
@@ -1472,6 +1631,7 @@ public final class QueleaProperties extends Properties {
      * Set whether to advance the scheudle item when the current item is sent
      * live.
      * <p>
+     *
      * @param val true if we should auto-advance, false otherwise.
      */
     public void setAdvanceOnLive(boolean val) {
@@ -1483,6 +1643,7 @@ public final class QueleaProperties extends Properties {
      * Determine whether to preview the scheudle item when the background image
      * has been updated.
      * <p>
+     *
      * @return true if we should preview, false otherwise.
      */
     public boolean getPreviewOnImageUpdate() {
@@ -1493,6 +1654,7 @@ public final class QueleaProperties extends Properties {
      * Determine whether to preview the scheudle item when the background image
      * has been updated.
      * <p>
+     *
      * @param val true if we should preview, false otherwise.
      */
     public void setPreviewOnImageUpdate(boolean val) {
@@ -1503,6 +1665,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get whether to use openoffice for presentations.
      * <p>
+     *
      * @return true if we should use openoffice, false if we should just use the
      * basic POI images.
      */
@@ -1513,6 +1676,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether to use openoffice for presentations.
      * <p>
+     *
      * @param val if we should use openoffice, false if we should just use the
      * basic POI images.
      */
@@ -1524,6 +1688,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the path to the openoffice installation on this machine.
      * <p>
+     *
      * @return the path to the openoffice installation on this machine.
      */
     public String getOOPath() {
@@ -1533,16 +1698,18 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the path to the openoffice installation on this machine.
      * <p>
+     *
      * @param path the path to the openoffice installation on this machine.
      */
     public void setOOPath(String path) {
         setProperty("oo.path", path);
         write();
     }
-    
+
     /**
      * Get whether to use PowerPoint for presentations.
      * <p/>
+     *
      * @return true if we should use PowerPoint, false if we should just use the
      * basic POI images or openoffice.
      */
@@ -1553,6 +1720,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether to use PowerPoint for presentations.
      * <p/>
+     *
      * @param val if we should use PowerPoint, false if we should just use the
      * basic POI images or openoffice.
      */
@@ -1564,6 +1732,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the path to the PowerPoint installation on this machine.
      * <p/>
+     *
      * @return the path to the PowerPoint installation on this machine.
      */
     public String getPPPath() {
@@ -1573,16 +1742,18 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the path to the PowerPoint installation on this machine.
      * <p/>
+     *
      * @param path the path to the PowerPoint installation on this machine.
      */
     public void setPPPath(String path) {
         setProperty("pp.path", path);
         write();
     }
-    
-     /**
+
+    /**
      * Get the path to the desired direcotry for recordings.
      * <p>
+     *
      * @return the path to the desired direcotry for recordings.
      */
     public String getRecordingsPath() {
@@ -1592,16 +1763,18 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the path to the desired direcotry for recordings.
      * <p>
+     *
      * @param path the path to the desired direcotry for recordings.
      */
     public void setRecordingsPath(String path) {
         setProperty("rec.path", path);
         write();
     }
-    
+
     /**
      * Get the path to the desired directory for downloading.
      * <p/>
+     *
      * @return the path to the desired directory for recordings.
      */
     public String getDownloadPath() {
@@ -1611,25 +1784,28 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the path to the desired directory for downloading.
      * <p/>
+     *
      * @param path the path to the desired directory for downloading.
      */
     public void setDownloadPath(String path) {
         setProperty("download.path", path);
         write();
     }
-    
+
     /**
      * Determine if the recordings should be converted to MP3 files.
      * <p>
+     *
      * @return true if recordings should be converted, false otherwise.
      */
     public boolean getConvertRecordings() {
         return Boolean.parseBoolean(getProperty("convert.mp3", "false"));
     }
-    
+
     /**
      * Set whether to automatically convert the recordings to MP3 files.
      * <p>
+     *
      * @param val if we should use covert to MP#, false if we should just store
      * recordings as WAV files.
      */
@@ -1642,6 +1818,7 @@ public final class QueleaProperties extends Properties {
      * Determine if the OO presentation should be always on top or not. Not user
      * controlled, but useful for testing.
      * <p>
+     *
      * @return true if the presentation should be always on top, false
      * otherwise.
      */
@@ -1652,6 +1829,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Sets the logo image location for persistent use
      * <p>
+     *
      * @param location File location
      */
     public void setLogoImage(String location) {
@@ -1662,6 +1840,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Return the location of the logo image
      * <p>
+     *
      * @return the logo image
      */
     public String getLogoImageURI() {
@@ -1671,6 +1850,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Sets the port used for mobile lyrics display.
      * <p>
+     *
      * @param port the port used for mobile lyrics display.
      */
     public void setMobLyricsPort(int port) {
@@ -1681,6 +1861,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Gets the port used for mobile lyrics display.
      * <p>
+     *
      * @return the port used for mobile lyrics display.
      */
     public int getMobLyricsPort() {
@@ -1690,6 +1871,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Determine if we should use mobile lyrics.
      * <p>
+     *
      * @return true if we should, false otherwise.
      */
     public boolean getUseMobLyrics() {
@@ -1699,6 +1881,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set if we should use mobile lyrics.
      * <p>
+     *
      * @param val true if we should, false otherwise.
      */
     public void setUseMobLyrics(boolean val) {
@@ -1714,6 +1897,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Determine if we should set up remote control server.
      * <p>
+     *
      * @return true if we should, false otherwise.
      */
     public boolean getUseRemoteControl() {
@@ -1723,6 +1907,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Gets the port used for remote control server.
      * <p>
+     *
      * @return the port used for mobile lyrics display.
      */
     public int getRemoteControlPort() {
@@ -1847,6 +2032,7 @@ public final class QueleaProperties extends Properties {
      * Get the maximum number of characters allowed on any one line of bible
      * text.
      * <p>
+     *
      * @return the maximum number of characters allowed on any one line of bible
      * text.
      */
@@ -1857,6 +2043,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Set the max bible chars value.
      * <p>
+     *
      * @param maxChars the maximum number of characters allowed on any one line
      * of bible text.
      */
@@ -1868,6 +2055,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the fade duration of the logo button text.
      * <p>
+     *
      * @return the duration of the fade in milliseconds text.
      */
     public int getLogoFadeDuration() {
@@ -1883,6 +2071,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the fade duration of the black button text.
      * <p>
+     *
      * @return the duration of the fade in milliseconds text.
      */
     public int getBlackFadeDuration() {
@@ -1898,6 +2087,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the fade duration of the clear button text.
      * <p>
+     *
      * @return the duration of the fade in milliseconds text.
      */
     public int getClearFadeDuration() {
@@ -1913,6 +2103,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the Translate ID from the properties file
      * <p>
+     *
      * @return the translate ID
      */
     public String getTranslateClientID() {
@@ -1928,6 +2119,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the Translate secret key from the properties file
      * <p>
+     *
      * @return the translate secret key
      */
     public String getTranslateClientSecret() {
@@ -1952,6 +2144,7 @@ public final class QueleaProperties extends Properties {
     /**
      * Get the directory used for storing countdown timers.
      * <p>
+     *
      * @return the timer directory
      */
     public File getTimerDir() {
@@ -1996,37 +2189,71 @@ public final class QueleaProperties extends Properties {
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
-    
+
     public boolean getDefaultSongDBUpdate() {
         return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
     }
-    
+
+    public boolean getShowDBSongPreview() {
+        return Boolean.parseBoolean(getProperty("db.song.preview", "false"));
+    }
+
+    public void setShowDBSongPreview(boolean val) {
+        setProperty("db.song.preview", Boolean.toString(val));
+    }
+
+    public boolean getImmediateSongDBPreview() {
+        return Boolean.parseBoolean(getProperty("db.song.immediate.preview", "false"));
+    }
+
+    public void setImmediateSongDBPreview(boolean val) {
+        setProperty("db.song.immediate.preview", Boolean.toString(val));
+    }
+
     public void setDefaultSongDBUpdate(boolean updateInDB) {
         setProperty("default.song.db.update", Boolean.toString(updateInDB));
         write();
     }
-    
+
     public int getWebDisplayableRefreshRate() {
         return Integer.parseInt(getProperty("web.refresh.rate", "500"));
     }
-    
+
     public String getWebProxyHost() {
         return getProperty("web.proxy.host", null);
     }
-    
+
     public String getWebProxyPort() {
         return getProperty("web.proxy.port", null);
     }
-    
+
     public String getWebProxyUser() {
         return getProperty("web.proxy.user", null);
     }
-    
+
     public String getWebProxyPassword() {
         return getProperty("web.proxy.password", null);
     }
-    
+
     public String getChurchCcliNum() {
         return getProperty("church.ccli.num", null);
+    }
+
+    /**
+     * Get the directory used for storing notices.
+     * <p>
+     *
+     * @return the notice directory
+     */
+    public File getNoticeDir() {
+        return new File(getQueleaUserHome(), "notices");
+    }
+
+    public boolean getUseDarkTheme() {
+        return Boolean.parseBoolean(getProperty("use.dark.theme", "false"));
+    }
+
+    public void setUseDarkTheme(boolean useDarkTheme) {
+        setProperty("use.dark.theme", String.valueOf(useDarkTheme));
     }
 }

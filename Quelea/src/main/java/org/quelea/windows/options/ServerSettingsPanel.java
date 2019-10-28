@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -58,19 +60,23 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+
 import javax.imageio.ImageIO;
+
+import org.apache.poi.ss.formula.functions.T;
 import org.quelea.server.RCHandler;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * The panel that shows the mobile lyrics and remote control options.
  * <p>
+ *
  * @author Michael and Ben
  */
 public class ServerSettingsPanel extends GridPane implements PropertyPanel {
@@ -150,16 +156,16 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(mlPortNumTextField, 2, 2);
         getChildren().add(mlPortNumTextField);
         HBox mobBox = new HBox(5);
-        mobBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.mob.url.label") + ": "));
+        Text navigateMobileLabel = new Text(LabelGrabber.INSTANCE.getLabel("navigate.mob.url.label") + ": ");
+        navigateMobileLabel.getStyleClass().add("text");
+        mobBox.getChildren().add(navigateMobileLabel);
         Text mobUrlLabel = new Text(getMLURL());
-        if (Desktop.isDesktopSupported() && getMLURL().startsWith("http")) {
+        if (getMLURL().startsWith("http")) {
             mobUrlLabel.setCursor(Cursor.HAND);
-            mobUrlLabel.setFill(Color.BLUE);
+            mobUrlLabel.setFill(Color.rgb(0, 152, 255));
             mobUrlLabel.setStyle("-fx-underline: true;");
             mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                ThreadedDesktop.browse(getMLURL(), (ex) -> {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getMLURL());
-                });
+                DesktopApi.browse(getMLURL());
             });
         }
         mobBox.getChildren().add(mobUrlLabel);
@@ -265,16 +271,16 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(rcPortNumTextField, 2, 5);
         getChildren().add(rcPortNumTextField);
         HBox rcBox = new HBox(5);
-        rcBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.remote.control.label") + ": "));
+        Text navigateRemoteLabel = new Text(LabelGrabber.INSTANCE.getLabel("navigate.remote.control.label") + ": ");
+        navigateRemoteLabel.getStyleClass().add("text");
+        rcBox.getChildren().add(navigateRemoteLabel);
         Text rcUrlLabel = new Text(getRCURL());
-        if (Desktop.isDesktopSupported() && getRCURL().startsWith("http")) {
+        if (getRCURL().startsWith("http")) {
             rcUrlLabel.setCursor(Cursor.HAND);
-            rcUrlLabel.setFill(Color.BLUE);
+            rcUrlLabel.setFill(Color.rgb(0, 152, 255));
             rcUrlLabel.setStyle("-fx-underline: true;");
             rcUrlLabel.setOnMouseClicked((MouseEvent t) -> {
-                ThreadedDesktop.browse(getRCURL(), (ex) -> {
-                    LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getMLURL());
-                });
+                DesktopApi.browse(getRCURL());
             });
         }
         rcBox.getChildren().add(rcUrlLabel);

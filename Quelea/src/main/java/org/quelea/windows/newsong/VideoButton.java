@@ -20,6 +20,7 @@ package org.quelea.windows.newsong;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.logging.Level;
@@ -71,53 +72,50 @@ public class VideoButton extends Button implements Cancellable {
         final File vidDir = QueleaProperties.get().getVidDir();
         fileChooser.setInitialDirectory(vidDir);
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
-        setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if (selectedFile != null) {
-                    QueleaProperties.get().setLastDirectory(selectedFile.getParentFile());
-                    copyStage.showAndAssociate(VideoButton.this);
-                    copyThread = new Thread() {
-                        public void run() {
-                            boolean interrupt = false;
-                            File newFile = new File(vidDir, selectedFile.getName());
-                            try {
-                                if (!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
-                                    VideoButton.copyFile(selectedFile.getAbsolutePath(), newFile.getAbsolutePath());
-                                }
-                            } catch (Exception ex) {
-                                LOGGER.log(Level.INFO, "Interrupted copying vid file", ex);
-                                newFile.delete();
-                                interrupt = true;
+        setOnAction(t -> {
+            File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
+            if (selectedFile != null) {
+                QueleaProperties.get().setLastDirectory(selectedFile.getParentFile());
+                copyStage.showAndAssociate(VideoButton.this);
+                copyThread = new Thread() {
+                    public void run() {
+                        boolean interrupt = false;
+                        File newFile = new File(vidDir, selectedFile.getName());
+                        try {
+                            if (!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
+                                VideoButton.copyFile(selectedFile.getAbsolutePath(), newFile.getAbsolutePath());
                             }
-
-                            if (!interrupt) {
-                                Platform.runLater(() -> {
-                                    copyStage.hide();
-                                    vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
-                                    videoLocationField.setText(vidLocation);
-                                    LyricDrawer drawer = new LyricDrawer();
-                                    drawer.setCanvas(canvas);
-                                    ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                                            drawer.getTheme().getFontPaint(),
-                                            new SerializableFont(drawer.getTheme().getTranslateFont()),
-                                            drawer.getTheme().getTranslateFontPaint(),
-                                            new VideoBackground(vidLocation, 0, false),
-                                            drawer.getTheme().getShadow(),
-                                            drawer.getTheme().isBold(),
-                                            drawer.getTheme().isItalic(),
-                                            drawer.getTheme().isTranslateBold(),
-                                            drawer.getTheme().isTranslateItalic(),
-                                            drawer.getTheme().getTextPosition(),
-                                            drawer.getTheme().getTextAlignment());
-                                    drawer.setTheme(theme);
-                                });
-                            }
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.INFO, "Interrupted copying vid file", ex);
+                            newFile.delete();
+                            interrupt = true;
                         }
-                    };
-                    copyThread.start();
-                }
+                        
+                        if (!interrupt) {
+                            Platform.runLater(() -> {
+                                copyStage.hide();
+                                vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
+                                videoLocationField.setText(vidLocation);
+                                LyricDrawer drawer = new LyricDrawer();
+                                drawer.setCanvas(canvas);
+                                ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
+                                        drawer.getTheme().getFontPaint(),
+                                        new SerializableFont(drawer.getTheme().getTranslateFont()),
+                                        drawer.getTheme().getTranslateFontPaint(),
+                                        new VideoBackground(vidLocation, 0, false),
+                                        drawer.getTheme().getShadow(),
+                                        drawer.getTheme().isBold(),
+                                        drawer.getTheme().isItalic(),
+                                        drawer.getTheme().isTranslateBold(),
+                                        drawer.getTheme().isTranslateItalic(),
+                                        drawer.getTheme().getTextPosition(),
+                                        drawer.getTheme().getTextAlignment());
+                                drawer.setTheme(theme);
+                            });
+                        }
+                    }
+                };
+                copyThread.start();
             }
         });
     }
@@ -140,7 +138,7 @@ public class VideoButton extends Button implements Cancellable {
 
             ByteBuffer buff = ByteBuffer.allocate(4096);
             while (fin.read(buff) != -1 || buff.position() > 0) {
-                buff.flip();
+                ((Buffer) buff).flip();
                 fout.write(buff);
                 buff.compact();
             }

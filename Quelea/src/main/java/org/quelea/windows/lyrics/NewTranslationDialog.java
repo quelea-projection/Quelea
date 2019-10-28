@@ -37,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -119,7 +120,11 @@ public class NewTranslationDialog extends Stage {
         VBox.setVgrow(buttonWrapperPane, Priority.ALWAYS);
         rootVBox.getChildren().add(spacer);
         rootVBox.getChildren().add(buttonWrapperPane);
-        setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
         setResizable(false);
     }
 

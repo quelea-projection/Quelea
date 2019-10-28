@@ -33,7 +33,6 @@ import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.imagegroup.ImageGroupSlide;
-import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;

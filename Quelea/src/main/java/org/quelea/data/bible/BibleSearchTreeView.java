@@ -91,6 +91,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                 int x = selected.getNum() - 1;
                 for (int i = 0; i < verses.length; i++) {
                     Text text = new Text(verses[i].toString() + " ");
+                    text.getStyleClass().add("text");
                     if (i == x) {
                         text.setFont(Font.font("Sans", FontWeight.BOLD, 14));
                     } else {

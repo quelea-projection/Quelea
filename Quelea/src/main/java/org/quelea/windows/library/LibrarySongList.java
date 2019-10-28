@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.library;
 
-import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,25 +25,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
+import org.apache.poi.ss.formula.functions.T;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
@@ -66,6 +63,7 @@ public class LibrarySongList extends StackPane {
     private final LibraryPopupMenu popupMenu;
     private ListView<SongDisplayable> songList;
     private LoadingPane loadingOverlay;
+    private LibrarySongPreviewCanvas previewCanvas;
     private AddSongPromptOverlay addSongOverlay;
 
     /**
@@ -84,61 +82,98 @@ public class LibrarySongList extends StackPane {
         getChildren().add(songList);
         getChildren().add(addSongOverlay);
         addSongOverlay.show();
-        songList.itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
-
-            @Override
-            public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
-                if (songList.getItems().isEmpty()) {
-                    addSongOverlay.show();
-                } else {
-                    addSongOverlay.hide();
-                }
+        songList.itemsProperty().addListener((val, oldList, newList) -> {
+            if (songList.getItems().isEmpty()) {
+                addSongOverlay.show();
+            } else {
+                addSongOverlay.hide();
             }
         });
         getChildren().add(loadingOverlay);
-        Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
-            @Override
-            public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
-                final TextFieldListCell<SongDisplayable> cell = new TextFieldListCell<>(new StringConverter<SongDisplayable>() {
-                    @Override
-                    public String toString(SongDisplayable song) {
-                        return song.getListHTML();
-                    }
-
-                    @Override
-                    public SongDisplayable fromString(String string) {
-                        //Implementation not needed.
-                        return null;
-                    }
-                });
-                cell.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        SongDisplayable displayable = cell.getItem();
-                        if (displayable != null) {
-                            Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-                            ClipboardContent content = new ClipboardContent();
-                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
-                            db.setContent(content);
+            previewCanvas = new LibrarySongPreviewCanvas();
+            StackPane.setAlignment(previewCanvas, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(previewCanvas, new Insets(10));
+            getChildren().add(previewCanvas);
+            songList.focusedProperty().addListener((observable, oldFocused, focused) -> {
+                if (QueleaProperties.get().getShowDBSongPreview() && focused && songList.getSelectionModel().getSelectedItem() != null) {
+                    previewCanvas.show();
+                } else {
+                    previewCanvas.hide();
+                }
+            });
+        Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = (lv) -> {
+            final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
+                @Override
+                protected void updateItem(SongDisplayable item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        HBox textBox = new HBox();
+                        if (item.getLastSearch() == null) {
+                            Text text = new Text(item.getTitle());
+                            text.getStyleClass().add("text");
+                            textBox.getChildren().add(text);
+                        } else {
+                            int startIndex = item.getTitle().toLowerCase().indexOf(item.getLastSearch().toLowerCase());
+                            if (startIndex == -1) {
+                                Text text = new Text(item.getTitle());
+                                text.getStyleClass().add("text");
+                                textBox.getChildren().add(text);
+                            } else {
+                                Text initText = new Text(item.getTitle().substring(0, startIndex));
+                                initText.getStyleClass().add("text");
+                                textBox.getChildren().add(initText);
+                                String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
+                                Text boldText = new Text(boldTextStr);
+                                boldText.setStyle("-fx-font-weight:bold;");
+                                boldText.getStyleClass().add("text");
+                                textBox.getChildren().add(boldText);
+                                Text plainText = new Text(item.getTitle().substring(startIndex + item.getLastSearch().length()));
+                                plainText.getStyleClass().add("text");
+                                textBox.getChildren().add(plainText);
+                            }
                         }
-                        event.consume();
+                        setGraphic(textBox);
                     }
-                });
-                return cell;
-            }
+                }
+            };
+            cell.setOnDragDetected((event) -> {
+                SongDisplayable displayable = cell.getItem();
+                if (displayable != null) {
+                    Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
+                    db.setContent(content);
+                }
+                event.consume();
+            });
+            return cell;
         };
         popupMenu = new LibraryPopupMenu();
         songList.setOnMouseClicked((MouseEvent t) -> {
             if (t.getClickCount() == 2 && songList.getSelectionModel().getSelectedItem() != null) {
                 new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
-            } else if (t.getClickCount() == 1 && t.isControlDown()) {
+            } else if (t.getClickCount() == 1 && (t.isControlDown())) {
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
+            }
+        });
+        songList.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldSong, song) -> {
+            if (previewCanvas != null) {
+                previewCanvas.setSong(song);
+                if (song != null && QueleaProperties.get().getShowDBSongPreview()) {
+                    previewCanvas.show();
+                } else {
+                    previewCanvas.hide();
+                }
+            }
+            if(QueleaProperties.get().getImmediateSongDBPreview()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
         songList.setOnKeyPressed((KeyEvent t) -> {
             if (t.getCode() == KeyCode.ENTER) {
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
+                new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
             }
         });
         if (popup) {
@@ -219,6 +254,7 @@ public class LibrarySongList extends StackPane {
 
             Platform.runLater(() -> {
                 LOGGER.log(Level.INFO, "Setting song list");
+                songList.setItems(FXCollections.observableArrayList()); //Force search display update
                 songList.setItems(songs);
                 if (!songs.isEmpty()) {
                     LOGGER.log(Level.INFO, "Selecting first song");
@@ -260,11 +296,8 @@ public class LibrarySongList extends StackPane {
     }
 
     private void refresh() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setLoading(true);
-            }
+        Platform.runLater(() -> {
+            setLoading(true);
         });
         final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs(loadingOverlay));
         Platform.runLater(new Runnable() {

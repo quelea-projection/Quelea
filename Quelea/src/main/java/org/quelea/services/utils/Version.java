@@ -24,20 +24,20 @@ package org.quelea.services.utils;
  * @author Michael
  */
 public class Version implements Comparable<Version> {
-
+    
     private final String versionStr;
-    private final String unstableName;
+    private final VersionType versionType;
 
     /**
      * Create a new version.
      * <p/>
      * @param version the version number in the form x.x.x.x (all x's must be
      * positive integers.)
-     * @param unstableName
+     * @param versionType
      */
-    public Version(String version, String unstableName) {
+    public Version(String version, VersionType versionType) {
         this.versionStr = version;
-        this.unstableName = unstableName;
+        this.versionType = versionType;
     }
 
     /**
@@ -86,8 +86,8 @@ public class Version implements Comparable<Version> {
      * <p/>
      * @return the minor version string.
      */
-    public String getUnstableName() {
-        return unstableName;
+    public VersionType getUnstableName() {
+        return versionType;
     }
 
     /**

@@ -19,13 +19,8 @@
 package org.quelea.windows.main.menus;
 
 import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -35,8 +30,8 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.UpdateChecker;
+import org.quelea.utils.DesktopApi;
 import org.quelea.windows.help.AboutDialog;
-import org.quelea.utils.ThreadedDesktop;
 
 /**
  * Quelea's help menu.
@@ -46,7 +41,6 @@ import org.quelea.utils.ThreadedDesktop;
 public class HelpMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
     private final MenuItem queleaWiki;
@@ -60,75 +54,45 @@ public class HelpMenu extends Menu {
     public HelpMenu() {
         super(LabelGrabber.INSTANCE.getLabel("help.menu"));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                aboutDialog = new AboutDialog();
-            }
+        Platform.runLater(() -> {
+            aboutDialog = new AboutDialog();
         });
 
         if (Desktop.isDesktopSupported()) {
-            queleaManual = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.manual"), new ImageView(new Image("file:icons/manual.png", 16, 16, false, true)));
-            queleaManual.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage("http://quelea.org/manuals/get.php?lang=" + QueleaProperties.get().getLanguageFile().getName());
-                }
-            });
-            getItems().add(queleaManual);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
-            queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getFacebookPageLocation());
-                }
+            queleaFacebook.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getFacebookPageLocation());
             });
             getItems().add(queleaFacebook);
             queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
-            queleaDiscuss.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getDiscussLocation());
-                }
+            queleaDiscuss.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getDiscussLocation());
             });
             getItems().add(queleaDiscuss);
             queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
-            queleaWiki.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    launchPage(QueleaProperties.get().getWikiPageLocation());
-                }
+            queleaWiki.setOnAction(t -> {
+                launchPage(QueleaProperties.get().getWikiPageLocation());
             });
             getItems().add(queleaWiki);
         } else {
             queleaDiscuss = null;
             queleaFacebook = null;
             queleaWiki = null;
-            queleaManual = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
-        updateCheck.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                new UpdateChecker().checkUpdate(true, true, true);
-            }
+        updateCheck.setOnAction(t -> {
+            new UpdateChecker().checkUpdate(true, true, true);
         });
         getItems().add(updateCheck);
         about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
-        about.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                aboutDialog.show();
-            }
+        about.setOnAction(t -> {
+            aboutDialog.show();
         });
         getItems().add(about);
     }
 
     private void launchPage(String page) {
-        ThreadedDesktop.browse(page, (ex) -> {
-            LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
-            showError(page);
-        });
+        DesktopApi.browse(page);
     }
 
     /**

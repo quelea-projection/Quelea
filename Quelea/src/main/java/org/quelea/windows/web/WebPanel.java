@@ -1,26 +1,28 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.web;
 
-import com.sun.glass.ui.Robot;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -49,10 +51,11 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel used in the live / preview panels for displaying webpages.
- *
+ * <p>
  * Doesn't work with Flash or Google Presentation but works well with HTML5.
- *
+ * <p>
  * <p/>
+ *
  * @author Arvid
  */
 public class WebPanel extends AbstractPanel {
@@ -120,20 +123,24 @@ public class WebPanel extends AbstractPanel {
         });
         imagePreview.setOnScroll(e -> {
             if (wd != null) {
-                Robot r = com.sun.glass.ui.Application.GetApplication().createRobot();
-                QueleaApp.get().getProjectionWindow().requestFocus();
-                if (e.getDeltaY() < 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_DOWN);
-                } else if (e.getDeltaY() > 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_UP);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_UP);
-                } else if (e.getDeltaX() < 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
-                } else if (e.getDeltaX() > 0) {
-                    r.keyPress(java.awt.event.KeyEvent.VK_LEFT);
-                    r.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
+                try {
+                    Robot r = new Robot();
+                    QueleaApp.get().getProjectionWindow().requestFocus();
+                    if (e.getDeltaY() < 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_DOWN);
+                    } else if (e.getDeltaY() > 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_UP);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_UP);
+                    } else if (e.getDeltaX() < 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
+                    } else if (e.getDeltaX() > 0) {
+                        r.keyPress(java.awt.event.KeyEvent.VK_LEFT);
+                        r.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
+                    }
+                } catch (AWTException ex) {
+                    LOGGER.log(Level.WARNING, "Error with robot", ex);
                 }
             }
         });
@@ -167,6 +174,7 @@ public class WebPanel extends AbstractPanel {
     /**
      * Show a given web displayable on the panel.
      * <p/>
+     *
      * @param displayable the web displayable.
      */
     public void showDisplayable(WebDisplayable displayable) {
@@ -227,8 +235,8 @@ public class WebPanel extends AbstractPanel {
         try {
             java.awt.Robot robot = new java.awt.Robot();
             robot.mouseMove((int) x, (int) y);
-            robot.mousePress(InputEvent.BUTTON1_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_MASK);
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             robot.mouseMove((int) originalLocation.getX(), (int) originalLocation.getY());
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed clicking the web view", e);
@@ -286,19 +294,19 @@ public class WebPanel extends AbstractPanel {
     }
 
     private void setupNavigationBarContent() {
-        back = new Button("", new ImageView(new Image("file:icons/arrow-back.png")));
+        back = new Button("", getButtonImageView("file:icons/arrow-back.png"));
         back.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.back();
             }
         });
-        forward = new Button("", new ImageView(new Image("file:icons/arrow-forward.png")));
+        forward = new Button("", getButtonImageView("file:icons/arrow-forward.png"));
         forward.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.forward();
             }
         });
-        reload = new Button("", new ImageView(new Image("file:icons/reload.png")));
+        reload = new Button("", getButtonImageView("file:icons/reload.png"));
         reload.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.reload();
@@ -319,24 +327,28 @@ public class WebPanel extends AbstractPanel {
                 }
             }
         });
-        go = new Button("", new ImageView(new Image("file:icons/send.png")));
+        go = new Button("", getButtonImageView("file:icons/send.png"));
         go.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.setUrl(url.getText());
             }
         });
-        plus = new Button("", new ImageView(new Image("file:icons/zoom-in.png")));
+        plus = new Button("", getButtonImageView("file:icons/zoom-in.png"));
         plus.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.zoom(true);
             }
         });
-        minus = new Button("", new ImageView(new Image("file:icons/zoom-out.png")));
+        minus = new Button("", getButtonImageView("file:icons/zoom-out.png"));
         minus.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.zoom(false);
             }
         });
+    }
+
+    private ImageView getButtonImageView(String path) {
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? path.replace(".png", "-light.png") : path));
     }
 
 }

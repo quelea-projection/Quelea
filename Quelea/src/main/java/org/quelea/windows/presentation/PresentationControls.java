@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,23 +24,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
  * The presentation controls containing a next and a previous button.
  * <p/>
+ *
  * @author Arvid
  */
 public class PresentationControls extends StackPane {
 
-    private static final Image PREVIOUS_IMAGE = new Image("file:icons/previous.png");
-    private static final Image NEXT_IMAGE = new Image("file:icons/next.png");
-    private final Button previousButton;
-    private final Button nextButton;
-
     public PresentationControls() {
-        previousButton = new Button("", setImageView(PREVIOUS_IMAGE));
+        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
+        final Image PREVIOUS_IMAGE = new Image(darkTheme ? "file:icons/previous-light.png" : "file:icons/previous.png");
+        final Image NEXT_IMAGE = new Image(darkTheme ? "file:icons/next-light.png" : "file:icons/next.png");
+        Button previousButton = new Button("", setImageView(PREVIOUS_IMAGE));
         setButtonParams(previousButton);
         previousButton.setTranslateX(-120);
         getChildren().add(previousButton);
@@ -52,12 +52,12 @@ public class PresentationControls extends StackPane {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                    if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                        lp.setBlacked(false);
-                    }
+            if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
+                lp.setBlacked(false);
+            }
         });
 
-        nextButton = new Button("", setImageView(NEXT_IMAGE));
+        Button nextButton = new Button("", setImageView(NEXT_IMAGE));
         nextButton.setOnMouseClicked((MouseEvent t) -> {
             PowerPointHandler.gotoNext();
             String result = PowerPointHandler.getCurrentSlide();
@@ -66,9 +66,9 @@ public class PresentationControls extends StackPane {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                    if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                        lp.setBlacked(false);
-                    }
+            if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
+                lp.setBlacked(false);
+            }
         });
 
         setButtonParams(nextButton);

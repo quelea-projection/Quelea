@@ -262,7 +262,11 @@ public class FontOptionsDialog extends Stage {
         buttonPane.getChildren().add(okButton);
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
-        setScene(new Scene(root, 330, 350));
+        Scene scene = new Scene(root, 330, 350);
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            scene.getStylesheets().add("org/modena_dark.css");
+        }
+        setScene(scene);
     }
 
     /**

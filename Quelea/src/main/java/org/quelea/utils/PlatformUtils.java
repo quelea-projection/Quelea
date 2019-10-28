@@ -1,12 +1,10 @@
 package org.quelea.utils;
 
-import com.sun.javafx.tk.TKStage;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.platform.unix.X11;
 
 import java.awt.*;
-import java.lang.reflect.Method;
 import javafx.stage.Stage;
 import org.quelea.services.utils.Utils;
 
@@ -62,6 +60,9 @@ public class PlatformUtils {
     }
 
     private static boolean setFullScreenWindow(long wid, boolean fullScreen) {
+        //Ignore this method for now. Doesn't work with snaps.
+        if(true) return false;
+        
         // Use the JNA platform X11 binding
         X11 x = X11.INSTANCE;
         X11.Display display = null;
@@ -92,30 +93,12 @@ public class PlatformUtils {
     }
 
     /**
-     * Get native window handle of a Stage
+     * Get native window handle of a Stage. We can't do this anymore in Java 10
+     * as the internal library we used has disappeared. Leave this here in case
+     * a solution appears in future.
      */
     private static long getWindowID(Stage stage) {
-        try {
-            Method tkStageGetter;
-            try {
-                // java 9
-                tkStageGetter = stage.getClass().getSuperclass().getDeclaredMethod("getPeer");
-            } catch (NoSuchMethodException ex) {
-                // java 8
-                tkStageGetter = stage.getClass().getMethod("impl_getPeer");
-            }
-            tkStageGetter.setAccessible(true);
-            TKStage tkStage = (TKStage) tkStageGetter.invoke(stage);
-            Method getPlatformWindow = tkStage.getClass().getDeclaredMethod("getPlatformWindow");
-            getPlatformWindow.setAccessible(true);
-            Object platformWindow = getPlatformWindow.invoke(tkStage);
-            Method getNativeHandle = platformWindow.getClass().getMethod("getNativeHandle");
-            getNativeHandle.setAccessible(true);
-            Object nativeHandle = getNativeHandle.invoke(platformWindow);
-            return (long) nativeHandle;
-        } catch (Throwable e) {
-            return -1;
-        }
+        return -1;
     }
 
     /**
