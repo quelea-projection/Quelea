@@ -29,7 +29,7 @@ public class FreeWorshipImportDialog extends ImportDialog {
     public FreeWorshipImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("freeworship.import.line1")
-                }, FileFilters.XML_GENERIC, new FreeWorshipParser(), false, true);
+                }, FileFilters.XML_GENERIC, new FreeWorshipParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }

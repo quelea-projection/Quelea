@@ -34,7 +34,7 @@ public class ScreenMonkeyImportDialog extends ImportDialog {
      */
     public ScreenMonkeyImportDialog() {
         super(new String[]{LabelGrabber.INSTANCE.getLabel("smi.import.line1")
-        }, FileFilters.XML_GENERIC, new ScreenMonkeyParser(), false, true);
+        }, FileFilters.XML_GENERIC, new ScreenMonkeyParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
 
 }

@@ -53,8 +53,8 @@ public class PlatformUtils {
 
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(null);
-        stage.setFullScreen(true);
-        stage.setAlwaysOnTop(true);
+        stage.setFullScreen(fullScreen);
+        stage.setAlwaysOnTop(fullScreen);
 
         return setFullScreenWindow(getWindowID(stage), fullScreen);
     }
