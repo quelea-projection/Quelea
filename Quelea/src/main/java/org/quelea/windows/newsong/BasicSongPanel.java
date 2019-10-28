@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.newsong;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;

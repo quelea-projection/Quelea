@@ -65,6 +65,29 @@ import org.xml.sax.SAXException;
 public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Serializable {
 
     public int count = 0;
+    public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private boolean updateInDB = true;
+    private String title = "";
+    private String author = "";
+    private String ccli = "";
+    private String year = "";
+    private String publisher = "";
+    private String copyright = "";
+    private String key = "";
+    private String capo = "";
+    private String info = "";
+    private boolean quickInsert;
+    private List<TextSection> sectionsInSequence = new ArrayList<>();
+    private List<TextSection> sectionsWithoutSequence = new ArrayList<>();
+    private HashMap<String, String> translations = new HashMap<>();
+    private String currentTranslation;
+    private ThemeDTO theme;
+    private long id = 0;
+    private boolean printChords;
+    private String lastSearch = "";
+    private String sequence = "";
+    private Map<Dimension, Double> fontSizeCache;
 
     /**
      * The builder responsible for building this song.
@@ -238,10 +261,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder sequence(String sequence) {
-            if (sequence == null) {
-                sequence = "";
-            }
-            song.sequence = sequence;
+            song.sequence = sequence == null ? "" : sequence;
             return this;
         }
 
@@ -255,30 +275,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             return song;
         }
     }
-
-    public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
-    private static final Logger LOGGER = LoggerUtils.getLogger();
-    private boolean updateInDB = true;
-    private String title = "";
-    private String author = "";
-    private String ccli = "";
-    private String year = "";
-    private String publisher = "";
-    private String copyright = "";
-    private String key = "";
-    private String capo = "";
-    private String info = "";
-    private boolean quickInsert;
-    private List<TextSection> sectionsInSequence = new ArrayList<>();
-    private List<TextSection> sectionsWithoutSequence = new ArrayList<>();
-    private HashMap<String, String> translations = new HashMap<>();
-    private String currentTranslation;
-    private ThemeDTO theme;
-    private long id = 0;
-    private boolean printChords;
-    private String lastSearch = "";
-    private String sequence = "";
-    private Map<Dimension,Double> fontSizeCache;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -341,7 +337,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         sectionsWithoutSequence = new ArrayList<>();
         sequence = "";
     }
-    
+
     @Override
     public Double getCachedUniformFontSize(Dimension dimension) {
         return fontSizeCache.get(dimension);
@@ -757,8 +753,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * setLyrics() method.
      * <p/>
      *
-     * @param chords   true if any chords should be included, false otherwise.
-     * @param comments true if any comments should be included, false otherwise.
+     * @param chords     true if any chords should be included, false otherwise.
+     * @param comments   true if any comments should be included, false otherwise.
      * @param inSequence true if lyrics should be returned according to stored sequence, false otherwise.
      * @return the lyrics to this song.
      */
@@ -830,7 +826,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 };
             } else {
                 String cpText = null;
-                if(copyright!=null) {
+                if (copyright != null) {
                     cpText = copyright.trim();
                 }
                 if (cpText != null && !cpText.trim().isEmpty() && !cpText.startsWith("©")) {
@@ -864,10 +860,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                         for (String t : title) {
                             sb.append(t.charAt(0));
                         }
-                        if (sb.toString().equals(s)) {
-                            if ((sectionsInSequence.size() > 0 && !sectionsInSequence.get(sectionsInSequence.size() - 1).equals(ts) || sectionsInSequence.isEmpty())) {
-                                sectionsInSequence.add(ts);
-                            }
+                        if (sb.toString().equals(s)
+                                && ((sectionsInSequence.size() > 0 && !sectionsInSequence.get(sectionsInSequence.size() - 1).equals(ts)
+                                    || sectionsInSequence.isEmpty()))) {
+                            sectionsInSequence.add(ts);
                         }
                     }
                 }
@@ -987,7 +983,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public String getListHTML() {//@todo wrong method name
         return getTitle();
     }
-    
+
     public String getLastSearch() {
         return lastSearch;
     }
@@ -1074,7 +1070,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     /**
-     *
      * Get the XML used to print the song (will be transferred via XSLT.)
      *
      * @param includeTranslations true if translations should be included in the

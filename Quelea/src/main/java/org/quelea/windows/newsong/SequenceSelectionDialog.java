@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
@@ -39,11 +40,11 @@ import org.quelea.windows.main.QueleaApp;
 /**
  * The dialog that allows the user to select a song sequence.
  * <p>
+ *
  * @author Arvid
  */
 public final class SequenceSelectionDialog extends Stage {
 
-    private ListView<String> allSections;
     private ListView<String> chosenSequence;
     private final Button removeButton;
     private final Button upButton;
@@ -53,7 +54,7 @@ public final class SequenceSelectionDialog extends Stage {
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
-     * in the service.
+     * in the sequence order.
      */
     public enum Direction {
         UP, DOWN
@@ -81,7 +82,7 @@ public final class SequenceSelectionDialog extends Stage {
         HBox centrePane = new HBox(5);
         centrePane.setPadding(new Insets(10));
         mainPane.setCenter(centrePane);
-        allSections = new ListView<>();
+        ListView<String> allSections = new ListView<>();
         allSections.setMaxHeight(Integer.MAX_VALUE);
         VBox allSectionsBox = new VBox(5);
         allSectionsBox.setPadding(new Insets(5));
@@ -110,9 +111,7 @@ public final class SequenceSelectionDialog extends Stage {
         Utils.setToolbarButtonStyle(upButton);
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.sequence.tooltip")));
         upButton.setDisable(true);
-        upButton.setOnAction((javafx.event.ActionEvent t) -> {
-            moveCurrentItem(Direction.UP);
-        });
+        upButton.setOnAction(t -> moveCurrentItem(Direction.UP));
 
         ImageView downIV = new ImageView(new Image("file:icons/down.png"));
         downIV.setFitWidth(16);
@@ -121,9 +120,7 @@ public final class SequenceSelectionDialog extends Stage {
         Utils.setToolbarButtonStyle(downButton);
         downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.sequence.tooltip")));
         downButton.setDisable(true);
-        downButton.setOnAction((javafx.event.ActionEvent t) -> {
-            moveCurrentItem(Direction.DOWN);
-        });
+        downButton.setOnAction(t -> moveCurrentItem(Direction.DOWN));
 
         toolbar.getChildren().add(removeButton);
         toolbar.getChildren().add(upButton);
@@ -156,50 +153,14 @@ public final class SequenceSelectionDialog extends Stage {
 
         final IntegerProperty dragFromIndex = new SimpleIntegerProperty(-1);
 
-        allSections.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+        setupCellsInAllSectionsList(allSections, dragFromIndex);
 
-            @Override
-            public ListCell<String> call(ListView<String> lv) {
-                final ListCell<String> cell = new ListCell<String>() {
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setText(null);
-                        } else {
-                            setText(item);
-                        }
-                    }
-                };
+        setupCellsInSelectedSectionsList(chosenSequence, dragFromIndex);
 
-                cell.setOnDragDetected((MouseEvent event) -> {
-                    fromLeft = true;
-                    if (!cell.isEmpty()) {
-                        dragFromIndex.set(cell.getIndex());
-                        Dragboard db = cell.startDragAndDrop(TransferMode.COPY);
-                        ClipboardContent cc = new ClipboardContent();
-                        cc.putString(cell.getItem());
-                        db.setContent(cc);
-                        db.setDragView(cell.snapshot(null, null));
-                    }
-                });
+        setWidth(500);
+    }
 
-                cell.setOnDragDone((DragEvent event) -> {
-                    dragFromIndex.set(-1);
-                    chosenSequence.getSelectionModel().select(event.getDragboard().getString());
-                });
-
-                cell.setOnMouseClicked(e -> {
-                    if (e.getButton().equals(MouseButton.PRIMARY)) {
-                        if (e.getClickCount() == 2) {
-                            addItemToSequence(chosenSequence.getItems().size(), cell.getText());
-                        }
-                    }
-                });
-                return cell;
-            }
-        });
-
+    private void setupCellsInSelectedSectionsList(ListView<String> chosenSequence, IntegerProperty dragFromIndex) {
         chosenSequence.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
 
             int endItem = -1;
@@ -294,6 +255,7 @@ public final class SequenceSelectionDialog extends Stage {
             }
 
         });
+
         chosenSequence.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 downButton.setDisable(false);
@@ -318,8 +280,50 @@ public final class SequenceSelectionDialog extends Stage {
                 addItemToSequence(-1, section);
             }
         });
+    }
 
-        setWidth(500);
+    private void setupCellsInAllSectionsList(ListView<String> allSections, IntegerProperty dragFromIndex) {
+        allSections.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+
+            @Override
+            public ListCell<String> call(ListView<String> lv) {
+                final ListCell<String> cell = new ListCell<String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(item);
+                        }
+                    }
+                };
+
+                cell.setOnDragDetected((MouseEvent event) -> {
+                    fromLeft = true;
+                    if (!cell.isEmpty()) {
+                        dragFromIndex.set(cell.getIndex());
+                        Dragboard db = cell.startDragAndDrop(TransferMode.COPY);
+                        ClipboardContent cc = new ClipboardContent();
+                        cc.putString(cell.getItem());
+                        db.setContent(cc);
+                        db.setDragView(cell.snapshot(null, null));
+                    }
+                });
+
+                cell.setOnDragDone((DragEvent event) -> {
+                    dragFromIndex.set(-1);
+                    chosenSequence.getSelectionModel().select(event.getDragboard().getString());
+                });
+
+                cell.setOnMouseClicked(e -> {
+                    if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+                        addItemToSequence(chosenSequence.getItems().size(), cell.getText());
+                    }
+                });
+                return cell;
+            }
+        });
     }
 
     private void addItemToSequence(int pos, String section) {
@@ -346,7 +350,7 @@ public final class SequenceSelectionDialog extends Stage {
      *
      * @return the user chosen sequence.
      */
-    List<String> getChosenSequence() {
+    public List<String> getChosenSequence() {
         return chosenSequence.getItems();
     }
 
@@ -361,10 +365,8 @@ public final class SequenceSelectionDialog extends Stage {
         String lyrics = QueleaApp.get().getMainWindow().getSongEntryWindow().getBasicSongPanel().getLyricsField().getTextArea().getText();
         List<String> list = new ArrayList<>();
         for (String s : lyrics.split("\n")) {
-            if (new LineTypeChecker(s).getLineType() == LineTypeChecker.Type.TITLE) {
-                if (!list.contains(s)) {
-                    list.add(s);
-                }
+            if (new LineTypeChecker(s).getLineType() == LineTypeChecker.Type.TITLE && !list.contains(s)) {
+                list.add(s);
             }
         }
         return list;
@@ -373,6 +375,7 @@ public final class SequenceSelectionDialog extends Stage {
     /**
      * Move the currently selected item in the list in the specified direction.
      * <p/>
+     *
      * @param direction the direction to move the selected item.
      */
     private void moveCurrentItem(Direction direction) {
