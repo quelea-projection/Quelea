@@ -758,7 +758,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 smallLinesList.add("CCLI License #" + churchCcliNum);
                 smallLines = smallLinesList.toArray(new String[smallLinesList.size()]);
             }
-            sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true, this.theme.isUppercase()));
+            sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
         }
     }
 
