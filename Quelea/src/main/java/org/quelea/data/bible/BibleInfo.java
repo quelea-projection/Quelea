@@ -88,10 +88,8 @@ public class BibleInfo implements Serializable {
             return false;
         }
         final BibleInfo other = (BibleInfo) obj;
-        if (!Objects.equals(this.attributes, other.attributes)) {
-            return false;
-        }
-        return true;
+
+        return Objects.equals(this.attributes, other.attributes);
     }
 
     /**

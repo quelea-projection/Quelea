@@ -104,16 +104,13 @@ public class ElevantoLoginDialog extends Stage {
             
             // read the query string from the request body
             String qry;
-            InputStream in = t.getRequestBody();
-            try {
+            try (InputStream in = t.getRequestBody()) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 byte buf[] = new byte[4096];
                 for (int n = in.read(buf); n > 0; n = in.read(buf)) {
                     out.write(buf, 0, n);
                 }
                 qry = new String(out.toByteArray(), encoding);
-            } finally {
-                in.close();
             }
             
             String urlSplit[] = qry.split("[#]");

@@ -61,10 +61,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
         if (!Objects.equals(this.verse, other.verse)) {
             return false;
         }
-        if (this.num != other.num) {
-            return false;
-        }
-        return true;
+        return this.num == other.num;
     }
 
     /**

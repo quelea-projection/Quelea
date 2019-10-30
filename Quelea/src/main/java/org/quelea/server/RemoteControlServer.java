@@ -981,9 +981,6 @@ public class RemoteControlServer {
         if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
             return false;
         }
-        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
-            return false;
-        }
         if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel() == null) {
             return false;
         }

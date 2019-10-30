@@ -325,7 +325,6 @@ public class PreferenceStorageHandler implements StorageHandler {
                 case QueleaPropertyKeys.darkThemeKey:
                     return LabelGrabber.INSTANCE.getLabel(QueleaProperties.get().getUseDarkTheme() ? "dark.theme.label" : "default.theme.label");
                 case QueleaPropertyKeys.projectorModeKey:
-                    return property.equals("coords");
                 case QueleaPropertyKeys.stageModeKey:
                     return property.equals("coords");
                 case QueleaPropertyKeys.projectorHCoordKey:

@@ -40,8 +40,6 @@ public class PresentationDrawer extends DisplayableDrawer {
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
         }
-        else {
-        }
     }
 
     public void setPlayVideo(boolean playVideo) {

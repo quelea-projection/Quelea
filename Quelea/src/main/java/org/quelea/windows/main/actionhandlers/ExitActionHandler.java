@@ -147,46 +147,44 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         LOGGER.log(Level.INFO, "Checking if Quelea currently is recording audio");
         MainToolbar toolbar = mainWindow.getMainToolbar();
         RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();
-        if (toolbar.getRecordButtonHandler() != null && recHandler != null) {
-            if (recHandler.getIsRecording()) {
-                block = true;
-                Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message"))
-                        .addYesButton((ActionEvent t1) -> {
-                            toolbar.stopRecording();
-                        }).addNoButton((ActionEvent t1) -> {
-                            System.exit(0);
-                        }).build();
-                d.setOnCloseRequest((WindowEvent we) -> {
-                    System.exit(0);
-                });
-                Thread thread = new Thread(() -> {
-                    while (block) {
-                        try {
-                            Thread.sleep(500);
-                            if (recHandler.getFinishedSaving()) {
-                                Platform.runLater(() -> {
-                                    d.close();
-                                });
-                                if (QueleaProperties.get().getConvertRecordings()) {
-                                    boolean converting = recHandler.isConverting();
-                                    if (!converting) {
-                                        block = false;
-                                        System.exit(0);
-                                    }
-                                } else {
+        if (toolbar.getRecordButtonHandler() != null && recHandler != null && recHandler.getIsRecording()) {
+            block = true;
+            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message"))
+                    .addYesButton((ActionEvent t1) -> {
+                        toolbar.stopRecording();
+                    }).addNoButton((ActionEvent t1) -> {
+                        System.exit(0);
+                    }).build();
+            d.setOnCloseRequest((WindowEvent we) -> {
+                System.exit(0);
+            });
+            Thread thread = new Thread(() -> {
+                while (block) {
+                    try {
+                        Thread.sleep(500);
+                        if (recHandler.getFinishedSaving()) {
+                            Platform.runLater(() -> {
+                                d.close();
+                            });
+                            if (QueleaProperties.get().getConvertRecordings()) {
+                                boolean converting = recHandler.isConverting();
+                                if (!converting) {
                                     block = false;
                                     System.exit(0);
                                 }
+                            } else {
+                                block = false;
+                                System.exit(0);
                             }
-                        } catch (InterruptedException ex) {
                         }
+                    } catch (InterruptedException ex) {
                     }
-                });
-                thread.setDaemon(true);
-                thread.start();
-                d.showAndWait();
-                return; //Don't exit until the recording is saved and converted
-            }
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
+            d.showAndWait();
+            return; //Don't exit until the recording is saved and converted
         }
         System.exit(0);
     }

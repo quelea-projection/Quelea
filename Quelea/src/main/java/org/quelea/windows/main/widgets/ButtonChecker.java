@@ -83,11 +83,6 @@ public class ButtonChecker {
             addSongButton.setDisable(true);
             return;
         }
-        if(songList.getListView().getSelectionModel().getSelectedIndex() == -1) {
-            addSongButton.setDisable(true);
-        }
-        else {
-            addSongButton.setDisable(false);
-        }
+        addSongButton.setDisable(songList.getListView().getSelectionModel().getSelectedIndex() == -1);
     }
 }

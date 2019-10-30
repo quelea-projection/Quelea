@@ -173,50 +173,48 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      */
     private void update() {
         final String text = searchField.getText();
-        if (text.length() > 3) {
-            if (BibleManager.get().isIndexInit()) {
-                searchResults.reset();
-                overlay.show();
-                ExecRunnable execRunnable = new ExecRunnable() {
-                    private volatile boolean cancel = false;
+        if (text.length() > 3 && BibleManager.get().isIndexInit()) {
+            searchResults.reset();
+            overlay.show();
+            ExecRunnable execRunnable = new ExecRunnable() {
+                private volatile boolean cancel = false;
 
-                    public void cancel() {
-                        cancel = true;
+                public void cancel() {
+                    cancel = true;
+                }
+
+                public void run() {
+                    if (cancel) {
+                        return;
                     }
-
-                    public void run() {
-                        if (cancel) {
-                            return;
-                        }
-                        final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-                        Platform.runLater(() -> {
-                            searchResults.reset();
-                            if (!text.trim().isEmpty()) {
-                                for (BibleChapter chapter : results) {
-                                    if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                        for (BibleVerse verse : chapter.getVerses()) {
-                                            if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
-                                                searchResults.add(verse);
-                                            }
+                    final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
+                    Platform.runLater(() -> {
+                        searchResults.reset();
+                        if (!text.trim().isEmpty()) {
+                            for (BibleChapter chapter : results) {
+                                if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                    for (BibleVerse verse : chapter.getVerses()) {
+                                        if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
+                                            searchResults.add(verse);
                                         }
                                     }
                                 }
                             }
-                            overlay.hide();
-                            String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
-                            if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
-                                resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
-                            }
-                            resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
-                        });
-                    }
-                };
-                if (lastUpdateRunnable != null) {
-                    lastUpdateRunnable.cancel();
+                        }
+                        overlay.hide();
+                        String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
+                        if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
+                            resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
+                        }
+                        resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
+                    });
                 }
-                lastUpdateRunnable = execRunnable;
-                updateExecutor.submit(execRunnable);
+            };
+            if (lastUpdateRunnable != null) {
+                lastUpdateRunnable.cancel();
             }
+            lastUpdateRunnable = execRunnable;
+            updateExecutor.submit(execRunnable);
         }
         searchResults.reset();
         resultsField.setText(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
