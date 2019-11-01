@@ -39,7 +39,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
         @Override
         public int compare(DisplayCanvas o1, DisplayCanvas o2) {
-            return o2.getDravingPriority().getPriority() - o1.getDravingPriority().getPriority();
+            return o2.getDrawingPriority().getPriority() - o1.getDrawingPriority().getPriority();
         }
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
