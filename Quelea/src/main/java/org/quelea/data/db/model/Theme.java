@@ -66,6 +66,34 @@ public class Theme {
         this.textAlignment = textAlignment;
     }
 
+    /**This is the original constructer, just for backwards compatibily
+     * Sets @param isUppercase to false
+     */
+    public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
+                 String backgroundcolour, String backgroundvid, String backgroundimage,
+                 TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
+        this.name = name;
+        this.fontname = fontname;
+        this.fontcolour = fontcolour;
+        this.translateFontname = translateFontname;
+        this.translateFontcolour = translateFontcolour;
+        this.backgroundcolour = backgroundcolour;
+        this.backgroundvid = backgroundvid;
+        this.backgroundimage = backgroundimage;
+        this.textShadow = shadow;
+        this.fontBold = isFontBold;
+        this.fontItalic = isFontitalic;
+        this.fontUpperCase = false;
+        this.translateFontBold = isTranslateFontBold;
+        this.translateFontItalic = isTranslateFontitalic;
+        this.videoHue = videoHue;
+        this.videoStretch = videoStretch;
+        this.textPosition = textPosition;
+        this.textAlignment = textAlignment;
+    }
+
+
+
     public Theme(Theme theme) {
         this.name = theme.name;
         this.fontname = theme.fontname;
