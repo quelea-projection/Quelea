@@ -164,7 +164,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        uppercaseButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/infobig-light.png" : "file:icons/infobig.png", 15, 15, false, true)));
+        uppercaseButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/uppercase-light.png" : "file:icons/uppercase.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(uppercaseButton);
         uppercaseButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -462,7 +462,7 @@ public class ThemeToolbar extends HBox {
         }
         final SerializableDropShadow shadow = moreFontOptionsDialog.getShadow();
         ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), moreFontOptionsDialog.getTranslateFont(), moreFontOptionsDialog.getTranslateColour(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), uppercaseButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), uppercaseButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), moreFontOptionsDialog.isTranslateUppercase(),-1, getAlignmentVal());
         return resultTheme;
     }
 

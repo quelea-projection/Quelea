@@ -47,7 +47,7 @@ public class ThemeDTO implements Serializable {
     public static final Color DEFAULT_TRANSLATE_FONT_COLOR = Color.WHITESMOKE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(Color.BLACK, 0, 0, 2, 0, true);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
-    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_FONT, DEFAULT_TRANSLATE_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), false, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), true, -1, 0);
+    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_FONT, DEFAULT_TRANSLATE_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), false, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), true, false, -1, 0);
     private final SerializableFont font;
     private final SerializableColor fontColor;
     private final SerializableFont translateFont;
@@ -61,6 +61,7 @@ public class ThemeDTO implements Serializable {
     private Boolean isFontUppercase = false;
     private Boolean isTranslateFontBold = false;
     private Boolean isTranslateFontItalic = false;
+    private Boolean isTranslateFontUppercase = false;
     private int textPosition = -1;
     private int textAlignment = 0;
 
@@ -72,7 +73,7 @@ public class ThemeDTO implements Serializable {
      * @param background the background to use for the page.
      */
     public ThemeDTO(SerializableFont font, Color fontPaint, SerializableFont translatefont, Color translatefontPaint, Background background,
-            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic, Boolean isFontUppercase, Boolean isTranslateFontBold, Boolean isTranslateFontItalic,
+            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic, Boolean isFontUppercase, Boolean isTranslateFontBold, Boolean isTranslateFontItalic, Boolean isTranslateFontUppercase,
             Integer textPosition, Integer textAlignment) {
         this.font = font;
         this.translateFont = translatefont;
@@ -86,6 +87,7 @@ public class ThemeDTO implements Serializable {
         this.isFontUppercase = isFontUppercase;
         this.isTranslateFontBold = isTranslateFontBold;
         this.isTranslateFontItalic = isTranslateFontItalic;
+        this.isTranslateFontUppercase = isTranslateFontUppercase;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
     }
@@ -294,7 +296,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isFontUppercase, isTranslateFontBold, isTranslateFontItalic, vidHue, vidStretch, textPosition, textAlignment);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isFontUppercase, isTranslateFontBold, isTranslateFontItalic, isTranslateFontUppercase,vidHue, vidStretch, textPosition, textAlignment);
         return theme;
     }
 
@@ -319,7 +321,7 @@ public class ThemeDTO implements Serializable {
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(givenShadow.getShadowColor()),
                 givenShadow.getOffsetX(), givenShadow.getOffsetY(), givenShadow.getRadius(), givenShadow.getSpread(), givenShadow.getUse());
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), translateFont, Utils.parseColour(theme.getTranslateFontcolour()),
-                background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isFontUppercase(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
+                background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isFontUppercase(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.isTranslateFontUppercase(),theme.getTextPosition(), theme.getTextAlignment());
         ret.themeName = theme.getName();
         return ret;
     }
@@ -348,6 +350,7 @@ public class ThemeDTO implements Serializable {
         ret.append("$isFontUppercase:").append(isFontUppercase);
         ret.append("$isTranslateFontBold:").append(isTranslateFontBold);
         ret.append("$isTranslateFontItalic:").append(isTranslateFontItalic);
+        ret.append("$isTranslateFontUppercase:").append(isTranslateFontUppercase);
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
             ret.append("$vidhue:").append(((VideoBackground) background).getHue());
@@ -391,6 +394,7 @@ public class ThemeDTO implements Serializable {
         String isFontUppercase = "";
         String isTranslateFontBold = "";
         String isTranslateFontItalic = "";
+        String isTranslateFontUppercase = "";
         String backgroundcolour = "";
         String backgroundvid = "";
         String backgroundimage = "";
@@ -424,6 +428,8 @@ public class ThemeDTO implements Serializable {
                 isTranslateFontBold = parts[1];
             } else if (parts[0].equalsIgnoreCase("isTranslateFontItalic")) {
                 isTranslateFontItalic = parts[1];
+            } else if (parts[0].equalsIgnoreCase("isTranslateFontUppercase")) {
+                isTranslateFontUppercase = parts[1];
             } else if (parts[0].equalsIgnoreCase("isFontItalic")) {
                 isFontItalic = parts[1];
             } else if (parts[0].equalsIgnoreCase("isFontUppercase")) {
@@ -482,7 +488,7 @@ public class ThemeDTO implements Serializable {
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY), Double.parseDouble(shadowRadius), Double.parseDouble(shadowSpread), Boolean.parseBoolean(shadowUse));
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), translateFont, Utils.parseColour(translatefontcolour),
                 background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic), Boolean.valueOf(isFontUppercase),
-                Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
+                Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Boolean.valueOf(isTranslateFontUppercase), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
         ret.themeName = themeName;
         return ret;
     }
@@ -537,6 +543,13 @@ public class ThemeDTO implements Serializable {
      */
     public boolean isTranslateBold() {
         return isTranslateFontBold;
+    }
+
+    /**
+     * @return the uppercase
+     */
+    public boolean isTranslateUppercase() {
+        return isTranslateFontUppercase;
     }
 
     @Override

@@ -155,7 +155,7 @@ public class EditThemeDialog extends Stage {
     public void setTheme(ThemeDTO theme) {
         if (theme == null) {
             theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false,false, true, -1, 0);
+                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false,false, true, false,-1, 0);
             theme.setThemeName("");
         }
         if (theme.getFile() == null) {

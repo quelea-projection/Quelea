@@ -109,6 +109,7 @@ public class VideoButton extends Button implements Cancellable {
                                         drawer.getTheme().isUppercase(),
                                         drawer.getTheme().isTranslateBold(),
                                         drawer.getTheme().isTranslateItalic(),
+                                        drawer.getTheme().isTranslateUppercase(),
                                         drawer.getTheme().getTextPosition(),
                                         drawer.getTheme().getTextAlignment());
                                 drawer.setTheme(theme);

@@ -96,7 +96,7 @@ public class ImageButton extends Button {
                             drawer.getTheme().getTranslateFontPaint(), new ImageBackground(imageLocation),
                             drawer.getTheme().getShadow(), drawer.getTheme().isBold(),
                             drawer.getTheme().isItalic(), drawer.getTheme().isUppercase(), drawer.getTheme().isTranslateBold(),
-                            drawer.getTheme().isTranslateItalic(), drawer.getTheme().getTextPosition(),
+                            drawer.getTheme().isTranslateItalic(), drawer.getTheme().isUppercase(), drawer.getTheme().getTextPosition(),
                             drawer.getTheme().getTextAlignment());
 
                     drawer.setTheme(theme);
