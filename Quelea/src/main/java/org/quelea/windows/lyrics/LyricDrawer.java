@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.geometry.Insets;
@@ -54,6 +55,7 @@ import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -63,6 +65,7 @@ import org.quelea.utils.WrapTextResult;
 /**
  * Responsible for drawing lyrics and their background.
  * <p/>
+ *
  * @author Ben Goodwin, tomaszpio@gmail.com, Michael
  */
 public class LyricDrawer extends WordDrawer {
@@ -75,6 +78,9 @@ public class LyricDrawer extends WordDrawer {
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
     private String[] smallText;
+    private Group oldTextGroup;
+    private String[] oldText;
+    private boolean newItem;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -97,6 +103,14 @@ public class LyricDrawer extends WordDrawer {
                 getCanvas().getChildren().add(smallTextGroup);
             }
         }
+
+        if (getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+            newItem = oldText != null && !Arrays.deepEquals(getText(), oldText) && textGroup != null;
+            oldText = getText();
+        } else {
+            oldTextGroup = textGroup;
+        }
+
         Font font = Font.font(theme.getFont().getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -207,7 +221,7 @@ public class LyricDrawer extends WordDrawer {
             }
         }
 
-        for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
+        for (Iterator<Node> it = getCanvas().getChildren().iterator(); it.hasNext(); ) {
             Node node = it.next();
             if (node instanceof Group) {
                 it.remove();
@@ -317,6 +331,29 @@ public class LyricDrawer extends WordDrawer {
             t2.setFromValue(0);
             t2.setToValue(1);
             t2.play();
+        } else if (QueleaProperties.get().getUseSlideTransition()
+                && !getCanvas().isBlacked() && !getCanvas().isCleared()
+                && !getCanvas().isShowingLogo()
+                && getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+            if (oldTextGroup != null) {
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionOutDuration()), oldTextGroup);
+                fadeOut.setFromValue(1.0);
+                fadeOut.setToValue(0.0);
+                fadeOut.setOnFinished(e -> {
+                    if (getCanvas().getChildren().contains(oldTextGroup)) {
+                        getCanvas().getChildren().remove(oldTextGroup);
+                        oldTextGroup = null;
+                    }
+                });
+                getCanvas().getChildren().add(oldTextGroup);
+                fadeOut.play();
+            }
+            if (oldTextGroup == null && Arrays.deepToString(oldText).equals("[]") || newItem) {
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionInDuration()), textGroup);
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            }
         }
     }
 
@@ -339,6 +376,7 @@ public class LyricDrawer extends WordDrawer {
     /**
      * Set the theme of this getCanvas().
      * <p/>
+     *
      * @param theme the theme to place on the getCanvas().
      */
     @Override
@@ -426,6 +464,7 @@ public class LyricDrawer extends WordDrawer {
     /**
      * Get the theme currently in use on the getCanvas().
      * <p/>
+     *
      * @return the current theme
      */
     @Override
@@ -440,6 +479,7 @@ public class LyricDrawer extends WordDrawer {
     /**
      * Set whether the first of each line should be capitalised.
      * <p/>
+     *
      * @param val true if the first character should be, false otherwise.
      */
     @Override
@@ -451,6 +491,7 @@ public class LyricDrawer extends WordDrawer {
      * Take the raw text and format it into a number of lines nicely, where the
      * lines aren't more than the maximum length.
      * <p/>
+     *
      * @return processed, sanctified text that can be displayed nicely.
      */
     private List<LyricLine> sanctifyText(String[] linesArr, String[] translationArr) {
@@ -489,6 +530,7 @@ public class LyricDrawer extends WordDrawer {
     /**
      * Given a line of any length, sensibly split it up into several lines.
      * <p/>
+     *
      * @param line the line to split.
      * @return the split line (or the unaltered line if it is less than or equal
      * to the allowed length.
@@ -525,6 +567,7 @@ public class LyricDrawer extends WordDrawer {
      * Determine the largest font size we can safely use for every section of a
      * text displayable.
      * <p>
+     *
      * @param displayable the displayable to check.
      * @return the font size to use
      */
@@ -532,19 +575,18 @@ public class LyricDrawer extends WordDrawer {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
-        
-        int width = (int)(getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
-        int height = (int)(getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-        
+
+        int width = (int) (getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+        int height = (int) (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+
         if (displayable instanceof BiblePassage) {
-            height *= 1-QueleaProperties.get().getSmallBibleTextSize();
+            height *= 1 - QueleaProperties.get().getSmallBibleTextSize();
+        } else {
+            height *= 1 - QueleaProperties.get().getSmallSongTextSize();
         }
-        else {
-            height *= 1-QueleaProperties.get().getSmallSongTextSize();
-        }
-        
+
         Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
-        if(cachedSize!=null) {
+        if (cachedSize != null) {
             return cachedSize;
         }
         Font font = theme.getFont();
@@ -606,14 +648,15 @@ public class LyricDrawer extends WordDrawer {
      * automatically wrapped and if the text is too large to fit on the screen
      * in the current font, the size will be decreased until all the text fits.
      * <p/>
-     * @param text an array of the lines to display on the canvas, one entry in
-     * the array is one line.
+     *
+     * @param text         an array of the lines to display on the canvas, one entry in
+     *                     the array is one line.
      * @param translations the translation to use for the current section, or
-     * null if none should be used.
-     * @param smallText an array of the small lines to be displayed on the
-     * getCanvas().
-     * @param fade true if the text should fade, false otherwise.
-     * @param fontSize the font size to use to draw this text.
+     *                     null if none should be used.
+     * @param smallText    an array of the small lines to be displayed on the
+     *                     getCanvas().
+     * @param fade         true if the text should fade, false otherwise.
+     * @param fontSize     the font size to use to draw this text.
      */
     @Override
     public void setText(String[] text, String[] translations, String[] smallText, boolean fade, double fontSize) {
@@ -636,6 +679,7 @@ public class LyricDrawer extends WordDrawer {
      * Get the text currently set to appear on the getCanvas(). The text may or
      * may not be shown depending on whether the canvas is blacked or cleared.
      * <p/>
+     *
      * @return the current text.
      */
     public String[] getText() {

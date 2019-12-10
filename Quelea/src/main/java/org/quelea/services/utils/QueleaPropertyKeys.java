@@ -131,5 +131,8 @@ public class QueleaPropertyKeys {
     public static final String projectorMarginRightKey = "projector.margin.right";
     public static final String projectorMarginBottomKey = "projector.margin.bottom";
     public static final String projectorMarginLeftKey = "projector.margin.left";
+    public static final String useSlideTransitionKey = "use.fade";
+    public static final String slideTransitionInDurationKey = "slide.transition.duration.in";
+    public static final String slideTransitionOutDurationKey = "slide.transition.duration.out";
 
 }

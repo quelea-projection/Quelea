@@ -60,7 +60,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,
- * author and lyrics.
+ * author, lyrics and sequence.
  * <p/>
  *
  * @author Michael
@@ -81,6 +81,8 @@ public class BasicSongPanel extends BorderPane {
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
     private String saveHash = "";
+    private final TextField sequenceField;
+    private final Button sequenceButton;
     private boolean darkTheme = false;
 
     /**
@@ -119,6 +121,9 @@ public class BasicSongPanel extends BorderPane {
                 lyricsArea.getArea().getTextArea().insertText(lyricsArea.getArea().getTextArea().getCaretPosition(), e.getCommitted());
             }
         });
+
+        sequenceField = new TextField();
+        sequenceButton = getSequenceButton();
 
         final VBox mainPanel = new VBox();
         ToolBar lyricsToolbar = new ToolBar();
@@ -166,6 +171,21 @@ public class BasicSongPanel extends BorderPane {
         mainPanel.getChildren().add(lyricsToolbar);
         VBox.setVgrow(lyricsArea, Priority.ALWAYS);
         mainPanel.getChildren().add(lyricsArea);
+
+        GridPane formPanel = new GridPane();
+        formPanel.setHgap(5);
+        GridPane.setHgrow(sequenceField, Priority.ALWAYS);
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel("song.sequence"));
+        label.setLabelFor(sequenceField);
+        GridPane.setConstraints(label, 1, 1);
+        GridPane.setConstraints(sequenceField, 2, 1);
+        GridPane.setConstraints(sequenceButton, 3, 1);
+        formPanel.getChildren().add(label);
+        formPanel.getChildren().add(sequenceField);
+        formPanel.getChildren().add(sequenceButton);
+
+        mainPanel.getChildren().add(formPanel);
+
         centrePanel.getChildren().add(mainPanel);
         setCenter(centrePanel);
     }
@@ -179,7 +199,7 @@ public class BasicSongPanel extends BorderPane {
     }
 
     private String getSaveHash() {
-        return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode();
+        return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode() + sequenceField.getText().hashCode();
     }
 
     private Button getNonBreakingLineButton() {
@@ -242,6 +262,29 @@ public class BasicSongPanel extends BorderPane {
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(label)));
         ret.setOnAction((event) -> {
             insertTitle(titleName, "");
+        });
+        getLyricsField().requestFocus();
+        return ret;
+    }
+
+    /**
+     * Get the sequence dialog button.
+     *
+     * @return the sequence button
+     */
+    private Button getSequenceButton() {
+        Button ret = new Button("", new ImageView(new Image("file:icons/edit32.png", 24, 24, false, true)));
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("sequence.tooltip")));
+        ret.setOnAction((event) -> {
+            SequenceSelectionDialog sequenceSelectionDialog = new SequenceSelectionDialog();
+            sequenceSelectionDialog.showAndWait();
+            if (sequenceSelectionDialog.isFinished()) {
+                StringBuilder sb = new StringBuilder();
+                for (String s : sequenceSelectionDialog.getChosenSequence()) {
+                    sb.append(s).append(" ");
+                }
+                getSequenceField().setText(sb.toString().trim());
+            }
         });
         return ret;
     }
@@ -361,6 +404,7 @@ public class BasicSongPanel extends BorderPane {
     public void resetNewSong() {
         getTitleField().clear();
         getAuthorField().clear();
+        sequenceField.setText("");
         getLyricsField().getTextArea().replaceText("");
         getTitleField().requestFocus();
         lyricsArea.clearUndo();
@@ -377,7 +421,7 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().setText(song.getAuthor());
         getLyricsField().getTextArea().clear();
         getLyricsField().refreshStyle();
-        getLyricsField().getTextArea().insertText(0, song.getLyrics(true, true));
+        getLyricsField().getTextArea().insertText(0, song.getLyrics(true, true, false));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
         lyricsArea.clearUndo();
@@ -414,6 +458,15 @@ public class BasicSongPanel extends BorderPane {
     }
 
     /**
+     * Get the sequence field.
+     * <p/>
+     * @return the sequence field.
+     */
+    public TextField getSequenceField() {
+        return sequenceField;
+    }
+
+    /**
      * Get the verse title button
      *
      * @return verse button
@@ -433,6 +486,7 @@ public class BasicSongPanel extends BorderPane {
             });
             m.getItems().add(mi);
         }
+        getLyricsField().requestFocus();
         return m;
     }
 

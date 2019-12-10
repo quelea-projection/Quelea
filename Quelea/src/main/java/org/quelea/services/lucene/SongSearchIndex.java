@@ -120,8 +120,8 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
                 if (song.getAuthor() != null) {
                     doc.add(new TextField("author", p.matcher(song.getAuthor()).replaceAll(""), Field.Store.NO));
                 }
-                if (song.getLyrics(false, false) != null) {
-                    doc.add(new TextField("lyrics", p.matcher(song.getLyrics(false, false)).replaceAll(""), Field.Store.NO));
+                if (song.getLyrics(false, false, false) != null) {
+                    doc.add(new TextField("lyrics", p.matcher(song.getLyrics(false, false, false)).replaceAll(""), Field.Store.NO));
                 }
                 doc.add(new TextField("number", p.matcher(Long.toString(song.getID())).replaceAll(""), Field.Store.YES));
                 writer.addDocument(doc);

@@ -37,13 +37,13 @@ public class SongDuplicateChecker {
         final SongDisplayable[] songs = SongManager.get().getSongs();
         final String[] songLyrics = new String[songs.length];
         for (int i = 0; i < songLyrics.length; i++) {
-            songLyrics[i] = songs[i].getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+            songLyrics[i] = songs[i].getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
         }
         boolean[] sameArr = new boolean[newSongs.length];
         for(int i=0 ; i<newSongs.length ; i++) {
             //System.out.println(i + " of " + newSongs.length);
             SongDisplayable newSong = newSongs[i];
-            String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+            String newLyrics = newSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
             int distance = new AparapiLevenshteinDistance().leastCompare(newLyrics, songLyrics);
             if(distance<30) {
                 sameArr[i] = true;
@@ -65,8 +65,8 @@ public class SongDuplicateChecker {
      */
     public boolean checkSong(SongDisplayable newSong) {
         for(SongDisplayable databaseSong : SongManager.get().getSongs()) {
-            String databaseLyrics = databaseSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
-            String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+            String databaseLyrics = databaseSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
+            String newLyrics = newSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
             int maxDistance;
             if(newLyrics.length() < databaseLyrics.length()) {
                 maxDistance = newLyrics.length() / 10;

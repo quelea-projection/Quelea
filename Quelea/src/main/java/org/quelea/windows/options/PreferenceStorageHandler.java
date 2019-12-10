@@ -301,7 +301,7 @@ public class PreferenceStorageHandler implements StorageHandler {
                 break;
             case QueleaPropertyKeys.smallBibleTextSizeKey:
             case QueleaPropertyKeys.smallSongTextSizeKey:
-                QueleaProperties.get().setProperty(breadcrumb, String.valueOf(Double.parseDouble(object.toString())/10));
+                QueleaProperties.get().setProperty(breadcrumb, String.valueOf(Double.parseDouble(object.toString())));
                 break;
             case QueleaPropertyKeys.defaultSongDbUpdateKey:
                 QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
