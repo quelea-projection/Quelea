@@ -115,7 +115,7 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"), dbSongPreviewList, dbSongPreviewProperty).customKey(dbSongPreviewKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 500).customKey(thumbnailSizeKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"), thumbnailSizeProperty, 100, 1000).customKey(thumbnailSizeKey)
                                 ),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("small.song.text.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"), showSmallSongProperty).customKey(showSmallSongTextKey),
@@ -147,7 +147,8 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())).customKey(songOverflowKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())).customKey(defaultSongDbUpdateKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())).customKey(clearLiveOnRemoveKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("slide.transition.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseSlideTransition())).customKey(useSlideTransitionKey)
                                 )
 
                         ),

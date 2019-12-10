@@ -305,7 +305,7 @@ public final class QueleaProperties extends Properties {
      * @return a list of user chosen fonts to appear in the theme dialog.
      */
     public List<String> getChosenFonts() {
-        String fontStr = getProperty(chosenFontsKey, "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
+        String fontStr = getProperty(chosenFontsKey, "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur|Roboto Mono|Ubuntu Mono");
         List<String> ret = new ArrayList<>();
         for (String str : fontStr.split("\\|")) {
             if (!str.trim().isEmpty()) {
@@ -525,10 +525,10 @@ public final class QueleaProperties extends Properties {
      */
     public void setGlobalSongThemeFile(File file) {
         if(file==null) {
-            setProperty(globalSongThemeFileKey, "");            
+            setProperty(globalSongThemeFileKey, "");
         }
         else {
-            setProperty(globalSongThemeFileKey, file.getAbsolutePath());            
+            setProperty(globalSongThemeFileKey, file.getAbsolutePath());
         }
     }
 
@@ -548,10 +548,10 @@ public final class QueleaProperties extends Properties {
      */
     public void setGlobalBibleThemeFile(File file) {
         if(file==null) {
-            setProperty(globalBibleThemeFileKey, "");            
+            setProperty(globalBibleThemeFileKey, "");
         }
         else {
-            setProperty(globalBibleThemeFileKey, file.getAbsolutePath());            
+            setProperty(globalBibleThemeFileKey, file.getAbsolutePath());
         }
     }
 
@@ -1401,7 +1401,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to the Quelea discussion forum.
      */
     public String getDiscussLocation() {
-        return getProperty(discussLocationKey, "https://groups.google.com/group/quelea-discuss");
+        return getProperty(discussLocationKey, "https://quelea.discourse.group/");
     }
 
     /**
@@ -2331,6 +2331,60 @@ public final class QueleaProperties extends Properties {
      */
     public File getNoticeDir() {
         return new File(getQueleaUserHome(), "notices");
+    }
+
+    /**
+     * Set whether fade should be used.
+     *
+     * @param useFade true if fade should be used
+     */
+    public void setUseSlideTransition(boolean useFade) {
+        setProperty(useSlideTransitionKey, Boolean.toString(useFade));
+    }
+
+    /**
+     * Determine whether fade should be used.
+     *
+     * @return true if fade is enabled, false otherwise.
+     */
+    public boolean getUseSlideTransition() {
+        return Boolean.parseBoolean(getProperty(useSlideTransitionKey, "false"));
+    }
+
+    /**
+     * Set the slide transition in duration.
+     *
+     * @param millis milliseconds for fade-in effect.
+     */
+    public void setSlideTransitionInDuration(int millis) {
+        setProperty(slideTransitionInDurationKey, Integer.toString(millis));
+    }
+
+    /**
+     * Get the slide transition in duration.
+     *
+     * @return milliseconds for fade-in effect.
+     */
+    public int getSlideTransitionInDuration() {
+        return Integer.parseInt(getProperty(slideTransitionInDurationKey, "750"));
+    }
+
+    /**
+     * Get the slide transition out duration.
+     *
+     * @return milliseconds for fade-out effect.
+     */
+    public int getSlideTransitionOutDuration() {
+        return Integer.parseInt(getProperty(slideTransitionOutDurationKey, "400"));
+    }
+
+    /**
+     * Set the slide transition out duration.
+     *
+     * @param millis milliseconds for fade-out effect.
+     */
+    public void setSlideTransitionOutDuration(int millis) {
+        setProperty(slideTransitionOutDurationKey, Integer.toString(millis));
     }
 
     public boolean getUseDarkTheme() {
