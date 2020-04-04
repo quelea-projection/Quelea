@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,7 +19,6 @@ package org.quelea.data.db;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -135,7 +134,7 @@ public final class SongManager {
                     song.getTitle();
                 } catch (Exception ex) {
                     /*
-                     * Sometimes (rarely) a song can become corrupt - not entirely 
+                     * Sometimes (rarely) a song can become corrupt - not entirely
                      * sure why, but this allows us to load the database ok whilst
                      * still skipping over the corrupt entries.
                      */
@@ -152,6 +151,7 @@ public final class SongManager {
                         .info(song.getInfo())
                         .capo(song.getCapo())
                         .translations(song.getTranslations())
+                        .sequence(song.getSequence())
                         .lyrics(song.getLyrics())
                         .id(song.getId()).get();
                 final Theme theme = song.getTheme();
@@ -200,7 +200,7 @@ public final class SongManager {
         clearIndex();
         final List<SongDisplayable> adjustedSongs = new ArrayList<>();
         for (SongDisplayable song : songs) {
-            if (song.getSections().length > 0) {
+            if (song.getSectionsWithoutSequence().length > 0) {
                 adjustedSongs.add(song);
             }
         }
@@ -213,7 +213,7 @@ public final class SongManager {
                     final boolean nullTheme = song.getSections()[0].getTheme() == null;
                     Song newSong = new Song(song.getTitle(),
                             song.getAuthor(),
-                            song.getLyrics(true, true),
+                            song.getLyrics(true, true, false),
                             song.getCcli(),
                             song.getCopyright(),
                             song.getYear(),
@@ -222,7 +222,8 @@ public final class SongManager {
                             song.getCapo(),
                             song.getInfo(),
                             nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
-                            song.getTranslations());
+                            song.getTranslations(),
+                            song.getSequence());
                     session.save(newSong);
                 }
             });
@@ -268,7 +269,8 @@ public final class SongManager {
                     updatedSong.setCcli(song.getCcli());
                     updatedSong.setCopyright(song.getCopyright());
                     updatedSong.setInfo(song.getInfo());
-                    updatedSong.setLyrics(song.getLyrics(true, true));
+                    updatedSong.setSequence(song.getSequence());
+                    updatedSong.setLyrics(song.getLyrics(true, true, false));
                     updatedSong.setKey(song.getKey());
                     updatedSong.setPublisher(song.getPublisher());
                     updatedSong.setTitle(song.getTitle());

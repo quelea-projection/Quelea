@@ -126,5 +126,8 @@ public class QueleaPropertyKeys {
     public static final String stageWCoordKey = "stage.width.coord";
     public static final String stageHCoordKey = "stage.height.coord";
     public static final String darkThemeKey = "use.dark.theme";
+    public static final String useSlideTransitionKey = "use.fade";
+    public static final String slideTransitionInDurationKey = "slide.transition.duration.in";
+    public static final String slideTransitionOutDurationKey = "slide.transition.duration.out";
 
 }

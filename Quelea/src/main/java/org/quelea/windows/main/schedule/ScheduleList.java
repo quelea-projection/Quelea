@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -73,6 +74,7 @@ import org.quelea.windows.stage.StageDrawer;
 /**
  * The schedule list, all the items that are to be displayed in the service.
  * <p/>
+ *
  * @author Michael
  */
 public class ScheduleList extends StackPane {
@@ -118,8 +120,10 @@ public class ScheduleList extends StackPane {
                             setText(null);
                             setGraphic(null);
                         } else {
-                            setGraphic(new ScheduleListNode(item));
+                            ScheduleListNode scheduleListNode = new ScheduleListNode(item);
+                            setGraphic(scheduleListNode);
                             setText(null);
+                            scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
                         }
                         if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
                             setContextMenu(new SchedulePopupMenu(item));
@@ -272,7 +276,7 @@ public class ScheduleList extends StackPane {
         if (listCell != null) {
             listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
         }
-        
+
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
             db.getFiles().stream().forEach((file) -> {
@@ -399,6 +403,7 @@ public class ScheduleList extends StackPane {
     /**
      * Get the current schedule in use on this list.
      * <p/>
+     *
      * @return the current schedule in use on this list.
      */
     public Schedule getSchedule() {
@@ -436,6 +441,7 @@ public class ScheduleList extends StackPane {
      * Erase everything in the current schedule and set the contents of this
      * list to the current schedule.
      * <p/>
+     *
      * @param schedule the schedule.
      */
     public void setSchedule(Schedule schedule) {
@@ -453,7 +459,7 @@ public class ScheduleList extends StackPane {
      * Refresh the display of the items in the schedule list.
      *
      * @param song the song of which the display should be refreshed in the
-     * listview.
+     *             listview.
      */
     public void refreshSong(SongDisplayable song) {
         ObservableList<Displayable> itemp = listView.itemsProperty().get();
@@ -478,6 +484,7 @@ public class ScheduleList extends StackPane {
     /**
      * Get the selection model of the underlying list.
      * <p>
+     *
      * @return the selection model of the listview.
      */
     public MultipleSelectionModel<Displayable> getSelectionModel() {
@@ -487,6 +494,7 @@ public class ScheduleList extends StackPane {
     /**
      * Get the items property of the underlying list.
      * <p>
+     *
      * @return the items property of the underlying list.
      */
     public ObjectProperty<ObservableList<Displayable>> itemsProperty() {
@@ -496,6 +504,7 @@ public class ScheduleList extends StackPane {
     /**
      * Return the items of the underlying list.
      * <p>
+     *
      * @return the items of the underlying list.
      */
     public ObservableList<Displayable> getItems() {
@@ -505,6 +514,7 @@ public class ScheduleList extends StackPane {
     /**
      * Determine whether the schedule list is empty.
      * <p/>
+     *
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
@@ -548,6 +558,7 @@ public class ScheduleList extends StackPane {
     /**
      * Move the currently selected item in the list in the specified direction.
      * <p/>
+     *
      * @param direction the direction to move the selected item.
      */
     public void moveCurrentItem(Direction direction) {
