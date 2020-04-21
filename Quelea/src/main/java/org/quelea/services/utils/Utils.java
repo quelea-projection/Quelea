@@ -805,11 +805,17 @@ public final class Utils {
 	public static List<String> getImageExtensions() {
 		List<String> ret = new ArrayList<>();
 		ret.add("png");
+		ret.add("PNG");
 		ret.add("tiff");
+		ret.add("TIFF");
 		ret.add("jpg");
+		ret.add("JPG");
 		ret.add("jpeg");
+		ret.add("JPEG");
 		ret.add("gif");
+		ret.add("GIF");
 		ret.add("bmp");
+		ret.add("BMP");
 		return ret;
 	}
 
@@ -821,20 +827,35 @@ public final class Utils {
 	public static List<String> getVideoExtensions() {
 		List<String> ret = new ArrayList<>();
 		ret.add("mkv");
+		ret.add("MKV");
 		ret.add("mp4");
+		ret.add("MP4");
 		ret.add("m4v");
+		ret.add("M4V");
 		ret.add("flv");
+		ret.add("FLV");
 		ret.add("avi");
+		ret.add("AVI");
 		ret.add("mov");
+		ret.add("MOV");
 		ret.add("rm");
+		ret.add("RM");
 		ret.add("mpg");
+		ret.add("MPG");
 		ret.add("mpeg");
+		ret.add("MPEG");
 		ret.add("wmv");
+		ret.add("WMV");
 		ret.add("ogm");
+		ret.add("OGM");
 		ret.add("mrl");
+		ret.add("MRL");
 		ret.add("asx");
+		ret.add("ASX");
 		ret.add("m2ts");
+		ret.add("M2TS");
 		ret.add("vlcarg");
+		ret.add("VLCARG");
 		return ret;
 	}
 
@@ -846,8 +867,11 @@ public final class Utils {
 	public static List<String> getAudioExtensions() {
 		List<String> ret = new ArrayList<>();
 		ret.add("mp3");
+		ret.add("MP3");
 		ret.add("wav");
+		ret.add("WAV");
 		ret.add("wma");
+		ret.add("WMA");
 		// TODO: Add more extensions
 		return ret;
 	}
