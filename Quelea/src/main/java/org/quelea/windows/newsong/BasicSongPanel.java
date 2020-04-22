@@ -425,6 +425,7 @@ public class BasicSongPanel extends BorderPane {
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
         lyricsArea.clearUndo();
+        sequenceField.setText(song.getSequence());
     }
 
     /**
