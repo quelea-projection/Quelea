@@ -33,6 +33,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import static com.dlsc.preferencesfx.util.Constants.*;
+import static org.quelea.services.utils.QueleaPropertyKeys.useMaxBibleCharsKey;
 
 /**
  * Handles everything related to storing values of {@link Setting} using {@link Preferences}.
@@ -293,6 +294,9 @@ public class PreferenceStorageHandler implements StorageHandler {
                 break;
             case QueleaPropertyKeys.defaultSongDbUpdateKey:
                 QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
+                break;
+            case QueleaPropertyKeys.useMaxBibleCharsKey:
+                QueleaProperties.get().setBibleUsingMaxChars(!Boolean.parseBoolean(object.toString()));
                 break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
