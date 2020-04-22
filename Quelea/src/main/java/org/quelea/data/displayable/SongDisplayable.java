@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -1243,10 +1244,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     }
                     if (translationNode.getNodeName().equals("lyrics")) {
                         translationOptLyrics = translationNode.getTextContent();
+                        if (translationOptLang != null && translationOptLyrics != null) {
+                            translationOpts.put(translationOptLang, translationOptLyrics);
+                        }
                     }
-                }
-                if (translationOptLang != null && translationOptLyrics != null) {
-                    translationOpts.put(translationOptLang, translationOptLyrics);
                 }
             }
             if (node.getNodeName().equals("sequence")) {
@@ -1277,7 +1278,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         ret.setSequence(sequence);
         return ret;
     }
-
+    
     /**
      * Generate a hashcode for this song.
      * <p/>
