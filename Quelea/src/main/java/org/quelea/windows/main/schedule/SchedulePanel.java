@@ -77,7 +77,7 @@ public class SchedulePanel extends BorderPane {
      */
     public SchedulePanel() {
         boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
-        ImageView themeButtonIcon = new ImageView(new Image("file:icons/theme.png"));
+        ImageView themeButtonIcon = new ImageView(new Image(darkTheme ? "file:icons/ic-theme-light.png" : "file:icons/ic-theme.png"));
         themeButtonIcon.setFitWidth(16);
         themeButtonIcon.setFitHeight(16);
         themeButton = new Button("", themeButtonIcon);
@@ -155,7 +155,7 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png"));
+        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/ic-remove-light.png" : "file:icons/ic-remove.png"));
         removeIV.setFitWidth(16);
         removeIV.setFitHeight(16);
         removeButton = new Button("", removeIV);
@@ -164,7 +164,7 @@ public class SchedulePanel extends BorderPane {
         removeButton.setDisable(true);
         removeButton.setOnAction(new RemoveScheduleItemActionHandler());
 
-        ImageView upIV = new ImageView(new Image(darkTheme ? "file:icons/up-light.png" : "file:icons/up.png"));
+        ImageView upIV = new ImageView(new Image(darkTheme ? "file:icons/ic-up-light.png" : "file:icons/ic-up.png"));
         upIV.setFitWidth(16);
         upIV.setFitHeight(16);
         upButton = new Button("", upIV);
@@ -178,7 +178,7 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        ImageView downIV = new ImageView(new Image(darkTheme ? "file:icons/down-light.png" : "file:icons/down.png"));
+        ImageView downIV = new ImageView(new Image(darkTheme ? "file:icons/ic-down-light.png" : "file:icons/ic-down.png"));
         downIV.setFitWidth(16);
         downIV.setFitHeight(16);
         downButton = new Button("", downIV);

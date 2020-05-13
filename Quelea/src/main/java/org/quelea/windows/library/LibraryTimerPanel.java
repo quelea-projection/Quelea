@@ -76,11 +76,11 @@ public class LibraryTimerPanel extends BorderPane {
             checkRemoveButton();
         });
 
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", new ImageView(new Image("file:icons/ic-add.png",16,16,false,true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timers.panel")));
         addButton.setOnAction(new AddTimerActionHandler());
         
-        Button importButton = new Button("", new ImageView(new Image("file:icons/importbw.png")));
+        Button importButton = new Button("", new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-import-light.png" : "file:icons/ic-import.png",16,16,false,true)));
         importButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("import.heading")));
         importButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();
@@ -124,7 +124,7 @@ public class LibraryTimerPanel extends BorderPane {
                 }
             }
         });
-        ImageView removeIV = new ImageView(new Image("file:icons/removedb.png"));
+        ImageView removeIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-delete-light.png" : "file:icons/ic-delete.png",16,16,false,true));
         removeButton = new Button("", removeIV);
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.timer.text")));

@@ -91,14 +91,14 @@ public class TestPaneDialog extends Stage {
         centrePane.setHgap(30);
         centrePane.setVgap(30);
 
-        centrePane.add(getTestView("file:icons/SMPTE Bars.png", false), 0, 0);
-        centrePane.add(getTestView("file:icons/position calibrate.png", false), 0, 1);
-        centrePane.add(getTestView("file:icons/square wedges.png", true), 1, 0);
-        centrePane.add(getTestView("file:icons/colorbands.png", false), 1, 1);
+        centrePane.add(getTestView("file:icons/img-SMPTE.png", false), 0, 0);
+        centrePane.add(getTestView("file:icons/img-position-calib.png", false), 0, 1);
+        centrePane.add(getTestView("file:icons/img-square-wedges.png", true), 1, 0);
+        centrePane.add(getTestView("file:icons/img-colorbands.png", false), 1, 1);
         root.setCenter(centrePane);
 
         StackPane bottomPane = new StackPane();
-        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"), new ImageView(new Image("file:icons/tick.png")));
+        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override

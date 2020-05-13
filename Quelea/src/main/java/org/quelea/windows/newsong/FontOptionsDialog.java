@@ -253,7 +253,7 @@ public class FontOptionsDialog extends Stage {
         BorderPane.setMargin(controlRoot, new Insets(10));
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         okButton.setOnAction((ActionEvent t) -> {
             hide();
         });

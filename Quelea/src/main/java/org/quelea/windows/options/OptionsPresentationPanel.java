@@ -75,14 +75,14 @@ public class OptionsPresentationPanel {
                     new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
             bindings.put(directoryFieldPPField, usePPProperty.not());
 
-            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image("file:icons/presentationssettingsicon.png")),
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/setting-ic-presentation-light.png" : "file:icons/setting-ic-presentation.png")),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOOProperty).customKey(useOoKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOOField, directoryChooserOOProperty).customKey(ooPathKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.pp.label"), usePPProperty).customKey(usePpKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("pp.path"), directoryFieldPPField, directoryChooserPPProperty).customKey(ppPathKey)
             );
         } else
-            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image("file:icons/presentationssettingsicon.png")),
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), new ImageView(new Image("file:icons/setting-ic-presentation.png")),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOOProperty).customKey(useOoKey),
                     Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOOField, directoryChooserOOProperty).customKey(ooPathKey)
             );

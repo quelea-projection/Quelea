@@ -128,7 +128,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
 
     private Button createAddBibleButton() {
         final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"),
-                new ImageView(new Image("file:icons/add.png")));
+                new ImageView(new Image("file:icons/ic-add.png",16,16,false,true)));
         addBibleButton.setOnAction(t -> {
 
             FileChooser chooser = new FileChooser();
@@ -155,7 +155,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
 
     private Button createDeleteBibleButton() {
         final Button deleteBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
-                new ImageView(new Image("file:icons/cross.png")));
+                new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         deleteBibleButton.setOnAction(t -> {
 
             Bible bible = BibleManager.get().getBibleFromName(comboBox.getSelectionModel().getSelectedItem());

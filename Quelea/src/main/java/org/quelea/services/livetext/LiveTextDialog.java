@@ -132,7 +132,7 @@ public class LiveTextDialog extends Stage {
             dialog.textField.clear();
             dialog.messageLabel.setText(message);
             dialog.messageLabel.setWrapText(true);
-            dialog.getIcons().add(new Image("file:icons/live_text.png"));
+            dialog.getIcons().add(new Image("file:icons/ic-livetext.png"));
             dialog.showAndWait();
         });
         while (dialog.isShowing()) {

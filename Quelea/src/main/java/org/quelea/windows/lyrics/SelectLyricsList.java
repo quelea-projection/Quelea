@@ -35,7 +35,7 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class SelectLyricsList extends ListView<TextSection> {
 
-    private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"), 6, 27);
+    private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/ic-edit.png"), 6, 27);
     private boolean oneLineMode;
     private boolean showQuickEdit;
     private int quickEditIndex;

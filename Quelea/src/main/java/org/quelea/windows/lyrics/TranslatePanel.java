@@ -78,7 +78,7 @@ public class TranslatePanel extends BorderPane implements Cancellable {
         StackPane translationPane = new StackPane();
         tabPane = new TabPane();
         translationPane.getChildren().add(tabPane);
-        addTranslationButton = new Button("", new ImageView(new Image("file:icons/newstar.png", 16, 16, false, true)));
+        addTranslationButton = new Button("", new ImageView(new Image("file:icons/ic-translate.png", 16, 16, false, true)));
         Utils.setToolbarButtonStyle(addTranslationButton);
         addTranslationButton.setOnAction(new EventHandler<ActionEvent>() {
 

@@ -129,9 +129,9 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public ImageView getPreviewIcon() {
         if (Utils.fileIsVideo(getLocationAsFile())) {
-            return new ImageView(new Image("file:icons/video.png"));
+            return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-video-light.png" : "file:icons/ic-sch-video.png",30,30,false,true));
         } else {
-            return new ImageView(new Image("file:icons/audio30.png"));
+            return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-audio-light.png" : "file:icons/ic-sch-audio.png",30,30,false,true));
         }
     }
 

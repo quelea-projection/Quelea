@@ -52,7 +52,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
     public BibleBrowseDialog() {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.browser.title"));
-        getIcons().add(new Image("file:icons/bible.png"));
+        getIcons().add(new Image("file:icons/ic-bible-open.png"));
 
         HBox northPanel = new HBox();
         bibles = new ComboBox<>();

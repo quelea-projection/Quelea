@@ -105,7 +105,7 @@ public class LivePanel extends LivePreviewPanel {
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
-        ImageView liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
+        ImageView liveIcon = new ImageView(new Image("file:icons/ic-livedot.png"));
         liveIcon.setFitHeight(10);
         liveIcon.setFitWidth(10);
         header.getItems().add(liveIcon);
@@ -193,7 +193,7 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.getItems().add(logo);
-        black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
+        black = new ToggleButton("", new ImageView(new Image("file:icons/ic-blackscreen.png",16,16,false,true)));
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -211,7 +211,7 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.getItems().add(black);
-        ImageView clearIV = new ImageView(new Image("file:icons/clear.png"));
+        ImageView clearIV = new ImageView(new Image("file:icons/ic-clearscreen.png"));
         clearIV.setFitWidth(16);
         clearIV.setFitHeight(16);
         clear = new ToggleButton("", clearIV);
@@ -230,7 +230,7 @@ public class LivePanel extends LivePreviewPanel {
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(clear);
-        ImageView hideIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/cross-light.png" : "file:icons/cross.png"));
+        ImageView hideIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-cancel-light.png" : "file:icons/ic-cancel.png"));
         hideIV.setFitWidth(16);
         hideIV.setFitHeight(16);
         hide = new ToggleButton("", hideIV);
@@ -630,7 +630,7 @@ public class LivePanel extends LivePreviewPanel {
             return webPreviewImage;
         } else {
             getWebPanel().addWebView((WebDisplayable) getDisplayable());
-            return new Image("file:icons/web preview.png");
+            return new Image("file:icons/web-preview.png");
         }
     }
 

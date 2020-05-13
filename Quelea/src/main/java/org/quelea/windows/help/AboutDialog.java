@@ -67,7 +67,7 @@ public class AboutDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
 
         BorderPane newLayout = new BorderPane();
-        ImageView logo = new ImageView(new Image("file:icons/full logo.png"));
+        ImageView logo = new ImageView(new Image("file:icons/img-about.png"));
         BorderPane.setAlignment(logo, Pos.CENTER);
         newLayout.setTop(logo);
 

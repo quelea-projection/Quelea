@@ -59,17 +59,17 @@ public class HelpMenu extends Menu {
         });
 
         if (Desktop.isDesktopSupported()) {
-            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
+            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/ic-facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getFacebookPageLocation());
             });
             getItems().add(queleaFacebook);
-            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
+            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-discuss-light.png" : "file:icons/ic-discuss.png", 16, 16, false, true)));
             queleaDiscuss.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getDiscussLocation());
             });
             getItems().add(queleaDiscuss);
-            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
+            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-manual-light.png" : "file:icons/ic-manual.png", 16, 16, false, true)));
             queleaWiki.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getWikiPageLocation());
             });
@@ -79,12 +79,12 @@ public class HelpMenu extends Menu {
             queleaFacebook = null;
             queleaWiki = null;
         }
-        updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
+        updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-update-light.png" : "file:icons/ic-update.png", 16, 16, false, true)));
         updateCheck.setOnAction(t -> {
             new UpdateChecker().checkUpdate(true, true, true);
         });
         getItems().add(updateCheck);
-        about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
+        about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/ic-about.png", 16, 16, false, true)));
         about.setOnAction(t -> {
             aboutDialog.show();
         });

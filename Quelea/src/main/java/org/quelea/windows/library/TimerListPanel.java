@@ -43,6 +43,7 @@ import javafx.util.StringConverter;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
@@ -113,7 +114,7 @@ public class TimerListPanel extends BorderPane {
         });
 
         ContextMenu removeMenu = new ContextMenu();
-        MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
+        MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-delete-light.png" : "file:icons/ic-delete.png", 16, 16, false, false)));
         removeItem.setOnAction(new RemoveTimerActionHandler());
         removeMenu.getItems().add(removeItem);
         timerList.setCellFactory(DisplayableListCell.forListView(removeMenu, callback, null));

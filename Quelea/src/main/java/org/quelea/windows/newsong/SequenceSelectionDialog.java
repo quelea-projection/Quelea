@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -93,7 +94,7 @@ public final class SequenceSelectionDialog extends Stage {
         VBox toolbar = new VBox();
         toolbar.setPadding(new Insets(5));
         toolbar.getChildren().add(new Label());
-        ImageView removeIV = new ImageView(new Image("file:icons/cross.png"));
+        ImageView removeIV = new ImageView(new Image("file:icons/ic-cancel.png"));
         removeIV.setFitWidth(16);
         removeIV.setFitHeight(16);
         removeButton = new Button("", removeIV);
@@ -104,7 +105,7 @@ public final class SequenceSelectionDialog extends Stage {
             chosenSequence.getItems().remove(chosenSequence.selectionModelProperty().get().getSelectedIndex());
         });
 
-        ImageView upIV = new ImageView(new Image("file:icons/up.png"));
+        ImageView upIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-up-light.png" : "file:icons/ic-up.png"));
         upIV.setFitWidth(16);
         upIV.setFitHeight(16);
         upButton = new Button("", upIV);
@@ -113,7 +114,7 @@ public final class SequenceSelectionDialog extends Stage {
         upButton.setDisable(true);
         upButton.setOnAction(t -> moveCurrentItem(Direction.UP));
 
-        ImageView downIV = new ImageView(new Image("file:icons/down.png"));
+        ImageView downIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-down-light.png" : "file:icons/ic-down.png"));
         downIV.setFitWidth(16);
         downIV.setFitHeight(16);
         downButton = new Button("", downIV);
@@ -136,7 +137,7 @@ public final class SequenceSelectionDialog extends Stage {
         chosenSequenceBox.getChildren().add(chosenSequence);
         centrePane.getChildren().add(chosenSequenceBox);
 
-        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         doneButton.setOnAction((ActionEvent t) -> {
             finished = true;
             SequenceSelectionDialog.this.hide();

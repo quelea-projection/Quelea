@@ -124,7 +124,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         BorderPane bottomPane = new BorderPane();
         VBox.setVgrow(bottomPane, Priority.SOMETIMES);
         bottomPane.setCenter(preview);
-        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/ic-add.png",16,16,false,true)));
         addToSchedule.setOnAction((ActionEvent t) -> {
             BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);

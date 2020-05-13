@@ -56,14 +56,14 @@ import org.quelea.services.utils.Utils;
 public class MultimediaControls extends StackPane {
 
     private static final int SLIDER_UPDATE_RATE = 100;
-    private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
-    private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
-    private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
-    private static final Image LOOP_IMAGE_ON = new Image("file:icons/loop_on.png");
-    private static final Image LOOP_IMAGE_OFF = new Image("file:icons/loop_off.png");
-    private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
-    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
-    private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
+    private static final Image PLAY_IMAGE = new Image("file:icons/ic-play.png");
+    private static final Image PAUSE_IMAGE = new Image("file:icons/ic-pause.png");
+    private static final Image STOP_IMAGE = new Image("file:icons/ic-stop.png");
+    private static final Image LOOP_IMAGE_ON = new Image("file:icons/ic-loopon.png");
+    private static final Image LOOP_IMAGE_OFF = new Image("file:icons/ic-loopoff.png");
+    private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/ic-playdisable.png");
+    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/ic-pausedisable.png");
+    private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/ic-stopdisable.png");
     private static final Image VOLUME = new Image("file:icons/volume.png");
     private boolean playpause;
     private ImageView playButton;

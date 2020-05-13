@@ -60,15 +60,15 @@ public class ToolsMenu extends Menu {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
         boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
-        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
+        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/ic-bible-open-light.png" : "file:icons/ic-bible-open.png", 20, 20, false, true)));
         viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
 
-        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
+        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/ic-bible-light.png" : "file:icons/ic-bible.png", 20, 20, false, true)));
         searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
 
-        testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/testbars.png", 20, 20, false, true)));
+        testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/ic-testbars.png", 20, 20, false, true)));
         testItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -83,7 +83,7 @@ public class ToolsMenu extends Menu {
         });
         getItems().add(testItem);
 
-        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image(darkTheme ? "file:icons/live_text-light.png" : "file:icons/live_text.png", 20, 20, false, true)));
+        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image(darkTheme ? "file:icons/ic-livetext-light.png" : "file:icons/ic-livetext.png", 20, 20, false, true)));
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
         if (QueleaApp.get().getMobileLyricsServer() == null) {
@@ -91,7 +91,7 @@ public class ToolsMenu extends Menu {
         }
         getItems().add(liveTextItem);
 
-        optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
+        optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image(darkTheme ? "file:icons/ic-options-light.png" : "file:icons/ic-options.png", 20, 20, false, true)));
         optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
 

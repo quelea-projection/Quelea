@@ -43,9 +43,9 @@ public class AddWebActionHandler implements EventHandler<ActionEvent> {
         dialog.setTitle(LabelGrabber.INSTANCE.getLabel("website.dialog.title"));
         dialog.setHeaderText(LabelGrabber.INSTANCE.getLabel("website.dialog.header"));
         dialog.setContentText(LabelGrabber.INSTANCE.getLabel("website.dialog.content"));
-        dialog.setGraphic(new ImageView(new Image("file:icons/website.png")));
+        dialog.setGraphic(new ImageView(new Image("file:icons/ic-sch-web.png")));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:icons/web-small.png"));
+        stage.getIcons().add(new Image("file:icons/ic-web.png"));
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {

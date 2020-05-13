@@ -1369,11 +1369,11 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     @Override
     public ImageView getPreviewIcon() {
         if (getID() < 0) {
-            return new ImageView(new Image("file:icons/lyricscopy.png"));
+            return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-lyricscopy-light.png" :  "file:icons/ic-sch-lyricscopy.png",30,30,false,true));
         } else if (hasChords()) {
-            return new ImageView(new Image("file:icons/lyricsandchords.png"));
+            return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-lyricschord-light.png" :  "file:icons/ic-sch-lyricschord.png",30,30,false,true));
         } else {
-            return new ImageView(new Image("file:icons/lyrics.png"));
+            return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-lyrics-light.png" :  "file:icons/ic-sch-lyrics.png",30,30,false,true));
         }
     }
 

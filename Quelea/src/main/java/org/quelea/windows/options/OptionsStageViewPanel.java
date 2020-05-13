@@ -71,7 +71,7 @@ public class OptionsStageViewPanel {
     }
 
     public Category getStageViewTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), new ImageView(new Image("file:icons/stageviewsettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), new ImageView(new Image("file:icons/setting-ic-stageview.png")),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), new SimpleBooleanProperty(QueleaProperties.get().getShowChords())).customKey(stageShowChordsKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignmentList, alignmentSelectionProperty).customKey(stageTextAlignmentKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fontsList, fontSelectionProperty).customKey(stageFontKey),

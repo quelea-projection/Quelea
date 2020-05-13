@@ -86,8 +86,8 @@ public class MobileLyricsServer {
         server.createContext("/livetext", new LiveTextHandler());
         server.createContext("/jscolor.js", new FileHandler("icons/jscolor.js"));
         server.createContext("/arrow.gif", new FileHandler("icons/arrow.gif"));
-        server.createContext("/gear.png", new FileHandler("icons/gear.png"));
-        server.createContext("/translate.png", new FileHandler("icons/translate_on.png"));
+        server.createContext("/gear.png", new FileHandler("icons/ic-options.png"));
+        server.createContext("/translate.png", new FileHandler("icons/ic-translate.png"));
         server.createContext("/cross.gif", new FileHandler("icons/cross.gif"));
         server.createContext("/hs.png", new FileHandler("icons/hs.png"));
         server.createContext("/hv.png", new FileHandler("icons/hv.png"));

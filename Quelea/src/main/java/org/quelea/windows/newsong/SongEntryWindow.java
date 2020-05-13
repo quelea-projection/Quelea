@@ -76,7 +76,7 @@ public class SongEntryWindow extends Stage {
         updateDBOnHide = true;
         Utils.addIconsToStage(this);
 
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
 
         BorderPane mainPane = new BorderPane();
         tabPane = new TabPane();
@@ -126,7 +126,7 @@ public class SongEntryWindow extends Stage {
             cancel = false;
             saveSong();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         cancelButton.setOnAction(t -> {
             checkSave();
         });

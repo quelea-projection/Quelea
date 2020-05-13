@@ -77,7 +77,7 @@ public class PreferencesDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
         initOwner(QueleaApp.get().getMainWindow());
-        getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
+        getIcons().add(new Image("file:icons/ic-options.png", 16, 16, false, true));
         mainPane = new BorderPane();
 
         generalPanel = new OptionsGeneralPanel(bindings);
@@ -101,7 +101,7 @@ public class PreferencesDialog extends Stage {
                         recordingPanel.getRecordingsTab()
                 );
 
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
             preferencesFx.saveSettings();

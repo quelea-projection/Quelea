@@ -29,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -106,7 +107,7 @@ public class WebDisplayable implements Displayable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        ImageView small = new ImageView(new Image("file:icons/website.png"));
+        ImageView small = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-web-light.png" : "file:icons/ic-sch-web.png",30,30,false,true));
         return small;
     }
 

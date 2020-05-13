@@ -106,7 +106,7 @@ public class OptionsGeneralPanel {
         bindings.put(smallSongSizeControllerField, showSmallSongProperty.not());
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")))
+        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/setting-ic-general.png")))
                 .subCategories(
                         Category.of(LabelGrabber.INSTANCE.getLabel("interface.options.options"),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.interface.options"),

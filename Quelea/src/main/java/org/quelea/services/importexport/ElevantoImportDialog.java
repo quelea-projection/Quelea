@@ -98,7 +98,7 @@ public class ElevantoImportDialog extends Stage {
         }
         
         centerOnScreen();
-        getIcons().add(new Image("file:icons/elevanto.png"));        
+        getIcons().add(new Image("file:icons/logo-elevanto.png"));
     }
     
     public ElevantoParser getParser() {

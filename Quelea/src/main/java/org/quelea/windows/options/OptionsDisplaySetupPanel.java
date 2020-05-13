@@ -56,7 +56,7 @@ public class OptionsDisplaySetupPanel {
     }
 
     Category getDisplaySetupTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), new ImageView(new Image("file:icons/monitorsettingsicon.png")), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), new ImageView(new Image("file:icons/setting-ic-monitor.png")), //, new ImageView(new Image("file:icons/monitorsettingsicon.png")),
                 controlScreen.getGroup(),
                 projectorScreen.getGroup(),
                 stageScreen.getGroup()

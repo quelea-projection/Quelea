@@ -70,7 +70,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     public BibleSearchDialog() {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
-        getIcons().add(new Image("file:icons/search.png"));
+        getIcons().add(new Image("file:icons/ic-bible.png"));
 
         overlay = new LoadingPane();
         searchField = new TextField();
@@ -83,7 +83,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         resultsField = new Text(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
         resultsField.setFont(Font.font("Sans", 14));
         resultsField.getStyleClass().add("text");
-        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
 
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();

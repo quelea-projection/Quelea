@@ -85,7 +85,7 @@ public class QuickEditDialog extends Stage {
         buttonPanel.setAlignment(Pos.CENTER);
         BorderPane.setMargin(buttonPanel, new Insets(5,0,5,0));
         buttonPanel.setSpacing(5);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
@@ -109,7 +109,7 @@ public class QuickEditDialog extends Stage {
                 Utils.updateSongInBackground(currentSong, false, true);
             }
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override

@@ -75,8 +75,8 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
             wordsArea.replaceText(selectedDisplayable.getPretext() + selectedDisplayable.secondsToTime(seconds) + selectedDisplayable.getPosttext());
         }
         
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
+        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());

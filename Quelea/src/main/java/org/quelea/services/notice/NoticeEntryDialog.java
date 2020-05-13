@@ -85,7 +85,7 @@ public class NoticeEntryDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
-        getIcons().add(new Image("file:icons/info.png"));
+        getIcons().add(new Image("file:icons/ic-notice.png"));
         colourPicker = new ColorPicker(Color.WHITE);
         colourPicker.setStyle("-fx-color-label-visible: false ;");
         if (fontSelectionDialog == null) {
@@ -157,7 +157,7 @@ public class NoticeEntryDialog extends Stage {
         mainPanel.getChildren().add(fontBox);
 
         HBox southPanel = new HBox();
-        addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
+        addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         addButton.setDefaultButton(true);
         addButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -171,7 +171,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(addButton);
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -181,7 +181,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(cancelButton);
-        saveButton = new Button(LabelGrabber.INSTANCE.getLabel("save.add.notice.button"), new ImageView(new Image("file:icons/filesave.png")));
+        saveButton = new Button(LabelGrabber.INSTANCE.getLabel("save.add.notice.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-save-light.png" : "file:icons/ic-save.png",16,16,false,true)));
         saveButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -191,7 +191,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(saveButton);
-        deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.notice.button"), new ImageView(new Image("file:icons/removedb.png")));
+        deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.notice.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-delete-light.png" : "file:icons/ic-delete.png",16,16,false,true)));
         deleteButton.setOnAction(e -> {
             QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().remove(notice);
             NoticeFileHandler.deleteNotice(notice);

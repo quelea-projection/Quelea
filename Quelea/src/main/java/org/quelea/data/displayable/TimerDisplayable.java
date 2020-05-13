@@ -246,7 +246,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/timer-small-light.png" : "file:icons/timer-small.png", 30, 30, false, true));
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-timer-light.png" : "file:icons/ic-sch-timer.png", 30, 30, false, true));
     }
 
     /**

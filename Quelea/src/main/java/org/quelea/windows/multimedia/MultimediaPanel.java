@@ -60,7 +60,7 @@ public class MultimediaPanel extends AbstractPanel {
         this.controlPanel = new MultimediaControls();
         controlPanel.setDisableControls(true);
         drawer = new MultimediaDrawer(controlPanel);
-        imgView = new ImageView(new Image("file:icons/vid preview.png"));
+        imgView = new ImageView(new Image("file:icons/vid-preview.png"));
         BorderPane.setMargin(controlPanel, new Insets(30));
         setCenter(controlPanel);
         VBox centerBit = new VBox(5);

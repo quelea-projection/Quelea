@@ -64,7 +64,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      */
     public NoticeDialog() {
         BorderPane mainPane = new BorderPane();
-        getIcons().add(new Image("file:icons/info.png"));
+        getIcons().add(new Image("file:icons/ic-notice.png"));
         noticeDrawers = new ArrayList<>();
         setTitle(LabelGrabber.INSTANCE.getLabel("notices.heading"));
         newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
@@ -168,7 +168,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
             }
         });
 
-        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {

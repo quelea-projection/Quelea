@@ -218,7 +218,7 @@ public class ScheduleThemeNode extends BorderPane {
             }
         }
         HBox buttonPanel = new HBox();
-        Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/add.png")));
+        Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/ic-add.png",16,16,false,true)));
         newThemeButton.setOnAction(t -> {
             themeDialog.setTheme(null);
             themeDialog.showAndWait();

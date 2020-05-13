@@ -144,7 +144,7 @@ public class WebPanel extends AbstractPanel {
                 }
             }
         });
-        imagePreview.setImage(new Image("file:icons/web preview.png"));
+        imagePreview.setImage(new Image("file:icons/web-preview.png"));
         addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
             if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
                 t.consume();

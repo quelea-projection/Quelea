@@ -40,6 +40,7 @@ import org.quelea.services.importexport.SelectExportedSongsDialog;
 import org.quelea.services.importexport.SongListExporter;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -58,7 +59,7 @@ public class ExportMenu extends Menu {
      * Create the export menu.
      */
     public ExportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("export.heading"), new ImageView(new Image("file:icons/right.png", 16, 16, false, true)));
+        super(LabelGrabber.INSTANCE.getLabel("export.heading"), new ImageView(new Image(QueleaProperties .get().getUseDarkTheme() ? "file:icons/ic-export-light.png" : "file:icons/ic-export.png", 16, 16, false, true)));
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(evt -> {
@@ -69,7 +70,7 @@ public class ExportMenu extends Menu {
 		});
         getItems().add(qspItem);
 
-        openLyricsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"));
+        openLyricsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"), new ImageView(new Image("file:icons/logo-openlyrics.png", 16, 16, false, true)));
         openLyricsItem.setOnAction(evt -> {
 			final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
 			//TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
@@ -78,7 +79,7 @@ public class ExportMenu extends Menu {
 		});
         getItems().add(openLyricsItem);
 
-        pdfItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
+        pdfItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pdf.button"), new ImageView(new Image(QueleaProperties .get().getUseDarkTheme() ? "file:icons/ic-pdf-light.png" : "file:icons/ic-pdf.png", 16, 16, false, true)));
         pdfItem.setOnAction(evt -> {
 			final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
 			//TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
@@ -87,7 +88,7 @@ public class ExportMenu extends Menu {
 		});
         getItems().add(pdfItem);
 
-        listItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("song.list"), new ImageView(new Image("file:icons/list.png", 16, 16, false, true)));
+        listItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("song.list"), new ImageView(new Image(QueleaProperties .get().getUseDarkTheme() ? "file:icons/ic-list-light.png" : "file:icons/ic-list.png", 16, 16, false, true)));
         listItem.setOnAction(evt -> {
 			FileChooser fc = new FileChooser();
 			fc.getExtensionFilters().add(FileFilters.CSV);

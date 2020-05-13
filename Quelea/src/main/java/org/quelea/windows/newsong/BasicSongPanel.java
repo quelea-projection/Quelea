@@ -132,10 +132,10 @@ public class BasicSongPanel extends BorderPane {
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(nonBreakingLineButton);
 
-        chorusButton = getTitleButton("chorus.png", "chorus.tooltip", "Chorus");
-        preChorusButton = getTitleButton("pre_chorus.png", "prechorus.tooltip", "Pre-chorus");
-        bridgeButton = getTitleButton("bridge.png", "bridge.tooltip", "Bridge");
-        tagButton = getTitleButton("tag_coda.png", "tag.tooltip", "Tag");
+        chorusButton = getTitleButton("txt-chorus.png", "chorus.tooltip", "Chorus");
+        preChorusButton = getTitleButton("txt-prechorus.png", "prechorus.tooltip", "Pre-chorus");
+        bridgeButton = getTitleButton("txt-bridge.png", "bridge.tooltip", "Bridge");
+        tagButton = getTitleButton("txt-tagcoda.png", "tag.tooltip", "Tag");
         verseButton = getVerseButton();
         lyricsToolbar.getItems().add(new Separator());
         lyricsToolbar.getItems().add(chorusButton);
@@ -203,7 +203,7 @@ public class BasicSongPanel extends BorderPane {
     }
 
     private Button getNonBreakingLineButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/nonbreakline.png", 24, 24, false, true)));
+        Button ret = new Button("", new ImageView(new Image("file:icons/ic-nonbreakline.png", 24, 24, false, true)));
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
         ret.setOnAction((event) -> {
@@ -273,7 +273,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the sequence button
      */
     private Button getSequenceButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/edit32.png", 24, 24, false, true)));
+        Button ret = new Button("", new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-edit-light.png" : "file:icons/ic-edit.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("sequence.tooltip")));
         ret.setOnAction((event) -> {
             SequenceSelectionDialog sequenceSelectionDialog = new SequenceSelectionDialog();
@@ -316,7 +316,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the button used for transposing the chords.
      */
     private Button getTransposeButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
+        Button ret = new Button("", new ImageView(new Image("file:icons/ic-transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
         ret.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -385,7 +385,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the spell checker button.
      */
     private Button getDictButton() {
-        Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
+        Button button = new Button("", new ImageView(new Image("file:icons/ic-dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
         button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -474,7 +474,7 @@ public class BasicSongPanel extends BorderPane {
      */
     private SplitMenuButton getVerseButton() {
         SplitMenuButton m = new SplitMenuButton();
-        m.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/verse-light.png" : "file:icons/verse.png", 24, 24, false, true)));
+        m.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/txt-verse-light.png" : "file:icons/txt-verse.png", 24, 24, false, true)));
         m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
         m.setOnMouseClicked((MouseEvent event) -> {
             insertTitle("Verse", "");

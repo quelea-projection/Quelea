@@ -1928,7 +1928,7 @@ public final class QueleaProperties extends Properties {
      * @return the logo image
      */
     public String getLogoImageURI() {
-        return "file:" + getProperty(logoImageLocationKey, "icons/logo default.png");
+        return "file:" + getProperty(logoImageLocationKey, "icons/default-logo.png");
     }
 
     /**

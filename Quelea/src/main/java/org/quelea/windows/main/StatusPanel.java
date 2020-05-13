@@ -61,7 +61,7 @@ public class StatusPanel extends HBox {
         progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE); //Allow progress bar to fill space.
         HBox.setHgrow(progressBar, Priority.ALWAYS);
-        cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 13, 13, false, true)));
+        cancelButton = new Button("", new ImageView(new Image("file:icons/ic-cancel.png", 13, 13, false, true)));
         Utils.setToolbarButtonStyle(cancelButton);
         cancelButton.setAlignment(Pos.CENTER);
         getChildren().add(label);

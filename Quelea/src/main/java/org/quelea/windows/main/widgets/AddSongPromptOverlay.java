@@ -59,7 +59,7 @@ public class AddSongPromptOverlay extends StackPane {
         VBox content = new VBox();
         content.setAlignment(Pos.TOP_LEFT);
         StackPane.setMargin(content, new Insets(10,0,0,15));
-        ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
+        ImageView iv = new ImageView(new Image("file:icons/ic-leftarrow.png"));
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
         Platform.runLater(new Runnable() {

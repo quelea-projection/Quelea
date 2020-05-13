@@ -92,7 +92,7 @@ public class OptionsBiblePanel {
     public Category getBiblesTab() {
         bindings.put(maxVersesSetting.getField(), useMaxVersesProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), new ImageView(new Image("file:icons/biblesettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), new ImageView(new Image("file:icons/setting-ic-bible.png")),
                 defaultBibleSetting,
                 showVerseNumSetting,
                 splitVersesSetting,

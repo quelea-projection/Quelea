@@ -73,7 +73,7 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
         
         centerOnScreen();
         setResizable(false);
-        getIcons().add(new Image("file:icons/planningcenteronline.png"));
+        getIcons().add(new Image("file:icons/logo-planningcenteronline.png"));
     }  
     
     @FXML private void onLoginAction(ActionEvent event) {

@@ -93,7 +93,7 @@ public class NewTranslationDialog extends Stage {
         StackPane buttonWrapperPane = new StackPane();
         HBox buttonPane = new HBox(5);
         buttonPane.setAlignment(Pos.CENTER);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png", 16, 16, true, true)));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png", 16, 16, true, true)));
         okButton.setDisable(true);
         okButton.setDefaultButton(true);
         okButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -105,7 +105,7 @@ public class NewTranslationDialog extends Stage {
             }
         });
         buttonPane.getChildren().add(okButton);
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png", 16, 16, true, true)));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/ic-cancel.png", 16, 16, true, true)));
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override

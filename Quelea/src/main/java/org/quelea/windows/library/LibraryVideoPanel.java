@@ -63,7 +63,7 @@ public class LibraryVideoPanel extends BorderPane {
         setCenter(videoPanel);
         toolbar = new ToolBar();
 
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", new ImageView(new Image("file:icons/ic-add.png",16,16,false,true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.videos.panel")));
         addButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();

@@ -56,7 +56,7 @@ public class PreviewPanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView goLiveIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/golivearrow-light.png" : "file:icons/golivearrow.png"));
+        ImageView goLiveIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-golive-light.png" : "file:icons/ic-golive.png"));
         goLiveIV.setFitHeight(16);
         goLiveIV.setFitWidth(16);
         liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), goLiveIV);

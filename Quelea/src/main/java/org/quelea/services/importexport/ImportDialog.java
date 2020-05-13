@@ -94,7 +94,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 		files = new ArrayList<>();
 		halt = false;
 		importedDialog = new SelectImportedSongsDialog();
-		importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image("file:icons/import.png", 16, 16, true, false)));
+		importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-import-light.png" :"file:icons/ic-import.png", 16, 16, false, true)));
 
 		VBox mainPane = new VBox();
 		final FileChooser locationChooser = new FileChooser();

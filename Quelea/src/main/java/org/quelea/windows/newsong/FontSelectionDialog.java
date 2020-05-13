@@ -99,7 +99,7 @@ public class FontSelectionDialog extends Stage {
         chosenFontBox.getChildren().add(chosenFontSelection);
         centrePane.getChildren().add(chosenFontBox);
 
-        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         doneButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override

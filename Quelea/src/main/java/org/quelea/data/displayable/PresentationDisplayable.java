@@ -131,7 +131,7 @@ public class PresentationDisplayable implements Displayable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/powerpoint.png", 30, 30, false, true));
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-sch-presentation-light.png" :  "file:icons/ic-sch-presentation.png", 30, 30, false, true));
     }
 
     /**

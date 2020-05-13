@@ -73,7 +73,7 @@ public class SpellTextArea extends StackPane {
         area = new LyricsTextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getTextArea().getText(), true));
         getChildren().add(area);
-        warning = new ImageView("file:icons/warning.png");
+        warning = new ImageView("file:icons/ic-warning.png");
         Tooltip.install(warning, new Tooltip(LabelGrabber.INSTANCE.getLabel("spelling.errors.in.doc.label")));
         StackPane.setAlignment(warning, Pos.TOP_RIGHT);
         StackPane.setMargin(warning, new Insets(5));

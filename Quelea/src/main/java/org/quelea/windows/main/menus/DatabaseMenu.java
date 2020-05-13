@@ -47,7 +47,7 @@ public class DatabaseMenu extends Menu {
     public DatabaseMenu() {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
 
-        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/newsong-light.png" : "file:icons/newsong.png", 16, 16, false, true)));
+        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-newsong-light.png" : "file:icons/ic-newsong.png", 16, 16, false, true)));
         newSongItem.setOnAction(new NewSongActionHandler());
         newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         getItems().add(newSongItem);

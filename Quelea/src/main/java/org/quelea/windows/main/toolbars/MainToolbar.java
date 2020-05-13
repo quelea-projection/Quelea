@@ -86,9 +86,9 @@ public class MainToolbar extends ToolBar {
      */
     public MainToolbar() {
         if (Utils.isMac()) {
-            newScheduleButton = getButtonFromImage("file:icons/filenewbig.png");
+            newScheduleButton = getButtonFromImage("file:icons/ic-newfile-large.png");
         } else {
-            newScheduleButton = getButtonFromImage("file:icons/filenew.png");
+            newScheduleButton = getButtonFromImage("file:icons/ic-newfile.png");
         }
         Utils.setToolbarButtonStyle(newScheduleButton);
         newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
@@ -96,9 +96,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(newScheduleButton);
 
         if (Utils.isMac()) {
-            openScheduleButton = getButtonFromImage("file:icons/fileopenbig.png");
+            openScheduleButton = getButtonFromImage("file:icons/ic-folder-large.png");
         } else {
-            openScheduleButton = getButtonFromImage("file:icons/fileopen.png");
+            openScheduleButton = getButtonFromImage("file:icons/ic-folder.png");
         }
         Utils.setToolbarButtonStyle(openScheduleButton);
         openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
@@ -106,9 +106,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(openScheduleButton);
 
         if (Utils.isMac()) {
-            saveScheduleButton = getButtonFromImage("file:icons/filesavebig.png");
+            saveScheduleButton = getButtonFromImage("file:icons/ic-save-large.png");
         } else {
-            saveScheduleButton = getButtonFromImage("file:icons/filesave.png");
+            saveScheduleButton = getButtonFromImage("file:icons/ic-save.png");
         }
         Utils.setToolbarButtonStyle(saveScheduleButton);
         saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
@@ -116,9 +116,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(saveScheduleButton);
 
         if (Utils.isMac()) {
-            printScheduleButton = getButtonFromImage("file:icons/fileprintbig.png");
+            printScheduleButton = getButtonFromImage("file:icons/ic-print-large.png");
         } else {
-            printScheduleButton = getButtonFromImage("file:icons/fileprint.png");
+            printScheduleButton = getButtonFromImage("file:icons/ic-print.png");
         }
         Utils.setToolbarButtonStyle(printScheduleButton);
         printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
@@ -128,9 +128,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         if (Utils.isMac()) {
-            newSongButton = getButtonFromImage("file:icons/newsongbig.png");
+            newSongButton = getButtonFromImage("file:icons/ic-newsong-large.png");
         } else {
-            newSongButton = getButtonFromImage("file:icons/newsong.png");
+            newSongButton = getButtonFromImage("file:icons/ic-newsong.png");
         }
         Utils.setToolbarButtonStyle(newSongButton);
         newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
@@ -140,9 +140,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         if (Utils.isMac()) {
-            quickInsertButton = getButtonFromImage("file:icons/lightningbig.png");
+            quickInsertButton = getButtonFromImage("file:icons/ic-quickinsert-large.png");
         } else {
-            quickInsertButton = getButtonFromImage("file:icons/lightning.png");
+            quickInsertButton = getButtonFromImage("file:icons/ic-quickinsert.png");
         }
         Utils.setToolbarButtonStyle(quickInsertButton);
         quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
@@ -151,10 +151,10 @@ public class MainToolbar extends ToolBar {
 
         add = new MenuButton("");
 
-        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/add_item-light.png" : "file:icons/add_item.png"));
+        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-add-large-light.png" : "file:icons/ic-add-large.png"));
         iv.setSmooth(true);
-        iv.setFitWidth(20);
-        iv.setFitHeight(20);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
         add.setGraphic(iv);
 
         add.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
@@ -174,9 +174,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addPresentationButton;
         if (Utils.isMac()) {
-            addPresentationButton = getMenuItemFromImage("file:icons/powerpointbig.png");
+            addPresentationButton = getMenuItemFromImage("file:icons/ic-powerpoint.png");
         } else {
-            addPresentationButton = getMenuItemFromImage("file:icons/powerpoint.png");
+            addPresentationButton = getMenuItemFromImage("file:icons/ic-powerpoint.png");
         }
         addPresentationButton.setText(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip"));
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
@@ -184,9 +184,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addMultimediaButton;
         if (Utils.isMac()) {
-            addMultimediaButton = getMenuItemFromImage("file:icons/multimedia.png");
+            addMultimediaButton = getMenuItemFromImage("file:icons/ic-video.png");
         } else {
-            addMultimediaButton = getMenuItemFromImage("file:icons/multimedia.png");
+            addMultimediaButton = getMenuItemFromImage("file:icons/ic-video.png");
         }
         addMultimediaButton.setText(LabelGrabber.INSTANCE.getLabel("add.multimedia.tooltip"));
         addMultimediaButton.setOnAction(new AddVideoActionHandler());
@@ -194,9 +194,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addTimerButton;
         if (Utils.isMac()) {
-            addTimerButton = getMenuItemFromImage("file:icons/timer-dark.png");
+            addTimerButton = getMenuItemFromImage("file:icons/ic-timer.png");
         } else {
-            addTimerButton = getMenuItemFromImage("file:icons/timer-dark.png", 24, 24, false, true);
+            addTimerButton = getMenuItemFromImage("file:icons/ic-timer.png");
         }
         addTimerButton.setText(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"));
         addTimerButton.setOnAction(new AddTimerActionHandler());
@@ -212,9 +212,9 @@ public class MainToolbar extends ToolBar {
         dvdImageStack = new StackPane();
         ImageView dvdIV;
         if (Utils.isMac()) {
-            dvdIV = new ImageView(new Image("file:icons/dvd.png"));
+            dvdIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-dvd-light.png" : "file:icons/ic-dvd.png",24, 24, false, true));
         } else {
-            dvdIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/dvd-light.png" : "file:icons/dvd.png", 24, 24, false, true));
+            dvdIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-dvd-light.png" : "file:icons/ic-dvd.png", 24, 24, false, true));
         }
         dvdIV.setFitWidth(24);
         dvdIV.setFitHeight(24);
@@ -228,9 +228,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addPdfButton;
         if (Utils.isMac()) {
-            addPdfButton = getMenuItemFromImage("file:icons/add_pdfbig.png");
+            addPdfButton = getMenuItemFromImage("file:icons/ic-pdf-large.png");
         } else {
-            addPdfButton = getMenuItemFromImage("file:icons/add_pdf.png");
+            addPdfButton = getMenuItemFromImage("file:icons/ic-pdf.png");
         }
         addPdfButton.setText(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"));
         addPdfButton.setOnAction(new AddPdfActionHandler());
@@ -238,9 +238,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addWebButton;
         if (Utils.isMac()) {
-            addWebButton = getMenuItemFromImage("file:icons/web.png");
+            addWebButton = getMenuItemFromImage("file:icons/ic-web.png");
         } else {
-            addWebButton = getMenuItemFromImage("file:icons/web-small.png");
+            addWebButton = getMenuItemFromImage("file:icons/ic-web.png");
         }
         addWebButton.setText(LabelGrabber.INSTANCE.getLabel("add.website"));
         addWebButton.setOnAction(new AddWebActionHandler());
@@ -248,9 +248,9 @@ public class MainToolbar extends ToolBar {
 
         MenuItem addImageGroupButton;
         if (Utils.isMac()) {
-            addImageGroupButton = getMenuItemFromImage("file:icons/image.png");
+            addImageGroupButton = getMenuItemFromImage("file:icons/ic-image.png");
         } else {
-            addImageGroupButton = getMenuItemFromImage("file:icons/image.png", 24, 24, false, true);
+            addImageGroupButton = getMenuItemFromImage("file:icons/ic-image.png");
         }
         addImageGroupButton.setText(LabelGrabber.INSTANCE.getLabel("add.images.panel"));
         addImageGroupButton.setOnAction(new AddImageActionHandler());
@@ -259,9 +259,9 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         if (Utils.isMac()) {
-            manageNoticesButton = getButtonFromImage("file:icons/infobig.png");
+            manageNoticesButton = getButtonFromImage("file:icons/ic-notice-large.png");
         } else {
-            manageNoticesButton = getButtonFromImage("file:icons/info.png");
+            manageNoticesButton = getButtonFromImage("file:icons/ic-notice-large.png");
         }
         Utils.setToolbarButtonStyle(manageNoticesButton);
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
@@ -302,7 +302,7 @@ public class MainToolbar extends ToolBar {
             });
         });
 
-        recordAudioButton = getToggleButtonFromImage("file:icons/record.png");
+        recordAudioButton = getToggleButtonFromImage("file:icons/ic-record.png");
         Utils.setToolbarButtonStyle(recordAudioButton);
         recording = false;
         recordAudioButton.setOnMouseClicked(e -> {

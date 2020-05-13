@@ -74,8 +74,8 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         }
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(firstSelected.getSections()[0].toString().trim());
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
+        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/ic-cancel.png",16,16,false,true)));
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());

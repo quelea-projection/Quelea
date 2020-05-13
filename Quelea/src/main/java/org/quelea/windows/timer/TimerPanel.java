@@ -54,7 +54,7 @@ public class TimerPanel extends AbstractPanel {
         this.controlPanel = new TimerControls();
         controlPanel.setDisableControls(true);
         drawer = new TimerDrawer(controlPanel);
-        ImageView img = new ImageView(new Image("file:icons/vid preview.png"));
+        ImageView img = new ImageView(new Image("file:icons/vid-preview.png"));
         BorderPane.setMargin(controlPanel, new Insets(30));
         setCenter(controlPanel);
         VBox centerBit = new VBox(5);

@@ -973,7 +973,7 @@ public final class Utils {
 	public static Image getVidBlankImage(File videoFile) {
 		synchronized (videoPreviewCache) {
 			if (!fileIsVideo(videoFile)) {
-				return new Image("file:icons/audio preview.png");
+				return new Image("file:icons/audio-preview.png");
 			}
 			if (videoFile.isFile()) {
 				try {
@@ -991,10 +991,10 @@ public final class Utils {
 					return ret;
 				} catch (Exception ex) {
 					LOGGER.log(Level.INFO, "Couldn''t get video preview image for {0}", videoFile.getAbsolutePath());
-					return new Image("file:icons/vid preview.png");
+					return new Image("file:icons/vid-preview.png");
 				}
 			} else {
-				return new Image("file:icons/vid preview.png");
+				return new Image("file:icons/vid-preview.png");
 			}
 		}
 	}

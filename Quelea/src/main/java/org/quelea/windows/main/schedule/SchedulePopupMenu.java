@@ -28,6 +28,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
@@ -43,12 +44,12 @@ import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
  */
 public class SchedulePopupMenu extends ContextMenu {
 
-    private final MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-    private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-    private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/bible.png", 16, 16, false, true)));
-    private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
-    private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.timer.text"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
-    private final MenuItem editTimerTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
+    private final MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-edit-light.png" : "file:icons/ic-edit.png", 16, 16, false, true)));
+    private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-theme-light.png" : "file:icons/ic-theme.png", 16, 16, false, true)));
+    private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/ic-bible.png", 16, 16, false, true)));
+    private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"), new ImageView(new Image("file:icons/ic-translate.png", 16, 16, false, true)));
+    private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.timer.text"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-timer-light.png" : "file:icons/ic-timer.png", 16, 16, false, true)));
+    private final MenuItem editTimerTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-theme-light.png" : "file:icons/ic-theme.png", 16, 16, false, true)));
     
 
     public SchedulePopupMenu(Displayable item) {

@@ -113,7 +113,7 @@ public class SelectSongsDialog extends Stage {
         gridScroll.setFitToWidth(true);
         gridScroll.setFitToHeight(true);
         mainPanel.getChildren().add(gridScroll);
-        addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
+        addButton = new Button(acceptText, new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         StackPane stackAdd = new StackPane();
         stackAdd.getChildren().add(addButton);
         VBox.setMargin(stackAdd, new Insets(10));

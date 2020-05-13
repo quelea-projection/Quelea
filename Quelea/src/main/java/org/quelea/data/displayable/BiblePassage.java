@@ -329,7 +329,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/bible.png"));
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-bible-light.png" : "file:icons/ic-bible.png",30,30,false,true));
     }
 
     /**

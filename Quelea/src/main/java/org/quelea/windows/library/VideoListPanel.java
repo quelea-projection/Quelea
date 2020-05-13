@@ -78,7 +78,7 @@ public class VideoListPanel extends BorderPane {
     private final TilePane videoList;
     private String dir;
     private Thread updateThread;
-    private static final Image BLANK = new Image("file:icons/vid preview.png");
+    private static final Image BLANK = new Image("file:icons/vid-preview.png");
 
     /**
      * Create a new video list panel.

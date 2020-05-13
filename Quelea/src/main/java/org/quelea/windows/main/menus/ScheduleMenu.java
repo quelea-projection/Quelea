@@ -78,50 +78,50 @@ public class ScheduleMenu extends Menu {
 
         addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"));
         if (!Utils.isMac()) {
-            addPowerpointItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/powerpoint-light.png" : "file:icons/powerpoint.png", 20, 20, true, false)));
+            addPowerpointItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/ic-powerpoint-light.png" : "file:icons/ic-powerpoint.png", 16, 16, true, false)));
         }
         addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPowerpointItem);
 
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"));
         if (!Utils.isMac()) {
-            addVideoItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/video file-light.png" : "file:icons/video file.png", 20, 20, true, false)));
+            addVideoItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/ic-video-light.png" : "file:icons/ic-video.png", 16, 16, true, false)));
         }
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
 
-        addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/timer-dark-light.png" : "file:icons/timer-dark.png", 16, 16, false, true)));
+        addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/ic-timer-light.png" : "file:icons/ic-timer.png", 16, 16, false, true)));
         addTimerItem.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerItem);
 
-        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/add_pdf-light.png" : "file:icons/add_pdf.png", 16, 16, false, true)));
+        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/ic-add-pdf-light.png" : "file:icons/ic-add-pdf.png", 16, 16, false, true)));
         addPDFItem.setOnAction(new AddPdfActionHandler());
         getItems().add(addPDFItem);
 
         dvdImageStack = new StackPane();
-        dvdImageStack.getChildren().add(new ImageView(new Image(darkTheme ? "file:icons/dvd-light.png" : "file:icons/dvd.png", 16, 16, false, true)));
+        dvdImageStack.getChildren().add(new ImageView(new Image(darkTheme ? "file:icons/ic-dvd-light.png" : "file:icons/ic-dvd.png", 16, 16, false, true)));
         addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDItem.setOnAction(new AddDVDActionHandler());
         if (!Utils.isMac()) {
             getItems().add(addDVDItem);
         }
 
-        addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image(darkTheme ? "file:icons/web-small-light.png" : "file:icons/web-small.png", 16, 16, false, true)));
+        addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image(darkTheme ? "file:icons/ic-web-light.png" : "file:icons/ic-web.png", 16, 16, false, true)));
         addWebItem.setOnAction(new AddWebActionHandler());
         getItems().add(addWebItem);
 
-        addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image(darkTheme ? "file:icons/image-light.png" : "file:icons/image.png", 16, 16, false, true)));
+        addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image(darkTheme ? "file:icons/ic-image-light.png" : "file:icons/ic-image.png", 16, 16, false, true)));
         addImageItem.setOnAction(new AddImageActionHandler());
         getItems().add(addImageItem);
 
         getItems().add(new SeparatorMenuItem());
 
-        manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image(darkTheme ? "file:icons/info-light.png" : "file:icons/info.png", 16, 16, false, true)));
+        manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image(darkTheme ? "file:icons/ic-notice-light.png" : "file:icons/ic-notice.png", 16, 16, false, true)));
         manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
         manageNoticesItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
         getItems().add(manageNoticesItem);
 
-        exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image(darkTheme ? "file:icons/pdf-light.png" : "file:icons/pdf.png", 16, 16, false, true)));
+        exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image(darkTheme ? "file:icons/ic-pdf-light.png" : "file:icons/ic-pdf.png", 16, 16, false, true)));
         exportScheduleItem.setOnAction(new ExportPDFScheduleSongsActionHandler());
         getItems().add(exportScheduleItem);
 

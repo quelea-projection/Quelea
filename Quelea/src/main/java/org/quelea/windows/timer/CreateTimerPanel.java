@@ -73,7 +73,7 @@ public class CreateTimerPanel extends Stage {
     private final ThemePanel tp;
 
     public CreateTimerPanel(TimerDisplayable td) {
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
 
         setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         initModality(Modality.APPLICATION_MODAL);
@@ -139,8 +139,8 @@ public class CreateTimerPanel extends Stage {
         Label themeLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.theme.label"));
         GridPane.setConstraints(themeLabel, 0, rows);
         grid.getChildren().add(themeLabel);
-        Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-        tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-theme-light.png" : "file:icons/ic-theme.png", 16, 16, false, true)));
+        tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/ic-tick.png",16,16,false,true)));
         tpConfirm.setAlignment(Pos.CENTER);
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(durationTextField.getText());

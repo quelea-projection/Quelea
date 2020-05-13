@@ -108,7 +108,7 @@ public class PdfDisplayable implements Displayable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/add_pdf-light.png" : "file:icons/add_pdf.png", 30, 30, false, true));
+        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/ic-pdf-large-light.png" : "file:icons/ic-pdf-large.png", 30, 30, false, true));
     }
 
     /**

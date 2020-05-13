@@ -105,7 +105,7 @@ public class LibrarySongPanel extends BorderPane {
             }
         });
         northPanel.getChildren().add(searchBox);
-        searchCancelButton = new Button("", new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png")));
+        searchCancelButton = new Button("", new ImageView(new Image(darkTheme ? "file:icons/ic-cancel-light.png" : "file:icons/ic-cancel.png",16,16,false,true)));
         Utils.setToolbarButtonStyle(searchCancelButton);
         searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
         searchCancelButton.setDisable(true);
@@ -122,7 +122,7 @@ public class LibrarySongPanel extends BorderPane {
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
 
-        ImageView addIV = new ImageView(new Image(darkTheme ? "file:icons/newsongdb-light.png" : "file:icons/newsongdb.png"));
+        ImageView addIV = new ImageView(new Image(darkTheme ? "file:icons/ic-newsong-light.png" : "file:icons/ic-newsong.png",16,16,false,true));
         addIV.setFitWidth(16);
         addIV.setFitHeight(16);
         addButton = new Button("", addIV);
@@ -130,7 +130,7 @@ public class LibrarySongPanel extends BorderPane {
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
         addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
-        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/removedb-light.png" : "file:icons/removedb.png"));
+        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/ic-delete-light.png" : "file:icons/ic-delete.png",16,16,false,true));
         removeIV.setFitWidth(16);
         removeIV.setFitHeight(16);
         removeButton = new Button("", removeIV);
