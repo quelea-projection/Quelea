@@ -45,7 +45,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2020.0", VersionType.RELEASE);
+    public static final Version VERSION = new Version("2020.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 

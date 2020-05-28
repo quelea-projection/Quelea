@@ -1243,10 +1243,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     }
                     if (translationNode.getNodeName().equals("lyrics")) {
                         translationOptLyrics = translationNode.getTextContent();
+                        if (translationOptLang != null && translationOptLyrics != null) {
+                            translationOpts.put(translationOptLang, translationOptLyrics);
+                        }
                     }
-                }
-                if (translationOptLang != null && translationOptLyrics != null) {
-                    translationOpts.put(translationOptLang, translationOptLyrics);
                 }
             }
             if (node.getNodeName().equals("sequence")) {
@@ -1277,7 +1277,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         ret.setSequence(sequence);
         return ret;
     }
-
+    
     /**
      * Generate a hashcode for this song.
      * <p/>
