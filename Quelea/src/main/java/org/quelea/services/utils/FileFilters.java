@@ -143,7 +143,7 @@ public final class FileFilters {
     /**
      * The file filter used for Songs.MB (the easyworship database.)
      */
-    public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
+    public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB", "Songs.db");
     /**
      * The file filter used for the mission praise importer.
      */
