@@ -4,7 +4,8 @@ language: java
 dist: trusty
 git:
   lfs_skip_smudge: true
-install: true
+install:
+  - git lfs pull
 addons:
   apt:
     packages:
