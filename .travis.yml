@@ -2,6 +2,8 @@ sudo: required
 if: tag IS blank
 language: java
 dist: trusty
+git:
+  lfs_skip_smudge: true
 install: true
 addons:
   apt:
@@ -15,6 +17,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - .git/lfs
 before_install:
   - cd Quelea
   - chmod +x gradlew
