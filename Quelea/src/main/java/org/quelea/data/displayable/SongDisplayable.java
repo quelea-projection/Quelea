@@ -913,6 +913,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         for (TextSection section : sections) {
             addSection(section);
         }
+        getSections(); //Initialise sequence order
     }
 
     /**
@@ -1259,9 +1260,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         if (!updateInDB) {
             ret.setNoDBUpdate();
         }
-        for (TextSection section : songSections) {
-            ret.addSection(section);
-        }
+        ret.addSections(songSections.toArray(new TextSection[songSections.size()]));
         ret.setCcli(ccli);
         ret.setCopyright(copyright);
         ret.setYear(year);
