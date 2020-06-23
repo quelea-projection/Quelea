@@ -1835,20 +1835,20 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the path to the desired direcotry for recordings.
+     * Get the path to the desired directory for recordings.
      * <p>
      *
-     * @return the path to the desired direcotry for recordings.
+     * @return the path to the desired directory for recordings.
      */
     public String getRecordingsPath() {
         return getProperty(recPathKey, "");
     }
 
     /**
-     * Set the path to the desired direcotry for recordings.
+     * Set the path to the desired directory for recordings.
      * <p>
      *
-     * @param path the path to the desired direcotry for recordings.
+     * @param path the path to the desired directory for recordings.
      */
     public void setRecordingsPath(String path) {
         setProperty(recPathKey, path);
