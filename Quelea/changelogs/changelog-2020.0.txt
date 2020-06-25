@@ -13,3 +13,4 @@ quelea (2020.0) stable
   * Increase maximum thumbnail preview size from 500 to 1000
   * Update "Support / Discussion" link from the previous Quelea Google Group to the current Quelea Community
   * Fix wrapping bug for Bible passages and other single-line sections in the selection lists
+  * Update SoF parser to work with SoF 6

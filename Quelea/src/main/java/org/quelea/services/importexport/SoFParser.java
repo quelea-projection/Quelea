@@ -24,10 +24,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.rtf.RTFEditorKit;
 import org.quelea.data.displayable.SongDisplayable;
@@ -36,6 +38,7 @@ import org.quelea.windows.main.StatusPanel;
 
 /**
  * Parsers SoF RTF files.
+ *
  * @author Michael
  */
 public class SoFParser implements SongParser {
@@ -45,38 +48,37 @@ public class SoFParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        if(file==null) {
+        if (file == null) {
             return ret;
         }
-        
+
         String fileText = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())))
                 .replace("\\page", "%PAGEMARKER%")
                 .replaceAll("(\\\\par[\\s]*\n){3,}", "%PAGEMARKER%")
                 .replace("1691", "%PAGEMARKER%1691")
                 .replace("\\line", "\\par\n");
-        
+
         RTFEditorKit rtfParser = new RTFEditorKit();
         javax.swing.text.Document document = rtfParser.createDefaultDocument();
         String rawText;
         try {
             rtfParser.read(new ByteArrayInputStream(fileText.getBytes()), document, 0);
             rawText = document.getText(0, document.getLength());
-        }
-        catch(BadLocationException ex) {
+        } catch (BadLocationException ex) {
             statusPanel.done();
             throw new IOException("Error importing SOF", ex);
         }
 
         String[] songs = rawText.split("%PAGEMARKER%");
 
-        for(int i=0 ; i <songs.length ; i++) {
+        for (int i = 0; i < songs.length; i++) {
             statusPanel.setProgress((double) i / songs.length);
-            
+
             String songText = songs[i];
             if (songText.toLowerCase().contains("regrettably, permission has not been granted")) {
                 continue;
             }
-            songText = songText.replaceFirst("[0-9]+", "");
+            songText = songText.replaceFirst("x?[0-9]+", "");
             int endIdx = songText.indexOf("A Songs of Fellowship Worship Resource");
             if (endIdx == -1) {
                 endIdx = songText.length();
@@ -88,8 +90,8 @@ public class SoFParser implements SongParser {
             if (m.find()) {
                 String title = m.group(1);
                 title = replaceLast(title, "[^a-zA-z]+", "");
-                if(title.length()>2) {
-                    title = title.substring(0, 1)+title.substring(1, title.length()).toLowerCase();
+                if (title.length() > 2) {
+                    title = title.substring(0, 1) + title.substring(1, title.length()).toLowerCase();
                 }
                 int position = m.start();
                 String header = songText.substring(0, position).trim();
@@ -105,17 +107,32 @@ public class SoFParser implements SongParser {
                 }
 
                 String lyrics = songText.substring(position, songText.length()).trim();
-                
+
                 SongDisplayable song = new SongDisplayable(title, author);
                 song.setLyrics(lyrics);
                 song.setCopyright(copyright);
                 ret.add(song);
+            } else {
+                String lyrics = Arrays.stream(songText.split("\n\n"))
+                        .filter(s -> !s.toLowerCase().contains("copyright"))
+                        .filter(s -> !s.toLowerCase().contains("ccli number"))
+                        .map(s -> s.trim())
+                        .collect(Collectors.joining("\n\n")).trim();
+                if (lyrics.contains("\n")) {
+                    String title = lyrics.substring(0, lyrics.indexOf("\n")).trim();
+                    if(title.endsWith(",")) {
+                        title = title.substring(0, title.length()-1);
+                    }
+                    SongDisplayable song = new SongDisplayable(title, "");
+                    song.setLyrics(lyrics);
+                    ret.add(song);
+                }
             }
         }
         statusPanel.done();
         return ret;
     }
-    
+
     private static String replaceLast(String text, String regex, String replacement) {
         return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
     }
