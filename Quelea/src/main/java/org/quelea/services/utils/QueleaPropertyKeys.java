@@ -83,6 +83,7 @@ public class QueleaPropertyKeys {
     public static final String logoImageLocationKey = "logo.image.location";
     public static final String mobLyricsPortKey = "mob.lyrics.port";
     public static final String useMobLyricsKey = "use.mob.lyrics";
+    public static final String planningCenterRefreshToken = "planning.center.refresh.token";
     public static final String useRemoteControlKey = "use.remote.control";
     public static final String remoteControlPortKey = "remote.control.port";
     public static final String remoteControlPasswordKey = "remote.control.password";

@@ -524,10 +524,9 @@ public final class QueleaProperties extends Properties {
      * Set the currently selected global theme file.
      */
     public void setGlobalSongThemeFile(File file) {
-        if(file==null) {
+        if (file == null) {
             setProperty(globalSongThemeFileKey, "");
-        }
-        else {
+        } else {
             setProperty(globalSongThemeFileKey, file.getAbsolutePath());
         }
     }
@@ -537,7 +536,7 @@ public final class QueleaProperties extends Properties {
      */
     public File getGlobalSongThemeFile() {
         String path = getProperty(globalSongThemeFileKey);
-        if(path==null || path.isEmpty()) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
         return new File(path);
@@ -547,10 +546,9 @@ public final class QueleaProperties extends Properties {
      * Set the currently selected global theme file.
      */
     public void setGlobalBibleThemeFile(File file) {
-        if(file==null) {
+        if (file == null) {
             setProperty(globalBibleThemeFileKey, "");
-        }
-        else {
+        } else {
             setProperty(globalBibleThemeFileKey, file.getAbsolutePath());
         }
     }
@@ -560,7 +558,7 @@ public final class QueleaProperties extends Properties {
      */
     public File getGlobalBibleThemeFile() {
         String path = getProperty(globalBibleThemeFileKey);
-        if(path==null || path.isEmpty()) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
         return new File(path);
@@ -1180,7 +1178,7 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-  public void setXStageCoord(String x) {
+    public void setXStageCoord(String x) {
         String[] prop = getProperty(stageCoordsKey, "0,0,0,0").trim().split(",");
         String rectStr = x
                 + "," + prop[1]
@@ -2010,6 +2008,15 @@ public final class QueleaProperties extends Properties {
 
     public String getRemoteControlPassword() {
         return getProperty(remoteControlPasswordKey, "quelea");
+    }
+
+    public void setPlanningCenterRefreshToken(String text) {
+        setProperty(planningCenterRefreshToken, text);
+        write();
+    }
+
+    public String getPlanningCenterRefreshToken() {
+        return getProperty(planningCenterRefreshToken, null);
     }
 
     public String getSmallSongTextPositionH() {
