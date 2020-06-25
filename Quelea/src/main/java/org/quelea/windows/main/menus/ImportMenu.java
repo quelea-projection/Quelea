@@ -166,14 +166,14 @@ public class ImportMenu extends Menu {
         pcoItem.setOnAction((ActionEvent t) -> {
             planningCenterOnlineImportDialog.start();
         });
-        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
+//        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
         
         // elevanto
         elevantoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("elevanto.button"), new ImageView(new Image("file:icons/elevanto.png", 16, 16, false, true)));
         elevantoItem.setOnAction((ActionEvent t) -> {
             elevantoImportDialog.start();
         });
-        elevantoItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
+//        elevantoItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
         olpItem.setOnAction((ActionEvent t) -> {
