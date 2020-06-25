@@ -28,6 +28,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
@@ -80,6 +81,7 @@ public class Dialog extends Stage {
 
         public Builder create() {
             stage = new Dialog();
+            stage.initOwner(QueleaApp.get().getMainWindow());
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setIconified(false);
             stage.centerOnScreen();
