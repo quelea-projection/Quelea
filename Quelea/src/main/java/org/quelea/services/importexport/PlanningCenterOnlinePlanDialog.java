@@ -40,7 +40,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.concurrent.Task;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
-import org.json.simple.JSONArray;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -128,9 +127,9 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
 
     protected PlanType getItemPlanType(Item item) {
         String itemType = item.getItemType();
-        if (itemType.equals("media")) {
+        if ("media".equals(itemType)) {
             return PlanType.MEDIA;
-        } else if (itemType.equals("song")) {
+        } else if ("song".equals(itemType)) {
             return PlanType.SONG;
         }
 //        else if (itemType.equals("item") && (boolean) item.get("using_custom_slides") == true) {

@@ -5,9 +5,6 @@
  */
 package org.quelea.services.importexport;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Consumer;
