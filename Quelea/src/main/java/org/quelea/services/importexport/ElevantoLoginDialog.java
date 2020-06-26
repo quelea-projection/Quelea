@@ -157,6 +157,7 @@ public class ElevantoLoginDialog extends Stage {
     
     public ElevantoLoginDialog(ElevantoImportDialog importDlg) {
         importDialog = importDlg;
+        initOwner(importDialog);
     }  
     
     private void shutdownServer() {

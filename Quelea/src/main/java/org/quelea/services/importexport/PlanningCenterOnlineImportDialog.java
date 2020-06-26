@@ -17,10 +17,13 @@
  */
 package org.quelea.services.importexport;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -33,39 +36,45 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.quelea.planningcenter.PlanningCenterClient;
+import org.quelea.planningcenter.auth.AuthToken;
+import org.quelea.planningcenter.model.services.Folder;
+import org.quelea.planningcenter.model.services.Item;
+import org.quelea.planningcenter.model.services.Plan;
+import org.quelea.planningcenter.model.services.ServiceType;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  *
  * @author Bronson
  */
-
-
-public class PlanningCenterOnlineImportDialog extends Stage{
+public class PlanningCenterOnlineImportDialog extends Stage {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Map<TreeItem<String>, PlanningCenterOnlinePlanDialog> treeViewItemPlanDialogMap = new HashMap<TreeItem<String>, PlanningCenterOnlinePlanDialog>();
     private final PlanningCenterOnlineParser parser;
-    private final PlanningCenterOnlineLoginDialog loginDialog;
-    
-    @FXML private TreeView serviceView;
-    @FXML private Pane planPane;
-    @FXML private Button okButton;
-    
+    private final PlanningCenterAuthenticator authenticator;
+
+    @FXML
+    private TreeView serviceView;
+    @FXML
+    private Pane planPane;
+    @FXML
+    private Button okButton;
+
     @SuppressWarnings("unchecked")
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
-        loginDialog = new PlanningCenterOnlineLoginDialog(this);
-        
+        authenticator = new PlanningCenterAuthenticator();
+
         initModality(Modality.APPLICATION_MODAL);
+        initOwner(QueleaApp.get().getMainWindow());
         setTitle(LabelGrabber.INSTANCE.getLabel("pco.import.heading"));
 
         try {
@@ -78,46 +87,63 @@ public class PlanningCenterOnlineImportDialog extends Stage{
                 scene.getStylesheets().add("org/modena_dark.css");
             }
             setScene(scene);
-                
+
             serviceView.getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<TreeItem<String>>() {
+                    .addListener(new ChangeListener<TreeItem<String>>() {
 
-                @Override
-                public void changed(
-                        ObservableValue<? extends TreeItem<String>> observable,
-                        TreeItem<String> old_val, TreeItem<String> new_val) {
-                    onServiceViewSelectedItem(observable, old_val, new_val);
-                }
+                        @Override
+                        public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> old_val, TreeItem<String> new_val) {
+                            onServiceViewSelectedItem(observable, old_val, new_val);
+                        }
 
-            });
-            
+                    });
+
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);
         }
-        
+
         centerOnScreen();
-        getIcons().add(new Image("file:icons/planningcenteronline.png"));        
+        getIcons().add(new Image("file:icons/planningcenteronline.png"));
     }
-    
+
     public PlanningCenterOnlineParser getParser() {
         return parser;
     }
-    
+
     public void start() {
-        show();
-        loginDialog.start();
+        String currentToken = QueleaProperties.get().getPlanningCenterRefreshToken();
+        PlanningCenterClient existingClient = new PlanningCenterClient(
+                new AuthToken(PlanningCenterAuthenticator.getClientDetails(), currentToken)
+                        .withRefreshTokenUpdater(t -> QueleaProperties.get().setPlanningCenterRefreshToken(t))
+        );
+        if (currentToken == null || !existingClient.isConnected()) {
+            authenticator.authenticate(token -> {
+                if (token.isPresent()) {
+                    QueleaProperties.get().setPlanningCenterRefreshToken(token.get().getCurrentRefreshToken());
+                    parser.setClient(new PlanningCenterClient(token.get()));
+                    show();
+                    updatePlans();
+                } else {
+                    hide();
+                }
+            });
+        } else {
+            parser.setClient(existingClient);
+            show();
+            updatePlans();
+        }
     }
-    
+
     // Disable/enable appropriate widgets while a import task is in operation
-    public void enablePlanProgressBars(boolean enable) {        
+    public void enablePlanProgressBars(boolean enable) {
         // stop user being able to try to change to another plan and do bad!
-        serviceView.setDisable(enable);     
+        serviceView.setDisable(enable);
         okButton.setDisable(enable);
     }
-    
+
     protected void onServiceViewSelectedItem(ObservableValue<? extends TreeItem<String>> observable,
-                        TreeItem<String> old_val, TreeItem<String> new_val) {
-        TreeItem<String> selectedItem = new_val;        
+            TreeItem<String> old_val, TreeItem<String> new_val) {
+        TreeItem<String> selectedItem = new_val;
         planPane.getChildren().clear();
         PlanningCenterOnlinePlanDialog planDialog = treeViewItemPlanDialogMap.get(selectedItem);
         if (planDialog != null) {
@@ -125,93 +151,86 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             planPane.getChildren().add(planDialog);
         }
     }
-    
-    protected void onLogin() {
-        // update ui to retreive plans and populate the list
-        updatePlans();
-    }
-    
-    @FXML public void onAcceptAction(ActionEvent event) {
+
+    @FXML
+    public void onAcceptAction(ActionEvent event) {
         event.consume();
         hide();
     }
-    
-    
+
     class UpdatePlanTask extends Task<Void> {
 
         UpdatePlanTask() {
         }
 
         @SuppressWarnings("unchecked")
-        @Override 
+        @Override
         protected Void call() throws Exception {
-            JSONObject rootFolder = parser.organisation();
-            processServiceTypeFolder(rootFolder, serviceView.getRoot());
+            try {
+                processServiceTypeFolder(serviceView.getRoot());
+            } catch (Throwable t) {
+                LOGGER.log(Level.WARNING, "Exception with parser", t);
+            }
             return null;
         }
-        
+
         @SuppressWarnings("unchecked")
-        protected void processServiceTypeFolder(JSONObject folder, TreeItem<String> parentItem)
-        {
-            String folderName = (String)folder.get("name");
-            TreeItem<String> folderItem = new TreeItem<String>(folderName);
-            
-            // iterate through any folders and dump them straight into serviceNames
-            JSONArray childServiceTypeFolders = (JSONArray)folder.get("service_type_folders");
-            for (Object childServiceTypeFolderObj : childServiceTypeFolders) {
-                JSONObject childServiceTypeFolder = (JSONObject)childServiceTypeFolderObj;
-                processServiceTypeFolder(childServiceTypeFolder, folderItem);
+        protected void processServiceTypeFolder(TreeItem<String> parentItem) throws IOException {
+            String orgName = parser.getPlanningCenterClient().services().api().get().execute().body().get().getName();
+            List<Folder> folders = parser.getPlanningCenterClient().services().folders().api().get().execute().body().get();
+            Map<String, TreeItem<String>> treeItemMap = folders.stream()
+                    .collect(Collectors.toMap(Folder::getId, f -> new TreeItem<>(f.getName() == null ? orgName : f.getName())));
+
+            for (Folder folder : folders) {
+                if (folder.getParent().isPresent()) {
+                    Folder parent = folder.getParent().get();
+                    treeItemMap.get(parent.getId()).getChildren().add(treeItemMap.get(folder.getId()));
+                } else {
+                    parentItem.getChildren().add(treeItemMap.get(folder.getId()));
+                }
+                treeItemMap.get(folder.getId()).setExpanded(true);
             }
-            
-            JSONArray serviceTypes = (JSONArray)folder.get("service_types");
-            processServiceTypes(serviceTypes, folderItem);
-            
-            folderItem.setExpanded(true);
-            parentItem.getChildren().add(folderItem);
-        }
-        
-        @SuppressWarnings("unchecked")
-        protected void processServiceTypes(JSONArray serviceTypes, TreeItem<String> parentItem)
-        {
-            for (Object serviceTypeObj : serviceTypes) {
-                JSONObject serviceType = (JSONObject)serviceTypeObj;
-                Long serviceTypeId = (Long)serviceType.get("id");
-                JSONObject serviceTypePlans = parser.serviceTypePlans(serviceTypeId);
-                String serviceTypeName = (String)serviceType.get("name");
-                JSONArray serviceTypePlansArray = (JSONArray)serviceTypePlans.get("array");
 
-                System.out.println("Service type: " + serviceTypeName);
+            List<ServiceType> serviceTypes = parser.getPlanningCenterClient().services().serviceTypes().api().get().execute().body().get();
 
-                TreeItem<String> serviceItem = new TreeItem<String>(serviceTypeName);
-                for (Object planObj : serviceTypePlansArray) {
-                    JSONObject plan = (JSONObject)planObj;
-                    String date = (String)plan.get("dates");
+            for (ServiceType serviceType : serviceTypes) {
+                TreeItem<String> serviceTypeItem = new TreeItem<>(serviceType.getName());
+                TreeItem<String> serviceTypeParentItem;
+                if (serviceType.getParent() == null) {
+                    serviceTypeParentItem = parentItem;
+
+                } else {
+                    serviceTypeParentItem = treeItemMap.get(serviceType.getParent().getId());
+                }
+
+                List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get().execute().body().get();
+                for (Plan plan : serviceTypePlans) {
+                    String date = plan.getDates();
                     if (date.isEmpty() || date.equals("No dates")) {
                         continue;
                     }
 
-                    Long id = (Long)plan.get("id");
-                    System.out.println("\tPlan: date:" + date + " id:" + id);
+                    List<Item> planItems = parser.getPlanningCenterClient().services().serviceType(plan.getServiceType().getId()).plan(plan.getId()).items().api().get().execute().body().get();
 
-                    TreeItem<String> planItem = new TreeItem<String>(date);
-                    serviceItem.getChildren().add(planItem);
-                    PlanningCenterOnlinePlanDialog planDialog = new PlanningCenterOnlinePlanDialog(PlanningCenterOnlineImportDialog.this, id);
+                    TreeItem<String> planItem = new TreeItem<>(date);
+                    serviceTypeItem.getChildren().add(planItem);
+                    PlanningCenterOnlinePlanDialog planDialog = new PlanningCenterOnlinePlanDialog(PlanningCenterOnlineImportDialog.this, plan, planItems);
                     treeViewItemPlanDialogMap.put(planItem, planDialog);
                 }
 
-                serviceItem.setExpanded(true);
-                parentItem.getChildren().add(serviceItem);
+                serviceTypeItem.setExpanded(true);
+                serviceTypeParentItem.getChildren().add(serviceTypeItem);
             }
+
         }
     };
-        
+
     @SuppressWarnings("unchecked")
     protected void updatePlans() {
-        
         serviceView.setShowRoot(false);
-        TreeItem<String> rootItem = new TreeItem<String>();
+        TreeItem<String> rootItem = new TreeItem<>();
         serviceView.setRoot(rootItem);
-        
+
         UpdatePlanTask task = new UpdatePlanTask();
         new Thread(task).start();
     }

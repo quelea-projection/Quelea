@@ -83,8 +83,8 @@ public class AutoDetectServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response;
-            response = "" + QueleaApp.get().getMainWindow().getOptionsDialog().getServerSettingsPanel().getMLURL() + "\n";
-            response = response + QueleaApp.get().getMainWindow().getOptionsDialog().getServerSettingsPanel().getRCURL();
+            response = "" + QueleaApp.get().getMainWindow().getPreferencesDialog().getOptionsServerSettingsPanel().getLyricsPreference().getMLURL() + "\n";
+            response = response + QueleaApp.get().getMainWindow().getPreferencesDialog().getOptionsServerSettingsPanel().getRemotePreference().getRCURL();
             t.sendResponseHeaders(200, response.length());
             try (OutputStream os = t.getResponseBody()) {
                 os.write(response.getBytes());

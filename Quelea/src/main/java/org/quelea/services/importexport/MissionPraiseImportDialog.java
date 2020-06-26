@@ -29,7 +29,7 @@ public class MissionPraiseImportDialog extends ImportDialog {
     public MissionPraiseImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("missionpraise.import.line1")
-                }, FileFilters.MISSION_PRAISE_RTF, new MissionPraiseParser(), false, true);
+                }, FileFilters.MISSION_PRAISE_RTF, new MissionPraiseParser(), ImportDialogOptions.allowZip().andAllowMultiple());
     }
     
 }

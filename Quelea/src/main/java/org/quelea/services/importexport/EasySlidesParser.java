@@ -29,7 +29,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.UnicodeReader;
 import org.quelea.windows.main.StatusPanel;

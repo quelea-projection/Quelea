@@ -42,7 +42,6 @@ import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SoFImportDialog;
 import org.quelea.services.importexport.SongBeamerImportDialog;
 import org.quelea.services.importexport.SongProImportDialog;
-import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
@@ -51,6 +50,7 @@ import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
 import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
 import org.quelea.services.importexport.ElevantoImportDialog;
+import org.quelea.services.importexport.ProPresenterImportDialog;
 import org.quelea.services.importexport.ScreenMonkeyImportDialog;
 import org.quelea.services.importexport.WorshipHimImportDialog;
 import org.quelea.services.languages.LabelGrabber;
@@ -73,10 +73,10 @@ public class ImportMenu extends Menu {
     private final ImportDialog sourceImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
+    private final ImportDialog proPresenterImportDialog;
     private final ImportDialog freeWorshipImportDialog;
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
-    private final ImportDialog songSelectImportDialog;
     private final ImportDialog songproImportDialog;
     private final ImportDialog videoPsalmImportDialog;
     private final ImportDialog mediaShoutImportDialog;
@@ -106,10 +106,10 @@ public class ImportMenu extends Menu {
     private final MenuItem worshipHimItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
+    private final MenuItem proPresenterItem;
     private final MenuItem easyWorshipItem;
     private final MenuItem songproItem;
     private final MenuItem vsItem;
-    private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
     private final MenuItem pcoItem;
     private final MenuItem elevantoItem;
@@ -130,12 +130,12 @@ public class ImportMenu extends Menu {
         sourceImportDialog = new SourceImportDialog();
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
+        proPresenterImportDialog = new ProPresenterImportDialog();
         freeWorshipImportDialog = new FreeWorshipImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         songproImportDialog = new SongProImportDialog();
         videoPsalmImportDialog = new VideoPsalmImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
-        songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
         worshipHimImportDialog = new WorshipHimImportDialog();
         songBeamerImportDialog = new SongBeamerImportDialog();
@@ -166,14 +166,14 @@ public class ImportMenu extends Menu {
         pcoItem.setOnAction((ActionEvent t) -> {
             planningCenterOnlineImportDialog.start();
         });
-        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
+//        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
         
         // elevanto
         elevantoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("elevanto.button"), new ImageView(new Image("file:icons/elevanto.png", 16, 16, false, true)));
         elevantoItem.setOnAction((ActionEvent t) -> {
             elevantoImportDialog.start();
         });
-        elevantoItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
+//        elevantoItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
         olpItem.setOnAction((ActionEvent t) -> {
@@ -203,11 +203,6 @@ public class ImportMenu extends Menu {
             sImportDialog.show();
         });
 
-        songSelectItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songselect.button"), new ImageView(new Image("file:icons/songselect.png", 16, 16, false, true)));
-        songSelectItem.setOnAction((ActionEvent t) -> {
-            songSelectImportDialog.show();
-        });
-
         mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
         mediaShoutItem.setOnAction((ActionEvent t) -> {
             mediaShoutImportDialog.show();
@@ -231,6 +226,11 @@ public class ImportMenu extends Menu {
         easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), new ImageView(new Image("file:icons/easyslides.png", 16, 16, false, true)));
         easySlidesItem.setOnAction((ActionEvent t) -> {
             easySlidesImportDialog.show();
+        });
+
+        proPresenterItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("propresenter.button"), new ImageView(new Image("file:icons/propresenter.png", 16, 16, false, true)));
+        proPresenterItem.setOnAction((ActionEvent t) -> {
+            proPresenterImportDialog.show();
         });
 
         freeWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("freeworship.button"), new ImageView(new Image("file:icons/freeworship.png", 16, 16, false, true)));
@@ -291,11 +291,11 @@ public class ImportMenu extends Menu {
         getItems().add(pcoItem);
         getItems().add(plainTextItem);
         getItems().add(pmItem);
+        getItems().add(proPresenterItem);
         getItems().add(qspItem);
         getItems().add(smItem);
         getItems().add(sbItem);
         getItems().add(songproItem);
-        getItems().add(songSelectItem);
         getItems().add(sofItem);
         getItems().add(spItem);
         getItems().add(ssItem);

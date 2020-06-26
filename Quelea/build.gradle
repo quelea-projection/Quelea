@@ -3,16 +3,16 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.4'
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.0'
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.25.0"
     }
 }
 
 plugins {
     id 'com.gradle.build-scan' version '1.16'
     id 'java'
-    id 'edu.sc.seis.launch4j' version '2.4.5'
+    id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'com.bmuschko.izpack' version '3.0'
 }
@@ -28,13 +28,13 @@ buildScan {
 
 ext {
     versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
-    
+
     CPInstallerName="quelea-" + versionsuffix + "-crossplatform-install.jar"
     WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
     WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
     MacInstallerName="quelea-" + versionsuffix + "-mac.zip"
     DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
-    
+
     CPInstaller ="dist/standalone/" + CPInstallerName
     DebInstaller ="dist/standalone/" + DebInstallerName
     WindowsInstaller="dist/standalone/" + ext.WindowsInstallerName
@@ -138,7 +138,7 @@ task innosetup (type:Exec) {
             commandLine = ['sh', './build-install.sh', project.queleaversion]
         }
     }
-    
+
     doLast {
         copy {from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName}}
         copy {from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name}}
@@ -147,8 +147,8 @@ task innosetup (type:Exec) {
 }
 
 task labelcheck(type:JavaExec) {
-   main = 'org.quelea.services.languages.LabelChecker'
-   classpath = sourceSets.main.runtimeClasspath
+    main = 'org.quelea.services.languages.LabelChecker'
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 task runPackr(type: JavaExec) {
@@ -160,9 +160,9 @@ task runPackr(type: JavaExec) {
 task zipMacPackr(type: Zip) {
     archiveName = MacInstallerName
     destinationDir = file("dist/standalone")
-    
+
     from "out-mac"
-    
+
     doLast {
         delete (file("out-mac"))
     }
@@ -178,42 +178,43 @@ build.finalizedBy(dist)
 
 dependencies {
     izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
-    
+
     compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4.0'
     compile 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
-    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
-    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '4.0.1'
-    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '4.0.1'
-    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.1'
-    compile group: 'org.apache.poi', name: 'poi', version: '4.0.1'
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.5.0'
+    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '4.1.0'
+    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '4.1.0'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.0'
+    compile group: 'org.apache.poi', name: 'poi', version: '4.1.0'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.28.0'
     compile group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
     compile group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
-    compile group: 'org.jcodec', name: 'jcodec', version: '0.2.3'
-    compile group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.3'
+    compile group: 'org.jcodec', name: 'jcodec', version: '0.2.5'
+    compile group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.5'
     compile group: 'uk.co.caprica', name: 'vlcj', version: '3.12.1'
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-    compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '3.0.0'
-    compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.0.0'
-    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.0.0'
-    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.0.0'
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.14'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.8'
-    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.8'
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.9.3'
+    compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '3.0.1'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.2.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.2.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.2.0'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.2'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
-    compile group: 'com.google.zxing', name: 'core', version: '3.3.3'
-    compile group: 'com.google.zxing', name: 'javase', version: '3.3.3'
+    compile group: 'com.google.zxing', name: 'core', version: '3.4.0'
+    compile group: 'com.google.zxing', name: 'javase', version: '3.4.0'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 //    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
-    compile group: 'org.apache.commons', name: 'commons-text', version: '1.6'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
     compile group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
     compile group: 'org.openoffice', name: 'jurt', version: '4.1.2'
     compile group: 'org.openoffice', name: 'juh', version: '4.1.2'
     compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
+    compile group: 'org.quelea', name: 'planning-center', version: '0.2'
 
     compile group: 'org.openoffice', name: 'unoil', version: '4.1.2'
     compile group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
@@ -222,25 +223,33 @@ dependencies {
 
     compile group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
     compile group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
-    
+
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
     compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
     compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
     compile group: 'javax.activation', name: 'activation', version: '1.1.1'
-    
+
+    compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+repositories {
+    maven {
+        url "http://maven.bestsolution.at/efxclipse-releases"
+    }
 }
 
 jar {
     manifest {
         attributes (
-            'Main-Class': 'org.quelea.windows.main.Main',
-            "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
+                'Main-Class': 'org.quelea.windows.main.Main',
+                "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
         )
     }
 }
 
 task releaseSummary(type:JavaExec) {
-   main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
-   classpath = sourceSets.main.runtimeClasspath
+    main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
+    classpath = sourceSets.main.runtimeClasspath
 }

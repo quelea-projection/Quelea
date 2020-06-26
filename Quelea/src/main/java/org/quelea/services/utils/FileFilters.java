@@ -33,6 +33,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SURVIVOR_SONGBOOK = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.survivor.songbook") + " (acetates.pdf)", "acetates.pdf");
     /**
+     * The file filter used for the sunday plus files.
+     */
+    public static final FileChooser.ExtensionFilter SUNDAY_PLUS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.sunday.plus") + " (*.ptf)", "*.ptf");
+    /**
      * Accept XML bbibles.
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.bibles") + " (*.xml, *.xmm)", "*.xml", "*.xmm");
@@ -41,6 +45,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_EASYSLIDES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.easyslide") + " (*.xml)", "*.xml");
     /**
+     * Accept openlyrics XML files.
+     */
+    public static final FileChooser.ExtensionFilter XML_OPENLYRICS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.openlyrics") + " (*.xml)", "*.xml");
+    /**
      * Accept generic XML files.
      */
     public static final FileChooser.ExtensionFilter XML_GENERIC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.files") + " (*.xml)", "*.xml");
@@ -48,10 +56,6 @@ public final class FileFilters {
      * Accept generic PDF files.
      */
     public static final FileChooser.ExtensionFilter PDF_GENERIC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.pdf.files") + " (*.pdf)", "*.pdf");
-    /**
-     * Accept USR (songselect) files.
-     */
-    public static final FileChooser.ExtensionFilter USR_SS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.usr.files") + " (*.usr)", "*.usr");
     /**
      * Accept video files.
      */
@@ -113,6 +117,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter TXT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.txt.files") + " (*.txt)", "*.txt");
     /**
+     * The file filter used for csv files.
+     */
+    public static final FileChooser.ExtensionFilter CSV = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.csv.files") + " (*.csv)", "*.csv");
+    /**
      * The file filter used for SQLite files.
      */
     public static final FileChooser.ExtensionFilter SQLITE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.sqlite.files") + " (*.sqlite)", "*.sqlite");
@@ -129,9 +137,13 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
     /**
+     * The file filter used for ProPresenter songs.
+     */
+    public static final FileChooser.ExtensionFilter PROPRESENTER = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.propresenter") + " (*.pro4, *.pro5, *.pro6)", "*.pro4", "*.pro5", "*.pro6");
+    /**
      * The file filter used for Songs.MB (the easyworship database.)
      */
-    public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
+    public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB", "Songs.db");
     /**
      * The file filter used for the mission praise importer.
      */
