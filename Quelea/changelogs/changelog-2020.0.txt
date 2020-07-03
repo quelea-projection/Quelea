@@ -15,3 +15,6 @@ quelea (2020.0) stable
   * Fix wrapping bug for Bible passages and other single-line sections in the selection lists
   * Update SoF parser to work with SoF 6
   * Fix planning center integration
+  * Add support for setting a song sequence
+  * Add an indicator for the item that currently is live
+  * Add option to use a fade transition between text items

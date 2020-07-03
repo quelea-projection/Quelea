@@ -33,7 +33,7 @@ script:
   - "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan"
   - PREVDIR="$(pwd)"
   - cd $(mktemp -d)
-  - git clone https://berry120:${GH_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
+  - git clone https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
   - cp $PREVDIR/dist/missinglabels.js repo/lang/
   - cd repo
   - ls -l lang/
@@ -47,12 +47,12 @@ before_deploy:
   - export GIT_TAG=CI-RELEASE
   - export RELEASE_DESCRIPTION="**CI Build $TRAVIS_BUILD_NUMBER - not to be used in production.**<br/>Quelea is also distributed as a Linux snap package. To install it, make sure snap is installed then run:<pre>sudo snap install --edge quelea</pre><h3>SHA256 hashes:</h3><table><tr><th>Windows x64</th><td>$(sha256sum dist/standalone/quelea-CI-UNSTABLE-x64-windows-install.exe | cut -d ' ' -f 1)</td></tr><tr><th>Crossplatform</th><td>$(sha256sum dist/standalone/quelea-CI-UNSTABLE-crossplatform-install.jar | cut -d ' ' -f 1 )</td></tr><tr><th>Mac</th><td>$(sha256sum dist/standalone/quelea-CI-UNSTABLE-mac.zip | cut -d ' ' -f 1 )</td></tr></table>"
   - git tag -f $GIT_TAG -a -m "CI Build $TRAVIS_BUILD_NUMBER - not to be used in production."
-  - git push --delete https://${GH_TOKEN}@github.com/quelea-projection/Quelea CI-RELEASE
-  - git push -q https://${GH_TOKEN}@github.com/quelea-projection/Quelea --tags
+  - git push --delete https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/Quelea CI-RELEASE
+  - git push -q https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/Quelea --tags
 deploy:
   - provider: releases
     api_key:
-      secure: qhNYAPbla5Ia0wJVzECCqW/1rxkkWXrGkTus2eluxbmJXLDpdViQBCveymTEnH+JM3PXMPXATdY7u4QMZtuc7ixozcEjl5y28TfUQIdvAEA2kX6yAUIGADz72Vfk75SRZQyhW1ZCkS7DI5Sz+uQUFhjG3s7EnNkEmWmXWOC/9bmWZnGqGZ4K9syI0yyrp4fJqvgIh9EauZeIzNY5d7vW0IJ6hAMxdT7LpbrbD3Fl0ymHVFRJU253cmFA76XT0Km9b0TJsTJa1CxZmCaVea6ip+LG7WG0cdP3Rj4UPUnPvmW4YUOWafCDn4Td/K4X/IC3QQI9JojnIIxe+SIr0fBJ6Pah4YokPG1LhONe0AiDtz25g3x9L7GiFLvPJcGhtNIy+ALqkoXhNbyK3b3fpOUV3rvthDIK3ZbnywNPA0vt4W5WMMy9d3H9lYMcTswHAfdEfx6GJ+h/RXD0F3ylvBQjPv6G3oCieV/KLlVpSXxMTkDWeZY/RZ/cgOEMvHimRIfJzHcc6PYUc0rYQjGBASIR4Kaw/JlnastRhFOH5SyEnRNqtKX85IUqowOCF7het8P8zel37bS/8MQK6RRpivg0AWr1WnHiSdokQFtlyLS8mXO4m+kyxTd92q2ZUu3X7/rcpe21fYxFGMpUshTQHaVg0hN3Mmr1rmIx5hrsNcS5G/o=
+      secure: UvpF9ALbHGsIFQv1SzH240WjdS6cZ/+sCbuGirMgtcIrtHCKd7p7ZfdGWRAtO4qxIY5Lu3QRuoT+oLMC1gJyF/pAq7CO53SDyJBwfACcQWrz1n5X5XJZngKwZGDVhVzTCqFWLpi1K/DWDj5jGv3kPj8RprZXZbSKqgQYXd2ZTe98c1irm45OY+IOJjlYd3AsWxjgseMSozj1t3iGzp0Y1b87OeV9494XtvT39d5t7Mozq2cP77gPFfQGWS8I4kTlAJtOK27ghkkyIciYTWln7+qZXSL1/wXQ09f4/yG1LFpsm1yaBn4qud8lxYaJXGVBGW9tH84l3v1+QUdD5aCX7kNoLbxbR388KwJPLshPw0Pu+wUPywiI3GDXUYFyotGEiy701qPSMrV/7N9TdLpeYaG5MRmJm81X9B8AY9soFpdpoB5XPz6XSxw1Tu4X+Sfccwn++q0hiLEW5KxA8ItF8LKVOhTDW3qlO440thPthJiBr+jzEUCGX6pxjFZqd788SfGFaqI03JsBrDoDg34nOqoOvoSi5CqkSemLYJVkG8euXZGcDVbDOpT9YH92Nv56NRKxsoEgQqjXR7XQR1MIhFmidBs6+BJ21hbAwy/WMPMDso8hGz306j3iWesv1DquYP4jo7u3LHhAYwLrttWcYlcqz+91sJfdeFPWNnIx3vI=
     file_glob: true
     file: dist/standalone/*
     skip_cleanup: true
