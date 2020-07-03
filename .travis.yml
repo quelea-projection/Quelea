@@ -51,8 +51,8 @@ before_deploy:
   - git push -q https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/Quelea --tags
 deploy:
   - provider: releases
-    api_key:
-      secure: qhNYAPbla5Ia0wJVzECCqW/1rxkkWXrGkTus2eluxbmJXLDpdViQBCveymTEnH+JM3PXMPXATdY7u4QMZtuc7ixozcEjl5y28TfUQIdvAEA2kX6yAUIGADz72Vfk75SRZQyhW1ZCkS7DI5Sz+uQUFhjG3s7EnNkEmWmXWOC/9bmWZnGqGZ4K9syI0yyrp4fJqvgIh9EauZeIzNY5d7vW0IJ6hAMxdT7LpbrbD3Fl0ymHVFRJU253cmFA76XT0Km9b0TJsTJa1CxZmCaVea6ip+LG7WG0cdP3Rj4UPUnPvmW4YUOWafCDn4Td/K4X/IC3QQI9JojnIIxe+SIr0fBJ6Pah4YokPG1LhONe0AiDtz25g3x9L7GiFLvPJcGhtNIy+ALqkoXhNbyK3b3fpOUV3rvthDIK3ZbnywNPA0vt4W5WMMy9d3H9lYMcTswHAfdEfx6GJ+h/RXD0F3ylvBQjPv6G3oCieV/KLlVpSXxMTkDWeZY/RZ/cgOEMvHimRIfJzHcc6PYUc0rYQjGBASIR4Kaw/JlnastRhFOH5SyEnRNqtKX85IUqowOCF7het8P8zel37bS/8MQK6RRpivg0AWr1WnHiSdokQFtlyLS8mXO4m+kyxTd92q2ZUu3X7/rcpe21fYxFGMpUshTQHaVg0hN3Mmr1rmIx5hrsNcS5G/o=
+    user: "quelea-bot"
+    password: "${QBOT_TOKEN}"
     file_glob: true
     file: dist/standalone/*
     skip_cleanup: true
