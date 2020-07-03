@@ -41,7 +41,7 @@ script:
   - git commit -m "Update missing labels file" || ls -l
   - echo $TRAVIS_BRANCH
   - echo $TRAVIS_PULL_REQUEST
-  - if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
+  - if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then git push; fi
       git push
     fi
   - cd $PREVDIR
