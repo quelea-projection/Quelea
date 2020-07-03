@@ -39,9 +39,7 @@ script:
   - ls -l lang/
   - git add lang/missinglabels.js
   - git commit -m "Update missing labels file" || ls -l
-  - if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
-      git push
-    fi
+  - if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then git push; fi
   - cd $PREVDIR
 before_deploy:
   - git config --global user.email "builds@travis-ci.com"
