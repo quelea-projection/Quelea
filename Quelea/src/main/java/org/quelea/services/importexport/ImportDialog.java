@@ -44,7 +44,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -90,6 +89,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 	public ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
 			final SongParser parser, final ImportDialogOptions options) {
 		initModality(Modality.APPLICATION_MODAL);
+                initOwner(QueleaApp.get().getMainWindow());
 		setTitle(LabelGrabber.INSTANCE.getLabel("import.heading"));
 		files = new ArrayList<>();
 		halt = false;

@@ -29,7 +29,7 @@ public class GlobalThemeStore {
     }
     
     public ThemeDTO getTheme(TextDisplayable displayable, TextSection section) {
-        if(QueleaProperties.get().getItemThemeOverride() && !section.getTheme().equalsIgnoreNameAndFontSize(ThemeDTO.DEFAULT_THEME)) {
+        if(QueleaProperties.get().getItemThemeOverride() && section.getTheme()!=null && !section.getTheme().equalsIgnoreNameAndFontSize(ThemeDTO.DEFAULT_THEME)) {
             return section.getTheme();
         }
         if(songThemeOverride!=null && displayable instanceof SongDisplayable) {

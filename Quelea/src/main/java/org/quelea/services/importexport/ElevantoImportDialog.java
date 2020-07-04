@@ -46,6 +46,7 @@ import org.json.simple.JSONObject;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  *
@@ -68,6 +69,7 @@ public class ElevantoImportDialog extends Stage {
         loginDialog = new ElevantoLoginDialog(this);
         
         initModality(Modality.APPLICATION_MODAL);
+        initOwner(QueleaApp.get().getMainWindow());
         setTitle(LabelGrabber.INSTANCE.getLabel("elevanto.import.heading"));
 
         try {
