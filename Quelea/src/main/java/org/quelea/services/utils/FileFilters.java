@@ -91,7 +91,7 @@ public final class FileFilters {
     /**
      * Only accept SDB (songpro database) files.
      */
-    public static final FileChooser.ExtensionFilter SDB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("sdb.files.description"), "*.sdb");
+    public static final FileChooser.ExtensionFilter SDB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("sdb.files.description"), "*.sdb", "*.spdb");
     /**
      * The file filter used for Quelea song packs.
      */
