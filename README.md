@@ -5,13 +5,13 @@
 
 **Are you here to download the latest version? Great! You want one of these:**
 
-[**2019.1 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2019.1/quelea-2019.1-x64-windows-install.exe)
+[**2020.0 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2020.0/quelea-2020.0-x64-windows-install.exe)
 
-[**2019.1 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2019.1/quelea-2019.1-crossplatform-install.jar)
+[**2020.0 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2020.0/quelea-2020.0-crossplatform-install.jar)
 
-[**2019.1 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2019.1/quelea-2019.1-mac.zip)
+[**2020.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2020.0/quelea-2020.0-mac.zip)
 
-[**2019.1 - Linux**](https://snapcraft.io/quelea)<br>
+[**2020.0 - Linux**](https://snapcraft.io/quelea)<br>
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
 **Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**
