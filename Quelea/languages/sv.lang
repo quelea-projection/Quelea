@@ -771,3 +771,5 @@ remote.long.press.description=Välj vad du vill ska hända när du gör en lång
 remote.long.press.title=Långtryckshändelse
 remote.double.press.title=Dubbeltryckshändelse
 remote.double.press.description=Välj vad du vill ska hända när du trycker ner båda volymknapparna samtidigt.
+remote.signal.failed=Misslyckades att sända signalen till servern
+remote.send.notice.tooltip=Lägg till ett meddelande
