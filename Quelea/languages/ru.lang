@@ -689,3 +689,5 @@ theme.changed=Тема изменена
 interface.theme.label=Тема приложения
 theme.changed.message=Вы должны перезапустить Quelea для применения изменений темы.
 dark.theme.label=Темная
+chosen.sequence.label=Выбранный порядок
+general.user.options=Основные настройки пользователя
