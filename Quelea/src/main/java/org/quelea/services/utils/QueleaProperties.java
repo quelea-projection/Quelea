@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import com.sun.istack.NotNull;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -1120,6 +1121,10 @@ public final class QueleaProperties extends Properties {
                 Integer.parseInt(prop[1]),
                 Integer.parseInt(prop[2]),
                 Integer.parseInt(prop[3]));
+    }
+
+    public Bounds getProjectorCoordsWithMargins() {
+        return applyProjectorMargin(getProjectorCoords());
     }
 
     /**
@@ -2279,6 +2284,57 @@ public final class QueleaProperties extends Properties {
 
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty(lyricHeightBoundKey, "0.9"));
+    }
+
+    public PercentMargins getProjectorMargin() {
+        String[] parts = getProperty(projectorMarginKey, "0,0,0,0").split(",");
+        if (parts.length == 4) {
+            return new PercentMargins(
+                    Double.parseDouble(parts[0]),
+                    Double.parseDouble(parts[1]),
+                    Double.parseDouble(parts[2]),
+                    Double.parseDouble(parts[3])
+            );
+        } else {
+            return new PercentMargins(0,0,0,0);
+        }
+    }
+
+    public void setProjectorMargin(@NotNull PercentMargins margins) {
+        setProperty(projectorMarginKey, margins.toString());
+    }
+
+    public void setProjectorMarginTop(double value) {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(value, prop.getRight(), prop.getBottom(), prop.getLeft());
+        setProjectorMargin(newProp);
+    }
+
+    public void setProjectorMarginRight(double value) {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), value, prop.getBottom(), prop.getLeft());
+        setProjectorMargin(newProp);
+    }
+
+    public void setProjectorMarginBottom(double value) {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), value, prop.getLeft());
+        setProjectorMargin(newProp);
+    }
+
+    public void setProjectorMarginLeft(double value) {
+        PercentMargins prop = getProjectorMargin();
+        PercentMargins newProp = new PercentMargins(prop.getTop(), prop.getRight(), prop.getBottom(), value);
+        setProjectorMargin(newProp);
+    }
+
+    public boolean hasProjectorMargin() {
+        PercentMargins margins = getProjectorMargin();
+        return margins.getTop() > 0 || margins.getLeft() > 0 || margins.getBottom() > 0 || margins.getRight() > 0;
+    }
+
+    public Bounds applyProjectorMargin(Bounds coords) {
+        return getProjectorMargin().applyMargins(coords);
     }
 
     public boolean getDefaultSongDBUpdate() {

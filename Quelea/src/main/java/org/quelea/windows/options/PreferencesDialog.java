@@ -169,11 +169,15 @@ public class PreferencesDialog extends Stage {
             int projectorScreen = QueleaProperties.get().getProjectorScreen();
             Bounds bounds;
             if (QueleaProperties.get().isProjectorModeCoords()) {
-                bounds = QueleaProperties.get().getProjectorCoords();
+                bounds = QueleaProperties.get().getProjectorCoordsWithMargins();
             } else {
-                bounds = Utils.getBoundsFromRect2D(
-                        monitors.get(projectorScreen < 0 || projectorScreen >= monitors.size() ? 0 : projectorScreen)
-                                .getBounds());
+                bounds = QueleaProperties.get().applyProjectorMargin(
+                                Utils.getBoundsFromRect2D(
+                                    monitors
+                                            .get(projectorScreen < 0 || projectorScreen >= monitors.size() ? 0 : projectorScreen)
+                                            .getBounds()
+                                )
+                        );
             }
             fiLyricWindow.setAreaImmediate(bounds);
             if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
@@ -186,7 +190,9 @@ public class PreferencesDialog extends Stage {
                     fiLyricWindow.hide();
                     VLCWindow.INSTANCE.refreshPosition();
                 } else {
-                    fiLyricWindow.setFullScreenAlwaysOnTop(true);
+                    if (!QueleaProperties.get().hasProjectorMargin()) {
+                        fiLyricWindow.setFullScreenAlwaysOnTop(true);
+                    }
                 }
             } else {
                 fiLyricWindow.setFullScreenAlwaysOnTop(false);

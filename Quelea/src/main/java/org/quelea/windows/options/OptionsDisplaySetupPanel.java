@@ -46,9 +46,9 @@ public class OptionsDisplaySetupPanel {
      */
     OptionsDisplaySetupPanel(HashMap<Field, ObservableValue> bindings) {
         this.bindings = bindings;
-        controlScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), false, bindings);
-        projectorScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), true, bindings);
-        stageScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), true, bindings);
+        controlScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), bindings);
+        projectorScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), bindings);
+        stageScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), bindings);
 
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(devices -> {
             QueleaApp.get().getMainWindow().getPreferencesDialog().updatePos();

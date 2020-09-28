@@ -208,6 +208,18 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.projectorYCoordKey:
                 QueleaProperties.get().setYProjectorCoord(object.toString());
                 break;
+            case QueleaPropertyKeys.projectorMarginTopKey:
+                QueleaProperties.get().setProjectorMarginTop((Double) object);
+                break;
+            case QueleaPropertyKeys.projectorMarginRightKey:
+                QueleaProperties.get().setProjectorMarginRight((Double) object);
+                break;
+            case QueleaPropertyKeys.projectorMarginBottomKey:
+                QueleaProperties.get().setProjectorMarginBottom((Double) object);
+                break;
+            case QueleaPropertyKeys.projectorMarginLeftKey:
+                QueleaProperties.get().setProjectorMarginLeft((Double) object);
+                break;
             case QueleaPropertyKeys.stageHCoordKey:
                 QueleaProperties.get().setHeightStageCoord(object.toString());
                 break;
@@ -339,6 +351,14 @@ public class PreferenceStorageHandler implements StorageHandler {
                     return QueleaProperties.get().getProjectorCoords().getMinX();
                 case QueleaPropertyKeys.projectorYCoordKey:
                     return QueleaProperties.get().getProjectorCoords().getMinY();
+                case QueleaPropertyKeys.projectorMarginTopKey:
+                    return QueleaProperties.get().getProjectorMargin().getTop();
+                case QueleaPropertyKeys.projectorMarginRightKey:
+                    return QueleaProperties.get().getProjectorMargin().getRight();
+                case QueleaPropertyKeys.projectorMarginBottomKey:
+                    return QueleaProperties.get().getProjectorMargin().getBottom();
+                case QueleaPropertyKeys.projectorMarginLeftKey:
+                    return QueleaProperties.get().getProjectorMargin().getLeft();
                 case QueleaPropertyKeys.stageHCoordKey:
                     return QueleaProperties.get().getStageCoords().getHeight();
                 case QueleaPropertyKeys.stageWCoordKey:

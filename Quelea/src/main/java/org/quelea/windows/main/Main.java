@@ -184,19 +184,31 @@ public final class Main extends Application {
                     if (lyricsHidden) {
                         LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
+                            fullScreenWindow = new DisplayStage(
+                                    QueleaProperties.get().applyProjectorMargin(
+                                        Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds())
+                                    ),
+                                    false
+                            );
                             fullScreenWindow.hide();
                         });
                     } else if (QueleaProperties.get().isProjectorModeCoords()) {
-                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
+                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoordsWithMargins());
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
+                            fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoordsWithMargins(), false);
                         });
                     } else {
                         LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                         Platform.runLater(() -> {
-                            fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
-                            fullScreenWindow.setFullScreenAlwaysOnTop(true);
+                            fullScreenWindow = new DisplayStage(
+                                    QueleaProperties.get().applyProjectorMargin(
+                                            Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds())
+                                    ),
+                                    false
+                            );
+                            if (!QueleaProperties.get().hasProjectorMargin()) {
+                                fullScreenWindow.setFullScreenAlwaysOnTop(true);
+                            }
                         });
                     }
 
