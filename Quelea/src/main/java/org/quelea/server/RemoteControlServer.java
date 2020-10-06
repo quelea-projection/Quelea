@@ -119,6 +119,7 @@ public class RemoteControlServer {
         server.createContext("/books", new ListBibleBooksHandler());
         server.createContext("/passage", new PassageSelecterHandler());
         server.createContext("/sidebar.png", new FileHandler("icons/sidebar.png"));
+        server.createContext("/logo.png", new FileHandler("icons/logo-square.png"));
         server.createContext("/section", new SectionHandler());
         server.createContext("/songtranslations", new SongTranslationsHandler());
         server.createContext("/gettranslation", new SongTranslationsHandler());
@@ -957,6 +958,8 @@ public class RemoteControlServer {
         pageContent = pageContent.replace("[search]", LabelGrabber.INSTANCE.getLabel("rcs.search"));
         pageContent = pageContent.replace("[songsearch]", LabelGrabber.INSTANCE.getLabel("rcs.song.search"));
         pageContent = pageContent.replace("[biblesearch]", LabelGrabber.INSTANCE.getLabel("rcs.bible.search"));
+        pageContent = pageContent.replace("[click.to.add]", LabelGrabber.INSTANCE.getLabel("click.to.add"));
+        pageContent = pageContent.replace("[bible.version]", LabelGrabber.INSTANCE.getLabel("bible.version"));
         return pageContent;
     }
 
