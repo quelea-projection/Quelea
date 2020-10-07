@@ -34,6 +34,7 @@ import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.notice.NoticeDrawer.NoticePosition;
+import org.apache.commons.collections4.properties.SortedProperties;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 
@@ -43,7 +44,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  *
  * @author Michael
  */
-public final class QueleaProperties extends Properties {
+public final class QueleaProperties extends SortedProperties {
 
     public static final Version VERSION = new Version("2021.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
