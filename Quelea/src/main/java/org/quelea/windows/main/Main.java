@@ -275,7 +275,7 @@ public final class Main extends Application {
                     List<String> cmdParams = getParameters().getRaw();
                     if (!cmdParams.isEmpty()) {
                         String schedulePath = cmdParams.get(cmdParams.size() - 1);
-                        if (!schedulePath.contains("--userhome=")) {
+                        if (!schedulePath.contains("--userhome=") && !schedulePath.contains("-psn_")){
                             LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                             Platform.runLater(() -> {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
