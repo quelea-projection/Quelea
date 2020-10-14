@@ -1,7 +1,8 @@
 package org.quelea.services.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Collections;
 
+@DisplayName("QueleaPropertiesTest")
 public class QueleaPropertiesTest {
 
     @Test
+    @DisplayName("Test If Properties File Is Sorted")
     // check whether properties file is sorted
     public void testIfPropertiesFileIsSorted() throws FileNotFoundException {
         // init properties
@@ -33,7 +36,6 @@ public class QueleaPropertiesTest {
         // sort the copy
         Collections.sort(propertyKeysSorted);
         // If both are equal then keys were already in sorted order
-        Assert.assertEquals(propertyKeys, propertyKeysSorted);
+        Assertions.assertEquals(propertyKeys, propertyKeysSorted);
     }
-
 }
