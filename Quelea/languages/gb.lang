@@ -769,3 +769,6 @@ remote.needs.newer.version=This feature needs the server to run Quelea $1 or abo
 remote.source.code=Source code
 remote.send.notice.tooltip=Add a notice
 remote.signal.failed=Failed sending the signal to the server
+remote.chapter=Chapter
+remote.start.verse=Start verse
+remote.end.verse=End verse
