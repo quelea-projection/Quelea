@@ -793,4 +793,7 @@ remote.no.wifi = Vous n'êtes pas connecté à un wifi. Veuillez définir l'URL 
 remote.search.tooltip = Ajouter un chant ou un passage biblique
 remote.about.translating = A propos de la traduction de l'application
 remote.source.code = Code source
+remote.start.verse=Début du couplet
+remote.chapter=Chapitre
+remote.end.verse=Fin du couplet
 remote.volume.navigation.description = Utilisez les boutons de volume du téléphone pour naviguer vers la diapositive / l'élément suivant ou précédent.
