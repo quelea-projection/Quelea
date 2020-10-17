@@ -773,3 +773,6 @@ remote.about.translating=О переводе приложения
 small.song.text.options=Настройки текста Small Song
 remote.source.code=Исходный код
 remote.volume.navigation.description=Используйте аппаратные кнопки громкости телефона для перехода к следующему или предыдущему слайду/элементу.
+remote.chapter=Глава
+remote.start.verse=Первый стих
+remote.end.verse=Последний стих
