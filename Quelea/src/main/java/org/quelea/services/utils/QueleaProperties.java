@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
+import org.apache.commons.collections4.properties.SortedProperties;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
@@ -43,7 +43,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  *
  * @author Michael
  */
-public final class QueleaProperties extends Properties {
+public final class QueleaProperties extends SortedProperties {
 
     public static final Version VERSION = new Version("2021.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
