@@ -117,7 +117,7 @@ public class NoticeDrawer {
             FXFontMetrics metrics = new FXFontMetrics(oldNotices.get(0).getFont().getFont());
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
-            if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
+            if (QueleaProperties.get().getNoticePosition()==NoticePosition.BOTTOM) {
                 StackPane.setAlignment(overlay, Pos.BOTTOM_CENTER);
                 overlay.setAlignment(Pos.BOTTOM_CENTER);
                 textGroup.setAlignment(Pos.BOTTOM_LEFT);
