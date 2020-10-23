@@ -145,7 +145,7 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo())).customKey(autoplayVidKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive())).customKey(advanceOnLiveKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())).customKey(songOverflowKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())).customKey(defaultSongDbUpdateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(false)).customKey(defaultSongDbUpdateKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())).customKey(clearLiveOnRemoveKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("slide.transition.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseSlideTransition())).customKey(useSlideTransitionKey)
