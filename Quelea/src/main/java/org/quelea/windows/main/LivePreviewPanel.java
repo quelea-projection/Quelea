@@ -106,44 +106,31 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(webPanel, WEB_LABEL);
         cardPanel.add(imageGroupPanel, IMAGE_GROUP_LABEL);
         cardPanel.show(LYRICS_LABEL);
-        lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent me) {
-                if (me.isControlDown() || me.isShiftDown()) {
-                    doQuickEdit(lyricsPanel.getLyricsList().getQuickEditIndex());
-                }
+        lyricsPanel.getLyricsList().setOnMouseClicked(me -> {
+            if (me.isControlDown() || me.isShiftDown()) {
+                doQuickEdit(lyricsPanel.getLyricsList().getQuickEditIndex());
             }
         });
 
-        lyricsPanel.getLyricsList().setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent ke) {
-                if (ke.isControlDown() && ke.getCode() == KeyCode.Q) {
-                    doQuickEdit(lyricsPanel.getCurrentIndex());
-                }
+        lyricsPanel.getLyricsList().setOnKeyPressed(ke -> {
+            if (ke.isControlDown() && ke.getCode() == KeyCode.Q) {
+                doQuickEdit(lyricsPanel.getCurrentIndex());
             }
         });
         presentationPanel.buildLoopTimeline();
-        setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                    event.acceptTransferModes(TransferMode.ANY);
-                }
+        setOnDragOver(event -> {
+            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                event.acceptTransferModes(TransferMode.ANY);
             }
         });
-        setOnDragDropped(new EventHandler<DragEvent>() {
-
-            @Override
-            public void handle(DragEvent event) {
-                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
-                    final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                    if (displayable != null) {
-                        setDisplayable(displayable, 0);
-                    }
+        setOnDragDropped(event -> {
+            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+                final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                if (displayable != null) {
+                    setDisplayable(displayable, 0);
                 }
-                event.consume();
             }
+            event.consume();
         });
     }
 
