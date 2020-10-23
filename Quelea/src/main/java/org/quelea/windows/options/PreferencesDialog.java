@@ -66,6 +66,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsStageViewPanel stageViewPanel;
     private final OptionsServerSettingsPanel optionsServerSettingsPanel;
     private final OptionsRecordingPanel recordingPanel;
+    private final OptionsImportExportPanel importExportPanel;
     private HashMap<Field, ObservableValue> bindings = new HashMap<>();
 
     /**
@@ -88,6 +89,7 @@ public class PreferencesDialog extends Stage {
         biblePanel = new OptionsBiblePanel(bindings);
         optionsServerSettingsPanel = new OptionsServerSettingsPanel(bindings);
         recordingPanel = new OptionsRecordingPanel(bindings, hasVLC);
+        importExportPanel = new OptionsImportExportPanel(bindings);
 
         preferencesFx =
                 PreferencesFx.of(new PreferenceStorageHandler(parent),
@@ -98,7 +100,8 @@ public class PreferencesDialog extends Stage {
                         presentationPanel.getPresentationsTab(),
                         biblePanel.getBiblesTab(),
                         optionsServerSettingsPanel.getServerTab(),
-                        recordingPanel.getRecordingsTab()
+                        recordingPanel.getRecordingsTab(),
+                        importExportPanel.getImportExportTab()
                 );
 
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));

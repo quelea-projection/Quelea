@@ -774,3 +774,4 @@ remote.signal.failed=Failed sending the signal to the server
 remote.chapter=Chapter
 remote.start.verse=Start verse
 remote.end.verse=End verse
+client.id=Client ID
