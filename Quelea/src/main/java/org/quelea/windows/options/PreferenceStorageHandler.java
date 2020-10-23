@@ -294,9 +294,6 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.defaultSongDbUpdateKey:
                 QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
                 break;
-            case QueleaPropertyKeys.useMaxBibleCharsKey:
-                QueleaProperties.get().setBibleUsingMaxChars(!Boolean.parseBoolean(object.toString()));
-                break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
@@ -374,8 +371,6 @@ public class PreferenceStorageHandler implements StorageHandler {
                     }
                 case QueleaPropertyKeys.defaultSongDbUpdateKey:
                     return !QueleaProperties.get().getDefaultSongDBUpdate();
-                case QueleaPropertyKeys.useMaxBibleCharsKey:
-                    return !QueleaProperties.get().getBibleUsingMaxChars();
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);
