@@ -860,9 +860,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                         for (String t : title) {
                             sb.append(t.charAt(0));
                         }
-                        if (sb.toString().equals(s)
-                                && ((sectionsInSequence.size() > 0 && !sectionsInSequence.get(sectionsInSequence.size() - 1).equals(ts)
-                                    || sectionsInSequence.isEmpty()))) {
+                        if (sb.toString().equals(s)) {
                             sectionsInSequence.add(ts);
                         }
                     }

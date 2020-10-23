@@ -361,7 +361,7 @@ public class SongEntryWindow extends Stage {
         if (song == null) {
             song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
-        song.setSequence(getBasicSongPanel().getSequenceField().getText());
+        song.setSequence(getBasicSongPanel().getSequenceField().getText().toUpperCase());
         song.setLyrics(getBasicSongPanel().getLyricsField().getTextArea().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
