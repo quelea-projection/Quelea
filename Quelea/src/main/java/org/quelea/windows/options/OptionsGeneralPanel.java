@@ -137,7 +137,8 @@ public class OptionsGeneralPanel {
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.user.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())).customKey(singleMonitorWarningKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("ccli.number.label"), churchCcliNumProperty).customKey(churchCcliNumKey)
                                 ),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("theme.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride())).customKey(itemThemeOverrideKey),
