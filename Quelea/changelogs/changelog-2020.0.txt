@@ -1,0 +1,20 @@
+quelea (2020.0) stable
+
+  * Fix Openlyrics import when more than one "lines" tag specified per verse
+  * New options dialog
+  * Remove USR songselect import (USR files no longer offered)
+  * Add Propresenter import (4, 5 and 6 supported at present)
+  * Add ability to export song list
+  * Fix title bug on plain text import song that only contain one section
+  * Add ability for importers to use zip file or regular file
+  * Fix importers to accept windows-encoded zip files
+  * Fix export to PDF fonts issues (# instead of some characters)
+  * Fix non-Latin and accented character input for song lyrics on Linux systems
+  * Increase maximum thumbnail preview size from 500 to 1000
+  * Update "Support / Discussion" link from the previous Quelea Google Group to the current Quelea Community
+  * Fix wrapping bug for Bible passages and other single-line sections in the selection lists
+  * Update SoF parser to work with SoF 6
+  * Fix planning center integration
+  * Add support for setting a song sequence
+  * Add an indicator for the item that currently is live
+  * Add option to use a fade transition between text items
