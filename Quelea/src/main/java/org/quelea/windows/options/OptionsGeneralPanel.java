@@ -64,6 +64,7 @@ public class OptionsGeneralPanel {
     private ObjectProperty<String> dbSongPreviewProperty;
     private ObservableList<String> dbSongPreviewList;
     private HashMap<Field, ObservableValue> bindings;
+    private StringProperty churchCcliNumProperty;
 
     /**
      * Create the options general panel.
@@ -100,6 +101,8 @@ public class OptionsGeneralPanel {
                 LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"))
         );
         dbSongPreviewProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
+
+        churchCcliNumProperty = new SimpleStringProperty(QueleaProperties.get().getChurchCcliNum());
     }
 
     public Category getGeneralTab() {
