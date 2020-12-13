@@ -775,3 +775,4 @@ remote.chapter=Chapter
 remote.start.verse=Start verse
 remote.end.verse=End verse
 client.id=Client ID
+enter.valid.port=Please enter a number between 1029 and 49151

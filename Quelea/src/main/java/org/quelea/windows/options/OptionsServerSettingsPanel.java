@@ -20,6 +20,8 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.StringField;
+import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
+import com.dlsc.formsfx.model.validators.ValidationResult;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -60,6 +62,7 @@ public class OptionsServerSettingsPanel {
 
     /**
      * Create the server settings panel.
+     *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
     OptionsServerSettingsPanel(HashMap<Field, ObservableValue> bindings) {
@@ -70,14 +73,24 @@ public class OptionsServerSettingsPanel {
         useMobileLyricsProperty = new SimpleBooleanProperty(QueleaProperties.get().getUseMobLyrics());
         lyricsPortNumberProperty = new SimpleStringProperty(String.valueOf(QueleaProperties.get().getMobLyricsPort()));
         mobileLyricsField = Field.ofStringType(lyricsPortNumberProperty).render(lyricsPreference);
+        mobileLyricsField.validate(this::validatePortNumber);
         bindings.put(mobileLyricsField, useMobileLyricsProperty.not());
 
         useMobileRemoteProperty = new SimpleBooleanProperty(QueleaProperties.get().getUseRemoteControl());
         remotePortNumberProperty = new SimpleStringProperty(String.valueOf(QueleaProperties.get().getRemoteControlPort()));
         remoteField = Field.ofStringType(remotePortNumberProperty).render(remotePreference);
+        remoteField.validate(this::validatePortNumber);
         bindings.put(remoteField, useMobileRemoteProperty.not());
 
         passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
+    }
+
+    private ValidationResult validatePortNumber(String s) {
+        int portNum = 0;
+        try {
+            portNum = Integer.parseInt(s);
+        } catch (NumberFormatException ignored) {}
+        return IntegerRangeValidator.between(1029, 49151, LabelGrabber.INSTANCE.getLabel("enter.valid.port")).validate(portNum);
     }
 
     public Category getServerTab() {

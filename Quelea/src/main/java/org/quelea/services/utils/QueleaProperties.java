@@ -1993,7 +1993,11 @@ public final class QueleaProperties extends SortedProperties {
      * @return the port used for mobile lyrics display.
      */
     public int getRemoteControlPort() {
-        return Integer.parseInt(getProperty(remoteControlPortKey, "1112"));
+        try {
+            return Integer.parseInt(getProperty(remoteControlPortKey, "1112"));
+        } catch (NumberFormatException e) {
+            return 1112;
+        }
     }
 
     public void setRemoteControlPort(int port) {
