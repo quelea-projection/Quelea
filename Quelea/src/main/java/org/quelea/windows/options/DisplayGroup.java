@@ -68,7 +68,8 @@ public class DisplayGroup {
 
         if (!custom) {
             int screen = QueleaProperties.get().getControlScreen();
-            screenSelectProperty.setValue(screen > -1 ? availableScreens.get(screen) : availableScreens.get(0));
+            screenSelectProperty.setValue(screen > -1 && availableScreens.size() > screen
+                    ? availableScreens.get(screen) : availableScreens.get(0));
             group = Group.of(groupName,
                     Setting.of(groupName, customControl, screenSelectProperty).customKey(controlScreenKey)
             );
