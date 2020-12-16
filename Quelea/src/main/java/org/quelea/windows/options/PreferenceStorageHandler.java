@@ -373,6 +373,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                     return !QueleaProperties.get().getDefaultSongDBUpdate();
                 case QueleaPropertyKeys.elevantoClientIdKey:
                     return QueleaProperties.get().getElevantoClientId();
+                case QueleaPropertyKeys.churchCcliNumKey:
+                    return QueleaProperties.get().getChurchCcliNum();
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);

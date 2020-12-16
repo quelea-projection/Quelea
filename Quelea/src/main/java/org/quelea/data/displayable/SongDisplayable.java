@@ -819,7 +819,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             String churchCcliNum = QueleaProperties.get().getChurchCcliNum();
             String[] smallLines;
-            if (churchCcliNum == null) {
+            if (churchCcliNum == null || churchCcliNum.isEmpty()) {
                 smallLines = new String[]{
                         title,
                         author + ((ccli.equals("")) ? " " : (" (" + ccli + ")"))
