@@ -62,8 +62,8 @@ deploy:
       secure: UvpF9ALbHGsIFQv1SzH240WjdS6cZ/+sCbuGirMgtcIrtHCKd7p7ZfdGWRAtO4qxIY5Lu3QRuoT+oLMC1gJyF/pAq7CO53SDyJBwfACcQWrz1n5X5XJZngKwZGDVhVzTCqFWLpi1K/DWDj5jGv3kPj8RprZXZbSKqgQYXd2ZTe98c1irm45OY+IOJjlYd3AsWxjgseMSozj1t3iGzp0Y1b87OeV9494XtvT39d5t7Mozq2cP77gPFfQGWS8I4kTlAJtOK27ghkkyIciYTWln7+qZXSL1/wXQ09f4/yG1LFpsm1yaBn4qud8lxYaJXGVBGW9tH84l3v1+QUdD5aCX7kNoLbxbR388KwJPLshPw0Pu+wUPywiI3GDXUYFyotGEiy701qPSMrV/7N9TdLpeYaG5MRmJm81X9B8AY9soFpdpoB5XPz6XSxw1Tu4X+Sfccwn++q0hiLEW5KxA8ItF8LKVOhTDW3qlO440thPthJiBr+jzEUCGX6pxjFZqd788SfGFaqI03JsBrDoDg34nOqoOvoSi5CqkSemLYJVkG8euXZGcDVbDOpT9YH92Nv56NRKxsoEgQqjXR7XQR1MIhFmidBs6+BJ21hbAwy/WMPMDso8hGz306j3iWesv1DquYP4jo7u3LHhAYwLrttWcYlcqz+91sJfdeFPWNnIx3vI=
     file_glob: true
     file: dist/standalone/*
-    skip_cleanup: true
     prerelease: true
     overwrite: true
     release_notes: $RELEASE_DESCRIPTION
     target_commitish: $TRAVIS_COMMIT
+    edge: true
