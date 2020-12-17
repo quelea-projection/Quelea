@@ -55,7 +55,7 @@ public final class Bible implements BibleInterface, Serializable {
     private BibleInfo information;
     private final List<BibleBook> books;
     private String filePath;
-    
+
     /**
      * Create a new bible.
      * <p/>
@@ -125,6 +125,14 @@ public final class Bible implements BibleInterface, Serializable {
                             || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
                         return parseXML(list.item(i), Utils.getFileNameWithoutExtension(file.getName()));
                     }
+                    else if (list.item(i).getNodeName().equalsIgnoreCase("osis")) {
+                        NodeList innerList = list.item(i).getChildNodes();
+                        for (int j = 0; j < innerList.getLength(); j++) {
+                            if (innerList.item(j).getNodeName().equalsIgnoreCase("osisText")) {
+                                return parseXML(innerList.item(j), Utils.getFileNameWithoutExtension(file.getName()));
+                            }
+                        }
+                    }
                 }
                 LOGGER.log(Level.WARNING, "Couldn''t parse the bible {0} because I couldn''t find any <bible> or <xmlbible> root tags :-(", file);
                 return null;
@@ -170,11 +178,16 @@ public final class Bible implements BibleInterface, Serializable {
         Bible ret = new Bible(name);
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
+            Node osisType =null;
+            if(list.item(i).getAttributes()!=null) {
+                osisType = list.item(i).getAttributes().getNamedItem("type");
+            }
             if (list.item(i).getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(list.item(i));
             } else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
                     || list.item(i).getNodeName().equalsIgnoreCase("b")
-                    || list.item(i).getNodeName().equalsIgnoreCase("book")) {
+                    || list.item(i).getNodeName().equalsIgnoreCase("book")
+                    || (list.item(i).getNodeName().equalsIgnoreCase("div") && osisType!=null && osisType.getNodeValue().equals("book"))) {
                 BibleBook book = BibleBook.parseXML(list.item(i), i);
                 book.setBible(ret);
                 ret.addBook(book);
