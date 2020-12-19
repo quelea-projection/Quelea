@@ -29,7 +29,7 @@ parts:
     gradle-output-dir: 'dist'
     after: [desktop-gtk2]
     override-build: |
-      ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan
+      chmod +x gradlew && ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan
 
 #parts:
 #  quelea:
