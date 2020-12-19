@@ -27,5 +27,5 @@ parts:
     stage-packages: [default-jre, openjfx, vlc]
     gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
-    gradle-version: 6.7.1
+#    gradle-version: 6.7.1
     after: [desktop-gtk2]
