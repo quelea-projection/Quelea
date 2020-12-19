@@ -10,7 +10,6 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '1.16'
     id 'java'
     id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'com.github.ben-manes.versions' version '0.20.0'
@@ -253,8 +252,4 @@ jar {
 task releaseSummary(type:JavaExec) {
     main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
     classpath = sourceSets.main.runtimeClasspath
-}
-
-test {
-    useJUnitPlatform()
 }
