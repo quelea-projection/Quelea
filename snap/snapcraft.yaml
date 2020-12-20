@@ -35,6 +35,9 @@ parts:
       ls -l
       cp -r /build/quelea/parts/quelea/build/dist/* /build/quelea/stage
       ls -l /build/quelea/stage
+    override-prime: |
+      snapcraftctl prime
+      ls -l /build/quelea/prime
 
 
 #parts:
