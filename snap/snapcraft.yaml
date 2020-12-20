@@ -32,6 +32,10 @@ parts:
       printenv
       chmod +x gradlew
       ./gradlew -Dhttp.proxyHost=10.10.10.1 -Dhttp.proxyPort=8222 -Dhttps.proxyHost=10.10.10.1 -Dhttps.proxyPort=8222 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist --scan
+      ls -l
+      cp -r /build/quelea/parts/quelea/build/dist/* /build/quelea/stage
+      ls -l /build/quelea/stage
+
 
 #parts:
 #  quelea:
