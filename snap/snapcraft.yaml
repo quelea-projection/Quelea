@@ -20,26 +20,6 @@ apps:
     command: sh $SNAP/jar/launch.sh
     plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
-parts:
-  quelea:
-    plugin: gradle
-    source: Quelea
-    stage-packages: [default-jre, openjfx, vlc]
-    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
-    gradle-output-dir: 'dist'
-    after: [desktop-gtk2]
-    override-build: |
-      printenv
-      chmod +x gradlew
-      ./gradlew -Dhttp.proxyHost=10.10.10.1 -Dhttp.proxyPort=8222 -Dhttps.proxyHost=10.10.10.1 -Dhttps.proxyPort=8222 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist --scan
-      ls -l
-      cp -r /build/quelea/parts/quelea/build/dist/* /build/quelea/stage
-      ls -l /build/quelea/stage
-    override-prime: |
-      snapcraftctl prime
-      ls -l /build/quelea/prime
-
-
 #parts:
 #  quelea:
 #    plugin: gradle
@@ -48,3 +28,23 @@ parts:
 #    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
 #    gradle-output-dir: 'dist'
 #    after: [desktop-gtk2]
+#    override-build: |
+#      printenv
+#      chmod +x gradlew
+#      ./gradlew -Dhttp.proxyHost=10.10.10.1 -Dhttp.proxyPort=8222 -Dhttps.proxyHost=10.10.10.1 -Dhttps.proxyPort=8222 -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar copyToDist --scan
+#      ls -l
+#      cp -r /build/quelea/parts/quelea/build/dist/* /build/quelea/stage
+#      ls -l /build/quelea/stage
+#    override-prime: |
+#      snapcraftctl prime
+#      ls -l /build/quelea/prime
+
+
+parts:
+  quelea:
+    plugin: gradle
+    source: Quelea
+    stage-packages: [default-jre, openjfx, vlc]
+    gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
+    gradle-output-dir: 'dist'
+    after: [desktop-gtk2]
