@@ -87,10 +87,10 @@ public class ShortcutManager {
         });
     }
 
-    private boolean checkCombination(String[] newSongKeys) {
-        if (newSongKeys.length != keyCodeBuilder.size())
+    private boolean checkCombination(String[] keyCombination) {
+        if (keyCombination.length != keyCodeBuilder.size())
             return false;
-        for (String kc : newSongKeys) {
+        for (String kc : keyCombination) {
             if (!keyCodeBuilder.contains(kc)) {
                 return false;
             }
