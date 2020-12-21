@@ -64,6 +64,7 @@ public class OptionsGeneralPanel {
     private ObjectProperty<String> dbSongPreviewProperty;
     private ObservableList<String> dbSongPreviewList;
     private HashMap<Field, ObservableValue> bindings;
+    private StringProperty churchCcliNumProperty;
 
     /**
      * Create the options general panel.
@@ -100,6 +101,8 @@ public class OptionsGeneralPanel {
                 LabelGrabber.INSTANCE.getLabel("db.song.preview.label.previewpane"))
         );
         dbSongPreviewProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
+
+        churchCcliNumProperty = new SimpleStringProperty(QueleaProperties.get().getChurchCcliNum());
     }
 
     public Category getGeneralTab() {
@@ -134,7 +137,8 @@ public class OptionsGeneralPanel {
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.user.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("check.for.update.label"), new SimpleBooleanProperty(QueleaProperties.get().checkUpdate())).customKey(checkUpdateKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"), new SimpleBooleanProperty(QueleaProperties.get().showSingleMonitorWarning())).customKey(singleMonitorWarningKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey)
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("auto.translate.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoTranslate())).customKey(autoTranslateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("ccli.number.label"), churchCcliNumProperty).customKey(churchCcliNumKey)
                                 ),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("theme.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("allow.item.theme.override.global"), new SimpleBooleanProperty(QueleaProperties.get().getItemThemeOverride())).customKey(itemThemeOverrideKey),
@@ -145,7 +149,7 @@ public class OptionsGeneralPanel {
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"), new SimpleBooleanProperty(QueleaProperties.get().getAutoPlayVideo())).customKey(autoplayVidKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"), new SimpleBooleanProperty(QueleaProperties.get().getAdvanceOnLive())).customKey(advanceOnLiveKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("overflow.song.label"), new SimpleBooleanProperty(QueleaProperties.get().getSongOverflow())).customKey(songOverflowKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(QueleaProperties.get().getDefaultSongDBUpdate())).customKey(defaultSongDbUpdateKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"), new SimpleBooleanProperty(false)).customKey(defaultSongDbUpdateKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getClearLiveOnRemove())).customKey(clearLiveOnRemoveKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule"), new SimpleBooleanProperty(QueleaProperties.get().getEmbedMediaInScheduleFile())).customKey(scheduleEmbedMediaKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("slide.transition.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseSlideTransition())).customKey(useSlideTransitionKey)

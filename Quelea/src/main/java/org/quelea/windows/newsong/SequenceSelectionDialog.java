@@ -24,6 +24,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -72,7 +73,8 @@ public final class SequenceSelectionDialog extends Stage {
         setScene(new Scene(mainPane));
 
         finished = false;
-        Label label = new Label(LabelGrabber.INSTANCE.getLabel("chosen.sequence.explanation"));
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel("chosen.sequence.explanation") +
+                "\n\n" + LabelGrabber.INSTANCE.getLabel("song.sequence.tip"));
         label.setWrapText(true);
         StackPane topPane = new StackPane();
         topPane.setPadding(new Insets(15));
@@ -135,6 +137,11 @@ public final class SequenceSelectionDialog extends Stage {
         chosenSequenceBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("chosen.sequence.label") + ": "));
         chosenSequenceBox.getChildren().add(chosenSequence);
         centrePane.getChildren().add(chosenSequenceBox);
+        chosenSequenceBox.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.DELETE) {
+                chosenSequence.getItems().remove(chosenSequence.selectionModelProperty().get().getSelectedIndex());
+            }
+        });
 
         Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
         doneButton.setOnAction((ActionEvent t) -> {

@@ -100,10 +100,13 @@ public final class BibleVerse implements BibleInterface, Serializable {
             ret.setChapter(BibleChapter.parseXML(node, ret.getChapterNum()));
         }
         try {
-            if (node.getAttributes().getNamedItem("vnumber") == null) {
-                ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
-            } else {
+            if (node.getAttributes().getNamedItem("vnumber") != null) {
                 ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
+            } else if (node.getAttributes().getNamedItem("n") != null) {
+                ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
+            } else if (node.getAttributes().getNamedItem("osisID") != null) {
+                String[] osisIdParts = node.getAttributes().getNamedItem("osisID").getNodeValue().trim().split("\\.");
+                ret.num = Integer.parseInt(osisIdParts[osisIdParts.length-1]);
             }
             ret.verse = node.getTextContent().replace("\n", " ").trim();
             return ret;

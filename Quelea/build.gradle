@@ -10,7 +10,6 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '1.16'
     id 'java'
     id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'com.github.ben-manes.versions' version '0.20.0'
@@ -231,7 +230,8 @@ dependencies {
 
     compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
 }
 
 repositories {

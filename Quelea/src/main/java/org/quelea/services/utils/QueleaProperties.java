@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
+import org.apache.commons.collections4.properties.SortedProperties;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
@@ -43,9 +43,9 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  *
  * @author Michael
  */
-public final class QueleaProperties extends Properties {
+public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2020.0", VersionType.CI);
+    public static final Version VERSION = new Version("2021.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
@@ -1993,7 +1993,11 @@ public final class QueleaProperties extends Properties {
      * @return the port used for mobile lyrics display.
      */
     public int getRemoteControlPort() {
-        return Integer.parseInt(getProperty(remoteControlPortKey, "1112"));
+        try {
+            return Integer.parseInt(getProperty(remoteControlPortKey, "1112"));
+        } catch (NumberFormatException e) {
+            return 1112;
+        }
     }
 
     public void setRemoteControlPort(int port) {

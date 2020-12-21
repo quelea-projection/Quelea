@@ -69,7 +69,7 @@ public class SelectLyricsList extends ListView<TextSection> {
         setCellFactory((ListView<TextSection> p) -> {
             ListCell<TextSection> cell = new LyricListCell(this);
             cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-                if (event.isControlDown()) {
+                if (event.isControlDown() || event.isShiftDown()) {
                     if (!cell.isEmpty()) {
                         quickEditIndex = getItems().indexOf(cell.getItem());
                         event.consume();

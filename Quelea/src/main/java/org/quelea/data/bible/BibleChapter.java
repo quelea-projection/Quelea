@@ -122,7 +122,8 @@ public final class BibleChapter implements BibleInterface, Serializable {
         BibleChapter ret = new BibleChapter(num);
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i).getNodeName().equalsIgnoreCase("vers")
+            if (list.item(i).getNodeName().equalsIgnoreCase("verse")
+                    || list.item(i).getNodeName().equalsIgnoreCase("vers")
                     || list.item(i).getNodeName().equalsIgnoreCase("v")) {
                 BibleVerse verse = BibleVerse.parseXML(list.item(i));
                 if (verse != null) {

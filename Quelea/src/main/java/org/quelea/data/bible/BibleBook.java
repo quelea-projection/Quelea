@@ -21,6 +21,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -32,6 +35,7 @@ import org.w3c.dom.NodeList;
  */
 public final class BibleBook implements BibleInterface, Serializable {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private int bookNumber;
     private String bookName;
     private final List<BibleChapter> chapters;
@@ -157,6 +161,8 @@ public final class BibleBook implements BibleInterface, Serializable {
             ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
         } else if (node.getAttributes().getNamedItem("name") != null) {
             ret.bookName = node.getAttributes().getNamedItem("name").getNodeValue();
+        } else if (node.getAttributes().getNamedItem("osisID") != null) {
+            ret.bookName = node.getAttributes().getNamedItem("osisID").getNodeValue();
         } else {
             ret.bookName = "Book " + ret.bookNumber;
         }
@@ -175,6 +181,7 @@ public final class BibleBook implements BibleInterface, Serializable {
                 ret.addChapter(chapter);
             }
         }
+        LOGGER.log(Level.INFO, "Parsed " + ret.getChapters().length + " chapters in " + ret.bookName);
         return ret;
     }
 

@@ -1,0 +1,6 @@
+quelea (2021.0) stable
+ 
+  * Fix "schedule cannot be opened" issue on Mac
+  * Church CCLI num can now be specified in options dialog
+  * Support OSIS XML bible format
+  * Song list export now also includes song CCLI number (where specified)
