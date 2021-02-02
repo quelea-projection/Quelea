@@ -19,6 +19,7 @@
 package org.quelea.windows.multimedia;
 
 import java.io.File;
+import javafx.application.Platform;
 
 /**
  * Class that loads native objective-c code in order to nicely play video on
@@ -27,10 +28,16 @@ import java.io.File;
  * @author grgarno
  */
 public class AVPlayerJava {
+    private static boolean moduleLoaded = false;
 
     static {
         File library = new File("./lib/libAVPlayerJava.jnilib");
-        System.load(library.getAbsolutePath());
+
+        // Use runLater here because the library being loaded updates the UI during the load, which has to be done on the main thread
+        Platform.runLater(() -> {
+            System.load(library.getAbsolutePath());
+            moduleLoaded = true;
+        });
         //boolean blub = isInit();
     }
 
@@ -217,5 +224,12 @@ public class AVPlayerJava {
      * @return The total time
      */
     public static native long getDuration();
+
+    /**
+     * Return whether the native code has loaded or not.
+     *
+     * @return false if still loading, true if loaded
+     */
+    public static boolean isModuleLoaded() { return moduleLoaded; }
 
 }
