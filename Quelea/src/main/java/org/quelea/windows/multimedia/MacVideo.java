@@ -20,6 +20,7 @@ package org.quelea.windows.multimedia;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
@@ -58,12 +59,25 @@ public class MacVideo extends VLCWindow {
             @Override
             public void run() {
                 try {
+                    // Wait up to 10 seconds for AVPlayerJava native code to get loaded
+                    int timeout = 10000;
+                    // 50ms between each test of whether native code is loaded
+                    int sleep_interval = 50;
 
-                    init = AVPlayerJava.isInit();
+                    // Loop until native code has loaded or timed out
+                    while( !AVPlayerJava.isModuleLoaded() && timeout > 0 ) {
+                        TimeUnit.MILLISECONDS.sleep(sleep_interval);
+                        timeout -= sleep_interval;
+                    }
 
-                    LOGGER.log(Level.INFO, "Video initialised ok");
+                    if( timeout == 0 ){
+                        LOGGER.log(Level.WARNING, "Couldn't initialise video, load of native library timed out");
+                    } else {
+                        init = AVPlayerJava.isInit();
+                        LOGGER.log(Level.INFO, "Video initialised ok");
+                    }
                 } catch (Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't initialise video, good luck as to why!", ex);
+                    LOGGER.log(Level.WARNING, "Couldn't initialise video, good luck as to why!", ex);
                 }
             }
         });
