@@ -1518,6 +1518,29 @@ public final class QueleaProperties extends SortedProperties {
         return getColor(getProperty(stageChordColorKey, "200,200,200"));
     }
 
+
+    /**
+     * Get the colour used to display chords in stage view.
+     * <p>
+     *
+     * @return the colour used to display chords in stage view.
+     */
+    public Color getTextBackgroundColor() {
+        return getColor(getProperty(lyricsTextBackgroundColor));
+    }
+
+
+    /**
+     * Determine whether to advance the scheudle item when the current item is
+     * sent live.
+     * <p>
+     *
+     * @return true if we should auto-advance, false otherwise.
+     */
+    public boolean getTextBackgroundEnable() {
+        return Boolean.parseBoolean(getProperty(lyricsTextBackgroundEnable, "false"));
+    }
+
     /**
      * Set the colour used to display chords in stage view.
      * <p>

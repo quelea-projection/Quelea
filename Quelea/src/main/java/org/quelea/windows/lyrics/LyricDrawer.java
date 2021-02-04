@@ -35,6 +35,9 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -246,8 +249,12 @@ public class LyricDrawer extends WordDrawer {
                 loopMetrics = metrics;
             }
             FormattedText t;
-            t = new FormattedText(line.getLine());
-
+            if (QueleaProperties.get().getTextBackgroundEnable()) {
+                t = new FormattedText(" " + line.getLine() + " ");
+                t.setBackground(new Background(new BackgroundFill(QueleaProperties.get().getTextBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
+            } else {
+                t = new FormattedText(line.getLine());
+            }
             if (line.isTranslateLine()) {
                 t.setFont(translateFont);
             } else {

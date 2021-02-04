@@ -62,6 +62,8 @@ public class QueleaPropertyKeys {
     public static final String displaySonginfotextKey = "display.songinfotext";
     public static final String defaultBibleKey = "default.bible";
     public static final String stageChordColorKey = "stage.chord.color";
+    public static final String lyricsTextBackgroundEnable = "lyrics.text.background.enable";
+    public static final String lyricsTextBackgroundColor = "lyrics.text.background.color";
     public static final String stageLyricsColorKey = "stage.lyrics.color";
     public static final String stageBackgroundColorKey = "stage.background.color";
     public static final String activeSelectionColorKey = "active.selection.color";
