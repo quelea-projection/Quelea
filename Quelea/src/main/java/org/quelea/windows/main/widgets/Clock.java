@@ -54,18 +54,31 @@ public class Clock extends Text {
                     Calendar time = Calendar.getInstance();
                     String hourString;
                     boolean s24h = QueleaProperties.get().getUse24HourClock();
-                    if (s24h) {
-                        hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
-                    } else {
-                        hourString = pad(2, '0', time.get(Calendar.HOUR) + "");
+
+                    // Get user visibility setting. There is only one clock at the moment but if there are
+                    // ever more clocks we will need to tell the constructor which clock we are looking at
+                    // to get the correct property
+                    boolean sShowClock = QueleaProperties.get().getStageShowClock();
+
+                    // Only bother updating the text is we are actually showing the clock
+                    if( sShowClock ) {
+                        if (s24h) {
+                            hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
+                        } else {
+                            hourString = pad(2, '0', time.get(Calendar.HOUR) + "");
+                        }
+                        String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
+                        String text1 = hourString + ":" + minuteString;
+                        if (!s24h) {
+                            text1 += (time.get(Calendar.AM_PM) == Calendar.AM) ? " AM" : " PM";
+                        }
+                        setText(text1);
                     }
-                    String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
-                    String text1 = hourString + ":" + minuteString;
-            if (!s24h) {
-                text1 += (time.get(Calendar.AM_PM) == Calendar.AM) ? " AM" : " PM";
-            }
-            setText(text1);
-        }),
+
+                    // Set visibility after updating the text as otherwise we might get a slight glitch when turning
+                    // the clock from hidden to visible!
+                    setVisible( sShowClock );
+                }),
                 new KeyFrame(Duration.seconds(1))
         );
         timeline.setCycleCount(Animation.INDEFINITE);
