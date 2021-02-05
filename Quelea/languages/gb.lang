@@ -612,6 +612,7 @@ rcs.song.search=Song
 rcs.bible.search=Bible
 rcs.search=Search and Add
 show.video.library.panel=Show Video Library Tab (requires restart)
+stage.show.clock=Show Clock
 use.24h.clock=Use 24H Clock
 split.bible.verses=Keep verses whole across slides
 no.verse.title=No verse found
