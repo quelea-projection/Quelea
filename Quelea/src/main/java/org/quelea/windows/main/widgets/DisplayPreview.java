@@ -73,24 +73,24 @@ public class DisplayPreview extends StackPane {
     }
 
     /**
-     * Calculate and update the new size of the display canvas.
+     * Calculate and update the new size of the display canvas. This maintains the same
+     * aspect ratio as the projection window.
      */
     private void updateSize() {
-        double width = getWidth();
-        double height = getHeight();
+        // For working out the current ratio, subtract 20 from width and height because
+        // this is the minimum margin amount (10 on each side), otherwise the ratio being
+        // calculate is of the whole split pane section not the actual preview/live display
+        double width = getWidth() - 20;
+        double height = getHeight() - 20;
         double currentRatio = width / height;
         double ratio = getRatio();
         if (currentRatio < ratio) { //height too big
-            double hDiff = (getHeight() - (width / ratio)) / 2;
-            if (hDiff < 10) {
-                hDiff = 10;
-            }
+            double hDiff = (height - (width / ratio)) / 2;
+            hDiff += 10;  // Add back the minimum margin on each side
             setMargin(canvas, new Insets(hDiff, 10, hDiff, 10));
         } else { //width too big
-            double vDiff = (getWidth() - (ratio * height)) / 2;
-            if (vDiff < 10) {
-                vDiff = 10;
-            }
+            double vDiff = (width - (ratio * height)) / 2;
+            vDiff += 10;  // Add back the minimum margin on each side
             setMargin(canvas, new Insets(10, vDiff, 10, vDiff));
         }
     }
