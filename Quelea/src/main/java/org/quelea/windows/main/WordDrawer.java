@@ -312,7 +312,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
      * <p>
      * @return The scaling factor for this canvas
      */
-    protected double CanvasScalingFactor() {
+    protected double canvasScalingFactor() {
         double scalingFactor = 1;
 
         // If there is a projection window, and it has some size (avoid divide by zero errors!)

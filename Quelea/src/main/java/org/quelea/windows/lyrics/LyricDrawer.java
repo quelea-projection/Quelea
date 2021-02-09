@@ -96,7 +96,7 @@ public class LyricDrawer extends WordDrawer {
             defaultFontSize = QueleaProperties.get().getMaxFontSize();
 
             // Scale the default font size for this canvas
-            defaultFontSize *= CanvasScalingFactor();
+            defaultFontSize *= canvasScalingFactor();
         }
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
@@ -581,7 +581,7 @@ public class LyricDrawer extends WordDrawer {
 
         // Retrieve and scale the max font size for this canvas
         double maxFontSizeForCanvas = QueleaProperties.get().getMaxFontSize();
-        maxFontSizeForCanvas *= CanvasScalingFactor();
+        maxFontSizeForCanvas *= canvasScalingFactor();
 
         int width = (int) (getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
         int height = (int) (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
