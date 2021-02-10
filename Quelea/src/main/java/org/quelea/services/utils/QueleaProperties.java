@@ -259,6 +259,15 @@ public final class QueleaProperties extends SortedProperties {
     }
 
     /**
+     * Get the preview panel divider position property.
+     *
+     * @return the preview panel divider position property, or -1 if none is set.
+     */
+    public double getPreviewDivposKey() {
+        return Double.parseDouble(getProperty(previewDivposKey, "-1"));
+    }
+
+    /**
      * Set the main divider position property.
      *
      * @param val the position of the divider 0-1.
@@ -288,6 +297,15 @@ public final class QueleaProperties extends SortedProperties {
         write();
     }
 
+    /**
+     * Set the preview panel divider position property.
+     *
+     * @param val the position of the preview panel divider 0-1.
+     */
+    public void setPreviewDivPos(double val) {
+        setProperty(previewDivposKey, Double.toString(val));
+        write();
+    }
     /**
      * Set the library divider position property.
      *
@@ -756,6 +774,16 @@ public final class QueleaProperties extends SortedProperties {
      */
     public void setShowExtraLivePanelToolbarOptions(boolean show) {
         setProperty(showExtraLivePanelToolbarOptionsKey, Boolean.toString(show));
+    }
+
+    /**
+     * Get the setting for whether the preview and live dividers should be linked. eg move together
+     * <p>
+     *
+     * @return true if the preview and live dividers should be linked, else false
+     */
+    public boolean getLinkPreviewAndLiveDividers(){
+        return Boolean.parseBoolean(getProperty(linkPreviewAndLiveDividers, "true"));
     }
 
     /**

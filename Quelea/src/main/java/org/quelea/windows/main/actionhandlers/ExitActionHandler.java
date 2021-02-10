@@ -117,6 +117,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         QueleaProperties.get().setMainDivPos(mainWindow.getMainPanel().getMainDivPos());
         QueleaProperties.get().setPrevLiveDivPos(mainWindow.getMainPanel().getPrevLiveDivPos());
         QueleaProperties.get().setCanvasDivPos(mainWindow.getMainPanel().getLivePanel().getLyricsPanel().getSplitPane().getDividerPositions()[0]);
+        QueleaProperties.get().setPreviewDivPos(mainWindow.getMainPanel().getPreviewPanel().getLyricsPanel().getSplitPane().getDividerPositions()[0]);
         QueleaProperties.get().setLibraryDivPos(mainWindow.getMainPanel().getLibraryDivPos());
         LOGGER.log(Level.INFO, "Hiding main window...");
         mainWindow.hide();
