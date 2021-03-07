@@ -402,6 +402,10 @@ public class StageDrawer extends WordDrawer {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
+
+        int width = (int) (getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+        int height = (int) (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+
         Font font = theme.getFont();
         font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -418,16 +422,12 @@ public class StageDrawer extends WordDrawer {
             double newSize;
             List<LyricLine> newText;
             if (displayable instanceof BiblePassage) {
-                newText = new ArrayList<>();
-                for (String str : section.getText(false, false)) {
-                    for (String line : str.split("\n")) {
-                        newText.add(new LyricLine(line));
-                    }
-                }
+                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
+                newSize = result.getFontSize();
             } else {
                 newText = sanctifyText(textArr);
+                newSize = pickFontSize(font, newText, width, height);
             }
-            newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
