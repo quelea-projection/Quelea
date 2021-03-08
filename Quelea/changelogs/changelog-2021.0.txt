@@ -10,3 +10,4 @@ quelea (2021.0) stable
   * Add option to move preview and live panel dividers independently
   * Add ability to hide stage clock
   * Scale maximum font size on preview/live to more accurately represent projection window
+  * Add customisable shortcuts option
