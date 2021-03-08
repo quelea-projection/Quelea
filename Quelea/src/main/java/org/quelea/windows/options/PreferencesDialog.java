@@ -36,6 +36,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -68,6 +69,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsRecordingPanel recordingPanel;
     private final OptionsImportExportPanel importExportPanel;
     private HashMap<Field, ObservableValue> bindings = new HashMap<>();
+    private boolean previousLinkPreviewLiveDividers;
 
     /**
      * Create a new preference dialog.
@@ -113,6 +115,27 @@ public class PreferencesDialog extends Stage {
             }
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
+
+            // If the option has changed for linking the preview and live dividers, update the current UI to respect
+            // the options now
+            if( previousLinkPreviewLiveDividers != QueleaProperties.get().getLinkPreviewAndLiveDividers() ) {
+                // Get both the preview and live split panes
+                SplitPane previewSplit = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getLyricsPanel().getSplitPane();
+                SplitPane liveSplit = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getSplitPane();
+
+                if( QueleaProperties.get().getLinkPreviewAndLiveDividers() ) {
+                    // If the option is now to have them linked, need to move the preview divider to line up with the
+                    // live one, before linking them together
+                    previewSplit.setDividerPositions(liveSplit.getDividerPositions()[0]);
+                    previewSplit.getDividers().get(0).positionProperty().
+                            bindBidirectional(liveSplit.getDividers().get(0).positionProperty());
+                } else {
+                    // Option is now to have them unlinked, so do that
+                    previewSplit.getDividers().get(0).positionProperty().
+                            unbindBidirectional(liveSplit.getDividers().get(0).positionProperty());
+                }
+            }
+
             hide();
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
@@ -136,6 +159,10 @@ public class PreferencesDialog extends Stage {
 
     private void callBeforeShowing() {
         getDisplaySetupPanel().setDisplayChange(false);
+
+        // Before showing the preferences dialog we save the current state of the link preview and live dividers so
+        // that we can tell if it has been changed and whether we need to action anything
+        previousLinkPreviewLiveDividers = QueleaProperties.get().getLinkPreviewAndLiveDividers();
     }
 
     private void bind(Field field, ObservableValue<? extends Boolean> booleanProperty) {

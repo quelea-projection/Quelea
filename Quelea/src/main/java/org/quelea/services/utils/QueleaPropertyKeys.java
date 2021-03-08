@@ -10,6 +10,7 @@ public class QueleaPropertyKeys {
     public static final String libraryDivposKey = "library.divpos";
     public static final String preliveDivposKey = "prelive.divpos";
     public static final String canvasDivposKey = "canvas.divpos";
+    public static final String previewDivposKey = "preview.divpos";
     public static final String chosenFontsKey = "chosen.fonts";
     public static final String uniformFontSizeKey = "uniform.font.size";
     public static final String showVerseNumbersKey = "show.verse.numbers";
@@ -31,6 +32,7 @@ public class QueleaPropertyKeys {
     public static final String additionalLineSpacingKey = "additional.line.spacing";
     public static final String thumbnailSizeKey = "thumbnail.size";
     public static final String showExtraLivePanelToolbarOptionsKey = "show.extra.live.panel.toolbar.options";
+    public static final String linkPreviewAndLiveDividers = "link.preview.and.live.dividers";
     public static final String clearLiveOnRemoveKey = "clear.live.on.remove";
     public static final String facebookPageKey = "facebook.page";
     public static final String wikiPageKey = "wiki.page";

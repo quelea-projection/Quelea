@@ -673,6 +673,7 @@ paste.label=Paste
 undo.label=Undo
 redo.label=Redo
 show.extra.live.panel.toolbar.options.label=Show extra live panel toolbar options
+link.preview.and.live.dividers.label=Link preview and live panel dividers
 save.add.notice.button=Save and add
 saved.notices=Saved notices
 delete.notice.button=Delete

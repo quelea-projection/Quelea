@@ -64,8 +64,12 @@ public class MainPanel extends BorderPane {
         scheduleAndLibrary.getItems().add(schedulePanel);
         scheduleAndLibrary.getItems().add(libraryPanel);
 
-        previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().
-                bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
+        // Link the preview and live dividers on the main window if the user wants them to move together
+        if(  QueleaProperties.get().getLinkPreviewAndLiveDividers() ) {
+            previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().
+                    bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
+        }
+
         previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(0.58);
         livePanel.getLyricsPanel().getSplitPane().setDividerPositions(0.58);
 
@@ -87,6 +91,7 @@ public class MainPanel extends BorderPane {
         double mainPos = QueleaProperties.get().getMainDivPos();
         double prevLivePos = QueleaProperties.get().getPrevLiveDivPos();
         double canvasPos = QueleaProperties.get().getCanvasDivPos();
+        double previewPos = QueleaProperties.get().getPreviewDivposKey();
         double libraryPos = QueleaProperties.get().getLibraryDivPos();
         if (prevLivePos != -1 && mainPos != -1) {
             mainSplit.setDividerPositions(mainPos, prevLivePos);
@@ -94,14 +99,25 @@ public class MainPanel extends BorderPane {
             mainSplit.setDividerPositions(0.2717, 0.6384);
         }
 
-        if (canvasPos != -1) {
+        if (canvasPos != -1 && (QueleaProperties.get().getLinkPreviewAndLiveDividers() || previewPos == -1 ) ) {
+            // live divider pos is found and either the preview and live dividers are linked, or we don't have a
+            // position saved for the preview divider so set both live and preview to saved value for live
             previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
             livePanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
-            if (libraryPos != -1) {
-                scheduleAndLibrary.setDividerPositions(libraryPos);
-            } else {
-                scheduleAndLibrary.setDividerPositions(0.5);
-            }
+        } else if (canvasPos != -1) {
+            // live and preview dividers not linked, and we have a position saved for the live divider so just set live
+            livePanel.getLyricsPanel().getSplitPane().setDividerPositions(canvasPos);
+        }
+
+        if (previewPos != -1 && !QueleaProperties.get().getLinkPreviewAndLiveDividers()) {
+            // preview divider pos is found, and not linked with live divider, so just set preview divider position
+            previewPanel.getLyricsPanel().getSplitPane().setDividerPositions(previewPos);
+        }
+
+        if (libraryPos != -1) {
+            scheduleAndLibrary.setDividerPositions(libraryPos);
+        } else {
+            scheduleAndLibrary.setDividerPositions(0.5);
         }
     }
 

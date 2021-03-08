@@ -7,5 +7,6 @@ quelea (2021.0) stable
   * Church CCLI num can now be specified in options dialog
   * Support OSIS XML bible format
   * Song list export now also includes song CCLI number (where specified)
+  * Add option to move preview and live panel dividers independently
   * Add ability to hide stage clock
   * Scale maximum font size on preview/live to more accurately represent projection window
