@@ -2287,6 +2287,8 @@ public final class QueleaProperties extends SortedProperties {
         return Integer.parseInt(getProperty(autoDetectPortKey, "50015"));
     }
 
+    public boolean getStageShowClock() { return Boolean.parseBoolean(getProperty(stageShowClockKey, "true")); }
+
     public boolean getUse24HourClock() {
         return Boolean.parseBoolean(getProperty(use24hClockKey, "true"));
     }

@@ -108,6 +108,7 @@ public class QueleaPropertyKeys {
     public static final String clearStageviewWithMainKey = "clear.stageview.with.main";
     public static final String songOverflowKey = "song.overflow";
     public static final String autoDetectPortKey = "auto.detect.port";
+    public static final String stageShowClockKey = "stage.show.clock";
     public static final String use24hClockKey = "use.24h.clock";
     public static final String splitBibleVersesKey = "split.bible.verses";
     public static final String lyricWidthBoundKey = "lyric.width.bound";

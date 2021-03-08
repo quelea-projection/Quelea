@@ -1,7 +1,12 @@
 quelea (2021.0) stable
  
   * Fix "schedule cannot be opened" issue on Mac
+  * Fix bible passages on stage display sometimes having a very small font size
+  * Fix bible passages on web display sometimes having a very small font size
+  * Fix Mac crash when switching windows whilst dialog windows were open
   * Church CCLI num can now be specified in options dialog
   * Support OSIS XML bible format
   * Song list export now also includes song CCLI number (where specified)
   * Add option to move preview and live panel dividers independently
+  * Add ability to hide stage clock
+  * Scale maximum font size on preview/live to more accurately represent projection window
