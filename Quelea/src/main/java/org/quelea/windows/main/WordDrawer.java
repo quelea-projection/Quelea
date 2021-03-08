@@ -303,4 +303,23 @@ public abstract class WordDrawer extends DisplayableDrawer {
 
         return font.getSize();
     }
+
+    /**
+     * Returns a scaling factor for the canvas of this WordDrawer. This is the scale of this canvas when
+     * compared to the canvas of the Projection Window. Using this scaling factor is it possible to
+     * calculate the sizes of things on a preview/live when compared to the Projection Window.
+     * For example the Maximum Font Size needs to be scaled for the preview/live displays.
+     * <p>
+     * @return The scaling factor for this canvas
+     */
+    protected double canvasScalingFactor() {
+        double scalingFactor = 1;
+
+        // If there is a projection window, and it has some size (avoid divide by zero errors!)
+        if (QueleaApp.get().getProjectionWindow() != null && QueleaApp.get().getProjectionWindow().getWidth() != 0) {
+            scalingFactor = getCanvas().getWidth() / QueleaApp.get().getProjectionWindow().getWidth();
+        }
+
+        return scalingFactor;
+    }
 }

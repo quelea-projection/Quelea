@@ -94,6 +94,9 @@ public class LyricDrawer extends WordDrawer {
         Utils.checkFXThread();
         if (defaultFontSize < 1) {
             defaultFontSize = QueleaProperties.get().getMaxFontSize();
+
+            // Scale the default font size for this canvas
+            defaultFontSize *= canvasScalingFactor();
         }
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
@@ -576,6 +579,10 @@ public class LyricDrawer extends WordDrawer {
             return -1;
         }
 
+        // Retrieve and scale the max font size for this canvas
+        double maxFontSizeForCanvas = QueleaProperties.get().getMaxFontSize();
+        maxFontSizeForCanvas *= canvasScalingFactor();
+
         int width = (int) (getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
         int height = (int) (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
 
@@ -593,7 +600,7 @@ public class LyricDrawer extends WordDrawer {
         font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize());
+                maxFontSizeForCanvas);
         double fontSize = Double.POSITIVE_INFINITY;
         for (int i = 0; i < displayable.getSections().length; i++) {
             TextSection section = displayable.getSections()[i];
