@@ -106,6 +106,9 @@ public class CreateTimerPanel extends Stage {
         durationTextField = new TextField();
         durationTextField.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("duration.tooltip.label")));
         durationTextField.setPromptText("5:00");
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            durationTextField.setStyle("-fx-prompt-text-fill: #404040");
+        }
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (parsable(newValue)) {
                 if (!QueleaProperties.get().getUseDarkTheme()) {
@@ -131,6 +134,9 @@ public class CreateTimerPanel extends Stage {
         textTextArea.setPrefRowCount(4);
         textTextArea.setPrefColumnCount(30);
         textTextArea.setPromptText(LabelGrabber.INSTANCE.getLabel("timer.text.prompt"));
+        if (QueleaProperties.get().getUseDarkTheme()) {
+            textTextArea.setStyle("-fx-prompt-text-fill: #404040");
+        }
         textLabel.setLabelFor(textTextArea);
         GridPane.setConstraints(textTextArea, 1, rows);
         grid.getChildren().add(textTextArea);
