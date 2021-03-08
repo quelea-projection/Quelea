@@ -11,3 +11,4 @@ quelea (2021.0) stable
   * Add ability to hide stage clock
   * Scale maximum font size on preview/live to more accurately represent projection window
   * Add customisable shortcuts option
+  * Fix bug with visibility of timer dialog in dark mode
