@@ -20,8 +20,6 @@ package org.quelea.windows.main.menus;
 
 import java.lang.ref.SoftReference;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -31,6 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.ShortcutManager;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
@@ -69,17 +68,13 @@ public class ToolsMenu extends Menu {
         getItems().add(searchBibleItem);
 
         testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/testbars.png", 20, 20, false, true)));
-        testItem.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                TestPaneDialog dialog = testDialog.get();
-                if (dialog == null) {
-                    dialog = new TestPaneDialog();
-                    testDialog = new SoftReference<>(dialog);
-                }
-                dialog.show();
+        testItem.setOnAction(t -> {
+            TestPaneDialog dialog = testDialog.get();
+            if (dialog == null) {
+                dialog = new TestPaneDialog();
+                testDialog = new SoftReference<>(dialog);
             }
+            dialog.show();
         });
         getItems().add(testItem);
 
@@ -92,7 +87,7 @@ public class ToolsMenu extends Menu {
         getItems().add(liveTextItem);
 
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
-        optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
+        optionsItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getOptionsKeys()));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
 
         getItems().add(optionsItem);

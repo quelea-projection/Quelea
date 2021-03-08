@@ -19,19 +19,16 @@
 package org.quelea.windows.main.menus;
 
 import java.util.logging.Logger;
-
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -118,7 +115,7 @@ public class ScheduleMenu extends Menu {
 
         manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image(darkTheme ? "file:icons/info-light.png" : "file:icons/info.png", 16, 16, false, true)));
         manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
-        manageNoticesItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
+        manageNoticesItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getNoticesKeys()));
         getItems().add(manageNoticesItem);
 
         exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image(darkTheme ? "file:icons/pdf-light.png" : "file:icons/pdf.png", 16, 16, false, true)));
