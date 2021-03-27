@@ -33,7 +33,7 @@ jobs:
   include:
     - stage: build
       script:
-        - "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist --scan"
+        - "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist"
         - PREVDIR="$(pwd)"
         - cd $(mktemp -d)
         - git clone https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./repo
