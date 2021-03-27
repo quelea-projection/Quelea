@@ -893,6 +893,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(int index, TextSection section) {
+        sectionsInSequence.clear();
         fontSizeCache.clear();
         if (section.getTheme() == null) {
             section.setTheme(theme);
@@ -922,6 +923,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param index      the index of the section to replace.
      */
     public void replaceSection(TextSection newSection, int index) {
+        sectionsInSequence.clear();
         sectionsWithoutSequence.set(index, newSection);
         fontSizeCache.clear();
     }
@@ -933,6 +935,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param index the index of the text section to remove.
      */
     public void removeSection(int index) {
+        sectionsInSequence.clear();
         sectionsWithoutSequence.remove(index);
         fontSizeCache.clear();
     }
