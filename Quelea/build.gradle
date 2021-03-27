@@ -231,8 +231,8 @@ dependencies {
 
     compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
 
-    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
-    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+    compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
+    compile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
 }
 
 repositories {
