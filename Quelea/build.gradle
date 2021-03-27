@@ -20,10 +20,10 @@ wrapper {
     gradleVersion = '4.10.2'
 }
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
+//buildScan {
+//    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+//    termsOfServiceAgree = 'yes'
+//}
 
 ext {
     versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
