@@ -20,11 +20,6 @@ wrapper {
     gradleVersion = '4.10.2'
 }
 
-//buildScan {
-//    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-//    termsOfServiceAgree = 'yes'
-//}
-
 ext {
     versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
 
@@ -231,8 +226,8 @@ dependencies {
 
     compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
 
-    compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
-    compile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
 }
 
 repositories {
