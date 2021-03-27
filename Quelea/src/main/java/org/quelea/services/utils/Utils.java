@@ -81,6 +81,7 @@ import javafx.stage.Stage;
 import org.apache.commons.text.StringEscapeUtils;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.awt.AWTFrameGrab;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
@@ -1127,6 +1128,18 @@ public final class Utils {
 			LOGGER.log(Level.WARNING, "Error extracting zip", ex);
 			return Collections.emptyList();
 		}
+	}
+
+	public static String getEncoding(File file) {
+		String encoding = "UTF-8";
+		try {
+			encoding = UniversalDetector.detectCharset(file);
+			LOGGER.log(Level.INFO, "Detected " + encoding + " encoding for " + file.getAbsolutePath());
+		}
+		catch (IOException ex) {
+			LOGGER.log(Level.WARNING, "Couldn't detect encoding, defaulting to " + encoding);
+		}
+		return encoding;
 	}
 
 }

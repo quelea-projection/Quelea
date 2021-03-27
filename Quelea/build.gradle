@@ -201,6 +201,7 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.2'
+    compile group: 'com.github.albfernandez', name: 'juniversalchardet', version: '2.4.0'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
     compile group: 'com.google.zxing', name: 'core', version: '3.4.0'

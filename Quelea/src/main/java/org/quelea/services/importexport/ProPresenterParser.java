@@ -18,6 +18,25 @@
  */
 package org.quelea.services.importexport;
 
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.StatusPanel;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.rtf.RTFEditorKit;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,27 +47,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.rtf.RTFEditorKit;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.main.StatusPanel;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Parses ProPrsenter 4, 5 and 6 XML files.
@@ -58,13 +59,13 @@ import org.xml.sax.SAXException;
 public class ProPresenterParser implements SongParser {
 
 	private static final Logger LOGGER = LoggerUtils.getLogger();
-	private final Map<Integer, Function<Node, Optional<String>>> slideTransformers;
+	private final Map<Integer, BiFunction<String, Node, Optional<String>>> slideTransformers;
 
 	public ProPresenterParser() {
-		Map<Integer, Function<Node, Optional<String>>> transformers = new HashMap<>();
-		transformers.put(4, n -> getSectionTextLegacy(n));
-		transformers.put(5, n -> getSectionTextLegacy(n));
-		transformers.put(6, n -> getSectionText6(n));
+		Map<Integer, BiFunction<String, Node, Optional<String>>> transformers = new HashMap<>();
+		transformers.put(4, (s, n) -> getSectionTextLegacy(s, n));
+		transformers.put(5, (s, n) -> getSectionTextLegacy(s, n));
+		transformers.put(6, (s, n) -> getSectionText6(s, n));
 		this.slideTransformers = Collections.unmodifiableMap(transformers);
 	}
 
@@ -74,6 +75,7 @@ public class ProPresenterParser implements SongParser {
 	}
 
 	private Optional<SongDisplayable> getSong(File file) {
+		String encoding = Utils.getEncoding(file);
 		int ppVersion = getVersion(file.getAbsolutePath());
 		if (ppVersion < 4 || ppVersion > 6) {
 			LOGGER.log(Level.WARNING, "Can only parse versions 4-6");
@@ -93,8 +95,8 @@ public class ProPresenterParser implements SongParser {
 			LOGGER.log(Level.INFO, "Found {0} slides", slideList.getLength());
 			for (int i = 0; i < slideList.getLength(); i++) {
 				slideTransformers
-						.getOrDefault(ppVersion, n -> Optional.empty())
-						.apply(slideList.item(i))
+						.getOrDefault(ppVersion, (s,n) -> Optional.empty())
+						.apply(encoding, slideList.item(i))
 						.map(this::appendNewline)
 						.ifPresent(lyrics::append);
 			}
@@ -127,7 +129,7 @@ public class ProPresenterParser implements SongParser {
 		return Optional.empty();
 	}
 
-	private Optional<String> getSectionTextLegacy(Node slideNode) {
+	private Optional<String> getSectionTextLegacy(String encoding, Node slideNode) {
 		try {
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			StringBuilder ret = new StringBuilder();
@@ -136,7 +138,7 @@ public class ProPresenterParser implements SongParser {
 			LOGGER.log(Level.INFO, "Found {0} lines", lines.getLength());
 			for (int j = 0; j < lines.getLength(); j++) {
 				Node lineNode = lines.item(j);
-				String line = new String(Base64.getDecoder().decode(lineNode.getAttributes().getNamedItem("RTFData").getTextContent()), Charset.forName("UTF-8"));
+				String line = new String(Base64.getDecoder().decode(lineNode.getAttributes().getNamedItem("RTFData").getTextContent()), Charset.forName(encoding));
 				line = stripRtfTags(line).trim();
 				ret.append(line).append('\n');
 			}
@@ -147,7 +149,7 @@ public class ProPresenterParser implements SongParser {
 		}
 	}
 
-	private Optional<String> getSectionText6(Node slideNode) {
+	private Optional<String> getSectionText6(String encoding, Node slideNode) {
 		try {
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			StringBuilder ret = new StringBuilder();
@@ -155,7 +157,7 @@ public class ProPresenterParser implements SongParser {
 			NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
 			for (int j = 0; j < lines.getLength(); j++) {
 				Node lineNode = lines.item(j);
-				String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName("UTF-8"));
+				String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName(encoding));
 				ret.append(line).append('\n');
 			}
 			return Optional.of(ret.toString());

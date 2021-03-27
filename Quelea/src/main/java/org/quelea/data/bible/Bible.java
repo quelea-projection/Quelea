@@ -114,11 +114,12 @@ public final class Bible implements BibleInterface, Serializable {
      * @return the bible as a java object, or null if an error occurred.
      */
     public static Bible parseBible(final File file) {
+        LOGGER.log(Level.INFO, "Parsing bible: " + file.getAbsolutePath());
         try {
             if (file.exists()) {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(new InputSource(new UnicodeReader(new FileInputStream(file), "UTF-8")));
+                Document doc = builder.parse(new InputSource(new UnicodeReader(new FileInputStream(file), Utils.getEncoding(file))));
                 NodeList list = doc.getChildNodes();
                 for (int i = 0; i < list.getLength(); i++) {
                     if (list.item(i).getNodeName().equalsIgnoreCase("xmlbible")

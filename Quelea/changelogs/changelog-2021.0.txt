@@ -13,3 +13,4 @@ quelea (2021.0) stable
   * Add customisable shortcuts option
   * Fix bug with visibility of timer dialog in dark mode
   * Fix bug with quick edit
+  * Auto-detect charsets for bible & song imports

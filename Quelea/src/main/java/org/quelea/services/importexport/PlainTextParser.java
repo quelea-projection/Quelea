@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -155,7 +156,7 @@ public class PlainTextParser implements SongParser {
                         defaultSongTitle = DEFAULT_TITLE;
                     }
                     SongDisplayable song = new SongDisplayable(defaultSongTitle, "");
-                    try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(listOfSongs[i]), "UTF-8"))) {
+                    try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(listOfSongs[i]), Utils.getEncoding(listOfSongs[i])))) {
                         String line;
                         while ((line = bfr.readLine()) != null) {
                             line = line.replace('\f', '\n');

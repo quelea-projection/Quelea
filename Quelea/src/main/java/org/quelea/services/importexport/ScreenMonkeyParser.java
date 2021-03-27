@@ -50,19 +50,20 @@ public class ScreenMonkeyParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        String rawXML = Utils.getTextFromFile(location.getAbsolutePath(), "", "UTF-8");
-        SongDisplayable song = getSongFromXML(rawXML);
+        String encoding = Utils.getEncoding(location);
+        String rawXML = Utils.getTextFromFile(location.getAbsolutePath(), "", encoding);
+        SongDisplayable song = getSongFromXML(rawXML, encoding);
         if (song != null) {
             ret.add(song);
         }
         return ret;
     }
 
-    private SongDisplayable getSongFromXML(String lyricsXML) {
+    private SongDisplayable getSongFromXML(String lyricsXML, String encoding) {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes("UTF-8")));
+            Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes(encoding)));
             Node root = doc.getElementsByTagName("Song").item(0);
             StringBuilder lyrics = new StringBuilder();
             String title = "Screen Money Song";

@@ -49,7 +49,7 @@ public class VideoPsalmParser implements SongParser {
 	public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) {
 		List<SongDisplayable> ret = new ArrayList<>();
 
-		String contents = Utils.getTextFromFile(location.getAbsolutePath(), null, "UTF-8");
+		String contents = Utils.getTextFromFile(location.getAbsolutePath(), null, Utils.getEncoding(location));
 		if (contents == null) {
 			return ret;
 		}

@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -43,7 +44,7 @@ public class EpicWorshipParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), "UTF-8"));
+        BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), Utils.getEncoding(location)));
         ArrayList<SongDisplayable> ret = new ArrayList<>();
         String fullContents = bfr.readLine();
         String songsWhole = fullContents.substring(10, fullContents.length() - 2);
