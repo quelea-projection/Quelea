@@ -781,3 +781,6 @@ remote.search.tooltip=Pridėti giesmę ar Biblijos ištrauką
 remote.about.translating=Apie programėlės vertimą
 remote.source.code=Pirminis kodas
 remote.volume.navigation.description=Naudoti telefono garsumo mygtukus, kad būtų perjungiama į kitą ar ankstesnę skaidrę/elementą.
+link.preview.and.live.dividers.label=Nuorodos peržiūros ir skydelio „Gyvai“ dalytuvai
+stage.show.clock=Rodyti laikrodį
+enter.valid.port=Įveskite skaičių nuo 1029 iki 49151
