@@ -73,6 +73,7 @@ public class FontOptionsDialog extends Stage {
     private final ColorPicker shadowColor;
     private final ToggleButton boldButton;
     private final ToggleButton italicButton;
+    private final ToggleButton uppercaseButton;
     private final CheckBox useShadowCheckbox;
     private final Slider shadowOffsetSlider;
     private final NumberTextField shadowOffsetText;
@@ -137,6 +138,8 @@ public class FontOptionsDialog extends Stage {
         Utils.setToolbarButtonStyle(boldButton);
         italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(italicButton);
+        uppercaseButton = new ToggleButton("", new ImageView(new Image("file:icons/uppercase.png", 15, 15, false, true)));
+        Utils.setToolbarButtonStyle(uppercaseButton);
 
         BorderPane root = new BorderPane();
         VBox controlRoot = new VBox(10);
@@ -148,6 +151,7 @@ public class FontOptionsDialog extends Stage {
         HBox fontButtonBox = new HBox(10);
         fontButtonBox.getChildren().add(boldButton);
         fontButtonBox.getChildren().add(italicButton);
+        fontButtonBox.getChildren().add(uppercaseButton);
         fontButtonBox.getChildren().add(fontColor);
         controlRoot.getChildren().add(fontButtonBox);
         controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.text") + ":"));
@@ -280,6 +284,7 @@ public class FontOptionsDialog extends Stage {
         fontColor.fireEvent(new ActionEvent());
         boldButton.setSelected(theme.isTranslateBold());
         italicButton.setSelected(theme.isTranslateItalic());
+        uppercaseButton.setSelected(theme.isTranslateUppercase());
         shadowColor.setValue(theme.getShadow().getColor());
         shadowColor.fireEvent(new ActionEvent());
         shadowOffsetSlider.setValue(theme.getShadow().getOffsetX());
@@ -334,6 +339,15 @@ public class FontOptionsDialog extends Stage {
      */
     public boolean isTranslateItalic() {
         return italicButton.isSelected();
+    }
+
+    /**
+     * Determine whether the font is uppercase.
+     *
+     * @return true if uppercase, false otherwise.
+     */
+    public boolean isTranslateUppercase() {
+        return uppercaseButton.isSelected();
     }
 
 }

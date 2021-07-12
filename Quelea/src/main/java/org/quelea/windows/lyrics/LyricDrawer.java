@@ -508,7 +508,11 @@ public class LyricDrawer extends WordDrawer {
         List<LyricLine> finalLines = new ArrayList<>();
         int translationOffset = 0;
         for (int i = 0; i < linesArr.length; i++) {
-            finalLines.add(new LyricLine(linesArr[i]));
+            if(this.theme.isUppercase()) {
+                finalLines.add(new LyricLine(linesArr[i].toUpperCase()));
+            } else {
+                finalLines.add(new LyricLine(linesArr[i]));
+            }
             if (new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
                 continue;
             }
@@ -517,7 +521,11 @@ public class LyricDrawer extends WordDrawer {
                     translationOffset++;
                 }
                 if (i + translationOffset < translationArr.length && new LineTypeChecker(translationArr[i + translationOffset]).getLineType() == Type.NORMAL) {
-                    finalLines.add(new LyricLine(true, translationArr[i + translationOffset]));
+                    if(this.theme.isTranslateUppercase()) {
+                        finalLines.add(new LyricLine(true, translationArr[i + translationOffset].toUpperCase()));
+                    } else {
+                        finalLines.add(new LyricLine(true, translationArr[i + translationOffset]));
+                    }
                 }
             }
         }
