@@ -110,6 +110,11 @@ public final class BibleChapter implements BibleInterface, Serializable {
                 num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue().trim());
             } catch (NumberFormatException ex) {
             }
+        } else if (node.getAttributes().getNamedItem("number") != null) {
+            try {
+                num = Integer.parseInt(node.getAttributes().getNamedItem("number").getNodeValue().trim());
+            } catch (NumberFormatException ex) {
+            }
         } else if (node.getAttributes().getNamedItem("n") != null) {
             try {
                 num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());

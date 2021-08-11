@@ -22,10 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javax.xml.parsers.DocumentBuilder;
@@ -106,7 +109,7 @@ public final class Bible implements BibleInterface, Serializable {
         }
         return true;
     }
-    
+
     /**
      * Parse a bible from a specified bible and return it as an object.
      * <p/>
@@ -177,24 +180,41 @@ public final class Bible implements BibleInterface, Serializable {
             name = defaultName;
         }
         Bible ret = new Bible(name);
-        NodeList list = node.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-            Node osisType =null;
-            if(list.item(i).getAttributes()!=null) {
-                osisType = list.item(i).getAttributes().getNamedItem("type");
+        List<Node> list = toList(node.getChildNodes());
+        list = list.stream().flatMap(n -> {
+            if (n.getNodeName().equalsIgnoreCase("testament")) {
+                return toList(n.getChildNodes()).stream();
             }
-            if (list.item(i).getNodeName().equalsIgnoreCase("information")) {
-                ret.information = BibleInfo.parseXML(list.item(i));
-            } else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
-                    || list.item(i).getNodeName().equalsIgnoreCase("b")
-                    || list.item(i).getNodeName().equalsIgnoreCase("book")
-                    || (list.item(i).getNodeName().equalsIgnoreCase("div") && osisType!=null && osisType.getNodeValue().equals("book"))) {
-                BibleBook book = BibleBook.parseXML(list.item(i), i);
+            else {
+                return Stream.of(n);
+            }
+        }).collect(Collectors.toList());
+        for(int i=0 ; i<list.size() ; i++) {
+            Node item = list.get(i);
+            Node osisType =null;
+            if(item.getAttributes()!=null) {
+                osisType = item.getAttributes().getNamedItem("type");
+            }
+            if (item.getNodeName().equalsIgnoreCase("information")) {
+                ret.information = BibleInfo.parseXML(item);
+            } else if (item.getNodeName().equalsIgnoreCase("biblebook")
+                    || item.getNodeName().equalsIgnoreCase("b")
+                    || item.getNodeName().equalsIgnoreCase("book")
+                    || (item.getNodeName().equalsIgnoreCase("div") && osisType!=null && osisType.getNodeValue().equals("book"))) {
+                BibleBook book = BibleBook.parseXML(item, i);
                 book.setBible(ret);
                 ret.addBook(book);
             }
         }
         LOGGER.log(Level.INFO, "Parsed bible: {0}. Contains {1} books.", new Object[]{ret.getName(), ret.getBooks().length});
+        return ret;
+    }
+
+    private static List<Node> toList(NodeList nodeList) {
+        List<Node> ret = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            ret.add(nodeList.item(i));
+        }
         return ret;
     }
 
