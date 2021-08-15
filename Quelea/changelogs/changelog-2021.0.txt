@@ -13,5 +13,7 @@ quelea (2021.0) stable
   * Add customisable shortcuts option
   * Fix bug with visibility of timer dialog in dark mode
   * Fix bug with quick edit
+  * Fix issue with image name conflict when saving / opening a schedule
+  * Add support for Beblia XML bibles
   * Auto-detect charsets for bible & song imports
   * Add option to have background colour around text
