@@ -106,6 +106,8 @@ public final class BibleVerse implements BibleInterface, Serializable {
                 ret.num = Integer.parseInt(node.getAttributes().getNamedItem("number").getNodeValue().trim());
             } else if (node.getAttributes().getNamedItem("n") != null) {
                 ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
+            } else if (node.getAttributes().getNamedItem("id") != null) {
+                ret.num = Integer.parseInt(node.getAttributes().getNamedItem("id").getNodeValue().trim());
             } else if (node.getAttributes().getNamedItem("osisID") != null) {
                 String[] osisIdParts = node.getAttributes().getNamedItem("osisID").getNodeValue().trim().split("\\.");
                 ret.num = Integer.parseInt(osisIdParts[osisIdParts.length-1]);

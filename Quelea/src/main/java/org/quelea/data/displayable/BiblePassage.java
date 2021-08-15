@@ -33,6 +33,7 @@ import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
+import org.quelea.data.bible.BibleBookNameUtil;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.languages.LabelGrabber;
@@ -306,7 +307,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                             for (BibleBook bb : b.getBooks()) {
                                 String p = passageSummary.split(" \\d")[0];
                                 if (bb.getBookName().equals(p)) {
-                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii));
+                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii, BibleBookNameUtil.getBookNameForIndex(ii, b.getBooks().length)));
                                     bv.getChapter().getBook().setBible(b);
                                     verses.add(bv);
                                 }

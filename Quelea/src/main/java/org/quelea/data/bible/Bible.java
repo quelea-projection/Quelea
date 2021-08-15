@@ -17,23 +17,8 @@
  */
 package org.quelea.data.bible;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.BibleUploader;
@@ -45,6 +30,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A bible containing a number of books as well as some information.
@@ -176,38 +175,41 @@ public final class Bible implements BibleInterface, Serializable {
         String name = "";
         if (node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
+        } else if (node.getAttributes().getNamedItem("name") != null) {
+            name = node.getAttributes().getNamedItem("name").getNodeValue();
         } else {
             name = defaultName;
         }
         Bible ret = new Bible(name);
         List<Node> list = toList(node.getChildNodes());
         list = list.stream().flatMap(n -> {
-            if (n.getNodeName().equalsIgnoreCase("testament")) {
-                return toList(n.getChildNodes()).stream();
-            }
-            else {
-                return Stream.of(n);
-            }
-        }).collect(Collectors.toList());
-        for(int i=0 ; i<list.size() ; i++) {
+                    if (n.getNodeName().equalsIgnoreCase("testament")) {
+                        return toList(n.getChildNodes()).stream();
+                    } else {
+                        return Stream.of(n);
+                    }
+                })
+                .filter(item -> ret.isBibleBookNode(item))
+                .collect(Collectors.toList());
+        for (int i = 0; i < list.size(); i++) {
             Node item = list.get(i);
-            Node osisType =null;
-            if(item.getAttributes()!=null) {
-                osisType = item.getAttributes().getNamedItem("type");
-            }
             if (item.getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(item);
-            } else if (item.getNodeName().equalsIgnoreCase("biblebook")
-                    || item.getNodeName().equalsIgnoreCase("b")
-                    || item.getNodeName().equalsIgnoreCase("book")
-                    || (item.getNodeName().equalsIgnoreCase("div") && osisType!=null && osisType.getNodeValue().equals("book"))) {
-                BibleBook book = BibleBook.parseXML(item, i);
+            } else if (ret.isBibleBookNode(item)) {
+                BibleBook book = BibleBook.parseXML(item, i, BibleBookNameUtil.getBookNameForIndex(i, list.size()));
                 book.setBible(ret);
                 ret.addBook(book);
             }
         }
-        LOGGER.log(Level.INFO, "Parsed bible: {0}. Contains {1} books.", new Object[]{ret.getName(), ret.getBooks().length});
+        LOGGER.log(Level.INFO, "Parsed bible: {0}. Contains {1} books.", new Object[]{ret.getName(), list.size()});
         return ret;
+    }
+
+    private boolean isBibleBookNode(Node n) {
+        return n.getNodeName().equalsIgnoreCase("biblebook")
+                || n.getNodeName().equalsIgnoreCase("b")
+                || n.getNodeName().equalsIgnoreCase("book")
+                || (n.getNodeName().equalsIgnoreCase("div") && n.getAttributes().getNamedItem("type") != null && n.getAttributes().getNamedItem("type").getNodeValue().equals("book"));
     }
 
     private static List<Node> toList(NodeList nodeList) {

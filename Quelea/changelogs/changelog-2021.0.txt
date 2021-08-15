@@ -15,5 +15,6 @@ quelea (2021.0) stable
   * Fix bug with quick edit
   * Fix issue with image name conflict when saving / opening a schedule
   * Add support for Beblia XML bibles
+  * Add support for 66 book bibles without explicit book names
   * Auto-detect charsets for bible & song imports
   * Add option to have background colour around text

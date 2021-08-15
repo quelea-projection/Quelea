@@ -147,12 +147,14 @@ public final class BibleBook implements BibleInterface, Serializable {
      * XML file.
      * @return the object as defined by the XML.
      */
-    public static BibleBook parseXML(Node node, int defaultBookNum) {
+    public static BibleBook parseXML(Node node, int defaultBookNum, String defaultBookName) {
         BibleBook ret = new BibleBook();
         if (node.getAttributes().getNamedItem("bnumber") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue().trim());
         } else if (node.getAttributes().getNamedItem("number") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("number").getNodeValue().trim());
+        } else if (node.getAttributes().getNamedItem("id") != null) {
+            ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("id").getNodeValue().trim());
         } else {
             ret.bookNumber = defaultBookNum;
         }
@@ -166,7 +168,7 @@ public final class BibleBook implements BibleInterface, Serializable {
         } else if (node.getAttributes().getNamedItem("osisID") != null) {
             ret.bookName = node.getAttributes().getNamedItem("osisID").getNodeValue();
         } else {
-            ret.bookName = "Book " + ret.bookNumber;
+            ret.bookName = defaultBookName;
         }
         
         if (node.getAttributes().getNamedItem("bsname") != null) {
