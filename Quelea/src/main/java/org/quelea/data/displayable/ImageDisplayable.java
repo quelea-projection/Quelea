@@ -86,12 +86,12 @@ public class ImageDisplayable implements Displayable {
      */
     public static ImageDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         File file = new File(node.getTextContent());
-        File imgFile = new File(QueleaProperties.get().getImageDir(), file.getName());
+        File imgFile = Utils.getChangedFile(node, fileChanges);;
         if (!imgFile.exists()) {
-            imgFile = new File(QueleaProperties.get().getDownloadPath(), file.getName());
+            imgFile = new File(QueleaProperties.get().getImageDir(), file.getName());
         }
         if (!imgFile.exists()) {
-            imgFile = Utils.getChangedFile(node, fileChanges);
+            imgFile = new File(QueleaProperties.get().getDownloadPath(), file.getName());
         }
         if (!imgFile.exists()) {
             LOGGER.log(Level.WARNING, "Image file {0} doesn''t exist.", imgFile.getAbsolutePath());
