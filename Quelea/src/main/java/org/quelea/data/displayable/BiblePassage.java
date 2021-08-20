@@ -113,7 +113,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
         final int MAX_CHARS = QueleaProperties.get().getMaxChars();
         final int MAX_VERSES = QueleaProperties.get().getMaxBibleVerses();
         final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSplitVerses();
-        final boolean USE_CHARS = QueleaProperties.get().getBibleUsingMaxChars();
+        final boolean USE_CHARS = !QueleaProperties.get().getBibleUsingMaxChars();
 
         StringBuilder section = new StringBuilder();
         StringBuilder line = new StringBuilder();
