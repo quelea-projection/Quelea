@@ -19,6 +19,7 @@ package org.quelea.data;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
@@ -375,7 +376,7 @@ public class ThemeDTO implements Serializable {
      * @param content Theme String representation
      * @return theme DTO
      */
-    public static ThemeDTO fromString(String content) {
+    public static ThemeDTO fromString(String content, Map<String, String> fileChanges) {
         if (content == null || content.isEmpty()) {
             return ThemeDTO.DEFAULT_THEME;
         }
@@ -425,9 +426,19 @@ public class ThemeDTO implements Serializable {
             } else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
             } else if (parts[0].equalsIgnoreCase("backgroundimage")) {
-                backgroundimage = parts[1];
+                String potentialSwap = fileChanges.get(new File(parts[1]).getAbsolutePath());
+                if (potentialSwap != null && new File(potentialSwap).exists()) {
+                    backgroundimage = potentialSwap;
+                } else {
+                    backgroundimage = parts[1];
+                }
             } else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
-                backgroundvid = parts[1];
+                String potentialSwap = fileChanges.get(new File(parts[1]).getAbsolutePath());
+                if (potentialSwap != null && new File(potentialSwap).exists()) {
+                    backgroundvid = potentialSwap;
+                } else {
+                    backgroundvid = parts[1];
+                }
             } else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowcolor")) {

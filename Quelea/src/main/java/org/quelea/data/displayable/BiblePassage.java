@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -317,7 +318,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                     }
                 }
             } else if (node.getNodeName().equals("theme")) {
-                tempTheme = ThemeDTO.fromString(node.getTextContent());
+                tempTheme = ThemeDTO.fromString(node.getTextContent(), Collections.emptyMap());
             }
         }
         return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme, multi);

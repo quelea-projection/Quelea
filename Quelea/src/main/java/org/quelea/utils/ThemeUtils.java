@@ -7,6 +7,7 @@ package org.quelea.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class ThemeUtils {
                 if (fileText.trim().isEmpty()) {
                     continue;
                 }
-                final ThemeDTO theme = ThemeDTO.fromString(fileText);
+                final ThemeDTO theme = ThemeDTO.fromString(fileText, Collections.emptyMap());
                 if (theme == ThemeDTO.DEFAULT_THEME) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
                     continue;  //error

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -195,7 +196,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         pretext = list.item(i + 1).getTextContent();
         posttext = list.item(i + 2).getTextContent();
         theme = list.item(i + 3).getTextContent();
-        ThemeDTO tempTheme = ThemeDTO.fromString(theme);
+        ThemeDTO tempTheme = ThemeDTO.fromString(theme, Collections.emptyMap());
         if (duration != -1) {
             return new TimerDisplayable(name, duration, pretext, posttext, tempTheme);
         } else {

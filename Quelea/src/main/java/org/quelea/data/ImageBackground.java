@@ -60,8 +60,13 @@ public class ImageBackground implements Background, Serializable {
 
     private Image initImage() {
         File f = new File(QueleaProperties.get().getImageDir(), imageName);
+        File rawPath = new File(imageName);
         Image img;
-        if(f.exists() && !imageName.trim().isEmpty()) {
+        if(!imageName.trim().isEmpty() && rawPath.exists()) {
+            img = ImageManager.INSTANCE.getImage(rawPath.toURI().toString());
+            originalImage = new SoftReference<>(img);
+        }
+        else if(f.exists() && !imageName.trim().isEmpty()) {
             img = ImageManager.INSTANCE.getImage(f.toURI().toString());
             originalImage = new SoftReference<>(img);
         }

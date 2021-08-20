@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.data.ThemeDTO;
@@ -130,7 +131,7 @@ public class TextSection implements Serializable {
      * @param sectionNode the section node.
      * @return the song section.
      */
-    public static TextSection parseXML(Node sectionNode) {
+    public static TextSection parseXML(Node sectionNode, Map<String, String> fileChanges) {
         NamedNodeMap attributes = sectionNode.getAttributes();
         String sectionTitle = null;
         String[] lyrics = null;
@@ -154,7 +155,7 @@ public class TextSection implements Serializable {
             Node node = nodelist.item(i);
             switch (node.getNodeName()) {
                 case "theme":
-                    theme = ThemeDTO.fromString(node.getTextContent());
+                    theme = ThemeDTO.fromString(node.getTextContent(), fileChanges);
                     break;
                 case "lyrics":
                     //String[] rawLyrics = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");

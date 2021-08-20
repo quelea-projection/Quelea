@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1135,7 +1136,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getFirstChild());
+            return parseXML(doc.getFirstChild(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
@@ -1153,7 +1154,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getChildNodes().item(0));
+            return parseXML(doc.getChildNodes().item(0), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't parse the schedule", ex);
             return null;
@@ -1167,7 +1168,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param song the song node to parse.
      * @return the song, or null if an error occurs.
      */
-    public static SongDisplayable parseXML(Node song) {
+    public static SongDisplayable parseXML(Node song, Map<String, String> fileChanges) {
         NodeList list = song.getChildNodes();
         String title = "";
         String author = "";
@@ -1223,7 +1224,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 for (int j = 0; j < sections.getLength(); j++) {
                     Node sectionNode = sections.item(j);
                     if (sectionNode.getNodeName().equals("section")) {
-                        songSections.add(TextSection.parseXML(sectionNode));
+                        songSections.add(TextSection.parseXML(sectionNode, fileChanges));
                     }
                 }
             }

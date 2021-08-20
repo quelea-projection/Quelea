@@ -83,7 +83,14 @@ public class VideoBackground implements Background, Serializable {
      * @return the file representing the video background
      */
     public File getVideoFile() {
-        return new File(QueleaProperties.get().getVidDir(), vidLocation.trim());
+        File vidDirFile = new File(QueleaProperties.get().getVidDir(), vidLocation.trim());
+        File absFile = new File(vidLocation.trim());
+        if(absFile.exists()) {
+            return absFile;
+        }
+        else {
+            return vidDirFile;
+        }
     }
 
     public String getVLCVidString() {

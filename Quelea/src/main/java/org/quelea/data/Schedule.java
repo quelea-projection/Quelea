@@ -327,7 +327,7 @@ public class Schedule implements Iterable<Displayable> {
                 String name = node.getNodeName();
                 //The non-shortcircuit (single bar) "or" is deliberate here, otherwise after "skipped" is set to true, nothing else will get added.
                 if (name.equalsIgnoreCase("song")) {
-                    skipped = skipped | !newSchedule.add(SongDisplayable.parseXML(node));
+                    skipped = skipped | !newSchedule.add(SongDisplayable.parseXML(node, fileChanges));
                 } else if (name.equalsIgnoreCase("passage")) {
                     skipped = skipped | !newSchedule.add(BiblePassage.parseXML(node));
                 } else if (name.equalsIgnoreCase("fileimage")) {
