@@ -301,7 +301,7 @@ public class Schedule implements Iterable<Displayable> {
              * 
              * Start bodge.
              */
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             StringBuilder contentsBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
