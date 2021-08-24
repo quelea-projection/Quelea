@@ -99,8 +99,7 @@ public class VideoBackground implements Background, Serializable {
 
     @Override
     public String getString() {
-        vidLocation = new File(vidLocation).getName();
-        return vidLocation.trim();
+        return new File(vidLocation).getName().trim();
     }
 
     @Override

@@ -99,7 +99,11 @@ public class ImageBackground implements Background, Serializable {
      * @return the file representing the image background.
      */
     public File getImageFile() {
-        return new File(QueleaProperties.get().getImageDir(), imageName.trim());
+        File ret = new File(imageName.trim());
+        if(!ret.exists()) {
+            ret = new File(QueleaProperties.get().getImageDir(), imageName.trim());
+        }
+        return ret;
     }
 
     /**
