@@ -19,6 +19,8 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.DoubleField;
 import com.dlsc.formsfx.model.structure.Field;
+import com.dlsc.formsfx.model.structure.StringField;
+import com.dlsc.preferencesfx.formsfx.view.controls.SimpleTextControl;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -65,6 +67,9 @@ public class OptionsGeneralPanel {
     private ObservableList<String> dbSongPreviewList;
     private HashMap<Field, ObservableValue> bindings;
     private StringProperty churchCcliNumProperty;
+    private BooleanProperty useDefaultTranslationProperty;
+    private StringProperty defaultTranslationNameProperty;
+    private StringField defaultTranslationNameField;
 
     /**
      * Create the options general panel.
@@ -103,11 +108,16 @@ public class OptionsGeneralPanel {
         dbSongPreviewProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"));
 
         churchCcliNumProperty = new SimpleStringProperty(QueleaProperties.get().getChurchCcliNum());
+
+        useDefaultTranslationProperty = new SimpleBooleanProperty(QueleaProperties.get().getUseDefaultTranslation());
+        defaultTranslationNameProperty = new SimpleStringProperty(QueleaProperties.get().getDefaultTranslationName());
+        defaultTranslationNameField = Field.ofStringType(defaultTranslationNameProperty).render(new SimpleTextControl());
     }
 
     public Category getGeneralTab() {
         bindings.put(smallSongSizeControllerField, showSmallSongProperty.not());
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
+        bindings.put(defaultTranslationNameField, useDefaultTranslationProperty.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")))
                 .subCategories(
@@ -158,12 +168,16 @@ public class OptionsGeneralPanel {
 
                         ),
                         Category.of(LabelGrabber.INSTANCE.getLabel("text.options.options"),
-                                Group.of(
+                                Group.of(LabelGrabber.INSTANCE.getLabel("general.text.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"), new SimpleBooleanProperty(QueleaProperties.get().checkCapitalFirst())).customKey(capitalFirstKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"), new SimpleBooleanProperty(QueleaProperties.get().getUseUniformFontSize())).customKey(uniformFontSizeKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.font.size.label"), maxFontSizeProperty, 12, 300).customKey(maxFontSizeKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"), additionalSpacingProperty, 0, 50).customKey(additionalLineSpacingKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"), maxCharsProperty, 10, 160).customKey(maxCharsKey)
+                                ),
+                                Group.of(LabelGrabber.INSTANCE.getLabel("translation.text.options"),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.default.translation.label"), useDefaultTranslationProperty).customKey(useDefaultTranslation),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("translation.name.label"), defaultTranslationNameField, defaultTranslationNameProperty).customKey(defaultTranslationName)
                                 )
                         )
                 ).expand();

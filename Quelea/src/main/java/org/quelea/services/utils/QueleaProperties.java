@@ -756,6 +756,22 @@ public final class QueleaProperties extends SortedProperties {
         setProperty(thumbnailSizeKey, Integer.toString(thumbnailSize));
     }
 
+    public boolean getUseDefaultTranslation() {
+        return Boolean.parseBoolean(getProperty(useDefaultTranslation, "false"));
+    }
+
+    public void setUseDefaultTranslation(boolean val) {
+        setProperty(useDefaultTranslation, Boolean.toString(val));
+    }
+
+    public String getDefaultTranslationName() {
+        return getProperty(defaultTranslationName, "");
+    }
+
+    public void setDefaultTranslationName(String val) {
+        setProperty(defaultTranslationName, val);
+    }
+
     /**
      * Get the show extra live panel toolbar options setting.
      * <p>
