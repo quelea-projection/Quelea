@@ -781,3 +781,11 @@ remote.search.tooltip=Voeg een lig of bijbelpassage toe
 remote.about.translating=Over vertalen van de app
 remote.source.code=Bron code
 remote.volume.navigation.description=Gebruik de volumeknoppen van de telefoon om te navigeren. Naar volgende/vorige dia of item.
+client.id=Client ID
+link.preview.and.live.dividers.label=Koppel scheidingslijnen preview and
+live paneel dividers
+stage.show.clock=Toon Klok
+song.sequence.tip=Tip: Je kunt een sectie meerdere keren toevoegen (bv
+refrein)!
+enter.valid.port=Gelieve een nummer tussen 1029 en 49151 in te toetsen
+open.sequence.editor.tooltip=Toon volgorde opsteller
