@@ -113,7 +113,7 @@ public class ImageBackground implements Background, Serializable {
      */
     @Override
     public String getString() {
-        return imageName;
+        return new File(imageName).getName().trim();
     }
 
     /**
