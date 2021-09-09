@@ -52,17 +52,17 @@ public enum TextAlignment {
      * @return the text alignment object.
      */
     public static TextAlignment parse(String val) {
-        if(val.equals(LabelGrabber.INSTANCE.getLabel("left"))) {
+        if(val.equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("left"))) {
             return TextAlignment.LEFT;
         }
 //        else if(val.equals(LabelGrabber.INSTANCE.getLabel("right"))) {
 //            return TextAlignment.RIGHT;
 //        }
-        else if(val.equals(LabelGrabber.INSTANCE.getLabel("centre"))) {
+        else if(val.equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("centre"))) {
             return TextAlignment.CENTRE;
         }
         else {
-            return null;
+            return TextAlignment.LEFT;
         }
     }
 }

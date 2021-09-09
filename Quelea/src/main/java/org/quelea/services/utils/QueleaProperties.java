@@ -886,7 +886,7 @@ public final class QueleaProperties extends SortedProperties {
      * @return the alignment of the text on stage view.
      */
     public String getStageTextAlignment() {
-        return TextAlignment.valueOf(getProperty(stageTextAlignmentKey, "LEFT")).toFriendlyString();
+        return TextAlignment.parse(getProperty(stageTextAlignmentKey, "LEFT")).toFriendlyString();
     }
 
     /**

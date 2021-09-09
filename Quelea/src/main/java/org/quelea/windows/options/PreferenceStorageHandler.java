@@ -249,10 +249,13 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.smallSongTextHPositionKey:
             case QueleaPropertyKeys.smallSongTextVPositionKey:
             case QueleaPropertyKeys.stageTextAlignmentKey:
-                String pos = LabelGrabber.INSTANCE.getEngKey(object.toString()).toLowerCase();
-                if (breadcrumb.contains("alignment"))
-                    pos = pos.toUpperCase();
-                QueleaProperties.get().setProperty(breadcrumb, pos);
+                String pos = LabelGrabber.INSTANCE.getEngKey(object.toString());
+                if (pos != null) {
+                    pos = pos.toLowerCase();
+                    if (breadcrumb.contains("alignment"))
+                        pos = pos.toUpperCase();
+                    QueleaProperties.get().setProperty(breadcrumb, pos);
+                }
                 break;
             case QueleaPropertyKeys.mobLyricsPortKey:
             case QueleaPropertyKeys.remoteControlPortKey:
