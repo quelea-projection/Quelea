@@ -45,7 +45,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  */
 public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2021.0", VersionType.RELEASE);
+    public static final Version VERSION = new Version("2021.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
