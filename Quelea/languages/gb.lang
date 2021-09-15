@@ -778,3 +778,7 @@ remote.start.verse=Start verse
 remote.end.verse=End verse
 client.id=Client ID
 enter.valid.port=Please enter a number between 1029 and 49151
+general.text.options=General Text Options
+translation.text.options=Translation Text Options
+use.default.translation.label=Use Default Translation
+translation.name.label=Translation name

@@ -58,6 +58,12 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
             song.setID(-1);
             song.setNoDBUpdate();
         }
+        if(QueleaProperties.get().getUseDefaultTranslation()) {
+            String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+            if(defaultTranslation!=null && !defaultTranslation.trim().isEmpty()) {
+                song.setCurrentTranslationLyrics(defaultTranslation);
+            }
+        }
         cacheVidPreview(song);
         schedulePanel.getScheduleList().add(song);
         libraryPanel.getLibrarySongPanel().getSearchBox().clear();
