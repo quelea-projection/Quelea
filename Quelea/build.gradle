@@ -1,7 +1,4 @@
 buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
     dependencies {
         classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
