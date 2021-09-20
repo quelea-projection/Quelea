@@ -392,6 +392,7 @@ public class PreferenceStorageHandler implements StorageHandler {
             }
         }
     }
+
     // asciidoctor Documentation - end::storageHandlerLoad[]
 
     /**
@@ -433,5 +434,14 @@ public class PreferenceStorageHandler implements StorageHandler {
         return preferences;
     }
 
+    @Override
+    public <T> T loadObject(String breadcrumb, Class<T> type, T defaultObject) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> ObservableList<T> loadObservableList(String breadcrumb, Class<T> type, ObservableList<T> defaultObservableList) {
+        throw new UnsupportedOperationException();
+    }
 
 }

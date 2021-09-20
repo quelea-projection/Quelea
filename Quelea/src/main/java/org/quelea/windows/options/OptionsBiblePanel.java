@@ -90,7 +90,7 @@ public class OptionsBiblePanel {
     }
 
     public Category getBiblesTab() {
-        bindings.put(maxVersesSetting.getField(), useMaxVersesProperty.not());
+        bindings.put((Field) maxVersesSetting.getElement(), useMaxVersesProperty.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), new ImageView(new Image("file:icons/biblesettingsicon.png")),
                 defaultBibleSetting,

@@ -215,7 +215,7 @@ dependencies {
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.2'
     implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
 
-    implementation group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
+    implementation group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '11.8.0'
 
     implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.32'
 

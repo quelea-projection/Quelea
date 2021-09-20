@@ -20,10 +20,12 @@ package org.quelea.windows.options;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.PreferencesFx;
+import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleControl;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -179,11 +181,17 @@ public class PreferencesDialog extends Stage {
     public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
         Setting setting;
         if (horizontal)
-            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
+            setting = Setting.of(label, FXCollections.observableArrayList(
+                    LabelGrabber.INSTANCE.getLabel("left"),
+                    LabelGrabber.INSTANCE.getLabel("right")),
+                    new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         else
-            setting = Setting.of(label, FXCollections.observableArrayList(LabelGrabber.INSTANCE.getLabel("top.text.position"), LabelGrabber.INSTANCE.getLabel("bottom.text.position")), new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
+            setting = Setting.of(label, FXCollections.observableArrayList(
+                    LabelGrabber.INSTANCE.getLabel("top.text.position"),
+                    LabelGrabber.INSTANCE.getLabel("bottom.text.position")),
+                    new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
-            bindings.put(setting.getField(), booleanBind.not());
+            bindings.put((Field) setting.getElement(), booleanBind.not());
         return setting;
     }
 

@@ -69,7 +69,7 @@ public class OptionsRecordingPanel {
     }
 
     public Category getRecordingsTab() {
-        bindings.put(useConvertSetting.getField(), new SimpleBooleanProperty(!hasVLC));
+        bindings.put((Field) useConvertSetting.getElement(), new SimpleBooleanProperty(!hasVLC));
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), new ImageView(new Image("file:icons/recordingssettingsicon.png")),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("recordings.path"), recordingsDirectoryField, recordingsDirectoryChooserProperty).customKey(recPathKey),
