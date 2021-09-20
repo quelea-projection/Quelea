@@ -120,8 +120,10 @@ task copyToDist {
 
 task grabNative {
     doLast {
-        def f = project.file(project.distdir + '/lib/libAVPlayerJava.jnilib')
-        new URL('https://github.com/quelea-projection/libAVPlayerJava/releases/download/v1.0/libAVPlayerJava.jnilib').withInputStream{ i -> f.withOutputStream{ it << i }}
+        copy {
+            from file(project.file('osx/libAVPlayerJava.jnilib'))
+            into project.file(project.distdir + '/lib/')
+        }
     }
 }
 copyToDist.finalizedBy(grabNative)
