@@ -25,7 +25,7 @@ parts:
     plugin: gradle
     source: Quelea
     stage-packages: [default-jre, vlc]
-    gradle-openjdk-version: 11
+    gradle-openjdk-version: "11"
     gradle-options: [--debug, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
     after: [desktop-gtk3]
