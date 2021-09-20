@@ -242,6 +242,9 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:win"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0'
