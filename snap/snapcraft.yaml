@@ -1,5 +1,6 @@
 name: quelea
 version: '2022.0'
+base: core20
 summary: Church projection
 description: |
   Quelea is a free and open source software application that projects
@@ -23,7 +24,7 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
-    stage-packages: [default-jre, openjfx, vlc]
+    stage-packages: [default-jre, vlc]
     gradle-options: [-Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
-    after: [desktop-gtk2]
+    after: [desktop-gtk3]

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
-<installation version="1.0">
+<installation version="5.0">
 
     <info>
         <appname>Quelea</appname>
@@ -33,12 +33,6 @@
     <native type="3rdparty" name="COIOSHelper.dll" stage="both">
         <os family="windows"/>
     </native>
-
-    <listeners>
-        <listener installer="RegistryInstallerListener" uninstaller="RegistryUninstallerListener">
-            <os family="windows"/>
-        </listener>
-    </listeners>
 
     <panels>
         <panel classname="HTMLHelloPanel" id="welcome"/>

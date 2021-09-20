@@ -1,7 +1,4 @@
 buildscript {
-    repositories {
-        jcenter()
-    }
     dependencies {
         classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
@@ -10,11 +7,20 @@ buildscript {
 }
 
 plugins {
+    id 'application'
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
     id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'com.bmuschko.izpack' version '3.0'
 }
+
+javafx {
+    version = "17"
+    modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
+}
+
+mainClassName = 'org.quelea.windows.main.MainStub'
 
 wrapper {
     gradleVersion = '4.10.2'
@@ -49,35 +55,23 @@ compileJava.finalizedBy(dependencyUpdates)
 
 sourceCompatibility = '8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-ext.mainClass = 'org.quelea.windows.main.Main'
+ext.mainClass = 'org.quelea.windows.main.MainStub'
 
 task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
-    mainClassName = 'org.quelea.windows.main.Main'
+    mainClassName = 'org.quelea.windows.main.MainStub'
     mutexName = "queleamutex"
-    supportUrl = "https://groups.google.com/group/quelea-discuss"
+    supportUrl = "https://quelea.discourse.group/"
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
+    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false","--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED","--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED","--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED","--add-opens java.base/java.lang=ALL-UNNAMED","--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
     bundledJre64Bit = true
     outfile = "Quelea64.exe"
 }
 
-//task createQueleaExe(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
-//    mainClassName = 'org.quelea.windows.main.Main'
-//    mutexName = "queleamutex"
-//    supportUrl = "https://groups.google.com/group/quelea-discuss"
-//    icon = "../../icons/logo.ico"
-//    copyright = "GPLv3"
-//    bundledJrePath = "winjre"
-//    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","-Dglass.accessible.force=false"]
-//    outfile = "Quelea.exe"
-//}
-//createQueleaExe.dependsOn createQueleaExe64
-
 task copyToDist {
     doLast {
-        copy {from configurations.runtime into project.distdir + "/lib"} //libraries
+        copy {from configurations.runtimeClasspath into project.distdir + "/lib"} //libraries
         copy {from "themes" into project.distdir + "/themes"}
         copy {from "icons" into project.distdir + "/icons"}
         copy {from "bibles" into project.distdir + "/bibles"}
@@ -90,7 +84,6 @@ task copyToDist {
         copy {from "img" into project.distdir + "/img"}
         copy {from "timer" into project.distdir + "/timer"}
         copy {from "src" into project.distdir + "/src"}
-//        copy {from zipTree("bundlejre/winjre.zip") into project.distdir}
         copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
         copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
         copy {from file("README.TXT") into file(project.distdir)}
@@ -111,13 +104,15 @@ task copyToDist {
 
 task grabNative {
     doLast {
-        def f = project.file(project.distdir + '/lib/libAVPlayerJava.jnilib')
-        new URL('https://github.com/quelea-projection/libAVPlayerJava/releases/download/v1.0/libAVPlayerJava.jnilib').withInputStream{ i -> f.withOutputStream{ it << i }}
+        copy {
+            from file(project.file('osx/libAVPlayerJava.jnilib'))
+            into project.file(project.distdir + '/lib/')
+        }
     }
 }
 copyToDist.finalizedBy(grabNative)
 
-izpack {
+izPackCreateInstaller {
     installFile = file("izpack/config.xml")
     outputFile = file(CPInstaller)
     baseDir = file("dist")
@@ -141,19 +136,19 @@ task innosetup (type:Exec) {
 }
 
 task labelcheck(type:JavaExec) {
-    main = 'org.quelea.services.languages.LabelChecker'
+    mainClass = 'org.quelea.services.languages.LabelChecker'
     classpath = sourceSets.main.runtimeClasspath
 }
 
 task runPackr(type: JavaExec) {
     classpath = files('packr.jar')
-    main = "com.badlogicgames.packr.Packr"
+    mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
 }
 
 task zipMacPackr(type: Zip) {
-    archiveName = MacInstallerName
-    destinationDir = file("dist/standalone")
+    archiveFileName = MacInstallerName
+    destinationDirectory = file("dist/standalone")
 
     from "out-mac"
 
@@ -167,87 +162,84 @@ runPackr.finalizedBy(zipMacPackr);
 task dist(type: GradleBuild) {
     tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
-build.finalizedBy(dist)
-
 
 dependencies {
-    izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.5'
+    izpack 'org.codehaus.izpack:izpack-ant:5.1.3'
 
-    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.5.0'
-    compile 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
-    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.5.0'
-    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.0.0'
-    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
-    compile group: 'org.apache.poi', name: 'poi', version: '5.0.0'
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.36.0.3'
-    compile group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
-    compile group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
-    compile group: 'org.jcodec', name: 'jcodec', version: '0.2.5'
-    compile group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.5'
-    compile group: 'uk.co.caprica', name: 'vlcj', version: '3.12.1'
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.8'
-    compile group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '4.0.1'
-    compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.8.2'
-    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.8.2'
-    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.8.2'
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
-    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
-    compile group: 'com.github.albfernandez', name: 'juniversalchardet', version: '2.4.0'
+    implementation 'com.googlecode.paradoxdriver:paradoxdriver:1.5.0'
+    implementation 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
+    implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.6.0'
+    implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.36.0.3'
+    implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
+    implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
+    implementation group: 'org.jcodec', name: 'jcodec', version: '0.2.5'
+    implementation group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.5'
+    implementation group: 'uk.co.caprica', name: 'vlcj', version: '3.12.1'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.8'
+    implementation group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '4.0.1'
+    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '8.9.0'
+    implementation group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.9.0'
+    implementation group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.9.0'
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
+    implementation group: 'com.github.albfernandez', name: 'juniversalchardet', version: '2.4.0'
     //https://hibernate.atlassian.net/browse/HHH-10574 prevents us upgrading to hibernate 5
-    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
-    compile group: 'com.google.zxing', name: 'core', version: '3.4.1'
-    compile group: 'com.google.zxing', name: 'javase', version: '3.4.1'
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
-//    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    compile group: 'org.apache.commons', name: 'commons-text', version: '1.9'
-    compile group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
-    compile group: 'org.openoffice', name: 'jurt', version: '4.1.2'
-    compile group: 'org.openoffice', name: 'juh', version: '4.1.2'
-    compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
-    compile group: 'org.quelea', name: 'planning-center', version: '0.2'
+    implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '4.3.11.Final'
+    implementation group: 'com.google.zxing', name: 'core', version: '3.4.1'
+    implementation group: 'com.google.zxing', name: 'javase', version: '3.4.1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+    implementation group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
+    implementation group: 'org.openoffice', name: 'jurt', version: '4.1.2'
+    implementation group: 'org.openoffice', name: 'juh', version: '4.1.2'
+    implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
+    implementation group: 'org.quelea', name: 'planning-center', version: '0.2'
 
-    compile group: 'org.openoffice', name: 'unoil', version: '4.1.2'
-    compile group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
+    implementation group: 'org.openoffice', name: 'unoil', version: '4.1.2'
+    implementation group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
 
-    compile group: 'com.aparapi', name: 'aparapi', version: '1.10.0'
+    implementation group: 'com.aparapi', name: 'aparapi', version: '1.10.0'
 
-    compile group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
-    compile group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
+    implementation group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
+    implementation group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
 
-    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-    compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '3.0.2'
-    compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.2'
-    compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '3.0.2'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.2'
+    implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
 
-    compile group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
+    implementation group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '8.4.3'
 
-    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.32'
+    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.32'
 
+    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
+    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
+    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:win"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
+    runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
 
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0'
-}
-
-repositories {
-    maven {
-        url "http://maven.bestsolution.at/efxclipse-releases"
-    }
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0'
 }
 
 jar {
     manifest {
         attributes (
-                'Main-Class': 'org.quelea.windows.main.Main',
-                "Class-Path": configurations.compile.collect { "lib/" + it.getName() }.join(' ')
+                'Main-Class': 'org.quelea.windows.main.MainStub',
+                "Class-Path": configurations.runtimeClasspath.collect { "lib/" + it.getName() }.join(' ')
         )
     }
 }
 
 task releaseSummary(type:JavaExec) {
-    main = 'org.quelea.services.utils.ReleaseSummaryGenerator'
+    mainClass = 'org.quelea.services.utils.ReleaseSummaryGenerator'
     classpath = sourceSets.main.runtimeClasspath
 }
