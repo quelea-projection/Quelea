@@ -28,4 +28,4 @@ parts:
     gradle-openjdk-version: "11"
     gradle-options: [--debug, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
     gradle-output-dir: 'dist'
-    after: [desktop-glib-only]
+    after: [desktop-gtk2]
