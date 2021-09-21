@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -126,6 +127,13 @@ public final class Utils {
 			file = new File(changedFile);
 		}
 		return file;
+	}
+
+	public static String toRelativeStorePath(File f) {
+		String[] parts = f.getAbsolutePath().split(Pattern.quote(System.getProperty("file.separator")));
+		parts = Arrays.copyOfRange(parts, 1, parts.length);
+		System.err.println(Arrays.toString(parts));
+		return String.join(System.getProperty("file.separator"), parts);
 	}
 
 	/**

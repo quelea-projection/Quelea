@@ -28,9 +28,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -62,6 +65,7 @@ import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -159,7 +163,7 @@ public class Schedule implements Iterable<Displayable> {
                     for (Displayable displayable : displayables) {
                         for (File displayableFile : displayable.getResources()) {
                             if (displayableFile.exists()) {
-                                String zipPath = "resources/" + displayableFile.getName();
+                                String zipPath = "resources/" + Utils.toRelativeStorePath(displayableFile);
                                 if (!entries.contains(zipPath)) {
                                     entries.add(zipPath);
                                     ZipEntry entry = new ZipEntry(zipPath);
@@ -196,6 +200,7 @@ public class Schedule implements Iterable<Displayable> {
      */
     public static Schedule fromFile(File file) {
         try {
+            LOGGER.log(Level.SEVERE, "Loading schedule from file: " + file.getAbsolutePath());
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
@@ -211,15 +216,23 @@ public class Schedule implements Iterable<Displayable> {
                         byte data[] = new byte[BUFFER];
                         File writeFile = new File(entry.getName().substring("resources/".length()));
                         if (writeFile.exists()) {
+                            LOGGER.log(Level.SEVERE, "Skipping " + writeFile.getAbsolutePath() + ", already exists");
                             continue;
                         }
                         if (!writeFile.canWrite()) {
+                            LOGGER.log(Level.SEVERE, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
+                            String[] localPathParts = new File(".").toPath().relativize(writeFile.toPath()).toString().split(Pattern.quote(System.getProperty("file.separator")));
+                            LOGGER.log(Level.SEVERE, "Write file local path: " + localPathParts);
                             String[] parts = writeFile.getAbsolutePath().split("\\.");
                             String extension = parts[parts.length - 1];
                             File tempWriteFile = File.createTempFile("resource", "." + extension);
-                            tempWriteFile = Files.move(tempWriteFile.toPath(), Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), writeFile.getName()), StandardCopyOption.REPLACE_EXISTING).toFile();
+                            LOGGER.log(Level.SEVERE, "Created file " + tempWriteFile.getAbsolutePath());
+                            Path tempResourceFile = Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), localPathParts);
+                            Files.createDirectories(tempResourceFile);
+                            tempWriteFile = Files.move(tempWriteFile.toPath(), tempResourceFile, StandardCopyOption.REPLACE_EXISTING).toFile();
+                            LOGGER.log(Level.SEVERE, "Moved to " + tempWriteFile.getAbsolutePath());
                             tempWriteFile.deleteOnExit();
-                            LOGGER.log(Level.INFO, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
+                            LOGGER.log(Level.SEVERE, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
                             fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
                             writeFile = tempWriteFile;
                         }
@@ -230,7 +243,7 @@ public class Schedule implements Iterable<Displayable> {
                             }
                             dest.flush();
                         }
-                        LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
+                        LOGGER.log(Level.SEVERE, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
@@ -293,12 +306,12 @@ public class Schedule implements Iterable<Displayable> {
     private static Schedule parseXML(InputStream inputStream, Map<String, String> fileChanges) {
         try {
             /*
-             * TODO: This should solve a problem some people were having with 
-             * entering schedules - though I'm not really sure *why* they're 
-             * having this problem (it seems to be that there's some funny 
+             * TODO: This should solve a problem some people were having with
+             * entering schedules - though I'm not really sure *why* they're
+             * having this problem (it seems to be that there's some funny
              * characters that end up in the XML file which shouldn't be there.
              * Character encoding bug perhaps? Oh joy.
-             * 
+             *
              * Start bodge.
              */
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));

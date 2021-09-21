@@ -115,7 +115,7 @@ public class PresentationDisplayable implements Displayable {
         StringBuilder ret = new StringBuilder();
         ret.append("<filepresentation>");
         if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
-            ret.append(Utils.escapeXML(file.getName()));            
+            ret.append(Utils.escapeXML(Utils.toRelativeStorePath(file)));
         }
         else {
             ret.append(Utils.escapeXML(file.getAbsolutePath()));            

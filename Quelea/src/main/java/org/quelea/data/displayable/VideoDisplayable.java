@@ -113,7 +113,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
         StringBuilder ret = new StringBuilder();
         ret.append("<filevideo>");
         if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
-            ret.append(Utils.escapeXML(new File(location).getName()));
+            ret.append(Utils.escapeXML(Utils.toRelativeStorePath(new File(location))));
         } else {
             ret.append(Utils.escapeXML(location));
         }
