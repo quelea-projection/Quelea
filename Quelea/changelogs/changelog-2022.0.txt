@@ -2,3 +2,4 @@ quelea (2022.0) stable
 
   * Upgrade to Java 11 / OpenJFX 17 as base
   * Implement global default translation option
+  * Bugfix: Resources with the same name in different folders no longer clash
