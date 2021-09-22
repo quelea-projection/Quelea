@@ -77,7 +77,7 @@ public class PdfDisplayable implements Displayable {
         StringBuilder ret = new StringBuilder();
         ret.append("<filepdf>");
         if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
-            ret.append(Utils.escapeXML(file.getName()));
+            ret.append(Utils.escapeXML(Utils.toRelativeStorePath(file)));
         } else {
             ret.append(Utils.escapeXML(file.getAbsolutePath()));
         }

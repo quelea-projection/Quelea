@@ -80,7 +80,7 @@ public class ImageGroupDisplayable implements Displayable {
         for (File f : files) {
             String loc;
             if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
-                loc = f.getName();
+                loc = Utils.escapeXML(Utils.toRelativeStorePath(f));
             } else {
                 loc = f.getAbsolutePath();
             }
