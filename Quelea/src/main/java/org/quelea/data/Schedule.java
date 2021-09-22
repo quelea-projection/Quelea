@@ -200,7 +200,7 @@ public class Schedule implements Iterable<Displayable> {
      */
     public static Schedule fromFile(File file) {
         try {
-            LOGGER.log(Level.SEVERE, "Loading schedule from file: " + file.getAbsolutePath());
+            LOGGER.log(Level.INFO, "Loading schedule from file: " + file.getAbsolutePath());
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
@@ -216,23 +216,23 @@ public class Schedule implements Iterable<Displayable> {
                         byte data[] = new byte[BUFFER];
                         File writeFile = new File(entry.getName().substring("resources/".length()));
                         if (writeFile.exists()) {
-                            LOGGER.log(Level.SEVERE, "Skipping " + writeFile.getAbsolutePath() + ", already exists");
+                            LOGGER.log(Level.INFO, "Skipping " + writeFile.getAbsolutePath() + ", already exists");
                             continue;
                         }
                         if (!writeFile.canWrite()) {
-                            LOGGER.log(Level.SEVERE, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
+                            LOGGER.log(Level.INFO, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
                             String[] localPathParts = new File(".").toPath().relativize(writeFile.toPath()).toString().split(Pattern.quote(System.getProperty("file.separator")));
-                            LOGGER.log(Level.SEVERE, "Write file local path: " + localPathParts);
+                            LOGGER.log(Level.INFO, "Write file local path: " + localPathParts);
                             String[] parts = writeFile.getAbsolutePath().split("\\.");
                             String extension = parts[parts.length - 1];
                             File tempWriteFile = File.createTempFile("resource", "." + extension);
-                            LOGGER.log(Level.SEVERE, "Created file " + tempWriteFile.getAbsolutePath());
+                            LOGGER.log(Level.INFO, "Created file " + tempWriteFile.getAbsolutePath());
                             Path tempResourceFile = Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), localPathParts);
                             Files.createDirectories(tempResourceFile);
                             tempWriteFile = Files.move(tempWriteFile.toPath(), tempResourceFile, StandardCopyOption.REPLACE_EXISTING).toFile();
-                            LOGGER.log(Level.SEVERE, "Moved to " + tempWriteFile.getAbsolutePath());
+                            LOGGER.log(Level.INFO, "Moved to " + tempWriteFile.getAbsolutePath());
                             tempWriteFile.deleteOnExit();
-                            LOGGER.log(Level.SEVERE, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
+                            LOGGER.log(Level.INFO, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
                             fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
                             writeFile = tempWriteFile;
                         }
@@ -243,7 +243,7 @@ public class Schedule implements Iterable<Displayable> {
                             }
                             dest.flush();
                         }
-                        LOGGER.log(Level.SEVERE, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
+                        LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);

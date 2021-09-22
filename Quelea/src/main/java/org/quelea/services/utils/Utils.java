@@ -132,7 +132,6 @@ public final class Utils {
 	public static String toRelativeStorePath(File f) {
 		String[] parts = f.getAbsolutePath().split(Pattern.quote(System.getProperty("file.separator")));
 		parts = Arrays.copyOfRange(parts, 1, parts.length);
-		System.err.println(Arrays.toString(parts));
 		return String.join(System.getProperty("file.separator"), parts);
 	}
 
