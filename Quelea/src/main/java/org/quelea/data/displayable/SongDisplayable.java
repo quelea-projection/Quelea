@@ -37,6 +37,8 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
@@ -45,6 +47,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
@@ -1278,7 +1285,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         ret.setSequence(sequence);
         return ret;
     }
-    
+
     /**
      * Generate a hashcode for this song.
      * <p/>
@@ -1368,14 +1375,37 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @return the song's preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
+    public javafx.scene.Node getPreviewIcon() {
+        ImageView iv;
         if (getID() < 0) {
-            return new ImageView(new Image("file:icons/lyricscopy.png"));
+            iv = new ImageView(new Image("file:icons/lyricscopy.png"));
         } else if (hasChords()) {
-            return new ImageView(new Image("file:icons/lyricsandchords.png"));
+            iv = new ImageView(new Image("file:icons/lyricsandchords.png"));
         } else {
-            return new ImageView(new Image("file:icons/lyrics.png"));
+            iv = new ImageView(new Image("file:icons/lyrics.png"));
         }
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(iv);
+        if (!getTranslations().isEmpty()) {
+            stackPane.getChildren().add(getTranslationPart());
+            stackPane.setAlignment(Pos.BOTTOM_LEFT);
+        }
+        return stackPane;
+    }
+
+    private StackPane getTranslationPart() {
+        StackPane ret = new StackPane();
+        Text text = new Text("T");
+        text.setStyle("-fx-font-weight: bold;");
+        text.setScaleX(0.8);
+        text.setScaleY(0.8);
+        ret.setPadding(new Insets(0,3,0,3));
+        ret.getChildren().add(text);
+        ret.setMaxWidth(5);
+        ret.setMaxHeight(5);
+        ret.setAlignment(Pos.BOTTOM_LEFT);
+        ret.setStyle("-fx-background-color: #DAA520;");
+        return ret;
     }
 
     /**
