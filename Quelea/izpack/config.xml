@@ -17,7 +17,7 @@
         <langpack iso3="eng"/>
     </locale>
 
-    <!-- 
+    <!--
         The resources section.
         The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
     -->
@@ -34,6 +34,26 @@
         <os family="windows"/>
     </native>
 
+    <listeners>
+        <listener classname="RegistryInstallerListener" stage="install" >
+            <os family="windows"/>
+        </listener>
+        <listener classname="RegistryUninstallerListener" stage="uninstall" >
+            <os family="windows"/>
+        </listener>
+    </listeners>
+
+    <natives>
+        <native type="3rdparty" name="COIOSHelper.dll" stage="both">
+            <os family="windows"/>
+        </native>
+        <native type="3rdparty" name="COIOSHelper_x64.dll" stage="both">
+            <os family="windows"/>
+        </native>
+        <native type="izpack" name="ShellLink.dll"/>
+        <native type="izpack" name="ShellLink_x64.dll"/>
+    </natives>
+
     <panels>
         <panel classname="HTMLHelloPanel" id="welcome"/>
         <panel classname="LicencePanel"/>
@@ -47,7 +67,7 @@
     <packs>
         <pack name="base" required="yes" preselected="yes" hidden="true">
             <description>Core components</description>
-            <file src="lib" targetdir="$INSTALL_PATH"/>
+            <fileset dir="lib" targetdir="$INSTALL_PATH/lib"/>
             <file src="vbs" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
