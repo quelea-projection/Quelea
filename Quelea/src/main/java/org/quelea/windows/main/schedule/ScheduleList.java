@@ -345,6 +345,12 @@ public class ScheduleList extends StackPane {
                             textDisplayable.setTheme(newTheme);
                             if (d instanceof SongDisplayable) {
                                 SongDisplayable sd = (SongDisplayable) d;
+                                if(QueleaProperties.get().getUseDefaultTranslation()) {
+                                    String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                                    if(defaultTranslation!=null && !defaultTranslation.trim().isEmpty()) {
+                                        sd.setCurrentTranslationLyrics(defaultTranslation);
+                                    }
+                                }
                                 Utils.updateSongInBackground(sd, true, false);
                             }
                             if (QueleaProperties.get().getPreviewOnImageUpdate()) {
@@ -364,6 +370,12 @@ public class ScheduleList extends StackPane {
                     if (!QueleaProperties.get().getDefaultSongDBUpdate() && displayable instanceof SongDisplayable) {
                         ((SongDisplayable) displayable).setID(-1);
                         ((SongDisplayable) displayable).setNoDBUpdate();
+                    }
+                    if (displayable instanceof SongDisplayable && QueleaProperties.get().getUseDefaultTranslation()) {
+                        String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                        if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                            ((SongDisplayable) displayable).setCurrentTranslationLyrics(defaultTranslation);
+                        }
                     }
                 } else {
                     displayable = tempDisp;
