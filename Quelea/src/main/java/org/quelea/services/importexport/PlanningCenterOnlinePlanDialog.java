@@ -88,7 +88,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     private final List<Item> planItems;
 
     @FXML
-    private TreeView planView;
+    private TreeView<String> planView;
     @FXML
     private ProgressBar totalProgress;
     @FXML
