@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
-import org.apache.commons.collections4.properties.SortedProperties;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
