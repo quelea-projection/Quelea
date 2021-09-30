@@ -70,12 +70,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                 }
             }
         });
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                trigger(t);
-            }
-        });
+        this.setOnMouseClicked(this::trigger);
     }
 
     private void trigger(Event t) {
