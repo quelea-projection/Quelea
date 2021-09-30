@@ -89,14 +89,7 @@ public class PlanningCenterOnlineImportDialog extends Stage {
             setScene(scene);
 
             serviceView.getSelectionModel().selectedItemProperty()
-                    .addListener(new ChangeListener<TreeItem<String>>() {
-
-                        @Override
-                        public void changed(ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> old_val, TreeItem<String> new_val) {
-                            onServiceViewSelectedItem(observable, old_val, new_val);
-                        }
-
-                    });
+                    .addListener(this::onServiceViewSelectedItem);
 
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);

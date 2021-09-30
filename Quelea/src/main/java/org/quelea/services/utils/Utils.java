@@ -472,12 +472,7 @@ public final class Utils {
 						@Override
 						public void run() {
 							updateRunner.run();
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									statusPanel.done();
-								}
-							});
+							Platform.runLater(statusPanel::done);
 						}
 					}.start();
 				}
