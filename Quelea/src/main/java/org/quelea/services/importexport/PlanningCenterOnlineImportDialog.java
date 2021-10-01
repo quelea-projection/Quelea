@@ -89,7 +89,7 @@ public class PlanningCenterOnlineImportDialog extends Stage {
             setScene(scene);
 
             serviceView.getSelectionModel().selectedItemProperty()
-                    .addListener(this::onServiceViewSelectedItem);
+                    .addListener((ChangeListener<TreeItem<String>>) this::onServiceViewSelectedItem);
 
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);
