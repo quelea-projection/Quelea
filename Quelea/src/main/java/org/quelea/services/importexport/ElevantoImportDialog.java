@@ -82,14 +82,14 @@ public class ElevantoImportDialog extends Stage {
                 scene.getStylesheets().add("org/modena_dark.css");
             }
             setScene(scene);
-                
+
             serviceView.getSelectionModel().selectedItemProperty()
-            .addListener(this::onServiceViewSelectedItem);
-            
+                    .addListener((ChangeListener<TreeItem<String>>) this::onServiceViewSelectedItem);
+
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);
         }
-        
+
         centerOnScreen();
         getIcons().add(new Image("file:icons/elevanto.png"));        
     }
