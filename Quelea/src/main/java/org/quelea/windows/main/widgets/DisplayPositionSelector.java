@@ -51,7 +51,7 @@ public class DisplayPositionSelector extends BorderPane {
             but.prefWidthProperty().bind(widthProperty().divide(3));
             but.prefHeightProperty().bind(heightProperty().divide(3));
             but.setToggleGroup(group);
-            but.setOnAction(new EventHandler<ActionEvent>() {
+            but.setOnAction(()-> {
 
                 @Override
                 public void handle(ActionEvent t) {
@@ -64,7 +64,7 @@ public class DisplayPositionSelector extends BorderPane {
             buttons.add(but);
         }
         setCenter(selectorPane);
-        setOnMouseEntered(new EventHandler<MouseEvent>() {
+        setOnMouseEntered(()-> {
 
             @Override
             public void handle(MouseEvent t) {
@@ -73,7 +73,7 @@ public class DisplayPositionSelector extends BorderPane {
                 trans.play();
             }
         });
-        setOnMouseExited(new EventHandler<MouseEvent>() {
+        setOnMouseExited(()-> {
 
             @Override
             public void handle(MouseEvent t) {

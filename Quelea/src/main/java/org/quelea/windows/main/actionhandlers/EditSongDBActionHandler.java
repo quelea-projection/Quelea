@@ -38,7 +38,7 @@ public class EditSongDBActionHandler implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent t) {
-        Platform.runLater(new Runnable() {
+        Platform.runLater(()-> {
             @Override
             public void run() {
                 SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();

@@ -111,25 +111,25 @@ public class DisplayStage extends Stage {
     }
 
     private void addVLCListeners() {
-        widthProperty().addListener(new ChangeListener<Number>() {
+        widthProperty().addListener(()-> {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 VLCWindow.INSTANCE.refreshPosition();
             }
         });
-        heightProperty().addListener(new ChangeListener<Number>() {
+        heightProperty().addListener(()-> {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 VLCWindow.INSTANCE.refreshPosition();
             }
         });
-        xProperty().addListener(new ChangeListener<Number>() {
+        xProperty().addListener(()-> {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 VLCWindow.INSTANCE.refreshPosition();
             }
         });
-        yProperty().addListener(new ChangeListener<Number>() {
+        yProperty().addListener(()-> {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 VLCWindow.INSTANCE.refreshPosition();
@@ -165,7 +165,7 @@ public class DisplayStage extends Stage {
      * @param area the area of the window.
      */
     public final void setFullScreenAlwaysOnTop(boolean fullscreen) {
-        Platform.runLater(new Runnable() {
+        Platform.runLater(()-> {
             @Override
             public void run() {
                 setFullScreenAlwaysOnTopImmediate(fullscreen);  
@@ -191,7 +191,7 @@ public class DisplayStage extends Stage {
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
-        Platform.runLater(new Runnable() {
+        Platform.runLater(()-> {
             @Override
             public void run() {
                 // ensure the window is not fullscreen always on top here
