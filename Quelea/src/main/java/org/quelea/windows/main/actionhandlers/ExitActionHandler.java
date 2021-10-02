@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
+
 import org.javafx.dialog.Dialog;
 import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
@@ -46,6 +48,7 @@ import org.quelea.windows.presentation.PowerPointHandler;
  * The exit action listener - called when the user requests they wish to exit
  * Quelea.
  * <p/>
+ *
  * @author Michael
  */
 public class ExitActionHandler implements EventHandler<ActionEvent> {
@@ -76,30 +79,23 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = true;
-            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(()-> {
-                @Override
-                public void handle(ActionEvent t) {
-                    //Save schedule
-                    block = true;
-                    new ScheduleSaver().saveSchedule(false, new SaveCallback() {
-                        @Override
-                        public void saved(boolean success) {
-                            cancel = !success;
-                            block = false;
-                        }
-                    });
-                }
-            }).addNoButton(()-> {
-                @Override
-                public void handle(ActionEvent t) {
-                    cancel = false;
-                }
-            }).addCancelButton(()-> {
-                @Override
-                public void handle(ActionEvent t) {
-                    //No need to do anything
-                }
-            }).build();
+            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text"))
+                    .addYesButton((t) -> {
+                        //Save schedule
+                        block = true;
+                        new ScheduleSaver().saveSchedule(false, new SaveCallback() {
+                            @Override
+                            public void saved(boolean success) {
+                                cancel = !success;
+                                block = false;
+                            }
+                        });
+                    }).addNoButton((t) -> {
+                        cancel = false;
+                    }).addCancelButton((t) -> {
+                        //No need to do anything
+                    }).build();
+
             d.showAndWait();
             while (block) {
                 try {
@@ -144,7 +140,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             LOGGER.log(Level.INFO, "Closing open PowerPoint presentations");
             PowerPointHandler.closePresentation();
         }
-        
+
         LOGGER.log(Level.INFO, "Checking if Quelea currently is recording audio");
         MainToolbar toolbar = mainWindow.getMainToolbar();
         RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();

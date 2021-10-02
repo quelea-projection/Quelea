@@ -36,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
@@ -50,6 +51,7 @@ import org.quelea.windows.main.QueleaApp;
  * A new song window that users use for inserting the text content of a new
  * song.
  * <p/>
+ *
  * @author Michael
  */
 public class SongEntryWindow extends Stage {
@@ -100,14 +102,14 @@ public class SongEntryWindow extends Stage {
         tabPane.getTabs().add(translateTab);
 
         basicSongPanel.getLyricsField().getTextArea().textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!disableTextAreaListeners) {
+            if (!disableTextAreaListeners) {
                 disableTextAreaListeners = true;
                 translatePanel.getDefaultLyricsArea().getTextArea().replaceText(newValue);
                 disableTextAreaListeners = false;
             }
         });
         translatePanel.getDefaultLyricsArea().getTextArea().textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!disableTextAreaListeners) {
+            if (!disableTextAreaListeners) {
                 disableTextAreaListeners = true;
                 basicSongPanel.getLyricsField().getTextArea().replaceText(newValue);
                 disableTextAreaListeners = false;
@@ -163,6 +165,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Determine if the entry window was cancelled.
      * <p>
+     *
      * @return true if it was cancelled, false otherwise.
      */
     public boolean wasCancelled() {
@@ -252,6 +255,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Get the panel where the user enters the basic song information.
      * <p/>
+     *
      * @return the basic song panel.
      */
     public BasicSongPanel getBasicSongPanel() {
@@ -270,6 +274,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Get the panel where the user enters the more detailed song information.
      * <p/>
+     *
      * @return the detailed song panel.
      */
     public DetailedSongPanel getDetailedSongPanel() {
@@ -279,6 +284,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Get the theme currently displayed on this window.
      * <p/>
+     *
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
@@ -327,6 +333,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Set this window up ready to edit an existing song.
      * <p/>
+     *
      * @param song the song to edit.
      */
     public void resetEditSong(SongDisplayable song) {
@@ -355,6 +362,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Get the song that's been edited or created by the window.
      * <p/>
+     *
      * @return the song.
      */
     public SongDisplayable getSong() {
@@ -391,6 +399,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Determine if this song entry window contains a song that could be saved.
      * <p/>
+     *
      * @return true if the song is viable (has a title and lyrics), false
      * otherwise.
      */

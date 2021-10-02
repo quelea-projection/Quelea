@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 
 /**
- *
  * @author Michael
  */
 public class BooleanCell<E> extends TableCell<E, Boolean> {
@@ -35,13 +34,11 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     public BooleanCell() {
 
         checkBox = new CheckBox();
-        checkBox.selectedProperty().addListener(()-> {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(isEditing()) {
-                    commitEdit(newValue == null ? false : newValue);
-                }
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (isEditing()) {
+                commitEdit(newValue == null ? false : newValue);
             }
+
         });
         this.setGraphic(checkBox);
         this.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
@@ -53,7 +50,7 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     @Override
     public void startEdit() {
         super.startEdit();
-        if(isEmpty()) {
+        if (isEmpty()) {
             return;
         }
         checkBox.setDisable(false);
@@ -76,11 +73,10 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     @Override
     public void updateItem(Boolean item, boolean empty) {
         super.updateItem(item, empty);
-        if(empty) {
+        if (empty) {
             setText(null);
             setGraphic(null);
-        }
-        else if(!isEmpty()) {
+        } else if (!isEmpty()) {
             checkBox.setSelected(item);
         }
     }

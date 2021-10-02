@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 
@@ -44,6 +45,7 @@ import org.quelea.windows.main.QueleaApp;
  * useful from a HCI perspective because otherwise the button is not greatly
  * noticeable.
  * <p/>
+ *
  * @author Michael
  */
 public class AddSongPromptOverlay extends StackPane {
@@ -58,27 +60,20 @@ public class AddSongPromptOverlay extends StackPane {
         setAlignment(Pos.CENTER);
         VBox content = new VBox();
         content.setAlignment(Pos.TOP_LEFT);
-        StackPane.setMargin(content, new Insets(10,0,0,15));
+        StackPane.setMargin(content, new Insets(10, 0, 0, 15));
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
+            QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel()
+                    .getSearchBox().textProperty().addListener((ov, t, t1) -> {
+                if (t1.isEmpty()) {
+                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+                } else {
+                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
+                }
+            });
 
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(()-> {
-
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        if(t1.isEmpty()) {
-                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-                        }
-                        else {
-                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
-                        }
-                    }
-                });
-            }
         });
         text.setWrapText(true);
         text.setTextFill(Color.WHITESMOKE);
@@ -95,7 +90,7 @@ public class AddSongPromptOverlay extends StackPane {
      */
     public synchronized void show() {
         setVisible(true);
-        if(trans != null) {
+        if (trans != null) {
             trans.stop();
         }
         trans = new FadeTransition(Duration.seconds(0.2), this);
@@ -108,18 +103,16 @@ public class AddSongPromptOverlay extends StackPane {
      * Hide (fade out) the overlay.
      */
     public synchronized void hide() {
-        if(trans != null) {
+        if (trans != null) {
             trans.stop();
         }
         trans = new FadeTransition(Duration.seconds(0.2), this);
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished(()-> {
-            @Override
-            public void handle(ActionEvent t) {
-                setVisible(false);
-            }
+        trans.setOnFinished((t) -> {
+            setVisible(false);
+
         });
     }
 }

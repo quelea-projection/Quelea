@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@
 package org.quelea.windows.main;
 
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
@@ -40,6 +42,7 @@ import org.quelea.utils.PlatformUtils;
 /**
  * The full screen window used for displaying the projection.
  * <p/>
+ *
  * @author Michael
  */
 public class DisplayStage extends Stage {
@@ -59,9 +62,10 @@ public class DisplayStage extends Stage {
     /**
      * Create a new display window positioned to fill the given rectangle.
      * <p/>
-     * @param area the area in which the window should be drawn.
+     *
+     * @param area      the area in which the window should be drawn.
      * @param stageView true if the display stage is a stage view, false if it's
-     * a normal projection view.
+     *                  a normal projection view.
      */
     public DisplayStage(Bounds area, boolean stageView) {
         final boolean playVideo = !stageView;
@@ -111,71 +115,63 @@ public class DisplayStage extends Stage {
     }
 
     private void addVLCListeners() {
-        widthProperty().addListener(()-> {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
-            }
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            VLCWindow.INSTANCE.refreshPosition();
         });
-        heightProperty().addListener(()-> {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
-            }
+
+        heightProperty().addListener((observable, oldValue, newValue) -> {
+            VLCWindow.INSTANCE.refreshPosition();
         });
-        xProperty().addListener(()-> {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
-            }
+
+        xProperty().addListener((observable, oldValue, newValue) -> {
+            VLCWindow.INSTANCE.refreshPosition();
         });
-        yProperty().addListener(()-> {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                VLCWindow.INSTANCE.refreshPosition();
-            }
+
+        yProperty().addListener((observable, oldValue, newValue) -> {
+            VLCWindow.INSTANCE.refreshPosition();
         });
     }
 
     /**
      * Set a test image to appear on this stage.
      * <p>
-     * @param img the test img, or null to clear.
+     *
+     * @param img            the test img, or null to clear.
      * @param preserveAspect true if the aspect ratio should be preserved, false
-     * if it should be stretched to fit.
+     *                       if it should be stretched to fit.
      */
     public void setTestImage(Image img, boolean preserveAspect) {
         testImage.getImageView().setPreserveRatio(preserveAspect);
         testImage.setVisible(img != null);
         testImage.setImage(img);
     }
-    
+
     /**
      * Set the Stage to be fullscreen or to make it non-fullscreen.
      * <p/>
+     *
      * @param area the area of the window.
      */
     public final void setFullScreenAlwaysOnTopImmediate(boolean fullscreen) {
         PlatformUtils.setFullScreenAlwaysOnTop(this, fullscreen);
     }
-    
+
     /**
      * Set the Stage to be fullscreen or to make it non-fullscreen using run later.
      * <p/>
+     *
      * @param area the area of the window.
      */
     public final void setFullScreenAlwaysOnTop(boolean fullscreen) {
-        Platform.runLater(()-> {
-            @Override
-            public void run() {
-                setFullScreenAlwaysOnTopImmediate(fullscreen);  
-            }
+        Platform.runLater(() -> {
+            setFullScreenAlwaysOnTopImmediate(fullscreen);
         });
     }
 
     /**
      * Set the area of the display window.
      * <p/>
+     *
      * @param area the area of the window.
      */
     public final void setAreaImmediate(final Bounds area) {
@@ -184,26 +180,25 @@ public class DisplayStage extends Stage {
         setX(area.getMinX());
         setY(area.getMinY());
     }
-    
+
     /**
      * Set the area of the display window using run later.
      * <p/>
+     *
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
-        Platform.runLater(()-> {
-            @Override
-            public void run() {
-                // ensure the window is not fullscreen always on top here
-                setFullScreenAlwaysOnTopImmediate(false);
-                setAreaImmediate(area);
-            }
+        Platform.runLater(() -> {
+            // ensure the window is not fullscreen always on top here
+            setFullScreenAlwaysOnTopImmediate(false);
+            setAreaImmediate(area);
         });
     }
 
     /**
      * Get the canvas object that underlines this display window.
      * <p/>
+     *
      * @return the lyric canvas backing this window.
      */
     public DisplayCanvas getCanvas() {
