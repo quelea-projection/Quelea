@@ -139,19 +139,7 @@ public class LineTypeChecker {
     }
 
     private static final TreeMap<String, String> titleMap = new TreeMap<>();
-    private static final TreeMap<String, String> titleMapRev = new TreeMap<>(new Comparator<String>() {
-
-        @Override
-        public int compare(String o1, String o2) {
-            if (o1.length() > o2.length()) {
-                return -1;
-            }
-            if (o1.length() == o2.length()) {
-                return 0;
-            }
-            return 1;
-        }
-    });
+    private static final TreeMap<String, String> titleMapRev = new TreeMap<>((o1, o2) -> Integer.compare(o2.length(), o1.length()));
 
     private static int hashLength = 3;
 
