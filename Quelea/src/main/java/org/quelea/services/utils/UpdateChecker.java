@@ -21,8 +21,6 @@ import java.awt.Desktop;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.utils.DesktopApi;
@@ -56,18 +54,8 @@ public class UpdateChecker {
             if(curVersion.compareTo(latestVersion) == -1) {
                 if(Desktop.isDesktopSupported()) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
-                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now")).addYesButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            DesktopApi.browse(QueleaProperties.get().getDownloadLocation());
-                        }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            //Nothing needed
-                        }
+                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now")).addYesButton(t -> DesktopApi.browse(QueleaProperties.get().getDownloadLocation())).addNoButton(t -> {
+                        //Nothing needed
                     }).build().showAndWait();
                     
                 }
@@ -87,8 +75,8 @@ public class UpdateChecker {
      * Show a message saying there was an error checking for updates.
      */
     private void showUpdateError() {
-        Platform.runLater(() -> {Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
-                    LabelGrabber.INSTANCE.getLabel("error.checking.updates.text"));});
+        Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
+                    LabelGrabber.INSTANCE.getLabel("error.checking.updates.text")));
     }
 
 }

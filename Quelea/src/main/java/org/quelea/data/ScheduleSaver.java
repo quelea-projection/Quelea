@@ -19,8 +19,6 @@ package org.quelea.data;
 
 import java.io.File;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
@@ -67,13 +65,7 @@ public class ScheduleSaver {
                 }
                 if (selectedFile.exists() && !Utils.isWindows()) {
                     yes = false;
-                    Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), selectedFile.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            yes = true;
-                        }
-                    }).addNoButton(t -> {}).build();
+                    Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), selectedFile.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(t -> yes = true).addNoButton(t -> {}).build();
                     confirm.showAndWait();
                     if (!yes) {
                         selectedFile = null;
@@ -83,27 +75,19 @@ public class ScheduleSaver {
             }
         }
         final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("saving.schedule"));
-        new Thread() {
-            public void run() {
-                boolean success = false;
-                if (schedule.getFile() != null) {
-                    success = schedule.writeToFile();
-                    if (!success) {
-                        Platform.runLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
-                            }
-                        });
-                    }
+        new Thread(() -> {
+            boolean success = false;
+            if (schedule.getFile() != null) {
+                success = schedule.writeToFile();
+                if (!success) {
+                    Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text")));
                 }
-                if (callback != null) {
-                    callback.saved(success);
-                }
-                statusPanel.done();
             }
-        }.start();
+            if (callback != null) {
+                callback.saved(success);
+            }
+            statusPanel.done();
+        }).start();
     }
 
 }

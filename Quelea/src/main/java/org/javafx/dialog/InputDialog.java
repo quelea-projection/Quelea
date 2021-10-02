@@ -61,13 +61,7 @@ public class InputDialog extends Stage {
         mainPane.setCenter(textField);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         okButton.setDefaultButton(true);
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                hide();
-            }
-        });
+        okButton.setOnAction(t -> hide());
         BorderPane.setMargin(okButton, new Insets(5));
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
@@ -86,16 +80,12 @@ public class InputDialog extends Stage {
      * @return the user entered text.
      */
     public static String getUserInput(final String message, final String title) {
-        Utils.fxRunAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-                dialog = new InputDialog();
-                dialog.setTitle(title);
-                dialog.textField.clear();
-                dialog.messageLabel.setText(message);
-                dialog.showAndWait();
-            }
+        Utils.fxRunAndWait(() -> {
+            dialog = new InputDialog();
+            dialog.setTitle(title);
+            dialog.textField.clear();
+            dialog.messageLabel.setText(message);
+            dialog.showAndWait();
         });
         while(dialog.isShowing()) {
             try {

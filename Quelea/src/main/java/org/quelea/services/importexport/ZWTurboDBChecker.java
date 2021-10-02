@@ -18,8 +18,6 @@
  */
 package org.quelea.services.importexport;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -49,12 +47,7 @@ public class ZWTurboDBChecker {
                     .setWarningIcon()
                     .setMessage(LabelGrabber.INSTANCE.getLabel("no.tdb.message").replace("$1", "\""+QueleaProperties.get().getQueleaUserHome().getAbsolutePath()+"\""))
                     .setTitle(LabelGrabber.INSTANCE.getLabel("no.tdb.heading"))
-                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent t) {
-                            warningDialog.hide();
-                        }
-                    })
+                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), t -> warningDialog.hide())
                     .setOwner(QueleaApp.get().getMainWindow())
                     .build();
             warningDialog.centerOnScreen();
