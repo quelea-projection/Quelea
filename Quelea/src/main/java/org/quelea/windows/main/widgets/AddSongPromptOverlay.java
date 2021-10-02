@@ -62,11 +62,11 @@ public class AddSongPromptOverlay extends StackPane {
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-        Platform.runLater(new Runnable() {
+        Platform.runLater(()-> {
 
             @Override
             public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(new ChangeListener<String>() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(()-> {
 
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String t, String t1) {
@@ -115,7 +115,7 @@ public class AddSongPromptOverlay extends StackPane {
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished(new EventHandler<ActionEvent>() {
+        trans.setOnFinished(()-> {
             @Override
             public void handle(ActionEvent t) {
                 setVisible(false);
