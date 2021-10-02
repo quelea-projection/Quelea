@@ -39,13 +39,7 @@ public class BibleSearchPopupMenu extends ContextMenu {
      */
     public BibleSearchPopupMenu() {
         viewVerseItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.in.browser"));
-        viewVerseItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                trigger();
-            }
-        });
+        viewVerseItem.setOnAction(t -> trigger());
         getItems().add(viewVerseItem);
     }
 
