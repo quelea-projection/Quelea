@@ -57,9 +57,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         HBox northPanel = new HBox();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
-        bibles.setOnAction((javafx.event.ActionEvent t) -> {
-            updateBooks();
-        });
+        bibles.setOnAction((javafx.event.ActionEvent t) -> updateBooks());
         BibleManager.get().registerBibleChangeListener(this);
         Label selectBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("bible.heading"));
         selectBibleLabel.setLabelFor(bibles);
@@ -70,14 +68,10 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         mainPane.setTop(northPanel);
 
         books = new ListView<>();
-        books.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BibleBook>() {
-
-            @Override
-            public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
-                BibleBook book = books.getSelectionModel().getSelectedItem();
-                if(book != null) {
-                    bibleText.setText(book.getText());
-                }
+        books.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
+            BibleBook book = books.getSelectionModel().getSelectedItem();
+            if(book != null) {
+                bibleText.setText(book.getText());
             }
         });
         mainPane.setLeft(books);
