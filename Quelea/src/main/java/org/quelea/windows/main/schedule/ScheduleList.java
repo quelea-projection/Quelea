@@ -279,7 +279,7 @@ public class ScheduleList extends StackPane {
 
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
-            db.getFiles().stream().forEach((file) -> {
+            db.getFiles().forEach((file) -> {
                 if (Utils.fileIsImage(file)) {
                     add(new ImageDisplayable(file));
                 } else if (Utils.fileIsVideo(file)) {
