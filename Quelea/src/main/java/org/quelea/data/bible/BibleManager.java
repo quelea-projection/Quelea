@@ -191,45 +191,36 @@ public final class BibleManager {
         indexInit = false;
         final StatusPanel[] panel = new StatusPanel[1];
         if(QueleaApp.get().getMainWindow() != null) {
-            Utils.fxRunAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
-                    panel[0].removeCancelButton();
-                    panel[0].getProgressBar().setProgress(-1);
-                }
+            Utils.fxRunAndWait(() -> {
+                panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
+                panel[0].removeCancelButton();
+                panel[0].getProgressBar().setProgress(-1);
             });
         }
-        new Thread() {
-            @Override
-            public void run() {
-                LOGGER.log(Level.INFO, "Adding bibles to index");
-                List<BibleChapter> chapters = new ArrayList<>(bibles.size() * 66);
-                for(Bible bible : bibles) {
-                    LOGGER.log(Level.FINE, "Adding {0} bible to index", bible.getName());
-                    index.clear();
-                    for(BibleBook book : bible.getBooks()) {
-                        chapters.addAll(Arrays.asList(book.getChapters()));
-                    }
-                    LOGGER.log(Level.FINE, "Added {0}.", bible.getName());
+        new Thread(() -> {
+            LOGGER.log(Level.INFO, "Adding bibles to index");
+            List<BibleChapter> chapters = new ArrayList<>(bibles.size() * 66);
+            for(Bible bible : bibles) {
+                LOGGER.log(Level.FINE, "Adding {0} bible to index", bible.getName());
+                index.clear();
+                for(BibleBook book : bible.getBooks()) {
+                    chapters.addAll(Arrays.asList(book.getChapters()));
                 }
-                index.addAll(chapters);
-                LOGGER.log(Level.INFO, "Finished Adding bibles to index");
-                indexInit = true;
-                for(Runnable r : onIndexInit) {
-                    r.run();
-                }
-                onIndexInit.clear();
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(panel[0] != null) {
-                            panel[0].done();
-                        }
-                    }
-                });
+                LOGGER.log(Level.FINE, "Added {0}.", bible.getName());
             }
-        }.start();
+            index.addAll(chapters);
+            LOGGER.log(Level.INFO, "Finished Adding bibles to index");
+            indexInit = true;
+            for(Runnable r : onIndexInit) {
+                r.run();
+            }
+            onIndexInit.clear();
+
+            Platform.runLater(() -> {
+                if(panel[0] != null) {
+                    panel[0].done();
+                }
+            });
+        }).start();
     }
 }
