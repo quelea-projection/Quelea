@@ -62,13 +62,13 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
 
                     @Override
                     public void run() {
-                        Platform.runLater(new Runnable() {
+                        Platform.runLater(()-> {
 
                             @Override
                             public void run() {
                                 panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.images"));
                                 panel.getProgressBar().setProgress(-1);
-                                panel.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+                                panel.getCancelButton().setOnAction(() -> {
 
                                     @Override
                                     public void handle(ActionEvent t) {
@@ -80,7 +80,7 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                         });
                         try {
                             if (!halt) {
-                                Platform.runLater(new Runnable() {
+                                Platform.runLater(()-> {
 
                                     @Override
                                     public void run() {
@@ -90,7 +90,7 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                                         } catch (IOException ex) {
                                             System.err.println("IO " + ex);
                                             if (!halt) {
-                                                Platform.runLater(new Runnable() {
+                                                Platform.runLater(()-> {
 
                                                     @Override
                                                     public void run() {
@@ -105,7 +105,7 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                         } catch (RuntimeException ex) {
                             System.err.println("RE " + ex);
                             LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
-                            Platform.runLater(new Runnable() {
+                            Platform.runLater(()-> {
 
                                 @Override
                                 public void run() {

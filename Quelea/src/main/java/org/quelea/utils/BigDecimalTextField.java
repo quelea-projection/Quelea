@@ -71,7 +71,7 @@ public class BigDecimalTextField extends TextField {
     private void initHandlers() {
 
         // try to parse when focus is lost or RETURN is hit
-        setOnAction(new EventHandler<ActionEvent>() {
+        setOnAction(()-> {
 
             @Override
             public void handle(ActionEvent arg0) {
@@ -79,7 +79,7 @@ public class BigDecimalTextField extends TextField {
             }
         });
 
-        focusedProperty().addListener(new ChangeListener<Boolean>() {
+        focusedProperty().addListener(()-> {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -90,7 +90,7 @@ public class BigDecimalTextField extends TextField {
         });
 
         // Set text in field if BigDecimal property is changed from outside.
-        numberProperty().addListener(new ChangeListener<BigDecimal>() {
+        numberProperty().addListener(()-> {
 
             @Override
             public void changed(ObservableValue<? extends BigDecimal> obserable, BigDecimal oldValue, BigDecimal newValue) {

@@ -116,7 +116,7 @@ public class BigDecimalSpinner extends HBox {
         incrementButton.prefHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.minHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.setFocusTraversable(false);
-        incrementButton.setOnAction(new EventHandler<ActionEvent>() {
+        incrementButton.setOnAction(()-> {
             @Override
             public void handle(ActionEvent ae) {
                 increment();
@@ -138,7 +138,7 @@ public class BigDecimalSpinner extends HBox {
         decrementButton.minHeightProperty().bind(buttonHeight);
 
         decrementButton.setFocusTraversable(false);
-        decrementButton.setOnAction(new EventHandler<ActionEvent>() {
+        decrementButton.setOnAction(()-> {
 
             @Override
             public void handle(ActionEvent ae) {

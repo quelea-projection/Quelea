@@ -71,13 +71,13 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
 
                 @Override
                 public void run() {
-                    Platform.runLater(new Runnable() {
+                    Platform.runLater(()-> {
 
                         @Override
                         public void run() {
                             panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
                             panel.getProgressBar().setProgress(-1);
-                            panel.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+                            panel.getCancelButton().setOnAction(()-> {
 
                                 @Override
                                 public void handle(ActionEvent t) {
@@ -91,7 +91,7 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                         for(File file : files) {
                             final PdfDisplayable displayable = new PdfDisplayable(file);
                             if(!halt) {
-                                Platform.runLater(new Runnable() {
+                                Platform.runLater(()-> {
 
                                     @Override
                                     public void run() {
@@ -105,7 +105,7 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                     catch(IOException ex) {
                         System.err.println("IO " + ex);
                         if(!halt) {
-                            Platform.runLater(new Runnable() {
+                            Platform.runLater(()-> {
 
                                 @Override
                                 public void run() {
@@ -117,7 +117,7 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                     catch(RuntimeException ex) {
                         System.err.println("RE " + ex);
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
-                        Platform.runLater(new Runnable() {
+                        Platform.runLater(()-> {
 
                             @Override
                             public void run() {

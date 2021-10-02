@@ -153,7 +153,7 @@ public class BasicSongPanel extends BorderPane {
             for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
                 dictSelector.getItems().add(dict);
             }
-            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
+            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(()-> {
 
                 @Override
                 public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
@@ -212,7 +212,7 @@ public class BasicSongPanel extends BorderPane {
             int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
             String line = parts[lineIndex];
             if (line.trim().isEmpty()) {
-                Platform.runLater(new Runnable() {
+                Platform.runLater(()-> {
 
                     @Override
                     public void run() {
@@ -223,7 +223,7 @@ public class BasicSongPanel extends BorderPane {
             } else {
                 int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
                 if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
-                    Platform.runLater(new Runnable() {
+                    Platform.runLater(()-> {
 
                         @Override
                         public void run() {
@@ -232,7 +232,7 @@ public class BasicSongPanel extends BorderPane {
                         }
                     });
                 } else {
-                    Platform.runLater(new Runnable() {
+                    Platform.runLater(()-> {
 
                         @Override
                         public void run() {
@@ -318,7 +318,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getTransposeButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
-        ret.setOnAction(new EventHandler<ActionEvent>() {
+        ret.setOnAction(()-> {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 String originalKey = getKey(0);
@@ -387,7 +387,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getDictButton() {
         Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
-        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        button.setOnAction(()-> {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 lyricsArea.runSpellCheck();
