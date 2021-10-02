@@ -35,7 +35,7 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     public BooleanCell() {
 
         checkBox = new CheckBox();
-        checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        checkBox.selectedProperty().addListener(()-> {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(isEditing()) {
