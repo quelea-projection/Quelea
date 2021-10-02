@@ -62,12 +62,9 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         sp = chapterPane;
         textPane = (FlowPane) sp.getContent();
-        this.setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCode() == KeyCode.RIGHT) {
-                    trigger(t);
-                }
+        this.setOnKeyTyped(t -> {
+            if (t.getCode() == KeyCode.RIGHT) {
+                trigger(t);
             }
         });
         this.setOnMouseClicked(this::trigger);
