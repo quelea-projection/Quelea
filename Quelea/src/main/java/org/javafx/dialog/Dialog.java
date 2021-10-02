@@ -112,12 +112,7 @@ public class Dialog extends Stage {
             stage.buttonsPanel.setAlignment(Pos.BOTTOM_CENTER);
             BorderPane.setMargin(stage.buttonsPanel, new Insets(0, 0, 1.5 * MARGIN, 0));
             stage.borderPanel.setBottom(stage.buttonsPanel);
-            stage.borderPanel.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                    stage.buttonsPanel.layout();
-                }
-            });
+            stage.borderPanel.widthProperty().addListener((ov, t, t1) -> stage.buttonsPanel.layout());
 
             stage.scene = new Scene(stage.borderPanel);
             if (QueleaProperties.get().getUseDarkTheme()) {
