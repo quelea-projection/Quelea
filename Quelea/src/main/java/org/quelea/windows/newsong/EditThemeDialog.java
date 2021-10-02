@@ -98,7 +98,7 @@ public class EditThemeDialog extends Stage {
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        confirmButton.setOnAction(()-> {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -115,7 +115,7 @@ public class EditThemeDialog extends Stage {
             }
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
-        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        cancelButton.setOnAction(()-> {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
