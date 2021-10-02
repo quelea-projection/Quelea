@@ -19,8 +19,6 @@ package org.quelea.data;
 
 import java.io.File;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;

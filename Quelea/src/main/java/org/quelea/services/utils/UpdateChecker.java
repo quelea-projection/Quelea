@@ -21,8 +21,6 @@ import java.awt.Desktop;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.utils.DesktopApi;

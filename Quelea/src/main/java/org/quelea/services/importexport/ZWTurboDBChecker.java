@@ -18,8 +18,6 @@
  */
 package org.quelea.services.importexport;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
