@@ -326,7 +326,7 @@ public final class Main extends Application {
                                         vlcWarningDialog.hide();
                                     });
                             vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
-                                String url = "https://www.videolan.org/vlc/index.html"
+                                String url = "https://www.videolan.org/vlc/index.html";
                                 DesktopApi.browse(url);
                                 vlcWarningDialog.hide();
                             });
