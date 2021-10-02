@@ -56,18 +56,8 @@ public class UpdateChecker {
             if(curVersion.compareTo(latestVersion) == -1) {
                 if(Desktop.isDesktopSupported()) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
-                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now")).addYesButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            DesktopApi.browse(QueleaProperties.get().getDownloadLocation());
-                        }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            //Nothing needed
-                        }
+                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now")).addYesButton(t -> DesktopApi.browse(QueleaProperties.get().getDownloadLocation())).addNoButton(t -> {
+                        //Nothing needed
                     }).build().showAndWait();
                     
                 }
