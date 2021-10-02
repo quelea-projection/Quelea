@@ -142,13 +142,7 @@ public class Version implements Comparable<Version> {
     public int compareTo(Version o) {
         String[] theseParts = versionStr.split("\\.");
         String[] otherParts = o.versionStr.split("\\.");
-        int minLength;
-        if(theseParts.length < otherParts.length) {
-            minLength = theseParts.length;
-        }
-        else {
-            minLength = otherParts.length;
-        }
+        int minLength = Math.min(theseParts.length, otherParts.length);
         for(int i = 0; i < minLength; i++) {
             int thisNum = Integer.parseInt(theseParts[i]);
             int otherNum = Integer.parseInt(otherParts[i]);
