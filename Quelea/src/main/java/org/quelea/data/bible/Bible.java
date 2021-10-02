@@ -40,7 +40,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -146,18 +145,13 @@ public final class Bible implements BibleInterface, Serializable {
             }
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible " + file, ex);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question").replace("$1", file.getName()))
-                            .addYesButton((ActionEvent event) -> {
-                                BibleUploader.INSTANCE.upload(file);
-                            })
-                            .addNoButton((ActionEvent event) -> {
-                                //Nothing needed
-                            }).build();
-                    brokenBibleDialog.showAndWait();
-                }
+            Platform.runLater(() -> {
+                Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question").replace("$1", file.getName()))
+                        .addYesButton((ActionEvent event) -> BibleUploader.INSTANCE.upload(file))
+                        .addNoButton((ActionEvent event) -> {
+                            //Nothing needed
+                        }).build();
+                brokenBibleDialog.showAndWait();
             });
             return null;
         }

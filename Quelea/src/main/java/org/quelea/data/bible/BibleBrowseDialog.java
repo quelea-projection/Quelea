@@ -18,9 +18,6 @@
  */
 package org.quelea.data.bible;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -28,7 +25,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -57,9 +53,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         HBox northPanel = new HBox();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
-        bibles.setOnAction((javafx.event.ActionEvent t) -> {
-            updateBooks();
-        });
+        bibles.setOnAction((javafx.event.ActionEvent t) -> updateBooks());
         BibleManager.get().registerBibleChangeListener(this);
         Label selectBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("bible.heading"));
         selectBibleLabel.setLabelFor(bibles);
@@ -70,14 +64,10 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         mainPane.setTop(northPanel);
 
         books = new ListView<>();
-        books.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BibleBook>() {
-
-            @Override
-            public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
-                BibleBook book = books.getSelectionModel().getSelectedItem();
-                if(book != null) {
-                    bibleText.setText(book.getText());
-                }
+        books.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
+            BibleBook book = books.getSelectionModel().getSelectedItem();
+            if(book != null) {
+                bibleText.setText(book.getText());
             }
         });
         mainPane.setLeft(books);
