@@ -77,8 +77,8 @@ public class UpdateChecker {
      * Show a message saying there was an error checking for updates.
      */
     private void showUpdateError() {
-        Platform.runLater(() -> {Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
-                    LabelGrabber.INSTANCE.getLabel("error.checking.updates.text"));});
+        Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
+                    LabelGrabber.INSTANCE.getLabel("error.checking.updates.text")));
     }
 
 }
