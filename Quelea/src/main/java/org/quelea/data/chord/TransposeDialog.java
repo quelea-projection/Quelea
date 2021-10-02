@@ -59,26 +59,16 @@ public class TransposeDialog extends Stage {
 
         HBox buttonPanel = new HBox();
         Button okButton = new Button(LabelGrabber.INSTANCE.getLabel("transpose.label"));
-        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                semitones = keySelection.getSelectionModel().getSelectedIndex() - 4;
-                if(semitones <= 0) {
-                    semitones--;
-                }
-                hide();
+        okButton.setOnAction(t -> {
+            semitones = keySelection.getSelectionModel().getSelectedIndex() - 4;
+            if(semitones <= 0) {
+                semitones--;
             }
+            hide();
         });
         buttonPanel.getChildren().add(okButton);
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
-        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                hide();
-            }
-        });
+        cancelButton.setOnAction(t -> hide());
         buttonPanel.getChildren().add(cancelButton);
         buttonPanel.setAlignment(Pos.BASELINE_LEFT);
         contentPane.getChildren().add(buttonPanel);
