@@ -148,7 +148,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         searchField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1.booleanValue()) {
+                if (t1) {
                     searchField.setText("");
                     searchField.focusedProperty().removeListener(this);
                 }

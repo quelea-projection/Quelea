@@ -107,7 +107,7 @@ public class VLCWindowDirect extends VLCWindow {
                             PlatformUtils.setFullScreenAlwaysOnTop(stage, true);
                             stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                                    if (newValue.booleanValue()) {
+                                    if (newValue) {
                                         //focused
                                         stage.toBack();
                                     } else {

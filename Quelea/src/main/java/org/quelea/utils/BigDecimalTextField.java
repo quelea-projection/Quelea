@@ -83,7 +83,7 @@ public class BigDecimalTextField extends TextField {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue.booleanValue()) {
+                if (!newValue) {
                     parseAndFormatInput();
                 }
             }
