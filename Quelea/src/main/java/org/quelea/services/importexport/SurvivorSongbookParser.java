@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.main.StatusPanel;
+import java.util.Objects;
 
 /**
  * Parses a PDF from the survivor songbook, this must be the acetates PDF containing only the lyrics (not the guitar
@@ -67,12 +68,7 @@ public class SurvivorSongbookParser implements SongParser {
             }
         }
         document.close();
-        if (pdfSongs == null) {
-            return new ArrayList<>();
-        }
-        else {
-            return pdfSongs;
-        }
+        Objects.requireNonNullElseGet(pdfSongs, () -> new ArrayList<>( 0 ));
     }
 
     /**
