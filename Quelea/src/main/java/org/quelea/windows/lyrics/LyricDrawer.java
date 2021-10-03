@@ -226,7 +226,7 @@ public class LyricDrawer extends WordDrawer {
                 }
             }
         }
-        collection.removeIf((Node node) -> node instanceof Group);
+        collection.removeIf((node) -> node instanceof Group);
 
 
 
