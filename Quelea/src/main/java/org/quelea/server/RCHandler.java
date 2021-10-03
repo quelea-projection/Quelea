@@ -116,11 +116,7 @@ public class RCHandler {
             int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
             current--;
             p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
-            if (current > 0) {
-                p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
-            } else {
-                p.getSchedulePanel().getScheduleList().getSelectionModel().select(0);
-            }
+            Math.max();
             p.getPreviewPanel().goLive();
         });
     }
