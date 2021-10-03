@@ -30,8 +30,10 @@ public class Theme {
     private String backgroundimage;
     private Boolean fontBold;
     private Boolean fontItalic;
+    private Boolean fontUpperCase;
     private Boolean translateFontBold;
     private Boolean translateFontItalic;
+    private Boolean translateFontUppercase;
     private Double videoHue;
     private Boolean videoStretch;
     private Integer textPosition;
@@ -43,7 +45,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isFontUpperCase, boolean isTranslateFontBold, boolean isTranslateFontitalic, boolean isTranslateFontUppercase, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -55,13 +57,44 @@ public class Theme {
         this.textShadow = shadow;
         this.fontBold = isFontBold;
         this.fontItalic = isFontitalic;
+        this.fontUpperCase = isFontUpperCase;
         this.translateFontBold = isTranslateFontBold;
         this.translateFontItalic = isTranslateFontitalic;
+        this.translateFontUppercase = isTranslateFontUppercase;
         this.videoHue = videoHue;
         this.videoStretch = videoStretch;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
     }
+
+    /**This is the original constructer, just for backwards compatibily
+     * Sets fontUppercase and translateFontUppercase to false
+     */
+    public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
+                 String backgroundcolour, String backgroundvid, String backgroundimage,
+                 TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
+        this.name = name;
+        this.fontname = fontname;
+        this.fontcolour = fontcolour;
+        this.translateFontname = translateFontname;
+        this.translateFontcolour = translateFontcolour;
+        this.backgroundcolour = backgroundcolour;
+        this.backgroundvid = backgroundvid;
+        this.backgroundimage = backgroundimage;
+        this.textShadow = shadow;
+        this.fontBold = isFontBold;
+        this.fontItalic = isFontitalic;
+        this.fontUpperCase = false;
+        this.translateFontBold = isTranslateFontBold;
+        this.translateFontItalic = isTranslateFontitalic;
+        this.translateFontUppercase = false;
+        this.videoHue = videoHue;
+        this.videoStretch = videoStretch;
+        this.textPosition = textPosition;
+        this.textAlignment = textAlignment;
+    }
+
+
 
     public Theme(Theme theme) {
         this.name = theme.name;
@@ -75,8 +108,10 @@ public class Theme {
         this.textShadow = theme.textShadow;
         this.fontBold = theme.fontBold;
         this.fontItalic = theme.fontItalic;
+        this.fontUpperCase = theme.fontUpperCase;
         this.translateFontBold = theme.translateFontBold;
         this.translateFontItalic = theme.translateFontItalic;
+        this.translateFontUppercase = theme.translateFontUppercase;
         this.videoHue = theme.videoHue;
         this.videoStretch = theme.videoStretch;
         this.textPosition = theme.textPosition;
@@ -314,6 +349,21 @@ public class Theme {
     }
 
     /**
+     * @return the isFontUpperCase
+     */
+    @Column(name = "isfontuppercase")
+    public Boolean isFontUppercase() {
+        return fontUpperCase == null ? false : fontUpperCase;
+    }
+
+    /**
+     * @param isFontUppercase the isFontUppercase to set
+     */
+    public void setFontUppercase(Boolean isFontUppercase) {
+        this.fontUpperCase = isFontUppercase;
+    }
+
+    /**
      * @return the isFontBold
      */
     @Column(name = "istranslatefontbold")
@@ -341,6 +391,21 @@ public class Theme {
      */
     public void setTranslateFontItalic(Boolean translateFontItalic) {
         this.translateFontItalic = translateFontItalic;
+    }
+
+    /**
+     * @return the isTranslateFontUppercase
+     */
+    @Column(name = "istranslatefontuppercase")
+    public Boolean isTranslateFontUppercase() {
+        return translateFontUppercase == null ? false : translateFontUppercase;
+    }
+
+    /**
+     * @param translateFontUppercase the translateFontUppercase to set
+     */
+    public void setTranslateFontUppercase(Boolean translateFontUppercase) {
+        this.translateFontUppercase = translateFontUppercase;
     }
 
     @Override

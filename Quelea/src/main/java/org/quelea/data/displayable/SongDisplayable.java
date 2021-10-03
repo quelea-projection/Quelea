@@ -317,7 +317,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public SongDisplayable(String title, String author) {
         this(title, author, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0));
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, false, true, false, -1, 0));
     }
 
     /**
@@ -770,6 +770,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             ret.append("\n");
         }
+
         return ret.toString().replaceAll("\\s+$", "").replace(" ", "<>");
     }
 
@@ -1258,7 +1259,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         }
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                        ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0));
+                        ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false,false, true, false, -1, 0));
         if (!updateInDB) {
             ret.setNoDBUpdate();
         }
