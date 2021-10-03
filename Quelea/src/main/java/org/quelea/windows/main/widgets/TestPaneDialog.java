@@ -35,7 +35,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.ImageManager;
