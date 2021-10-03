@@ -63,16 +63,22 @@ public class FreeWorshipParser implements SongParser {
             String ccli = "";
             for (int i = 0; i < props.getChildNodes().getLength(); i++) {
                 Node propNode = props.getChildNodes().item(i);
-                if (propNode.getNodeName().equals("titles")) {
-                    title = getChildByName(propNode, "title").getTextContent();
-                } else if (propNode.getNodeName().equals("authors")) {
-                    author = getChildByName(propNode, "author").getTextContent();
-                } else if (propNode.getNodeName().equals("copyright")) {
-                    copyright = propNode.getTextContent();
-                } else if (propNode.getNodeName().equals("ccliNo")) {
-                    ccli = propNode.getTextContent();
-                } else if (propNode.getNodeName().equals("publisher")) {
-                    publisher = propNode.getTextContent();
+                switch (propNode.getNodeName()) {
+                    case "titles":
+                        title = getChildByName(propNode, "title").getTextContent();
+                        break;
+                    case "authors":
+                        author = getChildByName(propNode, "author").getTextContent();
+                        break;
+                    case "copyright":
+                        copyright = propNode.getTextContent();
+                        break;
+                    case "ccliNo":
+                        ccli = propNode.getTextContent();
+                        break;
+                    case "publisher":
+                        publisher = propNode.getTextContent();
+                        break;
                 }
             }
             SongDisplayable song = new SongDisplayable(title, author);
