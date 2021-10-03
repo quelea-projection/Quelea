@@ -42,7 +42,7 @@ public class PPTPresentation implements Presentation {
      * @param file the file containing the presentation.
      */
     public PPTPresentation(String file) throws IOException {
-        slideshow = new HSLFSlideShow(new FileInputStream(new File(file)));
+        slideshow = new HSLFSlideShow(new FileInputStream(file));
         slides = makeSlides();
     }
 
