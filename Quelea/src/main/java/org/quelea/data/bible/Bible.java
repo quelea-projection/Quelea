@@ -17,11 +17,6 @@
  */
 package org.quelea.data.bible;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import org.javafx.dialog.Dialog;
-import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.BibleUploader;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.UnicodeReader;
 import org.quelea.services.utils.Utils;
@@ -30,6 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,14 +141,6 @@ public final class Bible implements BibleInterface, Serializable {
             }
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible " + file, ex);
-            Platform.runLater(() -> {
-                Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question").replace("$1", file.getName()))
-                        .addYesButton((ActionEvent event) -> BibleUploader.INSTANCE.upload(file))
-                        .addNoButton((ActionEvent event) -> {
-                            //Nothing needed
-                        }).build();
-                brokenBibleDialog.showAndWait();
-            });
             return null;
         }
     }
