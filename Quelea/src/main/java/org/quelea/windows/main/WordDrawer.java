@@ -248,7 +248,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
                 }
             }
         }
-        return new String[]{line.substring(0, nearestIndex + 1), line.substring(nearestIndex + 1, line.length())};
+        return new String[]{line.substring(0, nearestIndex + 1), line.substring(nearestIndex + 1)};
     }
 
     protected abstract void drawText(double defaultFontSize, boolean dumbWrap);
