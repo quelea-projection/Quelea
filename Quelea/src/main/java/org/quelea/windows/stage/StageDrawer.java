@@ -138,7 +138,7 @@ public class StageDrawer extends WordDrawer {
         smallTextGroup = new Group();
         StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
 
-        getCanvas().getChildren().removeIf((node) -> node instanceof Group);
+        getCanvas().getChildren().removeIf(node -> node instanceof Group);
 
         getCanvas().getChildren().add(newTextGroup);
         getCanvas().pushLogoNoticeToFront();
