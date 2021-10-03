@@ -47,44 +47,44 @@ public class VideoPsalmParser implements SongParser {
 	 */
 	@Override
 	public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) {
-		List<SongDisplayable> ret = new ArrayList<>();
+		List<SongDisplayable> resultSongs = new ArrayList<>();
 
 		String contents = Utils.getTextFromFile(location.getAbsolutePath(), null, Utils.getEncoding(location));
 		if (contents == null) {
-			return ret;
+			return resultSongs;
 		}
 		if (contents.startsWith(UTF8_BOM)) {
 			contents = contents.substring(1);
 		}
-		JsonElement jelement = new JsonParser().parse(contents);
+		JsonElement jElement = JsonParser.parseString(contents);
 
-		if (jelement == null) {
-			return ret;
+		if (jElement == null) {
+			return resultSongs;
 		}
 
-		JsonArray arr = jelement.getAsJsonObject().get("Songs").getAsJsonArray();
+		JsonArray jArray = jElement.getAsJsonObject().get("Songs").getAsJsonArray();
 
-		for (JsonElement obj : arr) {
+		for (JsonElement element : jArray) {
 			String title = "Unknown title";
-			if (obj.getAsJsonObject().has("Text")) {
-				title = obj.getAsJsonObject().get("Text").getAsString();
+			if (element.getAsJsonObject().has("Text")) {
+				title = element.getAsJsonObject().get("Text").getAsString();
 			}
 			String author = "";
-			if (obj.getAsJsonObject().has("Author")) {
-				author = obj.getAsJsonObject().get("Author").getAsString();
+			if (element.getAsJsonObject().has("Author")) {
+				author = element.getAsJsonObject().get("Author").getAsString();
 			}
 			SongDisplayable song = new SongDisplayable(title, author);
 			StringBuilder lyrics = new StringBuilder();
-			for (JsonElement verseObj : obj.getAsJsonObject().getAsJsonArray("Verses")) {
+			for (JsonElement verseObj : element.getAsJsonObject().getAsJsonArray("Verses")) {
 				if (verseObj.getAsJsonObject().has("Text")) {
 					lyrics.append(verseObj.getAsJsonObject().get("Text").getAsString().replaceAll("<[^>]+>", ""));
 					lyrics.append("\n\n");
 				}
 			}
 			song.setLyrics(lyrics.toString().trim());
-			ret.add(song);
+			resultSongs.add(song);
 		}
-		return ret;
+		return resultSongs;
 	}
 
 }
