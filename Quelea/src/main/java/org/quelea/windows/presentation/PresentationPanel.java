@@ -300,11 +300,8 @@ public class PresentationPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 1) {
-                    presentationPreview.select(1, true);
-                } else {
-                    presentationPreview.select(index, true);
-                }
+                //using Math.max instead of if else, fix part of issue #423
+                presentationPreview.select(Math.max(index,1), true);
             }
         });
 

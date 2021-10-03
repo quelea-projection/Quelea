@@ -195,11 +195,8 @@ public class PdfPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 1) {
-                    pdfPreview.select(1, true);
-                } else {
-                    pdfPreview.select(index, true);
-                }
+                //using Math.max instead of if else, fix part of issue #423
+                pdfPreview.select(Math.max(index,1), true);
             }
         });
 

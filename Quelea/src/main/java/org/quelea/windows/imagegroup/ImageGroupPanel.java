@@ -194,11 +194,8 @@ public class ImageGroupPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 1) {
-                    imageGroupPreview.select(1, true);
-                } else {
-                    imageGroupPreview.select(index, true);
-                }
+                //using Math.max instead of if else, fix part of issue #423
+                imageGroupPreview.select(Math.max(index,1), true);
             }
         });
 
