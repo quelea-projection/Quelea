@@ -275,7 +275,7 @@ public class ElevantoPlanDialog extends BorderPane {
 
         protected void prepare_CustomSlides(JSONObject item, TreeItem<String> treeItem) {
         }
-    };
+    }
     
     // This MUST be run in the main thread
     // This adds the prepared displayable items into Quelea
