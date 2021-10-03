@@ -34,9 +34,7 @@ public class AparapiLevenshteinDistance {
 
     public int leastCompare(String s1, String[] s2) {
         String[] arr = new String[s2.length];
-        for(int i = 0; i < arr.length; i++) {
-            arr[i] = s1;
-        }
+        Arrays.fill(arr,s1);
 
         int[] results = compare(arr, s2);
         int min = Integer.MAX_VALUE;
