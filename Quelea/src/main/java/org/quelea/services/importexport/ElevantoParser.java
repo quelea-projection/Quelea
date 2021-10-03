@@ -138,7 +138,7 @@ public class ElevantoParser {
         json.put("start", startDate);
         json.put("end", endDate);
                 
-        json.put("fields", Arrays.asList(new String[]{"series_name", "service_times", "plans", "volunteers", "songs", "files", "notes"}));
+        json.put("fields", Arrays.asList("series_name", "service_times", "plans", "volunteers", "songs", "files", "notes"));
         return postJson("https://api.elvanto.com/v1/services/getAll.json", json);
     }
 

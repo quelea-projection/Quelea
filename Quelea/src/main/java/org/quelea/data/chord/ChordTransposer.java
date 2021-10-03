@@ -54,7 +54,7 @@ public class ChordTransposer {
     private static final List<String> TRANSPOSE_STEPS = new ArrayList<String>() {
 
         {
-            addAll(Arrays.asList(new String[]{"A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"}));
+            addAll(Arrays.asList("A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"));
         }
     };
     /*

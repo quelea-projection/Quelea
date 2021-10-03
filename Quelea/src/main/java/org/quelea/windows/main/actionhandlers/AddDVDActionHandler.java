@@ -45,38 +45,27 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(true);
-        new Thread() {
-            public void run() {
-                final String dvdLocation = getLocation();
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if(dvdLocation == null) {
-                            warningDialog = new Dialog.Builder().create()
-                                    .setWarningIcon()
-                                    .setMessage(LabelGrabber.INSTANCE.getLabel("no.dvd.error"))
-                                    .setTitle(LabelGrabber.INSTANCE.getLabel("no.dvd.heading"))
-                                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
-                                        @Override
-                                        public void handle(ActionEvent t) {
-                                            warningDialog.hide();
-                                        }
-                                    })
-                                    .setOwner(QueleaApp.get().getMainWindow())
-                                    .build();
-                            warningDialog.centerOnScreen();
-                            warningDialog.showAndWait();
-                        }
-                        else {
-                            DiskDisplayable displayable = new DiskDisplayable(dvdLocation);
-                            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-                        }
-                        QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(false);
-                    }
-                });
-            }
-        }.start();
+        new Thread(() -> {
+            final String dvdLocation = getLocation();
+            Platform.runLater(() -> {
+                if(dvdLocation == null) {
+                    warningDialog = new Dialog.Builder().create()
+                            .setWarningIcon()
+                            .setMessage(LabelGrabber.INSTANCE.getLabel("no.dvd.error"))
+                            .setTitle(LabelGrabber.INSTANCE.getLabel("no.dvd.heading"))
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), t1 -> warningDialog.hide())
+                            .setOwner(QueleaApp.get().getMainWindow())
+                            .build();
+                    warningDialog.centerOnScreen();
+                    warningDialog.showAndWait();
+                }
+                else {
+                    DiskDisplayable displayable = new DiskDisplayable(dvdLocation);
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                }
+                QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(false);
+            });
+        }).start();
     }
 
     /**
