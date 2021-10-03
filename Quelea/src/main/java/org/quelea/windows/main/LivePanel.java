@@ -422,14 +422,17 @@ public class LivePanel extends LivePreviewPanel {
      * @param show display the extra options.
      */
     public void showExtraToolbarOptions(boolean show) {
-        if (show) {
-            if (!header.getItems().contains(hide)) {
+        if (show)
+        {
+            if (!header.getItems().contains(hide)) 
+            {
                 header.getItems().add(hide);
             }
-        } else {
-            if (header.getItems().contains(hide)) {
+        } 
+        else {
+           
                 header.getItems().remove(hide);
-            }
+            
         }
     }
 
