@@ -16,13 +16,27 @@
  */
 package org.quelea.windows.newsong;
 
+import org.javafx.dialog.Dialog;
+import org.quelea.data.chord.ChordLineTransposer;
+import org.quelea.data.chord.ChordTransposer;
+import org.quelea.data.chord.TransposeDialog;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.spelling.Dictionary;
+import org.quelea.services.languages.spelling.DictionaryManager;
+import org.quelea.services.languages.spelling.SpellTextArea;
+import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.InputMethodRequestsObject;
+import org.quelea.windows.lyrics.LyricsTextArea;
+import org.quelea.windows.main.QueleaApp;
+
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -41,22 +55,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.javafx.dialog.Dialog;
-import org.quelea.data.chord.ChordLineTransposer;
-import org.quelea.data.chord.ChordTransposer;
-import org.quelea.data.chord.TransposeDialog;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.languages.spelling.Dictionary;
-import org.quelea.services.languages.spelling.DictionaryManager;
-import org.quelea.services.languages.spelling.SpellTextArea;
-import org.quelea.services.utils.LineTypeChecker;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.InputMethodRequestsObject;
-import org.quelea.windows.lyrics.LyricsTextArea;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,
@@ -153,13 +151,7 @@ public class BasicSongPanel extends BorderPane {
             for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
                 dictSelector.getItems().add(dict);
             }
-            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(()-> {
-
-                @Override
-                public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
-                    lyricsArea.setDictionary(dictSelector.getValue());
-                }
-            });
+            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener((ov, t, t1) -> lyricsArea.setDictionary(dictSelector.getValue()));
 
             dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
             lyricsToolbar.getItems().add(dictSelector);
@@ -212,33 +204,24 @@ public class BasicSongPanel extends BorderPane {
             int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
             String line = parts[lineIndex];
             if (line.trim().isEmpty()) {
-                Platform.runLater(()-> {
+                Platform.runLater(() -> {
+                    lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
+                    lyricsArea.getArea().refreshStyle();
 
-                    @Override
-                    public void run() {
-                        lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
-                        lyricsArea.getArea().refreshStyle();
-                    }
                 });
             } else {
                 int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
                 if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
-                    Platform.runLater(()-> {
+                    Platform.runLater(() -> {
+                        lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
+                        lyricsArea.getArea().refreshStyle();
 
-                        @Override
-                        public void run() {
-                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
-                            lyricsArea.getArea().refreshStyle();
-                        }
                     });
                 } else {
-                    Platform.runLater(()-> {
+                    Platform.runLater(() -> {
+                        lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
+                        lyricsArea.getArea().refreshStyle();
 
-                        @Override
-                        public void run() {
-                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
-                            lyricsArea.getArea().refreshStyle();
-                        }
                     });
                 }
             }
@@ -260,9 +243,7 @@ public class BasicSongPanel extends BorderPane {
         Button ret = new Button("", new ImageView(new Image("file:icons/" + fileName, 24, 24, false, true)));
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(label)));
-        ret.setOnAction((event) -> {
-            insertTitle(titleName, "");
-        });
+        ret.setOnAction((event) -> insertTitle(titleName, ""));
         getLyricsField().requestFocus();
         return ret;
     }
@@ -318,20 +299,19 @@ public class BasicSongPanel extends BorderPane {
     private Button getTransposeButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
-        ret.setOnAction(()-> {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                String originalKey = getKey(0);
-                if (originalKey == null) {
-                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
-                    return;
-                }
-                transposeDialog.setKey(originalKey);
-                transposeDialog.showAndWait();
-                int semitones = transposeDialog.getSemitones();
+        ret.setOnAction((t) -> {
 
-                transposeSong(semitones);
+            String originalKey = getKey(0);
+            if (originalKey == null) {
+                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
+                return;
             }
+            transposeDialog.setKey(originalKey);
+            transposeDialog.showAndWait();
+            int semitones = transposeDialog.getSemitones();
+
+            transposeSong(semitones);
+
         });
         Utils.setToolbarButtonStyle(ret);
         return ret;
@@ -387,12 +367,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getDictButton() {
         Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
-        button.setOnAction(()-> {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                lyricsArea.runSpellCheck();
-            }
-        });
+        button.setOnAction((t) -> lyricsArea.runSpellCheck());
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
         Utils.setToolbarButtonStyle(button);
         return button;
@@ -461,6 +436,7 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the sequence field.
      * <p/>
+     *
      * @return the sequence field.
      */
     public TextField getSequenceField() {
@@ -476,15 +452,11 @@ public class BasicSongPanel extends BorderPane {
         SplitMenuButton m = new SplitMenuButton();
         m.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/verse-light.png" : "file:icons/verse.png", 24, 24, false, true)));
         m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
-        m.setOnMouseClicked((MouseEvent event) -> {
-            insertTitle("Verse", "");
-        });
+        m.setOnMouseClicked((MouseEvent event) -> insertTitle("Verse", ""));
         for (int i = 1; i < 10; i++) {
             MenuItem mi = new MenuItem("", new ImageView(new Image(darkTheme ? "file:icons/verse" + i + "-light.png" : "file:icons/verse" + i + ".png", 24, 24, false, true)));
             final int finalI = i;
-            mi.setOnAction((ActionEvent event) -> {
-                insertTitle("Verse", Integer.toString(finalI));
-            });
+            mi.setOnAction((ActionEvent event) -> insertTitle("Verse", Integer.toString(finalI)));
             m.getItems().add(mi);
         }
         getLyricsField().requestFocus();
