@@ -56,7 +56,7 @@ public class AparapiLevenshteinDistance {
             throw new IllegalArgumentException("Array lengths must be equal!");
         }
 
-        final int result[] = new int[s1.length];
+        final int[] result = new int[s1.length];
         ArrStart s1Box = toIntArr(s1);
         final int[] s1Arr = s1Box.arr;
         final int[] s1Starts = s1Box.starts;
@@ -71,7 +71,7 @@ public class AparapiLevenshteinDistance {
 
 //        System.out.println(dumpSize);
 
-        final int dump[] = new int[dumpSize]; //Yeah...
+        final int[] dump = new int[dumpSize]; //Yeah...
         Kernel kernel = new Kernel() {
             @Override
             public void run() {

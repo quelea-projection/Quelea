@@ -153,7 +153,7 @@ public class Schedule implements Iterable<Displayable> {
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"));
             final int BUFFER = 2048;
-            byte data[] = new byte[BUFFER];
+            byte[] data = new byte[BUFFER];
             try {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
                 zos.write(getXML().getBytes("UTF8"));
@@ -213,7 +213,7 @@ public class Schedule implements Iterable<Displayable> {
                     }
                     try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
                         int count;
-                        byte data[] = new byte[BUFFER];
+                        byte[] data = new byte[BUFFER];
                         File writeFile = new File(entry.getName().substring("resources/".length()));
                         if (writeFile.exists()) {
                             LOGGER.log(Level.INFO, "Skipping " + writeFile.getAbsolutePath() + ", already exists");

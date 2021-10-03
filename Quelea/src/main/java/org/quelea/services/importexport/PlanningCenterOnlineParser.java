@@ -99,7 +99,7 @@ public class PlanningCenterOnlineParser {
                 try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(partFile))) {
                     Long totalBytesRead = 0L;
 
-                    byte buffer[] = new byte[1024 * 1024];
+                    byte[] buffer = new byte[1024 * 1024];
                     int count;
                     while ((count = is.read(buffer)) != -1) {
                         bos.write(buffer, 0, count);
