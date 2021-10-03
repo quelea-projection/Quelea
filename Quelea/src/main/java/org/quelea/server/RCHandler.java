@@ -116,7 +116,6 @@ public class RCHandler {
             int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
             current--;
             p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
-            //using Math.max instead of if else, fix part of issue #423
             p.getSchedulePanel().getScheduleList().getSelectionModel().select(Math.max(current,0));
             p.getPreviewPanel().goLive();
         });
