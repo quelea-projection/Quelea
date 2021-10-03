@@ -72,9 +72,7 @@ public class BigDecimalTextField extends TextField {
     private void initHandlers() {
 
         // try to parse when focus is lost or RETURN is hit
-        setOnAction((ae) -> {
-            parseAndFormatInput();
-        });
+        setOnAction((ae) -> parseAndFormatInput());
 
         focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -84,9 +82,7 @@ public class BigDecimalTextField extends TextField {
         });
 
         // Set text in field if BigDecimal property is changed from outside.
-        numberProperty().addListener((observable, oldValue, newValue) -> {
-            setText(nf.format(newValue));
-        });
+        numberProperty().addListener((observable, oldValue, newValue) -> setText(nf.format(newValue)));
     }
 
     /**

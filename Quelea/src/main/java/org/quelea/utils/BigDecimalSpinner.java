@@ -38,6 +38,8 @@ import javafx.scene.shape.Path;
 
 import org.quelea.utils.BigDecimalTextField;
 
+import javax.swing.*;
+
 /**
  * JavaFX Control that behaves like a {@link JSpinner} known in Swing. The
  * number in the textfield can be incremented or decremented by a configurable

@@ -96,16 +96,12 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                     } catch (IOException ex) {
                         System.err.println("IO " + ex);
                         if (!halt) {
-                            Platform.runLater(() -> {
-                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
-                            });
+                            Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                         }
                     } catch (RuntimeException ex) {
                         System.err.println("RE " + ex);
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
-                        Platform.runLater(() -> {
-                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
-                        });
+                        Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                     }
                     while (panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works

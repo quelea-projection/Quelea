@@ -79,9 +79,7 @@ public class EditThemeDialog extends Stage {
         themeSelectPanel.setPadding(new Insets(5));
         Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.label") + ": ");
         themeCombo = new ComboBox<>();
-        themeCombo.setOnAction(event -> {
-            setTheme(themeCombo.getSelectionModel().getSelectedItem());
-        });
+        themeCombo.setOnAction(event -> setTheme(themeCombo.getSelectionModel().getSelectedItem()));
         themeCombo.setItems(ThemeUtils.getThemes());
         ThemeDTO newTheme = ThemeDTO.DEFAULT_THEME;
         newTheme.setThemeName("New...");

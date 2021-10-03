@@ -64,17 +64,14 @@ public class AddSongPromptOverlay extends StackPane {
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-        Platform.runLater(() -> {
-            QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel()
-                    .getSearchBox().textProperty().addListener((ov, t, t1) -> {
-                if (t1.isEmpty()) {
-                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-                } else {
-                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
-                }
-            });
-
-        });
+        Platform.runLater(() -> QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel()
+                .getSearchBox().textProperty().addListener((ov, t, t1) -> {
+                    if (t1.isEmpty()) {
+                        text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+                    } else {
+                        text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
+                    }
+                }));
         text.setWrapText(true);
         text.setTextFill(Color.WHITESMOKE);
         text.setStyle("-fx-font-size:16pt; -fx-font-family:Calibri;");
@@ -110,9 +107,6 @@ public class AddSongPromptOverlay extends StackPane {
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished((t) -> {
-            setVisible(false);
-
-        });
+        trans.setOnFinished((t) -> setVisible(false));
     }
 }

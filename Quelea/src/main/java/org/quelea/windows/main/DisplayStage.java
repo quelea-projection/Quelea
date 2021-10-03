@@ -80,16 +80,12 @@ public class DisplayStage extends Stage {
         scenePane.getChildren().add(canvas);
         if (stageView) {
             final Clock clock = new Clock();
-            ChangeListener<Number> cl = new ChangeListener<Number>() {
-
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                    double size = getWidth();
-                    if (getHeight() < size) {
-                        size = getHeight();
-                    }
-                    clock.setFontSize(size / 24);
+            ChangeListener<Number> cl = (ov, t, t1) -> {
+                double size = getWidth();
+                if (getHeight() < size) {
+                    size = getHeight();
                 }
+                clock.setFontSize(size / 24);
             };
             widthProperty().addListener(cl);
             heightProperty().addListener(cl);
@@ -115,21 +111,13 @@ public class DisplayStage extends Stage {
     }
 
     private void addVLCListeners() {
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            VLCWindow.INSTANCE.refreshPosition();
-        });
+        widthProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
 
-        heightProperty().addListener((observable, oldValue, newValue) -> {
-            VLCWindow.INSTANCE.refreshPosition();
-        });
+        heightProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
 
-        xProperty().addListener((observable, oldValue, newValue) -> {
-            VLCWindow.INSTANCE.refreshPosition();
-        });
+        xProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
 
-        yProperty().addListener((observable, oldValue, newValue) -> {
-            VLCWindow.INSTANCE.refreshPosition();
-        });
+        yProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
     }
 
     /**
@@ -150,7 +138,7 @@ public class DisplayStage extends Stage {
      * Set the Stage to be fullscreen or to make it non-fullscreen.
      * <p/>
      *
-     * @param area the area of the window.
+     * @param fullscreen the area of the window.
      */
     public final void setFullScreenAlwaysOnTopImmediate(boolean fullscreen) {
         PlatformUtils.setFullScreenAlwaysOnTop(this, fullscreen);
@@ -160,12 +148,10 @@ public class DisplayStage extends Stage {
      * Set the Stage to be fullscreen or to make it non-fullscreen using run later.
      * <p/>
      *
-     * @param area the area of the window.
+     * @param fullscreen the area of the window.
      */
     public final void setFullScreenAlwaysOnTop(boolean fullscreen) {
-        Platform.runLater(() -> {
-            setFullScreenAlwaysOnTopImmediate(fullscreen);
-        });
+        Platform.runLater(() -> setFullScreenAlwaysOnTopImmediate(fullscreen));
     }
 
     /**

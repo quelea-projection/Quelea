@@ -35,7 +35,7 @@ public class EditSongDBActionHandler implements EventHandler<ActionEvent> {
     /**
      * Edit the currently selected song in the library.
      *
-     * @param e the action event.
+     * @param t the action event.
      */
     @Override
     public void handle(ActionEvent t) {

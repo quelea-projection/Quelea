@@ -80,19 +80,14 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = true;
             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text"))
-                    .addYesButton((t) -> {
+                    .addYesButton((t1) -> {
                         //Save schedule
                         block = true;
-                        new ScheduleSaver().saveSchedule(false, new SaveCallback() {
-                            @Override
-                            public void saved(boolean success) {
-                                cancel = !success;
-                                block = false;
-                            }
+                        new ScheduleSaver().saveSchedule(false, success -> {
+                            cancel = !success;
+                            block = false;
                         });
-                    }).addNoButton((t) -> {
-                        cancel = false;
-                    }).addCancelButton((t) -> {
+                    }).addNoButton((t1) -> cancel = false).addCancelButton((t1) -> {
                         //No need to do anything
                     }).build();
 
@@ -148,22 +143,16 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             if (recHandler.getIsRecording()) {
                 block = true;
                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message"))
-                        .addYesButton((ActionEvent t1) -> {
-                            toolbar.stopRecording();
-                        }).addNoButton((ActionEvent t1) -> {
+                        .addYesButton((ActionEvent t1) -> toolbar.stopRecording()).addNoButton((ActionEvent t1) -> {
                             System.exit(0);
                         }).build();
-                d.setOnCloseRequest((WindowEvent we) -> {
-                    System.exit(0);
-                });
+                d.setOnCloseRequest((WindowEvent we) -> System.exit(0));
                 Thread thread = new Thread(() -> {
                     while (block) {
                         try {
                             Thread.sleep(500);
                             if (recHandler.getFinishedSaving()) {
-                                Platform.runLater(() -> {
-                                    d.close();
-                                });
+                                Platform.runLater(() -> d.close());
                                 if (QueleaProperties.get().getConvertRecordings()) {
                                     boolean converting = recHandler.isConverting();
                                     if (!converting) {
