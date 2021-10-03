@@ -115,7 +115,7 @@ public class PlainTextParser implements SongParser {
                     chordLine.append(' ');
                     
                     String startStr = sectionLine.substring(0,chordPos);
-                    String endStr = sectionLine.substring(chordPos,sectionLine.length());
+                    String endStr = sectionLine.substring(chordPos);
                     
                     sectionLine = startStr;
                     for(int i=0 ; i<chordLine.length() - chordPos ; i++) {
