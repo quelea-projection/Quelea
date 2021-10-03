@@ -169,11 +169,10 @@ public class ImageGroupPanel extends AbstractPanel {
         }
         ImageGroupSlide[] slides = displayable.getPresentation().getSlides();
         imageGroupPreview.setSlides(slides);
-        Platform.runLater(() -> {
-            if (index < 1) {
-                imageGroupPreview.select(1, true);
-            } else {
-                imageGroupPreview.select(index, true);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                imageGroupPreview.select(Math.max(index,1), true);
             }
         });
 

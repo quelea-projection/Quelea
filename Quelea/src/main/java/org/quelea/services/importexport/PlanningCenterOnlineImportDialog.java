@@ -216,7 +216,7 @@ public class PlanningCenterOnlineImportDialog extends Stage {
             }
 
         }
-    };
+    }
 
     @SuppressWarnings("unchecked")
     protected void updatePlans() {
