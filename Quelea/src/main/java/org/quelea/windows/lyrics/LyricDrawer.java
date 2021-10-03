@@ -226,8 +226,10 @@ public class LyricDrawer extends WordDrawer {
                 }
             }
         }
-         getCanvas().getChildren().removeIf(node -> node instanceof Group);
-getCanvas().getChildren().add(newTextGroup);
+      getCanvas().getChildren().removeIf(node -> node instanceof Group);
+        
+
+      getCanvas().getChildren().add(newTextGroup);
         if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
             getCanvas().getChildren().add(smallTextGroup);
         } else if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
