@@ -99,7 +99,10 @@ public final class Bible implements BibleInterface, Serializable {
         if (!Objects.equals(this.information, other.information)) {
             return false;
         }
-        return Objects.equals(this.books, other.books);
+        if (!Objects.equals(this.books, other.books)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -152,7 +155,7 @@ public final class Bible implements BibleInterface, Serializable {
      * @return the object as defined by the XML.
      */
     public static Bible parseXML(Node node, String defaultName) {
-        String name;
+        String name = "";
         if (node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
         } else if (node.getAttributes().getNamedItem("name") != null) {
@@ -169,7 +172,7 @@ public final class Bible implements BibleInterface, Serializable {
                         return Stream.of(n);
                     }
                 })
-                .filter(ret::isBibleBookNode)
+                .filter(item -> ret.isBibleBookNode(item))
                 .collect(Collectors.toList());
         for (int i = 0; i < list.size(); i++) {
             Node item = list.get(i);
