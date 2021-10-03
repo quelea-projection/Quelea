@@ -319,9 +319,9 @@ public final class Utils {
 	 * @return the VLC path.
 	 */
 	public static String getVLCStringFromFile(File file) {
-		String path = file.getAbsolutePath();
-		String[] parts = path.split("\\.");
-		if (parts[parts.length - 1].trim().toLowerCase().equals("vlcarg")) {
+		final String path = file.getAbsolutePath();
+		final String[] parts = path.split("\\.");
+		if (parts[parts.length - 1].trim().equalsIgnoreCase("vlcarg")) {
 			try {
 				byte[] encoded = Files.readAllBytes(Paths.get(path));
 				return new String(encoded, "UTF-8");
