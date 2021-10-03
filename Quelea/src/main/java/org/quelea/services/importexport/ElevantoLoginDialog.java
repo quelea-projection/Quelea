@@ -107,7 +107,7 @@ public class ElevantoLoginDialog extends Stage {
             InputStream in = t.getRequestBody();
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                byte buf[] = new byte[4096];
+                byte[] buf = new byte[4096];
                 for (int n = in.read(buf); n > 0; n = in.read(buf)) {
                     out.write(buf, 0, n);
                 }
@@ -116,12 +116,12 @@ public class ElevantoLoginDialog extends Stage {
                 in.close();
             }
             
-            String urlSplit[] = qry.split("[#]");
-            String paramSplit[] = urlSplit[1].split("[&]");
+            String[] urlSplit = qry.split("[#]");
+            String[] paramSplit = urlSplit[1].split("[&]");
             
             Map <String,String> params = new HashMap<String, String>();
             for (int i = 0; i < paramSplit.length; ++i) {
-                String pair[] = paramSplit[i].split("=");
+                String[] pair = paramSplit[i].split("=");
                 if (pair.length>1) {
                     params.put(pair[0], pair[1]);
                 }else{

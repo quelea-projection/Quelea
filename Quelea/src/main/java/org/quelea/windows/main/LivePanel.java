@@ -127,7 +127,7 @@ public class LivePanel extends LivePreviewPanel {
                 if (text.isEmpty()) {
                     return;
                 }
-                char arr[] = text.toCharArray();
+                char[] arr = text.toCharArray();
                 char ch = arr[text.toCharArray().length - 1];
                 if (!(ch >= '0' && ch <= '9')) {
                     t.consume();

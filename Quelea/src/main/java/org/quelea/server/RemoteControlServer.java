@@ -1061,10 +1061,10 @@ public class RemoteControlServer {
                 throws UnsupportedEncodingException {
 
             if (query != null) {
-                String pairs[] = query.split("[&]");
+                String[] pairs = query.split("[&]");
 
                 for (String pair : pairs) {
-                    String param[] = pair.split("[=]");
+                    String[] param = pair.split("[=]");
 
                     String key = null;
                     String value = null;

@@ -1110,7 +1110,7 @@ public final class Utils {
 				if (!entry.isDirectory()) {
 					try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
 						int currentByte;
-						byte data[] = new byte[BUFFER];
+						byte[] data = new byte[BUFFER];
 
 						FileOutputStream fos = new FileOutputStream(destFile);
 						try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {

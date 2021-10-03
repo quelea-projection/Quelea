@@ -38,7 +38,7 @@ public class IntegerTextField extends TextField {
         this.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                char ar[] = event.getCharacter().toCharArray();
+                char[] ar = event.getCharacter().toCharArray();
                 char ch = ar[event.getCharacter().toCharArray().length - 1];
                 /*populating lastkey if it is numeric*/
                 if((ch >= '0' && ch <= '9')) {

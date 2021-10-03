@@ -20,7 +20,7 @@ public class UnicodeReader extends Reader {
      * @throws IOException If an I/O error occurs.
      */
     public UnicodeReader(InputStream in, String defaultEncoding) throws IOException {
-        byte bom[] = new byte[BOM_SIZE];
+        byte[] bom = new byte[BOM_SIZE];
         String encoding;
         int unread;
         PushbackInputStream pushbackStream = new PushbackInputStream(in, BOM_SIZE);
