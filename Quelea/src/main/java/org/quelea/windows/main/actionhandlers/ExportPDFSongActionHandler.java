@@ -66,29 +66,11 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
             if (file != null) {
                 QueleaProperties.get().setLastDirectory(file.getParentFile());
                 if (song.hasChords()) {
-                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            song.setPrintChords(true);
-                        }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            song.setPrintChords(false);
-                        }
-                    }).build().showAndWait();
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(t12 -> song.setPrintChords(true)).addNoButton(t1 -> song.setPrintChords(false)).build().showAndWait();
                 }
                 exportTranslations = false;
                 if (!song.getTranslations().isEmpty()) {
-                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("translation.export.heading"), LabelGrabber.INSTANCE.getLabel("include.translations.question")).addYesButton(new EventHandler<ActionEvent>() {
-
-                        @Override
-                        public void handle(ActionEvent t) {
-                            exportTranslations = true;
-                        }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("translation.export.heading"), LabelGrabber.INSTANCE.getLabel("include.translations.question")).addYesButton(t13 -> exportTranslations = true).addNoButton(new EventHandler<ActionEvent>() {
 
                         @Override
                         public void handle(ActionEvent t) {

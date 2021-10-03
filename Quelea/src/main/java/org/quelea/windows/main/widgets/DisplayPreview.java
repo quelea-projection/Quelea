@@ -58,13 +58,7 @@ public class DisplayPreview extends StackPane {
         }
         getChildren().add(canvas);
         updateSize();
-        ChangeListener<Number> cl = new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                updateSize();
-            }
-        };
+        ChangeListener<Number> cl = (ov, t, t1) -> updateSize();
         widthProperty().addListener(cl);
         heightProperty().addListener(cl);
         QueleaApp.get().getProjectionWindow().widthProperty().addListener(cl);
