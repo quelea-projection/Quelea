@@ -150,7 +150,7 @@ public class DisplayGroup {
     private ObservableList<String> getAvailableScreens(boolean none) {
         ObservableList<Screen> monitors = Screen.getScreens();
 
-        ObservableList<String> descriptions = FXCollections.<String>observableArrayList();
+        ObservableList<String> descriptions = FXCollections.observableArrayList();
         if (none) {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("none.text"));
         }
