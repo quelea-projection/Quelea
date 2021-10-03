@@ -214,7 +214,7 @@ public class ElevantoImportDialog extends Stage {
                 }
             }
         }
-    };
+    }
         
     @SuppressWarnings("unchecked")
     protected void updatePlans() {

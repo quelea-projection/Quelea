@@ -86,7 +86,7 @@ public class ImageDisplayable implements Displayable {
      */
     public static ImageDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         File file = new File(node.getTextContent());
-        File imgFile = Utils.getChangedFile(node, fileChanges);;
+        File imgFile = Utils.getChangedFile(node, fileChanges);
         if (!imgFile.exists()) {
             imgFile = new File(QueleaProperties.get().getImageDir(), file.getName());
         }

@@ -425,7 +425,7 @@ public class OOPresentation implements XEventListener {
         public static void dispose() {
             try {
                 if (bridgeComponent != null) {
-                    connection.flush();;
+                    connection.flush();
                     connection.close();
                     bridgeComponent.dispose();
                     bridgeComponent = null;

@@ -633,7 +633,6 @@ public class LivePanel extends LivePreviewPanel {
             Double d = canvas.getBoundsInLocal().getHeight();
             int h = d.intValue();
             Double d2 = canvas.getBoundsInLocal().getWidth();
-            ;
             int w = d2.intValue();
             webPreviewImage = new WritableImage(w, h);
             SnapshotParameters params = new SnapshotParameters();
