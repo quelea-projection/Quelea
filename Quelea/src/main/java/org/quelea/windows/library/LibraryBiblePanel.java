@@ -263,7 +263,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         String[] sections;
         if (!passageSelector.getText().contains(":") && passageSelector.getText().contains("-")) {
             String[] temp = passageSelector.getText().split("-");
-            StringBuilder sb = new StringBuilder("");
+            StringBuilder sb = new StringBuilder();
             for (int i = Integer.parseInt(temp[0]); i <= Integer.parseInt(temp[1]); i++) {
                 sb.append(i).append(",");
             }
