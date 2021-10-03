@@ -194,11 +194,7 @@ public class ImageGroupPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 1) {
-                    imageGroupPreview.select(1, true);
-                } else {
-                    imageGroupPreview.select(index, true);
-                }
+                imageGroupPreview.select(Math.max(index,1), true);
             }
         });
 
