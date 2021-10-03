@@ -56,7 +56,7 @@ public class VideoPsalmParser implements SongParser {
 		if (contents.startsWith(UTF8_BOM)) {
 			contents = contents.substring(1);
 		}
-		JsonElement jelement = new JsonParser().parse(contents);
+		JsonElement jelement = JsonParser.parseString(contents);
 
 		if (jelement == null) {
 			return ret;
