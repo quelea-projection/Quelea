@@ -29,7 +29,6 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.QueleaApp;
 
