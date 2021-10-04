@@ -36,7 +36,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import org.quelea.utils.BigDecimalTextField;
 
-import javax.swing.*;
+import javax.swing.JSpinner;
 
 /**
  * JavaFX Control that behaves like a {@link JSpinner} known in Swing. The
