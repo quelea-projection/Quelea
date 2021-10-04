@@ -50,7 +50,7 @@ public class NoticeDrawer {
     
         private String text;
         
-        private NoticePosition(String text) {
+        NoticePosition(String text) {
             this.text = text;
         }
         
