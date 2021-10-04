@@ -19,7 +19,6 @@ package org.quelea.utils;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -35,7 +34,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-
 import org.quelea.utils.BigDecimalTextField;
 
 import javax.swing.*;
@@ -103,7 +101,7 @@ public class BigDecimalSpinner extends HBox {
         arrowDown.setMouseTransparent(true);
 
         // the spinner buttons scale with the textfield size
-        // TODO: the following approach leads to the desired result, but it is 
+        // TODO: the following approach leads to the desired result, but it is
         // not fully understood why and obviously it is not quite elegant
         buttonHeight = numberField.heightProperty().subtract(3).divide(2);
         // give unused space in the buttons VBox to the incrementBUtton
@@ -120,7 +118,7 @@ public class BigDecimalSpinner extends HBox {
         incrementButton.prefHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.minHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.setFocusTraversable(false);
-        incrementButton.setOnAction((ae) -> {
+        incrementButton.setOnAction(ae -> {
             increment();
             ae.consume();
         });
@@ -139,10 +137,9 @@ public class BigDecimalSpinner extends HBox {
         decrementButton.minHeightProperty().bind(buttonHeight);
 
         decrementButton.setFocusTraversable(false);
-        decrementButton.setOnAction((ae) -> {
+        decrementButton.setOnAction(ae -> {
             decrement();
             ae.consume();
-
         });
 
         StackPane decPane = new StackPane();

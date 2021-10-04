@@ -16,27 +16,13 @@
  */
 package org.quelea.windows.newsong;
 
-import org.javafx.dialog.Dialog;
-import org.quelea.data.chord.ChordLineTransposer;
-import org.quelea.data.chord.ChordTransposer;
-import org.quelea.data.chord.TransposeDialog;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.languages.spelling.Dictionary;
-import org.quelea.services.languages.spelling.DictionaryManager;
-import org.quelea.services.languages.spelling.SpellTextArea;
-import org.quelea.services.utils.LineTypeChecker;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.InputMethodRequestsObject;
-import org.quelea.windows.lyrics.LyricsTextArea;
-import org.quelea.windows.main.QueleaApp;
-
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -55,6 +41,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.javafx.dialog.Dialog;
+import org.quelea.data.chord.ChordLineTransposer;
+import org.quelea.data.chord.ChordTransposer;
+import org.quelea.data.chord.TransposeDialog;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.spelling.Dictionary;
+import org.quelea.services.languages.spelling.DictionaryManager;
+import org.quelea.services.languages.spelling.SpellTextArea;
+import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.InputMethodRequestsObject;
+import org.quelea.windows.lyrics.LyricsTextArea;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,
@@ -207,7 +209,6 @@ public class BasicSongPanel extends BorderPane {
                 Platform.runLater(() -> {
                     lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
                     lyricsArea.getArea().refreshStyle();
-
                 });
             } else {
                 int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
@@ -215,13 +216,11 @@ public class BasicSongPanel extends BorderPane {
                     Platform.runLater(() -> {
                         lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
                         lyricsArea.getArea().refreshStyle();
-
                     });
                 } else {
                     Platform.runLater(() -> {
                         lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
                         lyricsArea.getArea().refreshStyle();
-
                     });
                 }
             }
@@ -299,8 +298,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getTransposeButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
-        ret.setOnAction((t) -> {
-
+        ret.setOnAction(t -> {
             String originalKey = getKey(0);
             if (originalKey == null) {
                 Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
@@ -311,7 +309,6 @@ public class BasicSongPanel extends BorderPane {
             int semitones = transposeDialog.getSemitones();
 
             transposeSong(semitones);
-
         });
         Utils.setToolbarButtonStyle(ret);
         return ret;
@@ -367,7 +364,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getDictButton() {
         Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
-        button.setOnAction((t) -> lyricsArea.runSpellCheck());
+        button.setOnAction(t -> lyricsArea.runSpellCheck());
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
         Utils.setToolbarButtonStyle(button);
         return button;
@@ -436,7 +433,6 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get the sequence field.
      * <p/>
-     *
      * @return the sequence field.
      */
     public TextField getSequenceField() {

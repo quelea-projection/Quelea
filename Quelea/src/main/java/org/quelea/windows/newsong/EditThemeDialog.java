@@ -19,7 +19,6 @@
 package org.quelea.windows.newsong;
 
 import java.io.File;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -38,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -98,7 +96,7 @@ public class EditThemeDialog extends Stage {
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        confirmButton.setOnAction((t) -> {
+        confirmButton.setOnAction(t -> {
             String themeName;
             if (nameField.getText().trim().isEmpty()) {
                 themeName = LabelGrabber.INSTANCE.getLabel("untitled.theme.text");
@@ -109,13 +107,11 @@ public class EditThemeDialog extends Stage {
             theme.setFile(themeFile);
             theme.setThemeName(themeName);
             hide();
-
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
-        cancelButton.setOnAction((t) -> {
+        cancelButton.setOnAction(t -> {
             theme = null;
             hide();
-
         });
 
         HBox southPanel = new HBox(10);

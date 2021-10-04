@@ -23,12 +23,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
@@ -67,11 +65,10 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                         Platform.runLater(() -> {
                             panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.images"));
                             panel.getProgressBar().setProgress(-1);
-                            panel.getCancelButton().setOnAction((t) -> {
+                            panel.getCancelButton().setOnAction(t1 -> {
                                 panel.done();
                                 halt = true;
                             });
-
                         });
                         try {
                             if (!halt) {

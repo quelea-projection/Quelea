@@ -20,7 +20,6 @@ package org.quelea.utils;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -72,17 +71,16 @@ public class BigDecimalTextField extends TextField {
     private void initHandlers() {
 
         // try to parse when focus is lost or RETURN is hit
-        setOnAction((ae) -> parseAndFormatInput());
+        setOnAction(arg0 -> parseAndFormatInput());
 
         focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 parseAndFormatInput();
             }
-
         });
 
         // Set text in field if BigDecimal property is changed from outside.
-        numberProperty().addListener((observable, oldValue, newValue) -> setText(nf.format(newValue)));
+        numberProperty().addListener((obserable, oldValue, newValue) -> setText(nf.format(newValue)));
     }
 
     /**

@@ -21,13 +21,11 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
-
 import org.javafx.dialog.Dialog;
 import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
@@ -48,7 +46,6 @@ import org.quelea.windows.presentation.PowerPointHandler;
  * The exit action listener - called when the user requests they wish to exit
  * Quelea.
  * <p/>
- *
  * @author Michael
  */
 public class ExitActionHandler implements EventHandler<ActionEvent> {
@@ -79,18 +76,16 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = true;
-            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text"))
-                    .addYesButton((t1) -> {
-                        //Save schedule
-                        block = true;
-                        new ScheduleSaver().saveSchedule(false, success -> {
-                            cancel = !success;
-                            block = false;
-                        });
-                    }).addNoButton((t1) -> cancel = false).addCancelButton((t1) -> {
-                        //No need to do anything
-                    }).build();
-
+            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(t14 -> {
+                //Save schedule
+                block = true;
+                new ScheduleSaver().saveSchedule(false, success -> {
+                    cancel = !success;
+                    block = false;
+                });
+            }).addNoButton(t13 -> cancel = false).addCancelButton(t12 -> {
+                //No need to do anything
+            }).build();
             d.showAndWait();
             while (block) {
                 try {
@@ -143,9 +138,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             if (recHandler.getIsRecording()) {
                 block = true;
                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message"))
-                        .addYesButton((ActionEvent t1) -> toolbar.stopRecording()).addNoButton((ActionEvent t1) -> {
-                            System.exit(0);
-                        }).build();
+                        .addYesButton((ActionEvent t1) -> toolbar.stopRecording()).addNoButton((ActionEvent t1) -> System.exit(0)).build();
                 d.setOnCloseRequest((WindowEvent we) -> System.exit(0));
                 Thread thread = new Thread(() -> {
                     while (block) {

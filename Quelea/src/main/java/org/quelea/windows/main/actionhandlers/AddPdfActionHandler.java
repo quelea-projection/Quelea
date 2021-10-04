@@ -23,12 +23,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.services.languages.LabelGrabber;
@@ -42,7 +40,6 @@ import org.quelea.windows.main.StatusPanel;
 /**
  * The action listener for adding a PDF presentation.
  * <p>
- *
  * @author Arvid, based on AddPowerpointActionHandler
  */
 public class AddPdfActionHandler implements EventHandler<ActionEvent> {
@@ -52,7 +49,6 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
     /**
      * Add the PDF
      * <p>
-     *
      * @param t the event.
      */
     @Override
@@ -67,7 +63,7 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
     }
 
     public void addPDF(List<File> files) {
-        if (files != null) {
+        if(files != null) {
             new Thread() {
 
                 private StatusPanel panel;
@@ -78,32 +74,34 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                     Platform.runLater(() -> {
                         panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
                         panel.getProgressBar().setProgress(-1);
-                        panel.getCancelButton().setOnAction((t) -> {
+                        panel.getCancelButton().setOnAction(t -> {
                             panel.done();
                             halt = true;
                         });
                     });
                     try {
-                        for (File file : files) {
+                        for(File file : files) {
                             final PdfDisplayable displayable = new PdfDisplayable(file);
-                            if (!halt) {
+                            if(!halt) {
                                 Platform.runLater(() -> {
                                     QueleaProperties.get().setLastDirectory(file.getParentFile());
                                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                 });
                             }
                         }
-                    } catch (IOException ex) {
+                    }
+                    catch(IOException ex) {
                         System.err.println("IO " + ex);
-                        if (!halt) {
+                        if(!halt) {
                             Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                         }
-                    } catch (RuntimeException ex) {
+                    }
+                    catch(RuntimeException ex) {
                         System.err.println("RE " + ex);
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
                         Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                     }
-                    while (panel == null) {
+                    while(panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works
                     }
                     panel.done();

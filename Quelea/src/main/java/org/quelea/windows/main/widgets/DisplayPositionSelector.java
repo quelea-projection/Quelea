@@ -19,7 +19,6 @@ package org.quelea.windows.main.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,11 +29,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
-
 import org.quelea.data.ThemeDTO;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
+ *
  * @author Michael
  */
 public class DisplayPositionSelector extends BorderPane {
@@ -52,27 +51,24 @@ public class DisplayPositionSelector extends BorderPane {
             but.prefWidthProperty().bind(widthProperty().divide(3));
             but.prefHeightProperty().bind(heightProperty().divide(3));
             but.setToggleGroup(group);
-            but.setOnAction((t) -> {
+            but.setOnAction(t -> {
                 if (panel != null) {
                     panel.updateTheme(true);
                 }
-
             });
             selectorPane.add(but, i % 3, i / 3);
             buttons.add(but);
         }
         setCenter(selectorPane);
-        setOnMouseEntered((t) -> {
+        setOnMouseEntered(t -> {
             FadeTransition trans = new FadeTransition(Duration.seconds(0.2), DisplayPositionSelector.this);
             trans.setToValue(0.7);
             trans.play();
-
         });
-        setOnMouseExited((t) -> {
+        setOnMouseExited(t -> {
             FadeTransition trans = new FadeTransition(Duration.seconds(0.2), DisplayPositionSelector.this);
             trans.setToValue(0);
             trans.play();
-
         });
         setOpacity(0);
     }
