@@ -102,9 +102,11 @@ public class LibrarySongPreviewCanvas extends StackPane {
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished((t) -> {
+        trans.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
                 setVisible(false);
             }
-        );
+        });
     }
 }
