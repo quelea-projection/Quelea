@@ -67,30 +67,20 @@ public class LibraryPopupMenu extends ContextMenu {
         exportToPDF = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.pdf.button"), new ImageView(new Image("file:icons/fileexport.png", 16, 16, false, true)));
         exportToPDF.setOnAction(new ExportPDFSongActionHandler());
         print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), new ImageView(new Image("file:icons/fileprint.png", 16, 16, false, true)));
-        print.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
+        print.setOnAction(t -> {
                 final SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
                 if (song != null) {
                     if (song.hasChords()) {
-                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
-
-                            @Override
-                            public void handle(ActionEvent t) {
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(t -> {
                                 song.setPrintChords(true);
                             }
-                        }).addNoButton(new EventHandler<ActionEvent>() {
-
-                            @Override
-                            public void handle(ActionEvent t) {
+                        ).addNoButton(t -> {
                                 song.setPrintChords(false);
                             }
-                        }).build().showAndWait();
+                        ).build().showAndWait();
                     }
                     Printer.getInstance().print(song);
                 }
-            }
         });
 
         getItems().add(addToSchedule);
