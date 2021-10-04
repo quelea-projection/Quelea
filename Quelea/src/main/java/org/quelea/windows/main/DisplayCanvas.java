@@ -79,7 +79,7 @@ public class DisplayCanvas extends StackPane {
         LOW(2);
         private final int priority;
 
-        private Priority(int priority) {
+        Priority(int priority) {
             this.priority = priority;
         }
 
