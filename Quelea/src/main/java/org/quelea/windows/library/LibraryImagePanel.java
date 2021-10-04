@@ -66,9 +66,7 @@ public class LibraryImagePanel extends BorderPane {
 
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
-        addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
+        addButton.setOnAction(t -> {
                 FileChooser chooser = new FileChooser();
                 if (QueleaProperties.get().getLastDirectory() != null) {
                     chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
@@ -85,9 +83,7 @@ public class LibraryImagePanel extends BorderPane {
 
                             if(new File(imagePanel.getDir(), f.getName()).exists()) {
                                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
-                                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent t) {
+                                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), t -> {
                                                 try {
                                                     Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
                                                     Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
@@ -97,12 +93,10 @@ public class LibraryImagePanel extends BorderPane {
                                                     LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
                                                 }
                                             }
-                                        }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent t) {
+                                        ).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), t -> {
                                                 // DO NOTHING
                                             }
-                                        }).build();
+                                        ).build();
                                 d.showAndWait();
                             }
                             else {
@@ -119,7 +113,7 @@ public class LibraryImagePanel extends BorderPane {
                     }
                 }
             }
-        });
+        );
         HBox toolbarBox = new HBox();
         toolbar.setOrientation(Orientation.VERTICAL);
         toolbarBox.getChildren().add(toolbar);
