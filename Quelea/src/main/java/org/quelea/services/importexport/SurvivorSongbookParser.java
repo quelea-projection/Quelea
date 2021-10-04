@@ -68,7 +68,7 @@ public class SurvivorSongbookParser implements SongParser {
             }
         }
         document.close();
-        Objects.requireNonNullElseGet(pdfSongs, () -> new ArrayList<>( 0 ));
+        return Objects.requireNonNullElseGet(pdfSongs, () -> new ArrayList<>());
     }
 
     /**
