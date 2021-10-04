@@ -66,18 +66,13 @@ public class LibrarySongPanel extends BorderPane {
     public LibrarySongPanel() {
         boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
         songList = new LibrarySongList(true);
-        songList.getListView().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+        songList.getListView().getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
                 checkRemoveButton();
             }
-        });
-        songList.getListView().itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
-            @Override
-            public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
+        );
+        songList.getListView().itemsProperty().addListener((ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1)-> {
                 checkRemoveButton();
-            }
-        });
+            });
         ScrollPane listScrollPane = new ScrollPane();
         setCenter(listScrollPane);
 
@@ -89,32 +84,23 @@ public class LibrarySongPanel extends BorderPane {
         searchBox = new TextField();
         HBox.setHgrow(searchBox, Priority.SOMETIMES);
         searchBox.setMaxWidth(Double.MAX_VALUE);
-        searchBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
+        searchBox.setOnKeyPressed((KeyEvent t) ->{
                 if (t.getCode() == KeyCode.ESCAPE) {
                     searchCancelButton.fire();
                 }
-            }
-        });
-        searchBox.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+            });
+        searchBox.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
                 searchCancelButton.setDisable(searchBox.getText().isEmpty());
                 songList.filter(searchBox.getText());
-            }
-        });
+            });
         northPanel.getChildren().add(searchBox);
         searchCancelButton = new Button("", new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png")));
         Utils.setToolbarButtonStyle(searchCancelButton);
         searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
         searchCancelButton.setDisable(true);
-        searchCancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
+        searchCancelButton.setOnAction((ActionEvent t) -> {
                 searchBox.clear();
-            }
-        });
+            });
         northPanel.getChildren().add(searchCancelButton);
         BorderPane.setMargin(northPanel, new Insets(0, 5, 0, 5));
         setTop(northPanel);
@@ -176,3 +162,4 @@ public class LibrarySongPanel extends BorderPane {
         return searchBox;
     }
 }
+
