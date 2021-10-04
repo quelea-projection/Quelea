@@ -177,7 +177,7 @@ public class LibrarySongList extends StackPane {
             }
         });
         if (popup) {
-            songList.setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
+            songList.setCellFactory(DisplayableListCell.forListView(popupMenu, callback, null));
         }
         new Thread() {
             public void run() {

@@ -71,7 +71,7 @@ public class ProPresenterParser implements SongParser {
 
 	@Override
 	public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-		return getSong(file).map(Collections::singletonList).orElse(Collections.<SongDisplayable>emptyList());
+		return getSong(file).map(Collections::singletonList).orElse(Collections.emptyList());
 	}
 
 	private Optional<SongDisplayable> getSong(File file) {

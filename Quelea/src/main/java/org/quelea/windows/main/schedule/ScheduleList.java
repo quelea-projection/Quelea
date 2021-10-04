@@ -218,7 +218,7 @@ public class ScheduleList extends StackPane {
                 return listCell;
             }
         };
-        listView.setCellFactory(DisplayableListCell.<Displayable>forListView(null, callback, new Constraint<Displayable>() {
+        listView.setCellFactory(DisplayableListCell.forListView(null, callback, new Constraint<Displayable>() {
             @Override
             public boolean isTrue(Displayable d) {
                 return d instanceof SongDisplayable || d instanceof BiblePassage || d instanceof TimerDisplayable;
