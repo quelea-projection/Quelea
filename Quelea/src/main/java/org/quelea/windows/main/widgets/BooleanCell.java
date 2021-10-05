@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,9 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     public BooleanCell() {
 
         checkBox = new CheckBox();
-        checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(isEditing()) {
-                    commitEdit(newValue == null ? false : newValue);
-                }
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(isEditing()) {
+                commitEdit(newValue == null ? false : newValue);
             }
         });
         this.setGraphic(checkBox);

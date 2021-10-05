@@ -153,13 +153,7 @@ public class BasicSongPanel extends BorderPane {
             for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
                 dictSelector.getItems().add(dict);
             }
-            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
-
-                @Override
-                public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
-                    lyricsArea.setDictionary(dictSelector.getValue());
-                }
-            });
+            dictSelector.selectionModelProperty().get().selectedItemProperty().addListener((ov, t, t1) -> lyricsArea.setDictionary(dictSelector.getValue()));
 
             dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
             lyricsToolbar.getItems().add(dictSelector);
@@ -212,33 +206,21 @@ public class BasicSongPanel extends BorderPane {
             int lineIndex = lineFromPos(lyricsArea.getTextAndChords(), caretPos);
             String line = parts[lineIndex];
             if (line.trim().isEmpty()) {
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
-                        lyricsArea.getArea().refreshStyle();
-                    }
+                Platform.runLater(() -> {
+                    lyricsArea.getArea().getTextArea().replaceText(caretPos, caretPos, "<>");
+                    lyricsArea.getArea().refreshStyle();
                 });
             } else {
                 int nextLinePos = nextLinePos(lyricsArea.getTextAndChords(), caretPos);
                 if (nextLinePos >= lyricsArea.getTextAndChords().length()) {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
-                            lyricsArea.getArea().refreshStyle();
-                        }
+                    Platform.runLater(() -> {
+                        lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
+                        lyricsArea.getArea().refreshStyle();
                     });
                 } else {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
-                            lyricsArea.getArea().refreshStyle();
-                        }
+                    Platform.runLater(() -> {
+                        lyricsArea.getArea().getTextArea().replaceText(nextLinePos, nextLinePos, "<>\n");
+                        lyricsArea.getArea().refreshStyle();
                     });
                 }
             }
@@ -260,9 +242,7 @@ public class BasicSongPanel extends BorderPane {
         Button ret = new Button("", new ImageView(new Image("file:icons/" + fileName, 24, 24, false, true)));
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(label)));
-        ret.setOnAction((event) -> {
-            insertTitle(titleName, "");
-        });
+        ret.setOnAction((event) -> insertTitle(titleName, ""));
         getLyricsField().requestFocus();
         return ret;
     }
@@ -318,20 +298,17 @@ public class BasicSongPanel extends BorderPane {
     private Button getTransposeButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
-        ret.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                String originalKey = getKey(0);
-                if (originalKey == null) {
-                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
-                    return;
-                }
-                transposeDialog.setKey(originalKey);
-                transposeDialog.showAndWait();
-                int semitones = transposeDialog.getSemitones();
-
-                transposeSong(semitones);
+        ret.setOnAction(t -> {
+            String originalKey = getKey(0);
+            if (originalKey == null) {
+                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
+                return;
             }
+            transposeDialog.setKey(originalKey);
+            transposeDialog.showAndWait();
+            int semitones = transposeDialog.getSemitones();
+
+            transposeSong(semitones);
         });
         Utils.setToolbarButtonStyle(ret);
         return ret;
@@ -387,12 +364,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getDictButton() {
         Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
-        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                lyricsArea.runSpellCheck();
-            }
-        });
+        button.setOnAction(t -> lyricsArea.runSpellCheck());
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
         Utils.setToolbarButtonStyle(button);
         return button;
@@ -476,15 +448,11 @@ public class BasicSongPanel extends BorderPane {
         SplitMenuButton m = new SplitMenuButton();
         m.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/verse-light.png" : "file:icons/verse.png", 24, 24, false, true)));
         m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
-        m.setOnMouseClicked((MouseEvent event) -> {
-            insertTitle("Verse", "");
-        });
+        m.setOnMouseClicked((MouseEvent event) -> insertTitle("Verse", ""));
         for (int i = 1; i < 10; i++) {
             MenuItem mi = new MenuItem("", new ImageView(new Image(darkTheme ? "file:icons/verse" + i + "-light.png" : "file:icons/verse" + i + ".png", 24, 24, false, true)));
             final int finalI = i;
-            mi.setOnAction((ActionEvent event) -> {
-                insertTitle("Verse", Integer.toString(finalI));
-            });
+            mi.setOnAction((ActionEvent event) -> insertTitle("Verse", Integer.toString(finalI)));
             m.getItems().add(mi);
         }
         getLyricsField().requestFocus();
