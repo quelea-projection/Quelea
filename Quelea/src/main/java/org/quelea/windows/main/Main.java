@@ -16,7 +16,7 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
