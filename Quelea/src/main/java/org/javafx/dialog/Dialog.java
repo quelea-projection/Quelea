@@ -456,8 +456,8 @@ public class Dialog extends Stage {
      * @param title dialog title
      * @param message dialog message
      */
-    public static void showError(String title, String message) {
-        showError(title, message, null);
+    public static void showError(String t, String m) {
+        showError(t, m, null);
     }
 
     /**
