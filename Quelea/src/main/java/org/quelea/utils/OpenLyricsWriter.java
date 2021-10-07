@@ -45,7 +45,6 @@ import java.util.Locale;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -104,7 +103,6 @@ public class OpenLyricsWriter {
     public void writeToFile(File xfile, boolean overwrite)
             throws OpenLyricsWriterFileExistsException,
                    OpenLyricsWriterWriteErrorException,
-                   TransformerConfigurationException,
                    TransformerException {
         if (!overwrite && xfile.exists()) {
             throw new OpenLyricsWriterFileExistsException(String.format("The file %s exists.", xfile.getAbsolutePath()));
