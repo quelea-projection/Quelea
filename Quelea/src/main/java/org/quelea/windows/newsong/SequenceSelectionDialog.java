@@ -337,10 +337,10 @@ public final class SequenceSelectionDialog extends Stage {
         StringBuilder name = new StringBuilder();
         if (section.trim().contains(" ")) {
             for (String s : section.split(" ")) {
-                name.append(s.substring(0, 1));
+                name.append(s.charAt(0));
             }
         } else {
-            name.append(section.substring(0, 1));
+            name.append(section.charAt(0));
         }
         if (chosenSequence.getItems().size() != 0 && chosenSequence.getItems().get(0).isEmpty()) {
             chosenSequence.getItems().remove(0);
