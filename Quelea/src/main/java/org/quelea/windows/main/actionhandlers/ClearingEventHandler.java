@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,18 +48,8 @@ public abstract class ClearingEventHandler implements EventHandler<ActionEvent> 
         }
         yes = true;
         if(mainpanel.getSchedulePanel().getScheduleList().getSchedule().isModified()) {
-            final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent t) {
-                }
-            }).addNoButton(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent t) {
-                    yes = false;
-                }
-            }).build();
+            final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(t -> {
+            }).addNoButton(t -> yes = false).build();
             dialog.showAndWait();
         }
         return yes;

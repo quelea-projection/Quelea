@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,9 +77,7 @@ public class EditThemeDialog extends Stage {
         themeSelectPanel.setPadding(new Insets(5));
         Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.label") + ": ");
         themeCombo = new ComboBox<>();
-        themeCombo.setOnAction(event -> {
-            setTheme(themeCombo.getSelectionModel().getSelectedItem());
-        });
+        themeCombo.setOnAction(event -> setTheme(themeCombo.getSelectionModel().getSelectedItem()));
         themeCombo.setItems(ThemeUtils.getThemes());
         ThemeDTO newTheme = ThemeDTO.DEFAULT_THEME;
         newTheme.setThemeName("New...");
@@ -98,30 +96,22 @@ public class EditThemeDialog extends Stage {
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                String themeName;
-                if (nameField.getText().trim().isEmpty()) {
-                    themeName = LabelGrabber.INSTANCE.getLabel("untitled.theme.text");
-                } else {
-                    themeName = nameField.getText();
-                }
-                theme = panel.getTheme();
-                theme.setFile(themeFile);
-                theme.setThemeName(themeName);
-                hide();
+        confirmButton.setOnAction(t -> {
+            String themeName;
+            if (nameField.getText().trim().isEmpty()) {
+                themeName = LabelGrabber.INSTANCE.getLabel("untitled.theme.text");
+            } else {
+                themeName = nameField.getText();
             }
+            theme = panel.getTheme();
+            theme.setFile(themeFile);
+            theme.setThemeName(themeName);
+            hide();
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
-        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                theme = null;
-                hide();
-            }
+        cancelButton.setOnAction(t -> {
+            theme = null;
+            hide();
         });
 
         HBox southPanel = new HBox(10);

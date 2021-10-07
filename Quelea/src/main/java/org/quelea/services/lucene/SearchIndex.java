@@ -30,7 +30,7 @@ public interface SearchIndex<T> {
     /**
      * Filter the songs based on the contents of the lyrics or the title.
      */
-    public enum FilterType {
+    enum FilterType {
 
         TITLE, AUTHOR, BODY
     }
