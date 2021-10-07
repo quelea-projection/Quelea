@@ -98,7 +98,7 @@ public class HelpMenu extends Menu {
     /**
      * Show a dialog saying we couldn't open the given location.
      * <p/>
-     * @param location the location that failed to open.
+     * @param page the location that failed to open.
      */
     private void showError(String page) {
         Platform.runLater(() -> {

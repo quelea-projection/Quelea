@@ -119,7 +119,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Create a new timer displayable.
      * <p/>
-     * @param seconds the duration of the countdown timer
+     * @param timeToFinish this is when the timer equals 0
      * @param pretext any text to go before the timer
      * @param posttext and text to go after the timer
      * @param theme    the theme to use for this displayable when displayed

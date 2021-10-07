@@ -146,8 +146,7 @@ public class DisplayStage extends Stage {
 
     /**
      * Set the area of the display window.
-     * <p/>
-     * @param area the area of the window.
+     *
      */
     public final void setAreaImmediate(final Bounds area) {
         setWidth(area.getMaxX() - area.getMinX());
@@ -158,8 +157,6 @@ public class DisplayStage extends Stage {
 
     /**
      * Set the area of the display window using run later.
-     * <p/>
-     * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
         Platform.runLater(() -> {

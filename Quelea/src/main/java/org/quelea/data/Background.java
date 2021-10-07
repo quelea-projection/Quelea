@@ -49,7 +49,7 @@ public interface Background {
      * Set the given elements on the theme form to the correct values for this background.
      * @param backgroundColorPicker the colour picker
      * @param backgroundTypeSelect the ComboBox to select the background type.
-     * @param backgroundLocation the text field representing the background "location".
+     * @param backgroundImgLocation the text field representing the background "location".
      */
     void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider, CheckBox vidStretchCheckbox);
 }
