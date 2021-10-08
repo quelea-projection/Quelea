@@ -3,7 +3,9 @@
 Contributions are always welcome! There's three main ways you can contribute to Quelea - you can report issues, [maintain and add translations](https://quelea.org/lang/), and contribute to the code directly.
 
 ## Hacktoberfest issues
-If you're here for Hacktoberfest, welcomee! We hope you find something you can take on, and the help you need to do it.
+If you're here for Hacktoberfest, welcome! We hope you find something you can take on, and the help you need to do it.
+
+Please don't work on anything until we've assigned you an issue, and *especially* don't work on issues that have been assigned to someone else.
 
 Please be aware that we're currently limiting the issues labelled "good first issue" to one per contributor, as they're proving incredibly popular and we think it's only fair to share them around a bit. If you've done one of them then please leave the rest for other newcomers to pick up! (You're more than welcome to take on a more complicated issue however, if you'd like.)
 
