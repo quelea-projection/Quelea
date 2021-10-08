@@ -55,13 +55,7 @@ public class FontSelectionDialog extends Stage {
         setResizable(false);
         setTitle(LabelGrabber.INSTANCE.getLabel("font.selection.dialog.title"));
         Utils.addIconsToStage(this);
-        setOnHiding(new EventHandler<WindowEvent>() {
-
-            @Override
-            public void handle(WindowEvent t) {
-                QueleaProperties.get().setChosenFonts(chosenFontSelection.getItems());
-            }
-        });
+        setOnHiding(t -> QueleaProperties.get().setChosenFonts(chosenFontSelection.getItems()));
         BorderPane mainPane = new BorderPane();
         Scene scene = new Scene(mainPane);
         if (QueleaProperties.get().getUseDarkTheme()) {
@@ -100,13 +94,7 @@ public class FontSelectionDialog extends Stage {
         centrePane.getChildren().add(chosenFontBox);
 
         Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
-        doneButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                FontSelectionDialog.this.hide();
-            }
-        });
+        doneButton.setOnAction(t -> FontSelectionDialog.this.hide());
         StackPane donePane = new StackPane();
         donePane.setPadding(new Insets(0, 0, 10, 0));
         donePane.getChildren().add(doneButton);
@@ -141,17 +129,13 @@ public class FontSelectionDialog extends Stage {
                         }
                     }
                 };
-                listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        dragFromLeft = true;
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(listCell.getItem());
-                        db.setContent(content);
-                        event.consume();
-                    }
+                listCell.setOnDragDetected(event -> {
+                    dragFromLeft = true;
+                    Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(listCell.getItem());
+                    db.setContent(content);
+                    event.consume();
                 });
                 return listCell;
             }
@@ -172,64 +156,46 @@ public class FontSelectionDialog extends Stage {
                         }
                     }
                 };
-                listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        dragFromLeft = false;
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(listCell.getItem());
-                        db.setContent(content);
-                        event.consume();
-                    }
+                listCell.setOnDragDetected(event -> {
+                    dragFromLeft = false;
+                    Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(listCell.getItem());
+                    db.setContent(content);
+                    event.consume();
                 });
                 return listCell;
             }
         };
         allFontSelection.setCellFactory(allFontsCallback);
         chosenFontSelection.setCellFactory(chosenFontsCallback);
-        allFontSelection.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                if (event.getDragboard().getString() != null) {
-                    event.acceptTransferModes(TransferMode.ANY);
+        allFontSelection.setOnDragOver(event -> {
+            if (event.getDragboard().getString() != null) {
+                event.acceptTransferModes(TransferMode.ANY);
+            }
+        });
+        allFontSelection.setOnDragDropped(t -> {
+            if (!dragFromLeft) {
+                String font = t.getDragboard().getString();
+                if (font != null) {
+                    chosenFontSelection.getItems().remove(font);
+                    allFontSelection.getItems().add(font);
+                    Collections.sort(allFontSelection.getItems());
                 }
             }
         });
-        allFontSelection.setOnDragDropped(new EventHandler<DragEvent>() {
-
-            @Override
-            public void handle(DragEvent t) {
-                if (!dragFromLeft) {
-                    String font = t.getDragboard().getString();
-                    if (font != null) {
-                        chosenFontSelection.getItems().remove(font);
-                        allFontSelection.getItems().add(font);
-                        Collections.sort(allFontSelection.getItems());
-                    }
-                }
+        chosenFontSelection.setOnDragOver(event -> {
+            if (event.getDragboard().getString() != null) {
+                event.acceptTransferModes(TransferMode.ANY);
             }
         });
-        chosenFontSelection.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                if (event.getDragboard().getString() != null) {
-                    event.acceptTransferModes(TransferMode.ANY);
-                }
-            }
-        });
-        chosenFontSelection.setOnDragDropped(new EventHandler<DragEvent>() {
-
-            @Override
-            public void handle(DragEvent t) {
-                if (dragFromLeft) {
-                    String font = t.getDragboard().getString();
-                    if (font != null) {
-                        chosenFontSelection.getItems().add(font);
-                        Collections.sort(chosenFontSelection.getItems());
-                        allFontSelection.getItems().remove(font);
-                    }
+        chosenFontSelection.setOnDragDropped(t -> {
+            if (dragFromLeft) {
+                String font = t.getDragboard().getString();
+                if (font != null) {
+                    chosenFontSelection.getItems().add(font);
+                    Collections.sort(chosenFontSelection.getItems());
+                    allFontSelection.getItems().remove(font);
                 }
             }
         });

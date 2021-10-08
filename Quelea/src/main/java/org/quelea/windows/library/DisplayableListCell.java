@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,23 +58,17 @@ public class DisplayableListCell<T> extends ListCell<T> {
      */
     public static <T> Callback<ListView<T>, ListCell<T>> forListView(final ContextMenu contextMenu, final Callback<ListView<T>, ListCell<T>> cellFactory,
             final Constraint<T> constraint) {
-        return new Callback<ListView<T>, ListCell<T>>() {
-            @Override
-            public ListCell<T> call(ListView<T> listView) {
-                final ListCell<T> cell = cellFactory == null ? new DefaultListCell<T>() : cellFactory.call(listView);
-                cell.itemProperty().addListener(new ChangeListener<T>() {
-                    @Override
-                    public void changed(ObservableValue<? extends T> ov, T oldVal, T newVal) {
-                        if(newVal == null || (constraint != null && !constraint.isTrue(newVal))) {
-                            cell.setContextMenu(null);
-                        }
-                        else {
-                            cell.setContextMenu(contextMenu);
-                        }
-                    }
-                });
-                return cell;
-            }
+        return listView -> {
+            final ListCell<T> cell = cellFactory == null ? new DefaultListCell<T>() : cellFactory.call(listView);
+            cell.itemProperty().addListener((ov, oldVal, newVal) -> {
+                if(newVal == null || (constraint != null && !constraint.isTrue(newVal))) {
+                    cell.setContextMenu(null);
+                }
+                else {
+                    cell.setContextMenu(contextMenu);
+                }
+            });
+            return cell;
         };
     }
 }

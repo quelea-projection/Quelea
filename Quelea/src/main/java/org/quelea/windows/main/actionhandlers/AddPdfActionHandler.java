@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,33 +71,21 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
 
                 @Override
                 public void run() {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
-                            panel.getProgressBar().setProgress(-1);
-                            panel.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
-
-                                @Override
-                                public void handle(ActionEvent t) {
-                                    panel.done();
-                                    halt = true;
-                                }
-                            });
-                        }
+                    Platform.runLater(() -> {
+                        panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
+                        panel.getProgressBar().setProgress(-1);
+                        panel.getCancelButton().setOnAction(t -> {
+                            panel.done();
+                            halt = true;
+                        });
                     });
                     try {
                         for(File file : files) {
                             final PdfDisplayable displayable = new PdfDisplayable(file);
                             if(!halt) {
-                                Platform.runLater(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        QueleaProperties.get().setLastDirectory(file.getParentFile());
-                                        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-                                    }
+                                Platform.runLater(() -> {
+                                    QueleaProperties.get().setLastDirectory(file.getParentFile());
+                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                 });
                             }
                         }
@@ -105,25 +93,13 @@ public class AddPdfActionHandler implements EventHandler<ActionEvent> {
                     catch(IOException ex) {
                         System.err.println("IO " + ex);
                         if(!halt) {
-                            Platform.runLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
-                                }
-                            });
+                            Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                         }
                     }
                     catch(RuntimeException ex) {
                         System.err.println("RE " + ex);
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
-                        Platform.runLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
-                            }
-                        });
+                        Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                     }
                     while(panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works

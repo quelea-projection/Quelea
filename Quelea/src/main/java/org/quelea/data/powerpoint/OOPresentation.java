@@ -436,9 +436,7 @@ public class OOPresentation implements XEventListener {
                     }
 
                 }
-            } catch (DisposedException ex) {
-                throw new RuntimeException(ex.getMessage());
-            } catch (com.sun.star.io.IOException ex) {
+            } catch (DisposedException | com.sun.star.io.IOException ex) {
                 throw new RuntimeException(ex.getMessage());
             }
         }

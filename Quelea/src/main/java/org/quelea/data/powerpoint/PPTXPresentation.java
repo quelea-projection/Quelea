@@ -41,7 +41,7 @@ public class PPTXPresentation implements Presentation {
      * @param file the file containing the presentation.
      */
     public PPTXPresentation(String file) throws IOException {
-        slideshow = new XMLSlideShow(new FileInputStream(new File(file)));
+        slideshow = new XMLSlideShow(new FileInputStream(file));
         slides = makeSlides();
     }
 

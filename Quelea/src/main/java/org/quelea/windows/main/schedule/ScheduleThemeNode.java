@@ -59,7 +59,7 @@ public class ScheduleThemeNode extends BorderPane {
 
     public interface UpdateThemeCallback {
 
-        public void updateTheme(ThemeDTO theme);
+        void updateTheme(ThemeDTO theme);
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;
