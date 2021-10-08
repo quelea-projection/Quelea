@@ -422,20 +422,14 @@ public class LivePanel extends LivePreviewPanel {
      * @param show display the extra options.
      */
     public void showExtraToolbarOptions(boolean show) {
-        if (show)
-        {
-            if (!header.getItems().contains(hide)) 
-            {
+        if (show){
+            if (!header.getItems().contains(hide)){
                 header.getItems().add(hide);
             }
-        } 
-        else {
-           
-                header.getItems().remove(hide);
-            
+        }else{
+               header.getItems().remove(hide);     
         }
     }
-
     /**
      * Set the displayable to be shown on this live panel.
      * <p/>
