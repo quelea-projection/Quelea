@@ -297,7 +297,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         if (seconds < 0) {
             return "00:00";
         }
-        return (int) Math.floor(seconds / 60) + ":" + ((seconds % 60) > 9 ? "" : "0") + seconds % 60;
+        return seconds / 60 + ":" + ((seconds % 60) > 9 ? "" : "0") + seconds % 60;
     }
 
     public int getSeconds() {
