@@ -91,7 +91,7 @@ public class SoFParser implements SongParser {
                 String title = m.group(1);
                 title = replaceLast(title, "[^a-zA-z]+", "");
                 if (title.length() > 2) {
-                    title = title.charAt(1) + title.substring(1).toLowerCase();
+                    title = title.charAt(0) + title.substring(1).toLowerCase();
                 }
                 int position = m.start();
                 String header = songText.substring(0, position).trim();
