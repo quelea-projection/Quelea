@@ -222,7 +222,7 @@ public class Schedule implements Iterable<Displayable> {
                         if (!writeFile.canWrite()) {
                             LOGGER.log(Level.INFO, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
                             String[] localPathParts = new File(".").toPath().relativize(writeFile.toPath()).toString().split(Pattern.quote(System.getProperty("file.separator")));
-                            LOGGER.log(Level.INFO, "Write file local path: " + localPathParts);
+                            LOGGER.log(Level.INFO, "Write file local path: " + Arrays.toString(localPathParts));
                             String[] parts = writeFile.getAbsolutePath().split("\\.");
                             String extension = parts[parts.length - 1];
                             File tempWriteFile = File.createTempFile("resource", "." + extension);
