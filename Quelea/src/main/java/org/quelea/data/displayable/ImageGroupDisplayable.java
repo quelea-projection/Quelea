@@ -53,7 +53,7 @@ public class ImageGroupDisplayable implements Displayable {
         this.files = file;
         presentation = new ImageGroupFactory().getPresentation(file);
         if (presentation == null) {
-            throw new IOException("Error with image group, couldn't open " + file);
+            throw new IOException("Error with image group, couldn't open " + Arrays.toString(file));
         }
     }
 
