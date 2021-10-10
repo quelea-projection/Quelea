@@ -36,7 +36,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
 /**
- * JavaFX Control that behaves like a {@link JSpinner} known in Swing. The
+ * JavaFX Control that behaves like a {@link javax.swing.JSpinner} known in Swing. The
  * number in the textfield can be incremented or decremented by a configurable
  * stepWidth using the arrow buttons in the control or the up and down arrow
  * keys.

@@ -103,7 +103,6 @@ public class ZionWorxParser implements SongParser {
      * Get the raw text for a particular number song (starting at 1.)
      * <p>
      * @param fileContent the full CSV file content.
-     * @param num the number of the song to get.
      * @return the raw CSV text just for one song.
      */
     private RawTextWrapper getRawText(String fileContent) {
