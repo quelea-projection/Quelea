@@ -62,9 +62,9 @@ public class ProPresenterParser implements SongParser {
 	private final Map<Integer, BiFunction<String, Node, Optional<String>>> slideTransformers;
 
 	public ProPresenterParser() {
-		this.slideTransformers=Map.of(4, (s, n) -> getSectionTextLegacy(s, n),
-				5, (s, n) -> getSectionTextLegacy(s, n),
-				6, (s, n) -> getSectionText6(s, n)
+		this.slideTransformers=Map.of(4, this::getSectionTextLegacy,
+				5, this::getSectionTextLegacy,
+				6, this::getSectionText6
 				);
 	}
 
