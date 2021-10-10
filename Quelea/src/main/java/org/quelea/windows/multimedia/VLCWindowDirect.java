@@ -293,7 +293,7 @@ public class VLCWindowDirect extends VLCWindow {
          * Method that is called every frame that should be rendered
          *
          * @param mediaPlayer media player calling the method
-         * @param rgbBuffer int array holding picture data
+         * @param nativeBuffer int array holding picture data
          */
         @Override
         public void display(DirectMediaPlayer mediaPlayer, Memory[] nativeBuffer, BufferFormat bufferFormat) {
