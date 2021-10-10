@@ -64,7 +64,6 @@ public class NoticeDrawer {
     private NoticeOverlay overlay;
     private DisplayCanvas canvas;
     private List<Notice> notices;
-    private List<NoticesChangedListener> listeners;
     private boolean playing;
     private Rectangle backing;
 
@@ -76,7 +75,6 @@ public class NoticeDrawer {
     public NoticeDrawer(DisplayCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
-        listeners = new ArrayList<>();
         overlay = new NoticeOverlay();
         playing = false;
     }
@@ -206,14 +204,4 @@ public class NoticeDrawer {
     public synchronized List<Notice> getNotices() {
         return new ArrayList<>(notices);
     }
-
-    /**
-     * Add a notice changed listener to this drawer.
-     * <p/>
-     * @param listener the listener to add.
-     */
-    public synchronized void addNoticeChangedListener(NoticesChangedListener listener) {
-        listeners.add(listener);
-    }
-
 }
