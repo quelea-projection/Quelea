@@ -18,25 +18,7 @@
  */
 package org.quelea.windows.main.widgets;
 
-import javafx.animation.FadeTransition;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
-import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+
 
 /**
  * An overlay that should be put on the song database when no songs are present.
