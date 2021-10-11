@@ -24,7 +24,6 @@ import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
