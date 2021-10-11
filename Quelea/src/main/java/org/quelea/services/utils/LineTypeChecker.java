@@ -145,7 +145,7 @@ public class LineTypeChecker {
 
     private static String nextHash() {
         StringBuilder ret = new StringBuilder(hashLength);
-        ret.append("#".repeat(hashLength))
+        ret.append("#".repeat(hashLength));
         hashLength++;
         return ret.toString();
     }
