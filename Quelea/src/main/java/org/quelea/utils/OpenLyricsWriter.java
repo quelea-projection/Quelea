@@ -146,7 +146,6 @@ public class OpenLyricsWriter {
     /**
      * Get all the properties.
      *
-     * @param properties
      */
     private Element getProperties() {
         Element properties = this.doc.createElement("properties");
