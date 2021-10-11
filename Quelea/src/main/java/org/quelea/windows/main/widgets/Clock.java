@@ -96,9 +96,9 @@ public class Clock extends Text {
      */
     private static String pad(int fieldWidth, String padChar, String s) {
         StringBuilder sb = new StringBuilder();
-        for (int i = s.length(); i < fieldWidth; i++) {
-            sb.append(padChar);
-        }
+        var paddingAmount = fieldWidth-s.length();
+
+        sb.append(padChar.repeat(paddingAmount));
         sb.append(s);
 
         return sb.toString();
