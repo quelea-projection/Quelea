@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,31 +21,7 @@ package org.quelea.windows.help;
 import java.awt.Desktop;
 import java.io.File;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.utils.DesktopApi;
+
 
 /**
  * Quelea's about Dialog, displaying general features about the program and the
@@ -55,7 +31,7 @@ import org.quelea.utils.DesktopApi;
  * @author Michael
  */
 public class AboutDialog extends Stage {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -116,3 +92,4 @@ public class AboutDialog extends Stage {
         setScene(scene);
     }
 }
+
