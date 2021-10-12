@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- *
- *
+ * 
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,40 @@
  */
 package org.quelea.windows.main.menus;
 
-
+import javafx.event.ActionEvent;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import org.quelea.services.importexport.EasySlidesImportDialog;
+import org.quelea.services.importexport.EasyWorshipImportDialog;
+import org.quelea.services.importexport.EpicWorshipImportDialog;
+import org.quelea.services.importexport.FreeWorshipImportDialog;
+import org.quelea.services.importexport.ImportDialog;
+import org.quelea.services.importexport.MediaShoutImportDialog;
+import org.quelea.services.importexport.MissionPraiseImportDialog;
+import org.quelea.services.importexport.OpenLPImportDialog;
+import org.quelea.services.importexport.OpenLyricsImportDialog;
+import org.quelea.services.importexport.OpenSongImportDialog;
+import org.quelea.services.importexport.PlainTextSongsImportDialog;
+import org.quelea.services.importexport.PresentationManagerImportDialog;
+import org.quelea.services.importexport.QSPImportDialog;
+import org.quelea.services.importexport.SoFImportDialog;
+import org.quelea.services.importexport.SongBeamerImportDialog;
+import org.quelea.services.importexport.SongProImportDialog;
+import org.quelea.services.importexport.SourceImportDialog;
+import org.quelea.services.importexport.SundayPlusImportDialog;
+import org.quelea.services.importexport.SurvivorImportDialog;
+import org.quelea.services.importexport.VideoPsalmImportDialog;
+import org.quelea.services.importexport.ZWTurboDBChecker;
+import org.quelea.services.importexport.ZionWorxImportDialog;
+import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
+import org.quelea.services.importexport.ElevantoImportDialog;
+import org.quelea.services.importexport.ProPresenterImportDialog;
+import org.quelea.services.importexport.ScreenMonkeyImportDialog;
+import org.quelea.services.importexport.WorshipHimImportDialog;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 
 /**
  * Quelea's import menu.
@@ -124,14 +157,14 @@ public class ImportMenu extends Menu {
         mpItem.setOnAction((ActionEvent t) -> {
             missionPraiseImportDialog.show();
         });
-
+        
         // planning center online
         pcoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pco.button"), new ImageView(new Image("file:icons/planningcenteronline.png", 16, 16, false, true)));
         pcoItem.setOnAction((ActionEvent t) -> {
             planningCenterOnlineImportDialog.start();
         });
 //        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
-
+        
         // elevanto
         elevantoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("elevanto.button"), new ImageView(new Image("file:icons/elevanto.png", 16, 16, false, true)));
         elevantoItem.setOnAction((ActionEvent t) -> {
