@@ -23,7 +23,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.stage.FileChooser;
+import org.javafx.dialog.Dialog;
+import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * The action handler for adding images.
@@ -92,4 +104,3 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
     }
 
 }
-
