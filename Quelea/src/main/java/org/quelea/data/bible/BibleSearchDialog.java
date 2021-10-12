@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- *
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,32 @@ package org.quelea.data.bible;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import org.quelea.data.displayable.BiblePassage;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
  * A dialog that can be used for searching for bible passages.
