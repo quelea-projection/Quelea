@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- *
- *
+ * 
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,18 @@
  */
 package org.quelea.data.bible;
 
-
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A dialog where the user can browse through the installed bibles.
@@ -63,7 +74,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         bibleText = new TextArea();
         bibleText.setWrapText(true);
         bibleText.setEditable(false);
-
+        
         mainPane.setCenter(bibleText);
         updateBibles();
 
