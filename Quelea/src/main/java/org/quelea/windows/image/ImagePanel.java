@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.image;
 
-import javafx.event.EventHandler;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.quelea.data.displayable.ImageDisplayable;
