@@ -400,7 +400,7 @@ public class OOPresentation implements XEventListener {
          *
          * @param path the path to the openoffice install.
          */
-        private static XComponentContext connect(String path) throws BootstrapException, Exception {
+        private static XComponentContext connect(String path) throws Exception {
             File progPath = new File(path, "program");
             xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
             XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
