@@ -18,7 +18,7 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -27,7 +27,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;

@@ -285,7 +285,7 @@ public class RCHandler {
         return display;
     }
 
-    public static String databaseSearch(HttpExchange he) throws UnsupportedEncodingException, IOException {
+    public static String databaseSearch(HttpExchange he) throws IOException {
         String searchString;
         if (he.getRequestURI().toString().contains("/search/")) {
             String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");

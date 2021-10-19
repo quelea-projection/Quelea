@@ -21,7 +21,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -63,11 +62,11 @@ public class Clock extends Text {
                     // Only bother updating the text is we are actually showing the clock
                     if( sShowClock ) {
                         if (s24h) {
-                            hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
+                            hourString = pad(2, "0", time.get(Calendar.HOUR_OF_DAY) + "");
                         } else {
-                            hourString = pad(2, '0', time.get(Calendar.HOUR) + "");
+                            hourString = pad(2, "0", time.get(Calendar.HOUR) + "");
                         }
-                        String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
+                        String minuteString = pad(2, "0", time.get(Calendar.MINUTE) + "");
                         String text1 = hourString + ":" + minuteString;
                         if (!s24h) {
                             text1 += (time.get(Calendar.AM_PM) == Calendar.AM) ? " AM" : " PM";
@@ -94,11 +93,11 @@ public class Clock extends Text {
      * @param s the string to be padded.
      * @return the padded string.
      */
-    private static String pad(int fieldWidth, char padChar, String s) {
+    private static String pad(int fieldWidth, String padChar, String s) {
         StringBuilder sb = new StringBuilder();
-        for (int i = s.length(); i < fieldWidth; i++) {
-            sb.append(padChar);
-        }
+        var paddingAmount = Math.max(0,fieldWidth-s.length());
+
+        sb.append(padChar.repeat(paddingAmount));
         sb.append(s);
 
         return sb.toString();

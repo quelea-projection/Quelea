@@ -18,14 +18,9 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
