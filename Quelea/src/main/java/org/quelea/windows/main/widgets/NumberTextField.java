@@ -18,13 +18,15 @@
  */
 package org.quelea.windows.main.widgets;
 
-
-
+import java.text.NumberFormat;
+import java.text.ParseException;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-
+import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 
 /**
