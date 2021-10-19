@@ -18,7 +18,8 @@
  */
 package org.quelea.windows.main.toolbars;
 
-
+import java.io.File;
+import java.util.Date;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -28,6 +29,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+
+import javax.swing.Timer;
+
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
