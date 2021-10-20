@@ -34,7 +34,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import static org.quelea.services.utils.QueleaPropertyKeys.use24hClockKey;
