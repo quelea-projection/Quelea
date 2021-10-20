@@ -21,7 +21,6 @@ package org.quelea.windows.library;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.quelea.data.ThemeDTO;
