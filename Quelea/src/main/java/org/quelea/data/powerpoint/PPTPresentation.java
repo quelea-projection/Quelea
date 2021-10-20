@@ -17,10 +17,10 @@
  */
 package org.quelea.data.powerpoint;
 
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
