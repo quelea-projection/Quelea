@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.options;
 
+import java.util.HashMap;
+
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
