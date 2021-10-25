@@ -13,10 +13,10 @@ The instructions below use IntelliJ version 2021.2.3.
 1. Download and install the [Java SE Development Kit 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for your platform.
 2. Download and install [IntelliJ IDEA](https://www.jetbrains.com/idea/download) Community version for free.  Gradle is bundeld with it
 3. Fork the Quelea repository and git clone it locally.
-4. Open IntelliJ IDEA.
+4. Open IntelliJ IDEA.	
 ![](images/IntellijWelcome.png)
 
-5. Choose _Get from VCS_ from the top right of the welcome window.
+5. Choose _Get from VCS_ from the top right of the welcome window.	
 ![](images/IntellijGetFromVcs.png)
 
 6. In the _URL_ box paste the URL to your Quelea Github fork
