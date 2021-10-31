@@ -38,3 +38,4 @@ Please note that if we can't recreate a bug, then we can't fix it, so providing 
 
 ## I'd like to contribute
 Great! Please see our specific [contributing guidelines](CONTRIBUTING.md) for more information.
+Thanks.
