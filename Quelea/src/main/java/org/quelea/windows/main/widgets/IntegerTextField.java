@@ -18,9 +18,6 @@
  */
 package org.quelea.windows.main.widgets;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
@@ -35,50 +32,43 @@ public class IntegerTextField extends TextField {
     public IntegerTextField() {
         super();
 
-        this.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                char[] ar = event.getCharacter().toCharArray();
-                char ch = ar[event.getCharacter().toCharArray().length - 1];
-                /*populating lastkey if it is numeric*/
-                if((ch >= '0' && ch <= '9')) {
-                    numericLastKey = String.valueOf(ch);
-                }
+        this.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            char[] ar = event.getCharacter().toCharArray();
+            char ch = ar[event.getCharacter().toCharArray().length - 1];
+            /*populating lastkey if it is numeric*/
+            if ((ch >= '0' && ch <= '9')) {
+                numericLastKey = String.valueOf(ch);
+            }
 
-                if(isValid()) {
-                    /* Disable other charater than numeric character. */
-                    if(!(ch >= '0' && ch <= '9')) {
-                        event.consume();
-                    }
-                }
-                else {
+            if (isValid()) {
+                /* Disable other charater than numeric character. */
+                if (!(ch >= '0' && ch <= '9')) {
                     event.consume();
                 }
+            } else {
+                event.consume();
             }
         });
 
         /*Disabling 'invalid sting' past functionality if not numeric */
-        this.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> arg0, String oldValue, String newValue) {
-                if(!isNumeric(newValue)) {
-                    clear();
-                }
-                else if(!isValid()) {
-                    clear();
-                }
-            }
-
-            /**
-             * check for numeric value.
-             * <p/>
-             * @param text
-             * @return boolean
-             */
-            private boolean isNumeric(String text) {
-                return text.matches("-?\\d+(.\\d+)?");
+        this.textProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!isNumeric(newValue)) {
+                clear();
+            } else if (!isValid()) {
+                clear();
             }
         });
+
+        /**
+         * check for numeric value.
+         * <p/>
+         * @param text
+         * @return boolean
+         */
+
+    }
+    private boolean isNumeric(String text) {
+        return text.matches("-?\\d+(.\\d+)?");
     }
 
     /**

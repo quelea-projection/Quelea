@@ -17,23 +17,18 @@
  */
 package org.quelea.windows.imagegroup;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import org.quelea.data.imagegroup.ImageGroupSlide;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A JList for specifically displaying image group slides.
@@ -56,53 +51,39 @@ public class ImageGroupPreview extends ScrollPane {
         setStyle("-fx-focus-color: transparent;-fx-background-color:linear-gradient(to bottom right, #c0c0c0, #e8e8e8);");
         flow = new FlowPane(20, 20);
         flow.setAlignment(Pos.CENTER);
-        viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
-            @Override
-            public void changed(ObservableValue<? extends Bounds> bounds, Bounds oldBounds, Bounds newBounds) {
-                flow.setPrefWidth(newBounds.getWidth());
-            }
-        });
+        viewportBoundsProperty().addListener((bounds, oldBounds, newBounds) ->
+                flow.setPrefWidth(newBounds.getWidth()));
         setContent(flow);
-        setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                int selected = -1;
-                for (int i = 0; i < thumbnails.size(); i++) {
-                    SlideThumbnail thumbnail = thumbnails.get(i);
-                    Bounds bounds = new BoundingBox(thumbnail.getLayoutX(), thumbnail.getLayoutY() + getScrollOffset(), thumbnail.getWidth(), thumbnail.getHeight());
-                    if (bounds.contains(t.getX(), t.getY())) {
-                        selected = i;
-                    }
+        setOnMousePressed(mouseEvent -> {
+            int selected = -1;
+            for (int i = 0; i < thumbnails.size(); i++) {
+                SlideThumbnail thumbnail = thumbnails.get(i);
+                Bounds bounds = new BoundingBox(thumbnail.getLayoutX(), thumbnail.getLayoutY() + getScrollOffset(), thumbnail.getWidth(), thumbnail.getHeight());
+                if (bounds.contains(mouseEvent.getX(), mouseEvent.getY())) {
+                    selected = i;
                 }
-                if (selected != -1) {
-                    select(selected + 1, true);
+            }
+            if (selected != -1) {
+                select(selected + 1, true);
+            }
+        });
+        setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.RIGHT) {
+                keyEvent.consume();
+                if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
+                    select(selectedIndex + 1);
+                }
+            }
+            if (keyEvent.getCode() == KeyCode.LEFT) {
+                keyEvent.consume();
+                if (selectedIndex >= 2) {
+                    select(selectedIndex - 1);
                 }
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCode() == KeyCode.RIGHT) {
-                    t.consume();
-                    if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
-                        select(selectedIndex + 1);
-                    }
-                }
-                if (t.getCode() == KeyCode.LEFT) {
-                    t.consume();
-                    if (selectedIndex >= 2) {
-                        select(selectedIndex - 1);
-                    }
-                }
-            }
-        });
-        focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean focused) {
-                for (SlideThumbnail slide : thumbnails) {
-                    slide.setActive(focused);
-                }
+        focusedProperty().addListener((ov, t, focused) -> {
+            for (SlideThumbnail slide : thumbnails) {
+                slide.setActive(focused);
             }
         });
     }
@@ -125,6 +106,7 @@ public class ImageGroupPreview extends ScrollPane {
     /**
      * Clear all current slides and set the slides in the list.
      * <p/>
+     *
      * @param slides the slides to put in the list.
      */
     public void setSlides(ImageGroupSlide[] slides) {
