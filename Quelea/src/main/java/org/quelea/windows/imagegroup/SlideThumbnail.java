@@ -18,10 +18,7 @@
  */
 package org.quelea.windows.imagegroup;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.imagegroup.ImageGroupSlide;
