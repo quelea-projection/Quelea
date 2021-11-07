@@ -20,6 +20,7 @@ package org.quelea.data.displayable;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
 /**
@@ -48,7 +49,7 @@ public interface Displayable extends Serializable {
      *
      * @return the preview icon.
      */
-    ImageView getPreviewIcon();
+    Node getPreviewIcon();
 
     /**
      * Get the preview text to be displayed in the schedule.
