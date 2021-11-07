@@ -1395,16 +1395,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
     private StackPane getTranslationPart() {
         StackPane ret = new StackPane();
-        Text text = new Text("T");
-        text.setStyle("-fx-font-weight: bold;");
-        text.setScaleX(0.8);
-        text.setScaleY(0.8);
+        ImageView iv = new ImageView("file:icons/translate small.png");
+        iv.setFitWidth(13);
+        iv.setPreserveRatio(true);
         ret.setPadding(new Insets(0,3,0,3));
-        ret.getChildren().add(text);
+        ret.getChildren().add(iv);
         ret.setMaxWidth(5);
         ret.setMaxHeight(5);
-        ret.setAlignment(Pos.BOTTOM_LEFT);
-        ret.setStyle("-fx-background-color: #DAA520;");
+        ret.setAlignment(Pos.CENTER);
+        ret.setStyle("-fx-background-color: #333333;");
+        ret.setOpacity(0.9);
         return ret;
     }
 
