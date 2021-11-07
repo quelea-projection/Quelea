@@ -20,8 +20,6 @@ package org.quelea.windows.main.widgets;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
@@ -95,11 +93,6 @@ public class LoadingPane extends StackPane {
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setVisible(false);
-            }
-        });
+        trans.setOnFinished(actionEvent -> setVisible(false));
     }
 }

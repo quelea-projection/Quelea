@@ -18,8 +18,6 @@
 package org.quelea.services.importexport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
