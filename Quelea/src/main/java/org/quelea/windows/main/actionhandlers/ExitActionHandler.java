@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -27,7 +27,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
@@ -76,29 +75,15 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = true;
-            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    //Save schedule
-                    block = true;
-                    new ScheduleSaver().saveSchedule(false, new SaveCallback() {
-                        @Override
-                        public void saved(boolean success) {
-                            cancel = !success;
-                            block = false;
-                        }
-                    });
-                }
-            }).addNoButton(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    cancel = false;
-                }
-            }).addCancelButton(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    //No need to do anything
-                }
+            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(t14 -> {
+                //Save schedule
+                block = true;
+                new ScheduleSaver().saveSchedule(false, success -> {
+                    cancel = !success;
+                    block = false;
+                });
+            }).addNoButton(t13 -> cancel = false).addCancelButton(t12 -> {
+                //No need to do anything
             }).build();
             d.showAndWait();
             while (block) {
@@ -144,7 +129,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             LOGGER.log(Level.INFO, "Closing open PowerPoint presentations");
             PowerPointHandler.closePresentation();
         }
-        
+
         LOGGER.log(Level.INFO, "Checking if Quelea currently is recording audio");
         MainToolbar toolbar = mainWindow.getMainToolbar();
         RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();
@@ -152,22 +137,14 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             if (recHandler.getIsRecording()) {
                 block = true;
                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message"))
-                        .addYesButton((ActionEvent t1) -> {
-                            toolbar.stopRecording();
-                        }).addNoButton((ActionEvent t1) -> {
-                            System.exit(0);
-                        }).build();
-                d.setOnCloseRequest((WindowEvent we) -> {
-                    System.exit(0);
-                });
+                        .addYesButton((ActionEvent t1) -> toolbar.stopRecording()).addNoButton((ActionEvent t1) -> System.exit(0)).build();
+                d.setOnCloseRequest((WindowEvent we) -> System.exit(0));
                 Thread thread = new Thread(() -> {
                     while (block) {
                         try {
                             Thread.sleep(500);
                             if (recHandler.getFinishedSaving()) {
-                                Platform.runLater(() -> {
-                                    d.close();
-                                });
+                                Platform.runLater(() -> d.close());
                                 if (QueleaProperties.get().getConvertRecordings()) {
                                     boolean converting = recHandler.isConverting();
                                     if (!converting) {

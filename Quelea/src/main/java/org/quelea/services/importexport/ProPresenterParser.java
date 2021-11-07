@@ -62,16 +62,15 @@ public class ProPresenterParser implements SongParser {
 	private final Map<Integer, BiFunction<String, Node, Optional<String>>> slideTransformers;
 
 	public ProPresenterParser() {
-		Map<Integer, BiFunction<String, Node, Optional<String>>> transformers = new HashMap<>();
-		transformers.put(4, (s, n) -> getSectionTextLegacy(s, n));
-		transformers.put(5, (s, n) -> getSectionTextLegacy(s, n));
-		transformers.put(6, (s, n) -> getSectionText6(s, n));
-		this.slideTransformers = Collections.unmodifiableMap(transformers);
+		this.slideTransformers=Map.of(4, this::getSectionTextLegacy,
+				5, this::getSectionTextLegacy,
+				6, this::getSectionText6
+				);
 	}
 
 	@Override
 	public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-		return getSong(file).map(Collections::singletonList).orElse(Collections.<SongDisplayable>emptyList());
+		return getSong(file).map(Collections::singletonList).orElse(Collections.emptyList());
 	}
 
 	private Optional<SongDisplayable> getSong(File file) {

@@ -218,7 +218,7 @@ public class ScheduleList extends StackPane {
                 return listCell;
             }
         };
-        listView.setCellFactory(DisplayableListCell.<Displayable>forListView(null, callback, new Constraint<Displayable>() {
+        listView.setCellFactory(DisplayableListCell.forListView(null, callback, new Constraint<Displayable>() {
             @Override
             public boolean isTrue(Displayable d) {
                 return d instanceof SongDisplayable || d instanceof BiblePassage || d instanceof TimerDisplayable;
@@ -279,7 +279,7 @@ public class ScheduleList extends StackPane {
 
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
-            db.getFiles().stream().forEach((file) -> {
+            db.getFiles().forEach((file) -> {
                 if (Utils.fileIsImage(file)) {
                     add(new ImageDisplayable(file));
                 } else if (Utils.fileIsVideo(file)) {
@@ -345,6 +345,12 @@ public class ScheduleList extends StackPane {
                             textDisplayable.setTheme(newTheme);
                             if (d instanceof SongDisplayable) {
                                 SongDisplayable sd = (SongDisplayable) d;
+                                if(QueleaProperties.get().getUseDefaultTranslation()) {
+                                    String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                                    if(defaultTranslation!=null && !defaultTranslation.trim().isEmpty()) {
+                                        sd.setCurrentTranslationLyrics(defaultTranslation);
+                                    }
+                                }
                                 Utils.updateSongInBackground(sd, true, false);
                             }
                             if (QueleaProperties.get().getPreviewOnImageUpdate()) {
@@ -364,6 +370,12 @@ public class ScheduleList extends StackPane {
                     if (!QueleaProperties.get().getDefaultSongDBUpdate() && displayable instanceof SongDisplayable) {
                         ((SongDisplayable) displayable).setID(-1);
                         ((SongDisplayable) displayable).setNoDBUpdate();
+                    }
+                    if (displayable instanceof SongDisplayable && QueleaProperties.get().getUseDefaultTranslation()) {
+                        String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                        if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                            ((SongDisplayable) displayable).setCurrentTranslationLyrics(defaultTranslation);
+                        }
                     }
                 } else {
                     displayable = tempDisp;

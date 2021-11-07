@@ -55,30 +55,27 @@ public class MacVideo extends VLCWindow {
      * Constructor of this class
      */
     private MacVideo() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Wait up to 10 seconds for AVPlayerJava native code to get loaded
-                    int timeout = 10000;
-                    // 50ms between each test of whether native code is loaded
-                    int sleep_interval = 50;
+        runOnVIDThread(() -> {
+            try {
+                // Wait up to 10 seconds for AVPlayerJava native code to get loaded
+                int timeout = 10000;
+                // 50ms between each test of whether native code is loaded
+                int sleep_interval = 50;
 
-                    // Loop until native code has loaded or timed out
-                    while( !AVPlayerJava.isModuleLoaded() && timeout > 0 ) {
-                        TimeUnit.MILLISECONDS.sleep(sleep_interval);
-                        timeout -= sleep_interval;
-                    }
-
-                    if( timeout == 0 ){
-                        LOGGER.log(Level.WARNING, "Couldn't initialise video, load of native library timed out");
-                    } else {
-                        init = AVPlayerJava.isInit();
-                        LOGGER.log(Level.INFO, "Video initialised ok");
-                    }
-                } catch (Exception ex) {
-                    LOGGER.log(Level.WARNING, "Couldn't initialise video, good luck as to why!", ex);
+                // Loop until native code has loaded or timed out
+                while( !AVPlayerJava.isModuleLoaded() && timeout > 0 ) {
+                    TimeUnit.MILLISECONDS.sleep(sleep_interval);
+                    timeout -= sleep_interval;
                 }
+
+                if( timeout == 0 ){
+                    LOGGER.log(Level.WARNING, "Couldn't initialise video, load of native library timed out");
+                } else {
+                    init = AVPlayerJava.isInit();
+                    LOGGER.log(Level.INFO, "Video initialised ok");
+                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Couldn't initialise video, good luck as to why!", ex);
             }
         });
 
@@ -91,12 +88,8 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public boolean isInit() {
-        runOnVIDThreadAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-                //Just to block until construction has finished!
-            }
+        runOnVIDThreadAndWait(() -> {
+            //Just to block until construction has finished!
         });
         return init;
     }
@@ -108,15 +101,12 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setRepeat(final boolean repeat) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setRepeat() start");
-                if (init) {
-                    AVPlayerJava.setRepeat(repeat);
-                }
-//                System.out.println("setRepeat() end");
+            if (init) {
+                AVPlayerJava.setRepeat(repeat);
             }
+//                System.out.println("setRepeat() end");
         });
     }
 
@@ -130,36 +120,33 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void load(final String path, final String options, final boolean stretch) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("load("+path+") start");
-                if (init) {
-                    paused = false;
+            if (init) {
+                paused = false;
 
-                    String sanitisedPath = path;
-                    sanitisedPath = sanitisedPath.trim();
-                    if (sanitisedPath.startsWith("www")) {
-                        sanitisedPath = "http://" + sanitisedPath;
-                    }
-                    if (AVPlayerJava.isPlaying()) {
-                        AVPlayerJava.stop();
-                    }
-                    if (options != null) {
-                        if (options.length() > 0) {
-                            AVPlayerJava.setOptions(options);
-                        }
-                    }
-
-                    lastPath = sanitisedPath;
-                    lastOptions = options;
-                    lastStretch = stretch;
-                    AVPlayerJava.setStretch(stretch);
-                    AVPlayerJava.loadVid(sanitisedPath);
-
+                String sanitisedPath = path;
+                sanitisedPath = sanitisedPath.trim();
+                if (sanitisedPath.startsWith("www")) {
+                    sanitisedPath = "http://" + sanitisedPath;
                 }
-//                System.out.println("load() end");
+                if (AVPlayerJava.isPlaying()) {
+                    AVPlayerJava.stop();
+                }
+                if (options != null) {
+                    if (options.length() > 0) {
+                        AVPlayerJava.setOptions(options);
+                    }
+                }
+
+                lastPath = sanitisedPath;
+                lastOptions = options;
+                lastStretch = stretch;
+                AVPlayerJava.setStretch(stretch);
+                AVPlayerJava.loadVid(sanitisedPath);
+
             }
+//                System.out.println("load() end");
         });
     }
 
@@ -168,18 +155,15 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void play() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("play() start");
-                if (init) {
-                    AVPlayerJava.setFadeSpeed(QueleaProperties.get().getLogoFadeDuration() / 1000);
-                    paused = false;
-                    AVPlayerJava.play();
+            if (init) {
+                AVPlayerJava.setFadeSpeed(QueleaProperties.get().getLogoFadeDuration() / 1000);
+                paused = false;
+                AVPlayerJava.play();
 
-                }
-//                System.out.println("play() end");
             }
+//                System.out.println("play() end");
         });
     }
 
@@ -194,31 +178,28 @@ public class MacVideo extends VLCWindow {
     @Override
     public void play(final String vid, final String options, final boolean stretch) {
         this.location = vid;
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("play("+vid+") start");
-                if (init) {
-                    paused = false;
-                    if (AVPlayerJava.isPlaying()) {
-                        AVPlayerJava.stop();
-                    }
-                    if (options != null) {
-                        if (options.length() > 0) {
-                            AVPlayerJava.setOptions(options);
-                        }
-                    }
-                    lastPath = vid;
-                    lastOptions = options;
-                    lastStretch = stretch;
-                    AVPlayerJava.setStretch(stretch);
-                    AVPlayerJava.loadVid(vid);
-                    AVPlayerJava.setFadeSpeed(QueleaProperties.get().getLogoFadeDuration() / 1000);
-                    AVPlayerJava.play();
-
+            if (init) {
+                paused = false;
+                if (AVPlayerJava.isPlaying()) {
+                    AVPlayerJava.stop();
                 }
-//                System.out.println("play(arg) end");
+                if (options != null) {
+                    if (options.length() > 0) {
+                        AVPlayerJava.setOptions(options);
+                    }
+                }
+                lastPath = vid;
+                lastOptions = options;
+                lastStretch = stretch;
+                AVPlayerJava.setStretch(stretch);
+                AVPlayerJava.loadVid(vid);
+                AVPlayerJava.setFadeSpeed(QueleaProperties.get().getLogoFadeDuration() / 1000);
+                AVPlayerJava.play();
+
             }
+//                System.out.println("play(arg) end");
         });
     }
 
@@ -237,16 +218,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void pause() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("pause() start");
-                if (init) {
-                    paused = true;
-                    AVPlayerJava.pauseVideo();
-                }
-//                System.out.println("pause() end");
+            if (init) {
+                paused = true;
+                AVPlayerJava.pauseVideo();
             }
+//                System.out.println("pause() end");
         });
     }
 
@@ -256,16 +234,13 @@ public class MacVideo extends VLCWindow {
     @Override
     public void stop() {
         location = null;
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("stop() start");
-                if (init) {
-                    paused = false;
-                    AVPlayerJava.stop();
-                }
-//                System.out.println("stop() end");
+            if (init) {
+                paused = false;
+                AVPlayerJava.stop();
             }
+//                System.out.println("stop() end");
         });
     }
 
@@ -278,17 +253,14 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public boolean isMute() {
-        runOnVIDThreadAndWait(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThreadAndWait(() -> {
 //                System.out.println("isMute() start");
-                if (init) {
-                    muteTemp = AVPlayerJava.isMute();
-                } else {
-                    muteTemp = false;
-                }
-//                System.out.println("isMute() end");
+            if (init) {
+                muteTemp = AVPlayerJava.isMute();
+            } else {
+                muteTemp = false;
             }
+//                System.out.println("isMute() end");
         });
         return muteTemp;
     }
@@ -300,15 +272,12 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setMute(final boolean mute) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setMute() start");
-                if (init) {
-                    AVPlayerJava.setMute(mute);
-                }
-//                System.out.println("setMute() end");
+            if (init) {
+                AVPlayerJava.setMute(mute);
             }
+//                System.out.println("setMute() end");
         });
     }
     private double progressTemp;
@@ -320,17 +289,14 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public double getProgressPercent() {
-        runOnVIDThreadAndWait(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThreadAndWait(() -> {
 //                System.out.println("getProgressPercent() start");
-                if (init) {
-                    progressTemp = AVPlayerJava.getProgressPercent();
-                } else {
-                    progressTemp = 0;
-                }
-//                System.out.println("getProgressPercent() end");
+            if (init) {
+                progressTemp = AVPlayerJava.getProgressPercent();
+            } else {
+                progressTemp = 0;
             }
+//                System.out.println("getProgressPercent() end");
         });
         return progressTemp;
     }
@@ -342,15 +308,12 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setProgressPercent(final double percent) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setProgressPercent() start");
-                if (init) {
-                    AVPlayerJava.setProgressPercent(percent);
-                }
-//                System.out.println("setProgressPercent() end");
+            if (init) {
+                AVPlayerJava.setProgressPercent(percent);
             }
+//                System.out.println("setProgressPercent() end");
         });
     }
     private boolean isPlayingTemp;
@@ -362,17 +325,14 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public boolean isPlaying() {
-        runOnVIDThreadAndWait(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThreadAndWait(() -> {
 //                System.out.println("isPlaying() start");
-                if (init) {
-                    isPlayingTemp = AVPlayerJava.isPlaying();
-                } else {
-                    isPlayingTemp = false;
-                }
-//                System.out.println("isPlaying() end");
+            if (init) {
+                isPlayingTemp = AVPlayerJava.isPlaying();
+            } else {
+                isPlayingTemp = false;
             }
+//                System.out.println("isPlaying() end");
         });
         return isPlayingTemp;
     }
@@ -385,17 +345,14 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public boolean isPaused() {
-        runOnVIDThreadAndWait(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThreadAndWait(() -> {
 //                System.out.println("isPaused() start");
-                if (init) {
-                    isPausedTemp = paused;
-                } else {
-                    isPausedTemp = false;
-                }
-//                System.out.println("isPaused() end");
+            if (init) {
+                isPausedTemp = paused;
+            } else {
+                isPausedTemp = false;
             }
+//                System.out.println("isPaused() end");
         });
         return isPausedTemp;
     }
@@ -408,16 +365,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setOnFinished(final Runnable onFinished) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setOnFinished() start");
-                if (init) {
-                    paused = false;
-                    //TODO: Monitor code value AVPlayerJava.isFinished();
-                }
-//                System.out.println("setOnFinished() end");
+            if (init) {
+                paused = false;
+                //TODO: Monitor code value AVPlayerJava.isFinished();
             }
+//                System.out.println("setOnFinished() end");
         });
     }
 
@@ -426,16 +380,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void show() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("show() start");
-                if (init) {
-                    show = true;
-                    updateState();
-                }
-//                System.out.println("show() end");
+            if (init) {
+                show = true;
+                updateState();
             }
+//                System.out.println("show() end");
         });
     }
 
@@ -444,16 +395,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void hide() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("hide() start");
-                if (init) {
-                    show = false;
-                    updateState();
-                }
-//                System.out.println("hide() end");
+            if (init) {
+                show = false;
+                updateState();
             }
+//                System.out.println("hide() end");
         });
     }
 
@@ -464,16 +412,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setHideButton(final boolean hide) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setHideButton() start");
-                if (init) {
-                    hideButton = hide;
-                    updateState();
-                }
-//                System.out.println("setHideButton() end");
+            if (init) {
+                hideButton = hide;
+                updateState();
             }
+//                System.out.println("setHideButton() end");
         });
     }
 
@@ -481,16 +426,13 @@ public class MacVideo extends VLCWindow {
      * Update the state of the playback window.
      */
     private void updateState() {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("updateState() start");
-                if (init) {
-                    AVPlayerJava.setVisible((!hideButton && show));
+            if (init) {
+                AVPlayerJava.setVisible((!hideButton && show));
 
-                }
-//                System.out.println("updateState() end");
             }
+//                System.out.println("updateState() end");
         });
     }
 
@@ -502,16 +444,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setLocation(final int x, final int y) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setLocation() start");
-                if (init) {
-                    AVPlayerJava.setLocation(x, y);
+            if (init) {
+                AVPlayerJava.setLocation(x, y);
 
-                }
-//                System.out.println("setLocation() end");
             }
+//                System.out.println("setLocation() end");
         });
     }
 
@@ -523,16 +462,13 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setSize(final int width, final int height) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("setsize() start");
-                if (init) {
-                    AVPlayerJava.setSize(width, height);
+            if (init) {
+                AVPlayerJava.setSize(width, height);
 
-                }
-//                System.out.println("setsize() end");
             }
+//                System.out.println("setsize() end");
         });
     }
     private int tempX, tempY, tempWidth, tempHeight;
@@ -543,33 +479,27 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void refreshPosition() {
-        Utils.fxRunAndWait(new Runnable() {
-            @Override
-            public void run() {
-                showing = QueleaApp.get().getProjectionWindow().isShowing();
-                if (showing) {
-                    tempX = (int) QueleaApp.get().getProjectionWindow().getX();
-                    tempY = (int) QueleaApp.get().getProjectionWindow().getY();
-                    tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
-                    tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
-                }
+        Utils.fxRunAndWait(() -> {
+            showing = QueleaApp.get().getProjectionWindow().isShowing();
+            if (showing) {
+                tempX = (int) QueleaApp.get().getProjectionWindow().getX();
+                tempY = (int) QueleaApp.get().getProjectionWindow().getY();
+                tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
+                tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
             }
         });
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("refreshPosition() start");
-                if (init) {
-                    if (showing) {
-                        show();
-                        setLocation(tempX, tempY);
-                        setSize(tempWidth, tempHeight);
-                    } else {
-                        hide();
-                    }
+            if (init) {
+                if (showing) {
+                    show();
+                    setLocation(tempX, tempY);
+                    setSize(tempWidth, tempHeight);
+                } else {
+                    hide();
                 }
-//                System.out.println("refreshPosition() end");
             }
+//                System.out.println("refreshPosition() end");
         });
     }
 
@@ -598,26 +528,23 @@ public class MacVideo extends VLCWindow {
      */
     @Override
     public void setHue(final double hue) {
-        runOnVIDThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnVIDThread(() -> {
 //                System.out.println("set hue start");
-                if (init) {
-                    //input hue, 0-1, AVPlayer expecting -pi to pi
-                    double passHue;  //0-pi
-                    if (hue > 0.5) {//should be 0(1) - pi(0.5)
-                        passHue = ((1 - hue) * 2) * (Math.PI);
-                    } else {//should be 0(0) - - pi(0.5)
-                        passHue = (hue * 2) * (Math.PI * -1);
-                    }
-
-                    AVPlayerJava.setHue(passHue);
-                    // System.out.println("Hue: " + hue);
-                    // System.out.println("Passed Hue: "+passHue);
-                    MacVideo.this.hue = hue;
+            if (init) {
+                //input hue, 0-1, AVPlayer expecting -pi to pi
+                double passHue;  //0-pi
+                if (hue > 0.5) {//should be 0(1) - pi(0.5)
+                    passHue = ((1 - hue) * 2) * (Math.PI);
+                } else {//should be 0(0) - - pi(0.5)
+                    passHue = (hue * 2) * (Math.PI * -1);
                 }
-//                System.out.println("set hue end");
+
+                AVPlayerJava.setHue(passHue);
+                // System.out.println("Hue: " + hue);
+                // System.out.println("Passed Hue: "+passHue);
+                MacVideo.this.hue = hue;
             }
+//                System.out.println("set hue end");
         });
 
     }

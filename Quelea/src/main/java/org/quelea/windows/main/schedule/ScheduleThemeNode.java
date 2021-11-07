@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -59,7 +58,7 @@ public class ScheduleThemeNode extends BorderPane {
 
     public interface UpdateThemeCallback {
 
-        public void updateTheme(ThemeDTO theme);
+        void updateTheme(ThemeDTO theme);
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;

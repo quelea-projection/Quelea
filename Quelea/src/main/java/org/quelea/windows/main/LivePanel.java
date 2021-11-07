@@ -127,7 +127,7 @@ public class LivePanel extends LivePreviewPanel {
                 if (text.isEmpty()) {
                     return;
                 }
-                char arr[] = text.toCharArray();
+                char[] arr = text.toCharArray();
                 char ch = arr[text.toCharArray().length - 1];
                 if (!(ch >= '0' && ch <= '9')) {
                     t.consume();
@@ -368,12 +368,30 @@ public class LivePanel extends LivePreviewPanel {
                 return false;
             }
 
+            private String getTitle(int idx) {
+                if (getDisplayable() instanceof TextDisplayable) {
+                    TextDisplayable displayable = (TextDisplayable) getDisplayable();
+                    TextSection[] sections = displayable.getSections();
+                    String runningTitle = null;
+                    for(int i=0 ; i<sections.length ; i++) {
+                        if(sections[i].getTitle()!=null && !sections[i].getTitle().isEmpty()) {
+                            runningTitle = sections[i].getTitle();
+                        }
+                        if(idx==i) {
+                            return runningTitle;
+                        }
+                    }
+                }
+                return null;
+            }
+
             private int getSlideIndex(int selectedIndex, String shortcutKey) {
                 if (getDisplayable() instanceof TextDisplayable) {
                     TextDisplayable displayable = (TextDisplayable) getDisplayable();
                     TextSection[] sections = displayable.getSections();
-                    for (int i = (selectedIndex + 1) % sections.length; i != selectedIndex; i = ((i + 1) % sections.length)) {
-                        if (matches(shortcutKey, sections[i].getTitle())) {
+                    for(int it=0 ; it<sections.length+1 ; it++) {
+                        int i = (selectedIndex + 1 + it) % sections.length;
+                        if (matches(shortcutKey, getTitle(i))) {
                             return i;
                         }
                     }
@@ -404,17 +422,14 @@ public class LivePanel extends LivePreviewPanel {
      * @param show display the extra options.
      */
     public void showExtraToolbarOptions(boolean show) {
-        if (show) {
-            if (!header.getItems().contains(hide)) {
+        if (show){
+            if (!header.getItems().contains(hide)){
                 header.getItems().add(hide);
             }
-        } else {
-            if (header.getItems().contains(hide)) {
-                header.getItems().remove(hide);
-            }
+        }else{
+               header.getItems().remove(hide);     
         }
     }
-
     /**
      * Set the displayable to be shown on this live panel.
      * <p/>
@@ -615,7 +630,6 @@ public class LivePanel extends LivePreviewPanel {
             Double d = canvas.getBoundsInLocal().getHeight();
             int h = d.intValue();
             Double d2 = canvas.getBoundsInLocal().getWidth();
-            ;
             int w = d2.intValue();
             webPreviewImage = new WritableImage(w, h);
             SnapshotParameters params = new SnapshotParameters();

@@ -400,7 +400,7 @@ public class OOPresentation implements XEventListener {
          *
          * @param path the path to the openoffice install.
          */
-        private static XComponentContext connect(String path) throws BootstrapException, Exception {
+        private static XComponentContext connect(String path) throws Exception {
             File progPath = new File(path, "program");
             xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
             XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
@@ -425,7 +425,7 @@ public class OOPresentation implements XEventListener {
         public static void dispose() {
             try {
                 if (bridgeComponent != null) {
-                    connection.flush();;
+                    connection.flush();
                     connection.close();
                     bridgeComponent.dispose();
                     bridgeComponent = null;
@@ -436,9 +436,7 @@ public class OOPresentation implements XEventListener {
                     }
 
                 }
-            } catch (DisposedException ex) {
-                throw new RuntimeException(ex.getMessage());
-            } catch (com.sun.star.io.IOException ex) {
+            } catch (DisposedException | com.sun.star.io.IOException ex) {
                 throw new RuntimeException(ex.getMessage());
             }
         }

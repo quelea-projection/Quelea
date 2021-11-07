@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -315,7 +314,7 @@ public class CreateTimerPanel extends Stage {
     private void createEdit(TimerDisplayable td) {
         int seconds = td.getSeconds();
         if (seconds < 0) {
-            durationTextField.setText(td.getTimeToFinish().get(Calendar.HOUR) + ":" + (td.getTimeToFinish().get(Calendar.MINUTE) > 9 ? "" : "0") + td.getTimeToFinish().get(Calendar.MINUTE) + (td.getTimeToFinish().get(Calendar.AM_PM) == 0 ? "am" : "pm"));
+            durationTextField.setText(td.getTimeToFinish().get(Calendar.HOUR) + ":" + (td.getTimeToFinish().get(Calendar.MINUTE) > 9 ? "" : "0") + td.getTimeToFinish().get(Calendar.MINUTE) + (td.getTimeToFinish().get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm"));
         } else {
             durationTextField.setText(td.secondsToTime(td.getSeconds()));
         }

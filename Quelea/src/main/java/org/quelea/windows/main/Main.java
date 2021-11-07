@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -283,23 +284,19 @@ public final class Main extends Application {
                         }
                     }
                     
-                    //Only supported in Java 9+
-//                    if (Desktop.isDesktopSupported()) {
-//                        Desktop desktop = Desktop.getDesktop();
-//                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
-//                            desktop.setOpenFileHandler(new OpenFilesHandler() {
-//                                @Override
-//                                public void openFiles(OpenFilesEvent e) {
-//                                    List<File> files = e.getFiles();
-//                                    if (files != null && files.size() > 0) {
-//                                        Platform.runLater(() -> {
-//                                            QueleaApp.get().openSchedule(files.get(0));
-//                                        });
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    }
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+                            desktop.setOpenFileHandler((e) -> {
+                                List<File> files = e.getFiles();
+                                if (files != null && files.size() > 0) {
+                                    Platform.runLater(() -> {
+                                        QueleaApp.get().openSchedule(files.get(0));
+                                    });
+                                }
+                            });
+                        }
+                    }
 
                     Platform.runLater(() -> {
                         splashWindow.hide();
@@ -326,7 +323,8 @@ public final class Main extends Application {
                                         vlcWarningDialog.hide();
                                     });
                             vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), (t) -> {
-                                DesktopApi.browse("http://www.videolan.org/vlc/index.html");
+                                String url = "https://www.videolan.org/vlc/index.html";
+                                DesktopApi.browse(url);
                                 vlcWarningDialog.hide();
                             });
                             vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();

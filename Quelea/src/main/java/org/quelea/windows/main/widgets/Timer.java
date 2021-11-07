@@ -48,7 +48,7 @@ public class Timer extends Text {
     private ThemeDTO theme;
 
     public Timer(int seconds, String pretext, String posttext) {
-        this.minutes = (int) Math.floor(seconds / 60);
+        this.minutes = seconds/60;
         this.seconds = seconds % 60;
         this.pretext = pretext;
         this.posttext = posttext;

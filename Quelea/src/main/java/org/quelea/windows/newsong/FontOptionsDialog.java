@@ -105,17 +105,13 @@ public class FontOptionsDialog extends Stage {
         fontExpandButton = new Button("...");
         fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
         Utils.setToolbarButtonStyle(fontExpandButton);
-        fontExpandButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                fontSelectionDialog.showAndWait();
-                String selected = fontSelection.getSelectionModel().getSelectedItem();
-                fontSelection.getItems().clear();
-                fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
-                Collections.sort(fontSelection.getItems());
-                fontSelection.getSelectionModel().select(selected);
-            }
+        fontExpandButton.setOnAction(t -> {
+            fontSelectionDialog.showAndWait();
+            String selected = fontSelection.getSelectionModel().getSelectedItem();
+            fontSelection.getItems().clear();
+            fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
+            Collections.sort(fontSelection.getItems());
+            fontSelection.getSelectionModel().select(selected);
         });
 
         fontColor = new ColorPicker(Color.WHITE);
@@ -159,13 +155,7 @@ public class FontOptionsDialog extends Stage {
         GridPane.setConstraints(useShadowLabel, 1, 1);
         shadowPane.getChildren().add(useShadowLabel);
         useShadowCheckbox = new CheckBox();
-        useShadowCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                themePanel.updateTheme(false);
-            }
-        });
+        useShadowCheckbox.selectedProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         GridPane.setConstraints(useShadowCheckbox, 2, 1);
         shadowPane.getChildren().add(useShadowCheckbox);
         useShadowLabel.setLabelFor(useShadowCheckbox);
@@ -174,13 +164,7 @@ public class FontOptionsDialog extends Stage {
         Label shadowColorLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.color.label"));
         GridPane.setConstraints(shadowColorLabel, 1, 2);
         shadowPane.getChildren().add(shadowColorLabel);
-        shadowColor.valueProperty().addListener(new ChangeListener<Color>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                themePanel.updateTheme(false);
-            }
-        });
+        shadowColor.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         shadowColorLabel.setLabelFor(shadowColor);
         GridPane.setConstraints(shadowColor, 2, 2);
         shadowPane.getChildren().add(shadowColor);
@@ -188,13 +172,7 @@ public class FontOptionsDialog extends Stage {
         Label shadowOffsetLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.offset.label"));
         GridPane.setConstraints(shadowOffsetLabel, 1, 3);
         shadowPane.getChildren().add(shadowOffsetLabel);
-        shadowOffsetSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(false);
-            }
-        });
+        shadowOffsetSlider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         shadowOffsetText = new NumberTextField();
         shadowOffsetText.setMaxWidth(50);
         Bindings.bindBidirectional(shadowOffsetText.textProperty(), shadowOffsetSlider.valueProperty(), new NumberStringConverter());
@@ -209,13 +187,7 @@ public class FontOptionsDialog extends Stage {
         Label shadowRadiusLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.radius.label"));
         GridPane.setConstraints(shadowRadiusLabel, 1, 4);
         shadowPane.getChildren().add(shadowRadiusLabel);
-        shadowRadiusSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(false);
-            }
-        });
+        shadowRadiusSlider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         shadowRadiusText = new NumberTextField();
         shadowRadiusText.setMaxWidth(50);
         Bindings.bindBidirectional(shadowRadiusText.textProperty(), shadowRadiusSlider.valueProperty(), new NumberStringConverter());
@@ -230,13 +202,7 @@ public class FontOptionsDialog extends Stage {
         Label shadowSpreadLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.spread.label"));
         GridPane.setConstraints(shadowSpreadLabel, 1, 5);
         shadowPane.getChildren().add(shadowSpreadLabel);
-        shadowSpreadSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(false);
-            }
-        });
+        shadowSpreadSlider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         shadowSpreadText = new NumberTextField();
         shadowSpreadText.setMaxWidth(50);
         Bindings.bindBidirectional(shadowSpreadText.textProperty(), shadowSpreadSlider.valueProperty(), new NumberStringConverter());
@@ -254,9 +220,7 @@ public class FontOptionsDialog extends Stage {
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        okButton.setOnAction((ActionEvent t) -> {
-            hide();
-        });
+        okButton.setOnAction((ActionEvent t) -> hide());
         okButton.setAlignment(Pos.CENTER);
         StackPane.setMargin(okButton, new Insets(10));
         buttonPane.getChildren().add(okButton);

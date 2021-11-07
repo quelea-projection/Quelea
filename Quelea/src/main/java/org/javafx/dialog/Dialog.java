@@ -4,8 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -112,12 +109,7 @@ public class Dialog extends Stage {
             stage.buttonsPanel.setAlignment(Pos.BOTTOM_CENTER);
             BorderPane.setMargin(stage.buttonsPanel, new Insets(0, 0, 1.5 * MARGIN, 0));
             stage.borderPanel.setBottom(stage.buttonsPanel);
-            stage.borderPanel.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                    stage.buttonsPanel.layout();
-                }
-            });
+            stage.borderPanel.widthProperty().addListener((ov, t, t1) -> stage.buttonsPanel.layout());
 
             stage.scene = new Scene(stage.borderPanel);
             if (QueleaProperties.get().getUseDarkTheme()) {
@@ -198,19 +190,9 @@ public class Dialog extends Stage {
 
             // stacktrace text
             stage.stackTraceLabel = new Label();
-            stage.stackTraceLabel.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-                    alignScrollPane();
-                }
-            });
+            stage.stackTraceLabel.widthProperty().addListener((ov, oldValue, newValue) -> alignScrollPane());
 
-            stage.stackTraceLabel.heightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-                    alignScrollPane();
-                }
-            });
+            stage.stackTraceLabel.heightProperty().addListener((ov, oldValue, newValue) -> alignScrollPane());
 
             StacktraceExtractor extractor = new StacktraceExtractor();
             stage.stacktrace = extractor.extract(t);
@@ -218,45 +200,36 @@ public class Dialog extends Stage {
             stage.scrollPane = new ScrollPane();
             stage.scrollPane.setContent(stage.stackTraceLabel);
 
-            stage.viewStacktraceButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    stage.stacktraceVisible = !stage.stacktraceVisible;
-                    if (stage.stacktraceVisible) {
-                        stage.messageBox.getChildren().add(stage.scrollPane);
-                        stage.stackTraceLabel.setText(stage.stacktrace);
+            stage.viewStacktraceButton.setOnAction(t1 -> {
+                stage.stacktraceVisible = !stage.stacktraceVisible;
+                if (stage.stacktraceVisible) {
+                    stage.messageBox.getChildren().add(stage.scrollPane);
+                    stage.stackTraceLabel.setText(stage.stacktrace);
 
-                        alignScrollPane();
-                    } else {
-                        stage.messageBox.getChildren().remove(stage.scrollPane);
+                    alignScrollPane();
+                } else {
+                    stage.messageBox.getChildren().remove(stage.scrollPane);
 
-                        //alignScrollPane();
-                        stage.setWidth(stage.originalWidth);
-                        stage.setHeight(stage.originalHeight);
-                        stage.stackTraceLabel.setText(null);
-                        stage.centerOnScreen();
-                    }
-                    stage.messageBox.layout();
+                    //alignScrollPane();
+                    stage.setWidth(stage.originalWidth);
+                    stage.setHeight(stage.originalHeight);
+                    stage.stackTraceLabel.setText(null);
+                    stage.centerOnScreen();
                 }
+                stage.messageBox.layout();
             });
 
-            stage.copyStacktraceButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    Clipboard clipboard = Clipboard.getSystemClipboard();
-                    Map<DataFormat, Object> map = new HashMap<>();
-                    map.put(DataFormat.PLAIN_TEXT, stage.stacktrace);
-                    clipboard.setContent(map);
-                }
+            stage.copyStacktraceButton.setOnAction(t12 -> {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                Map<DataFormat, Object> map = new HashMap<>();
+                map.put(DataFormat.PLAIN_TEXT, stage.stacktrace);
+                clipboard.setContent(map);
             });
 
-            stage.showingProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        stage.originalWidth = stage.getWidth();
-                        stage.originalHeight = stage.getHeight();
-                    }
+            stage.showingProperty().addListener((ov, oldValue, newValue) -> {
+                if (newValue) {
+                    stage.originalWidth = stage.getWidth();
+                    stage.originalHeight = stage.getHeight();
                 }
             });
 
@@ -296,12 +269,7 @@ public class Dialog extends Stage {
         protected Builder addOkButton() {
             stage.okButton = new Button("OK");
             stage.okButton.setPrefWidth(BUTTON_WIDTH);
-            stage.okButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    stage.close();
-                }
-            });
+            stage.okButton.setOnAction(t -> stage.close());
             stage.buttonsPanel.getChildren().add(stage.okButton);
             return this;
         }
@@ -309,13 +277,10 @@ public class Dialog extends Stage {
         protected Builder addConfirmationButton(String buttonCaption, final EventHandler<ActionEvent> actionHandler) {
             Button confirmationButton = new Button(buttonCaption);
             confirmationButton.setMinWidth(BUTTON_WIDTH);
-            confirmationButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    stage.close();
-                    if (actionHandler != null) {
-                        actionHandler.handle(t);
-                    }
+            confirmationButton.setOnAction(t -> {
+                stage.close();
+                if (actionHandler != null) {
+                    actionHandler.handle(t);
                 }
             });
 
@@ -327,12 +292,9 @@ public class Dialog extends Stage {
         protected Builder addApplyButton(String buttonCaption, final EventHandler<ActionEvent> actionHandler) {
             Button applyButton = new Button(buttonCaption);
             applyButton.setMinWidth(BUTTON_WIDTH);
-            applyButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    if (actionHandler != null) {
-                        actionHandler.handle(t);
-                    }
+            applyButton.setOnAction(t -> {
+                if (actionHandler != null) {
+                    actionHandler.handle(t);
                 }
             });
 

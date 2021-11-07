@@ -52,7 +52,6 @@ import org.quelea.windows.main.StatusPanel;
 public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionEvent> {
 
     private boolean printChords;
-    private final HashSet<String> names = new HashSet<>();
 
     @Override
     public void handle(ActionEvent t) {
@@ -74,42 +73,28 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
                 public void handle(ActionEvent t) {
                     printChords = true;
                 }
-            }).addNoButton(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent t) {
-                    printChords = false;
-                }
-            }).build().showAndWait();
-            names.clear();
+            }).addNoButton(t1 -> printChords = false).build().showAndWait();
             final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
             final List<SongDisplayable> songDisplayablesThreadSafe = getSongs(schedule);
             final File threadSafeFile = new File(file.getAbsolutePath());
-            new Thread() {
-                public void run() {
-                    final HashSet<String> names = new HashSet<>();
-                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(threadSafeFile), Charset.forName("UTF-8"))) {
-                        for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
-                            Displayable d = songDisplayablesThreadSafe.get(i);
-                            if (!(d instanceof SongDisplayable)) {
-                                continue;
-                            }
-                            SongDisplayable song = (SongDisplayable) d;
-                            String name = PDFExporter.sanitise(song.getTitle()) + ".pdf";
-                            while (names.contains(name)) {
-                                name = Utils.incrementExtension(name, "pdf");
-                            }
-                            names.add(name);
-                            out.putNextEntry(new ZipEntry(name));
-                            out.write(PDFExporter.getPDF(song, printChords));
-                            panel.setProgress((double) i / songDisplayablesThreadSafe.size());
+            new Thread(() -> {
+                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(threadSafeFile), Charset.forName("UTF-8"))) {
+                    for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
+                        Displayable d = songDisplayablesThreadSafe.get(i);
+                        if (!(d instanceof SongDisplayable)) {
+                            continue;
                         }
-                        panel.done();
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
+                        SongDisplayable song = (SongDisplayable) d;
+                        String name = PDFExporter.sanitise(song.getTitle()) + ".pdf";
+                        out.putNextEntry(new ZipEntry(name));
+                        out.write(PDFExporter.getPDF(song, printChords));
+                        panel.setProgress((double) i / songDisplayablesThreadSafe.size());
                     }
+                    panel.done();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
                 }
-            }.start();
+            }).start();
         }
     }
 

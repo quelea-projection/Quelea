@@ -47,7 +47,7 @@ import org.quelea.windows.main.DisplayCanvas;
  * <p/>
  * @author Michael
  */
-public class NoticeDialog extends Stage implements NoticesChangedListener {
+public class NoticeDialog extends Stage {
 
     private Button newNoticeButton;
     private Button removeNoticeButton;
@@ -189,7 +189,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      * Called when the notice status has updated, i.e. it's removed or the
      * counter is decremented.
      */
-    @Override
     public void noticesUpdated() {
         Notice selected = noticeList.getSelectionModel().getSelectedItem();
         noticeList.getItems().clear();
@@ -211,7 +210,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      */
     public void registerCanvas(DisplayCanvas canvas) {
         noticeDrawers.add(canvas.getNoticeDrawer());
-        canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }
 
     /**

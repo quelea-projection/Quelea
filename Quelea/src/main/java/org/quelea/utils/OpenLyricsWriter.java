@@ -103,8 +103,7 @@ public class OpenLyricsWriter {
      */
     public void writeToFile(File xfile, boolean overwrite)
             throws OpenLyricsWriterFileExistsException,
-                   OpenLyricsWriterWriteErrorException,
-                   TransformerConfigurationException,
+                   OpenLyricsWriterWriteErrorException, 
                    TransformerException {
         if (!overwrite && xfile.exists()) {
             throw new OpenLyricsWriterFileExistsException(String.format("The file %s exists.", xfile.getAbsolutePath()));
@@ -146,7 +145,6 @@ public class OpenLyricsWriter {
     /**
      * Get all the properties.
      *
-     * @param properties
      */
     private Element getProperties() {
         Element properties = this.doc.createElement("properties");

@@ -34,9 +34,7 @@ public class AparapiLevenshteinDistance {
 
     public int leastCompare(String s1, String[] s2) {
         String[] arr = new String[s2.length];
-        for(int i = 0; i < arr.length; i++) {
-            arr[i] = s1;
-        }
+        Arrays.fill(arr,s1);
 
         int[] results = compare(arr, s2);
         int min = Integer.MAX_VALUE;
@@ -56,7 +54,7 @@ public class AparapiLevenshteinDistance {
             throw new IllegalArgumentException("Array lengths must be equal!");
         }
 
-        final int result[] = new int[s1.length];
+        final int[] result = new int[s1.length];
         ArrStart s1Box = toIntArr(s1);
         final int[] s1Arr = s1Box.arr;
         final int[] s1Starts = s1Box.starts;
@@ -71,7 +69,7 @@ public class AparapiLevenshteinDistance {
 
 //        System.out.println(dumpSize);
 
-        final int dump[] = new int[dumpSize]; //Yeah...
+        final int[] dump = new int[dumpSize]; //Yeah...
         Kernel kernel = new Kernel() {
             @Override
             public void run() {

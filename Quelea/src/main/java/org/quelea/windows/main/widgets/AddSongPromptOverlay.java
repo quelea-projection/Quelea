@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,6 @@ import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -32,8 +30,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
@@ -62,24 +58,18 @@ public class AddSongPromptOverlay extends StackPane {
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-        Platform.runLater(new Runnable() {
+        Platform.runLater(() -> QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(new ChangeListener<String>() {
 
             @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(new ChangeListener<String>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        if(t1.isEmpty()) {
-                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
-                        }
-                        else {
-                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
-                        }
-                    }
-                });
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                if(t1.isEmpty()) {
+                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+                }
+                else {
+                    text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
+                }
             }
-        });
+        }));
         text.setWrapText(true);
         text.setTextFill(Color.WHITESMOKE);
         text.setStyle("-fx-font-size:16pt; -fx-font-family:Calibri;");
@@ -115,11 +105,6 @@ public class AddSongPromptOverlay extends StackPane {
         trans.setFromValue(getOpacity());
         trans.setToValue(0);
         trans.play();
-        trans.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setVisible(false);
-            }
-        });
+        trans.setOnFinished(t -> setVisible(false));
     }
 }

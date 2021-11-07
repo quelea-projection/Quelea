@@ -116,11 +116,7 @@ public class RCHandler {
             int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
             current--;
             p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
-            if (current > 0) {
-                p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
-            } else {
-                p.getSchedulePanel().getScheduleList().getSelectionModel().select(0);
-            }
+            p.getSchedulePanel().getScheduleList().getSelectionModel().select(Math.max(current,0));
             p.getPreviewPanel().goLive();
         });
     }
@@ -289,7 +285,7 @@ public class RCHandler {
         return display;
     }
 
-    public static String databaseSearch(HttpExchange he) throws UnsupportedEncodingException, IOException {
+    public static String databaseSearch(HttpExchange he) throws IOException {
         String searchString;
         if (he.getRequestURI().toString().contains("/search/")) {
             String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");

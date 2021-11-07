@@ -120,10 +120,10 @@ public class PresentationSlide {
         String slideText = LabelGrabber.INSTANCE.getLabel("preview.failed");
         graphics.setColor(new Color(174, 167, 159));
         graphics.fillRect(0, 0, width, height);
-        graphics.setFont(new Font("Calibri", 0, 1000));
+        graphics.setFont(new Font("Calibri", Font.PLAIN, 1000));
         graphics.setColor(new Color(250, 250, 250));
         while (graphics.getFontMetrics().stringWidth(slideText) > width - 1000) {
-            graphics.setFont(new Font("Calibri", 0, graphics.getFont().getSize() - 2));
+            graphics.setFont(new Font("Calibri", Font.PLAIN, graphics.getFont().getSize() - 2));
         }
         graphics.drawString(slideText, 10, height / 2 - graphics.getFontMetrics().getHeight() / 4);
     }

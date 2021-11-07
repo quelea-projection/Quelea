@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -71,32 +71,16 @@ public class BigDecimalTextField extends TextField {
     private void initHandlers() {
 
         // try to parse when focus is lost or RETURN is hit
-        setOnAction(new EventHandler<ActionEvent>() {
+        setOnAction(arg0 -> parseAndFormatInput());
 
-            @Override
-            public void handle(ActionEvent arg0) {
+        focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
                 parseAndFormatInput();
             }
         });
 
-        focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue.booleanValue()) {
-                    parseAndFormatInput();
-                }
-            }
-        });
-
         // Set text in field if BigDecimal property is changed from outside.
-        numberProperty().addListener(new ChangeListener<BigDecimal>() {
-
-            @Override
-            public void changed(ObservableValue<? extends BigDecimal> obserable, BigDecimal oldValue, BigDecimal newValue) {
-                setText(nf.format(newValue));
-            }
-        });
+        numberProperty().addListener((obserable, oldValue, newValue) -> setText(nf.format(newValue)));
     }
 
     /**

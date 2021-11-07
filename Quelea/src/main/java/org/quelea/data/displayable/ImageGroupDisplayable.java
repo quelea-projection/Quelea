@@ -20,6 +20,7 @@ package org.quelea.data.displayable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class ImageGroupDisplayable implements Displayable {
         this.files = file;
         presentation = new ImageGroupFactory().getPresentation(file);
         if (presentation == null) {
-            throw new IOException("Error with image group, couldn't open " + file);
+            throw new IOException("Error with image group, couldn't open " + Arrays.toString(file));
         }
     }
 

@@ -16,8 +16,7 @@
  */
 package org.javafx.dialog;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -29,7 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -61,13 +60,7 @@ public class InputDialog extends Stage {
         mainPane.setCenter(textField);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         okButton.setDefaultButton(true);
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                hide();
-            }
-        });
+        okButton.setOnAction(t -> hide());
         BorderPane.setMargin(okButton, new Insets(5));
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
@@ -86,16 +79,12 @@ public class InputDialog extends Stage {
      * @return the user entered text.
      */
     public static String getUserInput(final String message, final String title) {
-        Utils.fxRunAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-                dialog = new InputDialog();
-                dialog.setTitle(title);
-                dialog.textField.clear();
-                dialog.messageLabel.setText(message);
-                dialog.showAndWait();
-            }
+        Utils.fxRunAndWait(() -> {
+            dialog = new InputDialog();
+            dialog.setTitle(title);
+            dialog.textField.clear();
+            dialog.messageLabel.setText(message);
+            dialog.showAndWait();
         });
         while(dialog.isShowing()) {
             try {

@@ -107,8 +107,7 @@ public class PlatformUtils {
      * @param display display
      * @param wid native window identifier
      * @param msg type of message to send
-     * @param data0 message data
-     * @param data1 message data
+     * @param data message data
      * @return <code>1</code> if the message was successfully sent to the
      * window; <code>0</code> otherwise
      */

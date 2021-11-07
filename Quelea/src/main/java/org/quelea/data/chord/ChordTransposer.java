@@ -54,7 +54,7 @@ public class ChordTransposer {
     private static final List<String> TRANSPOSE_STEPS = new ArrayList<String>() {
 
         {
-            addAll(Arrays.asList(new String[]{"A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"}));
+            addAll(Arrays.asList("A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"));
         }
     };
     /*
@@ -110,11 +110,11 @@ public class ChordTransposer {
         String localTail;
         if(chord.length() > 1) {
             if(Character.toLowerCase(chord.charAt(1)) == 'b' || chord.charAt(1) == '#') {
-                localTail = chord.substring(2, chord.length());
+                localTail = chord.substring(2);
                 chord = chord.substring(0, 2);
             }
             else {
-                localTail = chord.substring(1, chord.length());
+                localTail = chord.substring(1);
                 chord = chord.substring(0, 1);
             }
         }

@@ -88,7 +88,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     private final List<Item> planItems;
 
     @FXML
-    private TreeView planView;
+    private TreeView<String> planView;
     @FXML
     private ProgressBar totalProgress;
     @FXML
@@ -387,7 +387,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 LOGGER.log(Level.WARNING, "Can't prepare custom slides", ex);
             }
         }
-    };
+    }
 
     // This MUST be run in the main thread
     // This adds the prepared displayable items into Quelea

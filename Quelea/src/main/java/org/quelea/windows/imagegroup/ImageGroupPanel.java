@@ -64,30 +64,24 @@ public class ImageGroupPanel extends AbstractPanel {
         this.containerPanel = containerPanel;
         BorderPane mainPanel = new BorderPane();
         imageGroupPreview = new ImageGroupPreview();
-        imageGroupPreview.addSlideChangedListener(new SlideChangedListener() {
-            @Override
-            public void slideChanged(ImageGroupSlide newSlide) {
-                if (live) {
-                    LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                    if (newSlide != null && displayable != null) {
-                            currentSlide = newSlide;
-                            updateCanvas();
-                    }
+        imageGroupPreview.addSlideChangedListener(newSlide -> {
+            if (live) {
+                LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+                if (newSlide != null && displayable != null) {
+                        currentSlide = newSlide;
+                        updateCanvas();
                 }
             }
         });
         imageGroupPreview.select(0);
 
-        imageGroupPreview.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
-                    t.consume();
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
-                } else if (t.getCode().equals(KeyCode.PAGE_UP) || t.getCode().equals(KeyCode.UP)) {
-                    t.consume();
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
-                }
+        imageGroupPreview.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+            if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
+                t.consume();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+            } else if (t.getCode().equals(KeyCode.PAGE_UP) || t.getCode().equals(KeyCode.UP)) {
+                t.consume();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
             }
         });
         mainPanel.setCenter(imageGroupPreview);
@@ -102,14 +96,11 @@ public class ImageGroupPanel extends AbstractPanel {
     public void buildLoopTimeline() {
         loopTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(0),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                if (containerPanel instanceof LivePanel) {
-                                    LivePanel livePanel = ((LivePanel) containerPanel);
-                                    if (livePanel.isLoopSelected()) {
-                                        imageGroupPreview.advanceSlide(true);
-                                    }
+                        actionEvent -> {
+                            if (containerPanel instanceof LivePanel) {
+                                LivePanel livePanel = ((LivePanel) containerPanel);
+                                if (livePanel.isLoopSelected()) {
+                                    imageGroupPreview.advanceSlide(true);
                                 }
                             }
                         }
@@ -118,43 +109,30 @@ public class ImageGroupPanel extends AbstractPanel {
         );
         loopTimeline.setCycleCount(Animation.INDEFINITE);
         loopTimeline.play();
-        QueleaApp.get().doOnLoad(new Runnable() {
-
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLoopDurationTextField().textProperty().addListener(new ChangeListener<String>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        int newTime;
-                        try {
-                            newTime = Integer.parseInt(t1);
-                        } catch (NumberFormatException ex) {
-                            return;
-                        }
-                        loopTimeline.stop();
-                        loopTimeline = new Timeline(
-                                new KeyFrame(Duration.seconds(0),
-                                        new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent actionEvent) {
-                                                if (containerPanel instanceof LivePanel) {
-                                                    LivePanel livePanel = ((LivePanel) containerPanel);
-                                                    if (livePanel.isLoopSelected()) {
-                                                        imageGroupPreview.advanceSlide(true);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                ),
-                                new KeyFrame(Duration.seconds(newTime))
-                        );
-                        loopTimeline.setCycleCount(Animation.INDEFINITE);
-                        loopTimeline.play();
-                    }
-                });
+        QueleaApp.get().doOnLoad(() -> QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLoopDurationTextField().textProperty().addListener((ov, t, t1) -> {
+            int newTime;
+            try {
+                newTime = Integer.parseInt(t1);
+            } catch (NumberFormatException ex) {
+                return;
             }
-        });
+            loopTimeline.stop();
+            loopTimeline = new Timeline(
+                    new KeyFrame(Duration.seconds(0),
+                            actionEvent -> {
+                                if (containerPanel instanceof LivePanel) {
+                                    LivePanel livePanel = ((LivePanel) containerPanel);
+                                    if (livePanel.isLoopSelected()) {
+                                        imageGroupPreview.advanceSlide(true);
+                                    }
+                                }
+                            }
+                    ),
+                    new KeyFrame(Duration.seconds(newTime))
+            );
+            loopTimeline.setCycleCount(Animation.INDEFINITE);
+            loopTimeline.play();
+        }));
     }
 
     private void drawSlide(ImageGroupSlide newSlide, DisplayCanvas canvas) {
@@ -194,11 +172,7 @@ public class ImageGroupPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (index < 1) {
-                    imageGroupPreview.select(1, true);
-                } else {
-                    imageGroupPreview.select(index, true);
-                }
+                imageGroupPreview.select(Math.max(index,1), true);
             }
         });
 

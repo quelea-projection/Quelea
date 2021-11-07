@@ -26,7 +26,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 
 /**
@@ -82,7 +81,7 @@ public class NumberTextField extends TextField {
         focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue()) {
+                if(!newValue) {
                     parseAndFormatInput();
                 }
             }

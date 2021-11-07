@@ -17,10 +17,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import org.quelea.data.GlobalThemeStore;
@@ -40,6 +36,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPreview;
 import org.quelea.windows.stage.StageDrawer;
+import java.util.logging.Logger;
 
 /**
  * The panel where the lyrics for different songs can be selected.

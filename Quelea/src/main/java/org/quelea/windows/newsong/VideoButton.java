@@ -26,7 +26,6 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -134,7 +133,7 @@ public class VideoButton extends Button implements Cancellable {
 
     private static void copyFile(String in, String out) throws Exception {
         try (FileChannel fin = new FileInputStream(in).getChannel();
-                FileChannel fout = new FileOutputStream(out).getChannel();) {
+                FileChannel fout = new FileOutputStream(out).getChannel()) {
 
             ByteBuffer buff = ByteBuffer.allocate(4096);
             while (fin.read(buff) != -1 || buff.position() > 0) {

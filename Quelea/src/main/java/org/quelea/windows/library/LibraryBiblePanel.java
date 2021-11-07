@@ -263,13 +263,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         String[] sections;
         if (!passageSelector.getText().contains(":") && passageSelector.getText().contains("-")) {
             String[] temp = passageSelector.getText().split("-");
-            StringBuilder sb = new StringBuilder("");
-            for (int i = Integer.valueOf(temp[0]); i <= Integer.valueOf(temp[1]); i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = Integer.parseInt(temp[0]); i <= Integer.parseInt(temp[1]); i++) {
                 sb.append(i).append(",");
             }
             sections = sb.toString().split(",");
         } else {
-            sections = passageSelector.getText().split("(;|,)");
+            sections = passageSelector.getText().split("([;,])");
         }
         ArrayList<BiblePassage> passages = new ArrayList<>();
         if (passageSelector.getText().isEmpty()) {
@@ -309,9 +309,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                         // Scroll to selected verse
                         if (!previewText.toString().contains("<body")) {
 
-                            String firstVerse = oldText.replaceAll("((\\d+)(:\\d+)?-?(\\d+)?(;|,))+((\\d+)(:\\d+)?)(-?\\d+)?", "$6");
+                            String firstVerse = oldText.replaceAll("((\\d+)(:\\d+)?-?(\\d+)?([;,]))+((\\d+)(:\\d+)?)(-?\\d+)?", "$6");
                             // Remove any non-numeric character in the end
-                            if (firstVerse.substring(firstVerse.length() - 1).matches("-|,|;")) {
+                            if (firstVerse.substring(firstVerse.length() - 1).matches("[-,;]")) {
                                 firstVerse = firstVerse.substring(0, firstVerse.length() - 1);
                             }
                             // Find the last number entered for passages separated with a hyphen

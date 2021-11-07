@@ -13,7 +13,7 @@ public enum VersionType {
 
     BETA("icons/splash-beta.png"), CI("icons/splash-bare-nightly.png"), RELEASE("icons/splash-bare.png");
 
-    private VersionType(String splashPath) {
+    VersionType(String splashPath) {
         this.splashPath = splashPath;
     }
 

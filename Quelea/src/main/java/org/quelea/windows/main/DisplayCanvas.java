@@ -79,7 +79,7 @@ public class DisplayCanvas extends StackPane {
         LOW(2);
         private final int priority;
 
-        private Priority(int priority) {
+        Priority(int priority) {
             this.priority = priority;
         }
 
@@ -111,18 +111,8 @@ public class DisplayCanvas extends StackPane {
         setMinWidth(0);
         background = getNewImageView();
         this.updater = updater;
-        heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                updateCanvas(updater);
-            }
-        });
-        widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                updateCanvas(updater);
-            }
-        });
+        heightProperty().addListener((ov, t, t1) -> updateCanvas(updater));
+        widthProperty().addListener((ov, t, t1) -> updateCanvas(updater));
         getChildren().add(background);
 
         black.setFill(Color.BLACK);
@@ -149,41 +139,35 @@ public class DisplayCanvas extends StackPane {
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
         final Runnable[] r = new Runnable[1];
-        final ListChangeListener<Node> listener = new ListChangeListener<Node>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends Node> change) {
-                while (change.next()) {
-                    if (!change.wasRemoved()) {
-                        try {
-                            /**
-                             * Platform.runLater() is necessary here to avoid
-                             * exceptions on some implementations, including
-                             * JFX8 at the time of writing. You can't modify a
-                             * list inside its listener, so the
-                             * Platform.runLater() delays it until after the
-                             * listener is complete (this is necessary even
-                             * though we're on the EDT.)
-                             * <p>
-                             * https://javafx-jira.kenai.com/browse/RT-35275
-                             */
-                            if (r[0] != null) {
-                                Platform.runLater(r[0]);
-                            }
-                        } catch (Exception ex) {
-                            LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
+        final ListChangeListener<Node> listener = change -> {
+            while (change.next()) {
+                if (!change.wasRemoved()) {
+                    try {
+                        /**
+                         * Platform.runLater() is necessary here to avoid
+                         * exceptions on some implementations, including
+                         * JFX8 at the time of writing. You can't modify a
+                         * list inside its listener, so the
+                         * Platform.runLater() delays it until after the
+                         * listener is complete (this is necessary even
+                         * though we're on the EDT.)
+                         * <p>
+                         * https://javafx-jira.kenai.com/browse/RT-35275
+                         */
+                        if (r[0] != null) {
+                            Platform.runLater(r[0]);
                         }
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
                     }
                 }
             }
         };
         getChildren().addListener(listener);
-        r[0] = new Runnable() {
-            @Override
-            public void run() {
-                getChildren().removeListener(listener);
-                pushLogoNoticeToFront();
-                getChildren().addListener(listener);
-            }
+        r[0] = () -> {
+            getChildren().removeListener(listener);
+            pushLogoNoticeToFront();
+            getChildren().addListener(listener);
         };
         noticeOverlay.setCache(true);
         getChildren().add(noticeOverlay);
@@ -246,12 +230,9 @@ public class DisplayCanvas extends StackPane {
     }
 
     private void updateCanvas(final CanvasUpdater updater) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (isVisibleInScene() && updater != null) {
-                    updater.updateCallback();
-                }
+        Platform.runLater(() -> {
+            if (isVisibleInScene() && updater != null) {
+                updater.updateCallback();
             }
         });
     }

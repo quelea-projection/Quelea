@@ -601,7 +601,7 @@ public class PowerPointHandler {
     /**
      * Get the result from the AppleScript.
      *
-     * @param process the AppleScript Process
+     * @param result the AppleScript Process
      * @return the return string from the AppleScript
      */
     private static String getMacResult(Process result) {

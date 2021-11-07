@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import java.io.File;
 import java.util.Date;
 
 import javafx.application.Platform;

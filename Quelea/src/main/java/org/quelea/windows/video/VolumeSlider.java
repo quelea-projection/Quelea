@@ -20,7 +20,6 @@ package org.quelea.windows.video;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;

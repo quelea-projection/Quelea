@@ -82,23 +82,14 @@ public class ElevantoImportDialog extends Stage {
                 scene.getStylesheets().add("org/modena_dark.css");
             }
             setScene(scene);
-                
+
             serviceView.getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<TreeItem<String>>() {
+                    .addListener((ChangeListener<TreeItem<String>>) this::onServiceViewSelectedItem);
 
-                @Override
-                public void changed(
-                        ObservableValue<? extends TreeItem<String>> observable,
-                        TreeItem<String> old_val, TreeItem<String> new_val) {
-                    onServiceViewSelectedItem(observable, old_val, new_val);
-                }
-
-            });
-            
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Couldn't create planning import dialog", e);
         }
-        
+
         centerOnScreen();
         getIcons().add(new Image("file:icons/elevanto.png"));        
     }
@@ -223,7 +214,7 @@ public class ElevantoImportDialog extends Stage {
                 }
             }
         }
-    };
+    }
         
     @SuppressWarnings("unchecked")
     protected void updatePlans() {

@@ -198,42 +198,36 @@ public class LyricDrawer extends WordDrawer {
         smallTextGroup.setEffect(smallshadow);
 
         if (curDisplayable instanceof BiblePassage) {
-            if (QueleaProperties.get().getSmallBibleTextPositionV().toLowerCase().equals("top")) {
-                if (QueleaProperties.get().getSmallBibleTextPositionH().toLowerCase().equals("left")) {
+            if (QueleaProperties.get().getSmallBibleTextPositionV().equalsIgnoreCase("top")) {
+                if (QueleaProperties.get().getSmallBibleTextPositionH().equalsIgnoreCase("left")) {
                     StackPane.setAlignment(smallTextGroup, Pos.TOP_LEFT);
                 } else {
                     StackPane.setAlignment(smallTextGroup, Pos.TOP_RIGHT);
                 }
             } else {
-                if (QueleaProperties.get().getSmallBibleTextPositionH().toLowerCase().equals("left")) {
+                if (QueleaProperties.get().getSmallBibleTextPositionH().equalsIgnoreCase("left")) {
                     StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
                 } else {
                     StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
                 }
             }
         } else {
-            if (QueleaProperties.get().getSmallSongTextPositionV().toLowerCase().equals("top")) {
-                if (QueleaProperties.get().getSmallSongTextPositionH().toLowerCase().equals("left")) {
+            if (QueleaProperties.get().getSmallSongTextPositionV().equalsIgnoreCase("top")) {
+                if (QueleaProperties.get().getSmallSongTextPositionH().equalsIgnoreCase("left")) {
                     StackPane.setAlignment(smallTextGroup, Pos.TOP_LEFT);
                 } else {
                     StackPane.setAlignment(smallTextGroup, Pos.TOP_RIGHT);
                 }
             } else {
-                if (QueleaProperties.get().getSmallSongTextPositionH().toLowerCase().equals("left")) {
+                if (QueleaProperties.get().getSmallSongTextPositionH().equalsIgnoreCase("left")) {
                     StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
                 } else {
                     StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
                 }
             }
         }
-
-        for (Iterator<Node> it = getCanvas().getChildren().iterator(); it.hasNext(); ) {
-            Node node = it.next();
-            if (node instanceof Group) {
-                it.remove();
-            }
-        }
-
+        getCanvas().getChildren().removeIf(node -> node instanceof Group);
+        
         getCanvas().getChildren().add(newTextGroup);
         if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
             getCanvas().getChildren().add(smallTextGroup);

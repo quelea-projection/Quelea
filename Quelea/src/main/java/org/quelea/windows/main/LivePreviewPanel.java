@@ -21,13 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;

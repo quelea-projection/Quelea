@@ -319,9 +319,9 @@ public final class Utils {
 	 * @return the VLC path.
 	 */
 	public static String getVLCStringFromFile(File file) {
-		String path = file.getAbsolutePath();
-		String[] parts = path.split("\\.");
-		if (parts[parts.length - 1].trim().toLowerCase().equals("vlcarg")) {
+		final String path = file.getAbsolutePath();
+		final String[] parts = path.split("\\.");
+		if (parts[parts.length - 1].trim().equalsIgnoreCase("vlcarg")) {
 			try {
 				byte[] encoded = Files.readAllBytes(Paths.get(path));
 				return new String(encoded, "UTF-8");
@@ -472,12 +472,7 @@ public final class Utils {
 						@Override
 						public void run() {
 							updateRunner.run();
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									statusPanel.done();
-								}
-							});
+							Platform.runLater(statusPanel::done);
 						}
 					}.start();
 				}
@@ -1115,7 +1110,7 @@ public final class Utils {
 				if (!entry.isDirectory()) {
 					try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
 						int currentByte;
-						byte data[] = new byte[BUFFER];
+						byte[] data = new byte[BUFFER];
 
 						FileOutputStream fos = new FileOutputStream(destFile);
 						try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
