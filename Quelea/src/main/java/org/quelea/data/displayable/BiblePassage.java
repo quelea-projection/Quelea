@@ -308,7 +308,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                             for (BibleBook bb : b.getBooks()) {
                                 String p = passageSummary.split(" \\d")[0];
                                 if (bb.getBookName().equals(p)) {
-                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii, BibleBookNameUtil.getBookNameForIndex(ii, b.getBooks().length)));
+                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii, BibleBookNameUtil.getBookNameForIndex(ii-1, b.getBooks().length)));
                                     bv.getChapter().getBook().setBible(b);
                                     verses.add(bv);
                                 }
