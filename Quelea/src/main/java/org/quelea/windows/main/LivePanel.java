@@ -614,6 +614,14 @@ public class LivePanel extends LivePreviewPanel {
         this.black.setSelected(isBlack);
     }
 
+    public void clickBlacked() {
+        this.black.fire();
+    }
+
+    public void clickLogoed() {
+        this.logo.fire();
+    }
+
     public void stopLoop() {
         loop.setSelected(false);
     }
