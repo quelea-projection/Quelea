@@ -296,7 +296,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.author = song.author;
         this.sectionsInSequence = new ArrayList<>();
         this.sectionsWithoutSequence = new ArrayList<>();
-        for (TextSection section : song.getSections()) {
+        for (TextSection section : song.getSectionsWithoutSequence()) {
             this.sectionsWithoutSequence.add(new TextSection(section));
         }
         this.theme = song.theme;
