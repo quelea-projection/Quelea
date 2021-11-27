@@ -192,6 +192,9 @@ public class SchedulePanel extends BorderPane {
                 updateScheduleDisplay();
             }
         });
+        scheduleList.getListView().focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) updateScheduleDisplay();
+        });
 
         ToolBar header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
