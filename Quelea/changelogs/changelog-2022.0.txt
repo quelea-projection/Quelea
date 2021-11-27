@@ -6,4 +6,6 @@ quelea (2022.0) stable
   * Bugfix: Schedules containing verses from Revelation no longer break
   * Bugfix: Corrupt bibles now show a sensible error message when they're imported
   * Feature: Register global open file handler
+  * Feature: Videos now uncheck black / logo buttons when autoplayed
+  * Feature: CORS enabled on mobile lyrics endpoint so custom webpages can access lyric content
   * Various code quality fixes courtesy of Hacktoberfest contributors - thanks to everyone who contributed!
