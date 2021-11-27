@@ -325,7 +325,7 @@ public class MobileLyricsServer {
                 }
             }
             he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
             OutputStream os = he.getResponseBody();
             os.write(response.getBytes(Charset.forName("UTF-8")));
