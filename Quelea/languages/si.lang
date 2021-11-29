@@ -780,3 +780,5 @@ general.text.options=Splošne možnosti besedila
 translation.text.options=Možnosti prevedenega besedila
 use.default.translation.label=Uporabi privzeti prevod
 translation.name.label=Ime prevoda
+bible.load.error.title=Napaka pri nalaganju Svetega pisma
+bible.load.error.question=Svetega pisma ni mogoče naložiti - najverjetneje je zapis okvarjen ali neveljaven.
