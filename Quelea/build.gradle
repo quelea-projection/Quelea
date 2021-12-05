@@ -15,6 +15,16 @@ plugins {
     id 'com.bmuschko.izpack' version '3.0'
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+}
+
 javafx {
     version = "17"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
@@ -200,7 +210,7 @@ dependencies {
     implementation group: 'org.openoffice', name: 'jurt', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'juh', version: '4.1.2'
     implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
-    implementation group: 'org.quelea', name: 'planning-center', version: '0.2'
+    implementation group: 'org.quelea', name: 'planning-center', version: '0.3-SNAPSHOT', changing: true
 
     implementation group: 'org.openoffice', name: 'unoil', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
