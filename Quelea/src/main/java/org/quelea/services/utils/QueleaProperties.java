@@ -305,6 +305,7 @@ public final class QueleaProperties extends SortedProperties {
         setProperty(previewDivposKey, Double.toString(val));
         write();
     }
+
     /**
      * Set the library divider position property.
      *
@@ -797,7 +798,7 @@ public final class QueleaProperties extends SortedProperties {
      *
      * @return true if the preview and live dividers should be linked, else false
      */
-    public boolean getLinkPreviewAndLiveDividers(){
+    public boolean getLinkPreviewAndLiveDividers() {
         return Boolean.parseBoolean(getProperty(linkPreviewAndLiveDividers, "true"));
     }
 
@@ -1121,7 +1122,7 @@ public final class QueleaProperties extends SortedProperties {
      * * <p/>
      *
      * @param extend true if it should automatically move projection screen,
-     * false otherwise.
+     *               false otherwise.
      */
     public void setUseAutoExtend(boolean extend) {
         setProperty(useAutoExtendKey, Boolean.toString(extend));
@@ -1144,7 +1145,7 @@ public final class QueleaProperties extends SortedProperties {
      * <p>
      *
      * @param maxChars the maximum number of characters allowed on any one line
-     * of projected text.
+     *                 of projected text.
      */
     public void setMaxChars(int maxChars) {
         setProperty(maxCharsKey, Integer.toString(maxChars));
@@ -1759,8 +1760,8 @@ public final class QueleaProperties extends SortedProperties {
     public String[] getGodWords() {
         return getProperty(godWordsKey,
                 "god,God,jesus,Jesus,christ,Christ,you,You,he,He,lamb,Lamb,"
-                + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
-                + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
+                        + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
+                        + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
                 .trim().split(",");
     }
 
@@ -1826,7 +1827,7 @@ public final class QueleaProperties extends SortedProperties {
      * <p>
      *
      * @param val if we should use openoffice, false if we should just use the
-     * basic POI images.
+     *            basic POI images.
      */
     public void setUseOO(boolean val) {
         setProperty(useOoKey, Boolean.toString(val));
@@ -1870,7 +1871,7 @@ public final class QueleaProperties extends SortedProperties {
      * <p/>
      *
      * @param val if we should use PowerPoint, false if we should just use the
-     * basic POI images or openoffice.
+     *            basic POI images or openoffice.
      */
     public void setUsePP(boolean val) {
         setProperty(usePpKey, Boolean.toString(val));
@@ -1955,7 +1956,7 @@ public final class QueleaProperties extends SortedProperties {
      * <p>
      *
      * @param val if we should use covert to MP#, false if we should just store
-     * recordings as WAV files.
+     *            recordings as WAV files.
      */
     public void setConvertRecordings(boolean val) {
         setProperty(convertMp3Key, Boolean.toString(val));
@@ -2206,7 +2207,7 @@ public final class QueleaProperties extends SortedProperties {
      * <p>
      *
      * @param maxChars the maximum number of characters allowed on any one line
-     * of bible text.
+     *                 of bible text.
      */
     public void setMaxBibleChars(int maxChars) {
         setProperty(maxBibleCharsKey, Integer.toString(maxChars));
@@ -2325,7 +2326,9 @@ public final class QueleaProperties extends SortedProperties {
         return Integer.parseInt(getProperty(autoDetectPortKey, "50015"));
     }
 
-    public boolean getStageShowClock() { return Boolean.parseBoolean(getProperty(stageShowClockKey, "true")); }
+    public boolean getStageShowClock() {
+        return Boolean.parseBoolean(getProperty(stageShowClockKey, "true"));
+    }
 
     public boolean getUse24HourClock() {
         return Boolean.parseBoolean(getProperty(use24hClockKey, "true"));
@@ -2463,7 +2466,7 @@ public final class QueleaProperties extends SortedProperties {
     public String[] getBibleFocusKeys() {
         return getProperty("bible.focus.keys", "Ctrl,B").split(",");
     }
-    
+
     /**
      * Set whether fade should be used.
      *
