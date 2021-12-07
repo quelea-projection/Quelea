@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -72,6 +72,7 @@ public final class Main extends Application {
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
      * <p>
+     *
      * @param stage the stage JavaFX provides that we don't use (ignored)
      */
     @Override
@@ -276,14 +277,14 @@ public final class Main extends Application {
                     List<String> cmdParams = getParameters().getRaw();
                     if (!cmdParams.isEmpty()) {
                         String schedulePath = cmdParams.get(cmdParams.size() - 1);
-                        if (!schedulePath.contains("--userhome=") && !schedulePath.contains("-psn_")){
+                        if (!schedulePath.contains("--userhome=") && !schedulePath.contains("-psn_")) {
                             LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                             Platform.runLater(() -> {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             });
                         }
                     }
-                    
+
                     if (Desktop.isDesktopSupported()) {
                         Desktop desktop = Desktop.getDesktop();
                         if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
@@ -347,6 +348,7 @@ public final class Main extends Application {
     /**
      * If it's appropriate, show the warning about only having 1 monitor.
      * <p/>
+     *
      * @param numMonitors the number of monitors.
      */
     private void showMonitorWarning(int numMonitors) {
