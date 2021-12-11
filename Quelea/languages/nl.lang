@@ -787,3 +787,9 @@ song.sequence.tip=Tip: Je kunt een sectie meerdere keren toevoegen (bv
 refrein)!
 enter.valid.port=Gelieve een nummer tussen 1029 en 49151 in te toetsen
 open.sequence.editor.tooltip=Toon volgorde opsteller
+translation.text.options=Vertaal tekst opties
+general.text.options=Algemene tekst opties
+use.default.translation.label=Gebruik de standaard vertaling
+bible.load.error.title=FOut bij laden bijbel
+translation.name.label=Naam vertaling
+bible.load.error.question=Onmogelijk om de bijbel te laten. Mogelijk is het bestand kapot of snapt Qaelea het formaat niet.
