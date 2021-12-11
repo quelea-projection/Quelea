@@ -18,6 +18,10 @@
 package org.quelea.services.importexport;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +60,7 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class PlanningCenterOnlineImportDialog extends Stage {
 
+    public static final DateTimeFormatter STANDARD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Map<TreeItem<String>, PlanningCenterOnlinePlanDialog> treeViewItemPlanDialogMap = new HashMap<TreeItem<String>, PlanningCenterOnlinePlanDialog>();
     private final PlanningCenterOnlineParser parser;
@@ -211,7 +216,11 @@ public class PlanningCenterOnlineImportDialog extends Stage {
                     }
                     Platform.runLater(() -> serviceTypeParentItem.getChildren().add(serviceTypeItem));
 
-                    List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get().execute().body().get();
+                    Map<String, String> planQueryMap = new HashMap<>();
+                    planQueryMap.put("include", "contributors,my_schedules,plan_times,series");
+                    planQueryMap.put("filter", "after");
+                    planQueryMap.put("after",STANDARD_DATE_FORMAT.format(LocalDate.now().minusMonths(1)));
+                    List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get(planQueryMap).execute().body().get();
                     for (Plan plan : serviceTypePlans) {
                         String date = plan.getDates();
                         if (date.isEmpty() || date.equals("No dates")) {

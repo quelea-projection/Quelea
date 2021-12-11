@@ -15,6 +15,12 @@ plugins {
     id 'com.bmuschko.izpack' version '3.0'
 }
 
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
