@@ -221,6 +221,9 @@ public class PlanningCenterOnlineImportDialog extends Stage {
                     planQueryMap.put("filter", "after");
                     planQueryMap.put("after",STANDARD_DATE_FORMAT.format(LocalDate.now().minusMonths(1)));
                     List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get(planQueryMap).execute().body().get();
+                    if(serviceTypePlans.isEmpty()) {
+                        serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get().execute().body().get();
+                    }
                     for (Plan plan : serviceTypePlans) {
                         String date = plan.getDates();
                         if (date.isEmpty() || date.equals("No dates")) {
