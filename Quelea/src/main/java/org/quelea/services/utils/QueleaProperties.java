@@ -756,6 +756,14 @@ public final class QueleaProperties extends SortedProperties {
         setProperty(thumbnailSizeKey, Integer.toString(thumbnailSize));
     }
 
+    public int getPlanningCentrePrevDays() {
+        return Integer.parseInt(getProperty(planningCentrePrevDaysKey, "31"));
+    }
+
+    public void setPlanningCentrePrevDays(int days) {
+        setProperty(planningCentrePrevDaysKey, Integer.toString(days));
+    }
+
     public boolean getUseDefaultTranslation() {
         return Boolean.parseBoolean(getProperty(useDefaultTranslation, "false"));
     }

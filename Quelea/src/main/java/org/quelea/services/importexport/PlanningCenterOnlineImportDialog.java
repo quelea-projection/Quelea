@@ -216,14 +216,14 @@ public class PlanningCenterOnlineImportDialog extends Stage {
                     }
                     Platform.runLater(() -> serviceTypeParentItem.getChildren().add(serviceTypeItem));
 
+                    int pastDays = QueleaProperties.get().getPlanningCentrePrevDays();
                     Map<String, String> planQueryMap = new HashMap<>();
                     planQueryMap.put("include", "contributors,my_schedules,plan_times,series");
-                    planQueryMap.put("filter", "after");
-                    planQueryMap.put("after",STANDARD_DATE_FORMAT.format(LocalDate.now().minusMonths(1)));
-                    List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get(planQueryMap).execute().body().get();
-                    if(serviceTypePlans.isEmpty()) {
-                        serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get().execute().body().get();
+                    if(pastDays>=0) {
+                        planQueryMap.put("filter", "after");
+                        planQueryMap.put("after", STANDARD_DATE_FORMAT.format(LocalDate.now().minusDays(QueleaProperties.get().getPlanningCentrePrevDays())));
                     }
+                    List<Plan> serviceTypePlans = parser.getPlanningCenterClient().services().serviceType(serviceType.getId()).plans().api().get(planQueryMap).execute().body().get();
                     for (Plan plan : serviceTypePlans) {
                         String date = plan.getDates();
                         if (date.isEmpty() || date.equals("No dates")) {

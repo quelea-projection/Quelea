@@ -12,6 +12,7 @@ pco.login.import.heading=Planning Center Online Login
 pco.loginerror.title=Login Error
 pco.loginerror.warning=Failed to login, check email and password and try again
 pco.import.heading=Planning Center Online
+pco.days.previous.setting=Past days to import
 elevanto.button=Elevanto
 elevanto.import.heading=Elevanto
 elevanto.loginsuccess.message=You may close this window and return to Quelea
