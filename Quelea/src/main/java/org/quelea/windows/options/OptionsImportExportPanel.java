@@ -62,7 +62,7 @@ public class OptionsImportExportPanel {
                 Group.of(LabelGrabber.INSTANCE.getLabel("elevanto.import.heading"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("client.id"), elevantoClientIdProperty).customKey(elevantoClientIdKey)),
                 Group.of(LabelGrabber.INSTANCE.getLabel("pco.import.heading"),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("pco.days.previous.setting"), planningCenterPrevDaysProperty, 0, 365).customKey(planningCentrePrevDaysKey))
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("pco.days.previous.setting"), planningCenterPrevDaysProperty, 0, 730).customKey(planningCentrePrevDaysKey))
         );
     }
 
