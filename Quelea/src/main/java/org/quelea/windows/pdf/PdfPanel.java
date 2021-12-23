@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -44,6 +44,7 @@ import org.quelea.windows.main.QueleaApp;
 /**
  * The panel for displaying PDF slides in the live / preview panels.
  * <p/>
+ *
  * @author Arvid, based on PresentationPanel
  */
 public class PdfPanel extends AbstractPanel {
@@ -59,6 +60,7 @@ public class PdfPanel extends AbstractPanel {
     /**
      * Create a new presentation panel.
      * <p/>
+     *
      * @param containerPanel the panel to create.
      */
     public PdfPanel(final LivePreviewPanel containerPanel) {
@@ -178,8 +180,9 @@ public class PdfPanel extends AbstractPanel {
     /**
      * Set the displayable to be on this presentation panel.
      * <p/>
+     *
      * @param displayable the presentation displayable to display.
-     * @param index the index to display.
+     * @param index       the index to display.
      */
     public void showDisplayable(final PdfDisplayable displayable, final int index) {
         if (this.displayable == displayable) {
@@ -195,14 +198,14 @@ public class PdfPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                pdfPreview.select(Math.max(index,1), true);
+                pdfPreview.select(Math.max(index, 1), true);
             }
         });
 
         /*
          * TODO
-         * For some reason the following scroll to line causes a bug whereby 
-         * the contents are only registered the second time of viewing? So 
+         * For some reason the following scroll to line causes a bug whereby
+         * the contents are only registered the second time of viewing? So
          * leave commented out until we can get to the bottom of it.
          */
 //        presentationList.scrollTo(getIndex());
@@ -212,6 +215,7 @@ public class PdfPanel extends AbstractPanel {
     /**
      * Get the currently selected index on this panel.
      * <p/>
+     *
      * @return the currently selected index on this panel.
      */
     public int getIndex() {
@@ -221,6 +225,7 @@ public class PdfPanel extends AbstractPanel {
     /**
      * Get the length of the item on this panel.
      * <p/>
+     *
      * @return the length of the item on this panel.
      */
     public int getSlideCount() {
@@ -266,7 +271,7 @@ public class PdfPanel extends AbstractPanel {
     public void selectLast() {
         pdfPreview.selectLast();
     }
-    
+
     public void selectFirst() {
         pdfPreview.select(1, true);
     }
