@@ -24,7 +24,7 @@ import com.healthmarketscience.jackcess.Row;
 import com.healthmarketscience.jackcess.Table;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -53,45 +53,46 @@ public class SongProParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        Database db = new DatabaseBuilder(file).setCharset(Charset.forName("ISO-8859-1")).setReadOnly(true).open();
-        Table table = db.getTable("Chorus");
-        int total = table.getRowCount();
-        int iter = 0;
-        for (Row r1 : table) {
-            statusPanel.setProgress((double) iter / total);
-            String title = r1.getString("Title");
-            String author = r1.getString("Author");
-            String copyright = r1.getString("Copyright");
-            String key = r1.getString("Key");
-            String comments = r1.getString("Comments");
+        try(Database db = new DatabaseBuilder(file).setCharset(StandardCharsets.ISO_8859_1).setReadOnly(true).open()) {
+            Table table = db.getTable("Chorus");
+            int total = table.getRowCount();
+            int iter = 0;
+            for (Row r1 : table) {
+                statusPanel.setProgress((double) iter / total);
+                String title = r1.getString("Title");
+                String author = r1.getString("Author");
+                String copyright = r1.getString("Copyright");
+                String key = r1.getString("Key");
+                String comments = r1.getString("Comments");
 //                String sequence = r1.getString("Sequence"); //TODO: For future use when we implement song sequences?
 
-            StringBuilder lyrics = new StringBuilder();
-            for (int i = 1; i <= 8; i++) {
-                String versesec = getSection("Verse " + i, r1.getString("Verse" + i));
-                if (versesec != null && !versesec.trim().isEmpty()) {
-                    lyrics.append(versesec);
+                StringBuilder lyrics = new StringBuilder();
+                for (int i = 1; i <= 8; i++) {
+                    String versesec = getSection("Verse " + i, r1.getString("Verse" + i));
+                    if (versesec != null && !versesec.trim().isEmpty()) {
+                        lyrics.append(versesec);
+                    }
                 }
-            }
-            String chorussec = getSection("Chorus", r1.getString("Chorus"));
-            if (chorussec != null && !chorussec.trim().isEmpty()) {
-                lyrics.append(chorussec);
-            }
-            String bridgesec = getSection("Bridge", r1.getString("Bridge"));
-            if (bridgesec != null && !bridgesec.trim().isEmpty()) {
-                lyrics.append(bridgesec);
-            }
+                String chorussec = getSection("Chorus", r1.getString("Chorus"));
+                if (chorussec != null && !chorussec.trim().isEmpty()) {
+                    lyrics.append(chorussec);
+                }
+                String bridgesec = getSection("Bridge", r1.getString("Bridge"));
+                if (bridgesec != null && !bridgesec.trim().isEmpty()) {
+                    lyrics.append(bridgesec);
+                }
 
-            SongDisplayable song = new SongDisplayable(title, author);
-            song.setLyrics(lyrics.toString().trim());
-            song.setKey(key);
-            song.setInfo(comments);
-            song.setCopyright(copyright);
-            ret.add(song);
-            iter++;
+                SongDisplayable song = new SongDisplayable(title, author);
+                song.setLyrics(lyrics.toString().trim());
+                song.setKey(key);
+                song.setInfo(comments);
+                song.setCopyright(copyright);
+                ret.add(song);
+                iter++;
+            }
+            statusPanel.done();
+            return ret;
         }
-        statusPanel.done();
-        return ret;
     }
 
     private String getSection(String secName, String sec) {
