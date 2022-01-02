@@ -55,11 +55,14 @@ public class SongBeamerParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("Cp1250")));
-        String fileLine;
-        StringBuilder rawLinesBuilder = new StringBuilder();
-        while ((fileLine = reader.readLine()) != null) {
-            rawLinesBuilder.append(fileLine).append("\n");
+        StringBuilder rawLinesBuilder;
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName(
+                "Cp1250")))) {
+            String fileLine;
+            rawLinesBuilder = new StringBuilder();
+            while ((fileLine = reader.readLine()) != null) {
+                rawLinesBuilder.append(fileLine).append("\n");
+            }
         }
         String rawLines = rawLinesBuilder.toString();
 
