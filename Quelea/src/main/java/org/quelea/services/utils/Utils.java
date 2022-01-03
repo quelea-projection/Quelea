@@ -27,17 +27,11 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -59,6 +53,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javafx.application.Platform;
@@ -638,19 +633,11 @@ public final class Utils {
 			destFile.createNewFile();
 		}
 
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
+		try(FileInputStream fileInputStream = new FileInputStream(sourceFile);
+		FileOutputStream fileOutputStream = new FileOutputStream(destFile)) {
+			FileChannel source = fileInputStream.getChannel();
+			FileChannel destination = fileOutputStream.getChannel();
 			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
 		}
 	}
 
@@ -1087,45 +1074,47 @@ public final class Utils {
 		try {
 			LOGGER.log(Level.INFO, "Extracting zip file {0}", zip.getAbsolutePath());
 			int BUFFER = 2048;
-			ZipFile zipFile;
-			if (charset == null) {
-				zipFile = new ZipFile(zip);
-			} else {
-				zipFile = new ZipFile(zip, charset);
-			}
 
 			File tempFolder = Files.createTempDirectory("qzipextract").toFile();
 			tempFolder.deleteOnExit();
 
-			Enumeration zipFileEntries = zipFile.entries();
+			try (ZipFile zipFile = (charset == null) ? new ZipFile(zip) :  new ZipFile(zip, charset)){
+				Enumeration<? extends ZipEntry> zipFileEntries = zipFile.entries();
 
-			while (zipFileEntries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-				String currentEntry = entry.getName();
-				File destFile = new File(tempFolder, currentEntry);
-				File destinationParent = destFile.getParentFile();
+				while (zipFileEntries.hasMoreElements()) {
+					ZipEntry entry = zipFileEntries.nextElement();
 
-				destinationParent.mkdirs();
+					if(!entry.isDirectory()){
 
-				if (!entry.isDirectory()) {
-					try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
-						int currentByte;
-						byte[] data = new byte[BUFFER];
+						String currentEntry = entry.getName();
+						File destFile = new File(tempFolder, currentEntry);
+						boolean destFileCreated = destFile.getParentFile().mkdirs();
 
-						FileOutputStream fos = new FileOutputStream(destFile);
-						try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
-							while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-								dest.write(data, 0, currentByte);
+						if (destFileCreated) {
+							try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
+								int currentByte;
+								byte[] data = new byte[BUFFER];
+
+								FileOutputStream fos = new FileOutputStream(destFile);
+								try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+									while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
+										dest.write(data, 0, currentByte);
+									}
+									dest.flush();
+								}
 							}
-							dest.flush();
 						}
 					}
 				}
-
+				try (Stream<Path> pathStream =
+										 Files.find(Paths.get(tempFolder.getAbsolutePath()),
+																999,
+																(p, bfa) -> bfa.isRegularFile())) {
+					return pathStream
+									.map(Path::toFile)
+									.collect(Collectors.toList());
+				}
 			}
-
-			return Files.find(Paths.get(tempFolder.getAbsolutePath()), 999, (p, bfa) -> bfa.isRegularFile()).map(path -> path.toFile())
-					.collect(Collectors.toList());
 		} catch (IOException ex) {
 			LOGGER.log(Level.WARNING, "Error extracting zip", ex);
 			return Collections.emptyList();
