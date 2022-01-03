@@ -18,9 +18,7 @@
  */
 package org.quelea.services.languages;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -34,22 +32,30 @@ import java.util.regex.Pattern;
 public class USEnglishConverter {
 
     public static void main(String[] args) {
-        try {
-            System.out.println("Converting language file to American English...");
-            Properties gb = new Properties();
-            gb.load(new FileReader("languages/gb.lang"));
-            Properties usa = new Properties();
-            for(Object k : gb.keySet()) {
-                String key = (String) k;
-                usa.setProperty(key, translateToUS(gb.getProperty(key)));
-            }
-            usa.setProperty("LANGUAGENAME", "English (US)");
-            usa.store(new FileWriter("languages/us.lang"), "THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!");
-            System.out.println("Successfully converted language file to American English.");
-        }
-        catch(IOException ex) {
+        System.out.println("Converting language file to American English...");
+        Properties gb = new Properties();
+        try (Reader reader = new FileReader("languages/gb.lang")) {
+            gb.load(reader);
+        } catch (IOException ex) {
             ex.printStackTrace();
+            return;
         }
+
+
+        Properties usa = new Properties();
+        for (Object k : gb.keySet()) {
+            String key = (String) k;
+            usa.setProperty(key, translateToUS(gb.getProperty(key)));
+        }
+        usa.setProperty("LANGUAGENAME", "English (US)");
+        try (Writer writer = new FileWriter("languages/us.lang")) {
+            usa.store(writer, "THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. " +
+                    "DO NOT EDIT MANUALLY!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("Successfully converted language file to American English.");
     }
 
     /**
