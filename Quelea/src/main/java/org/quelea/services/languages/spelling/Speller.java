@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,8 +75,7 @@ public class Speller {
         else {
             words = new HashSet<>();
             dictionaries.put(dict.getDictFile(), words);
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), "UTF-8"));
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), StandardCharsets.UTF_8))) {
                 String line;
                 while((line = reader.readLine()) != null) {
                     line = sanitiseWord(line);
@@ -198,15 +198,14 @@ public class Speller {
      */
     public void addWord(String word) {
         word = sanitiseWord(word);
-        try {
-            if(!words.contains(word)) {
-                words.add(word);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dict.getDictFile(), true), "UTF-8"));
-                out.append(System.getProperty("line.separator") + word).close();
+        if(!words.contains(word)) {
+            words.add(word);
+            try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dict.getDictFile(), true), StandardCharsets.UTF_8))) {
+                out.append(System.getProperty("line.separator")).append(word).close();
             }
-        }
-        catch(IOException ex) {
-            throw new RuntimeException("Couldn't add word to dictionary file", ex);
+            catch(IOException ex) {
+                throw new RuntimeException("Couldn't add word to dictionary file", ex);
+            }
         }
     }
 
