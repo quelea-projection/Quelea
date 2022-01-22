@@ -805,3 +805,6 @@ translation.text.options=Options de texte de traduction
 general.text.options=Options générale de texte
 use.default.translation.label=Utiliser la traduction par défaut
 translation.name.label=Nom de la traduction
+pco.days.previous.setting=Jours precedent à importer
+bible.load.error.title=Erreur de chargement de la bible
+bible.load.error.question=Impossible de lire la bible - Elle est probablement corrompu ou dans un format invalide
