@@ -24,6 +24,9 @@ parts:
   quelea:
     plugin: gradle
     source: Quelea
+    override-prime: |
+      snapcraftctl prime
+      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
     stage-packages: [default-jre, openjfx, vlc]
     gradle-openjdk-version: "11"
     gradle-options: [--debug, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, copyToDist]
