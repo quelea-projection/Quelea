@@ -66,11 +66,13 @@ public class OpenLyricsParser implements SongParser {
 			String author = getAuthor(ol);
 			if (!lyrics.isEmpty()) {
 				SongDisplayable displayable = new SongDisplayable(title, author);
+				displayable.setSequence(String.join(" ", verseOrder).toUpperCase());
+				// UpperCase required as OpenLyrics labels are lowe case
+				// this is required before setLyrics is called so the sequence is used correctly
 				displayable.setLyrics(lyrics);
 				displayable.setInfo(comments);
 				displayable.setCopyright(copyright);
 				displayable.setCcli(ccli);
-				displayable.setSequence(String.join(" ",verseOrder));
 				return Collections.singletonList(displayable);
 			} else {
 				LOGGER.log(Level.INFO, "Song had empty lyrics");
