@@ -62,6 +62,7 @@ public class OpenLyricsParser implements SongParser {
 			String comments = getComments(ol.getProperties().getComments());
 			String ccli = ol.getProperties().getCcliNo();
 			String copyright = ol.getProperties().getCopyright();
+			List<String> verseOrder = ol.getProperties().getVerseOrder();
 			String author = getAuthor(ol);
 			if (!lyrics.isEmpty()) {
 				SongDisplayable displayable = new SongDisplayable(title, author);
@@ -69,6 +70,7 @@ public class OpenLyricsParser implements SongParser {
 				displayable.setInfo(comments);
 				displayable.setCopyright(copyright);
 				displayable.setCcli(ccli);
+				displayable.setSequence(String.join(" ",verseOrder));
 				return Collections.singletonList(displayable);
 			} else {
 				LOGGER.log(Level.INFO, "Song had empty lyrics");
