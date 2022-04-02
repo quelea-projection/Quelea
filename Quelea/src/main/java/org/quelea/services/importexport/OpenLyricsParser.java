@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
@@ -66,8 +67,7 @@ public class OpenLyricsParser implements SongParser {
 			String author = getAuthor(ol);
 			if (!lyrics.isEmpty()) {
 				SongDisplayable displayable = new SongDisplayable(title, author);
-				displayable.setSequence(String.join(" ", verseOrder).toUpperCase());
-				// UpperCase required as OpenLyrics labels are lowe case
+				displayable.setSequence( getSequenceAsString(verseOrder));
 				// this is required before setLyrics is called so the sequence is used correctly
 				displayable.setLyrics(lyrics);
 				displayable.setInfo(comments);
@@ -81,6 +81,17 @@ public class OpenLyricsParser implements SongParser {
 		} catch (OpenLyricsException | IOException | ParserConfigurationException | SAXException ex) {
 			LOGGER.log(Level.WARNING, "Parse error", ex);
 			return Collections.emptyList();
+		}
+	}
+
+	private String getSequenceAsString(List<String> verseOrder) {
+		if (verseOrder==null){
+			return "";
+		}else{
+			return verseOrder.stream()
+					.filter( x->!x.isBlank() ) // we remove extra blank entries.
+					.map(String::toUpperCase) //  toUpperCase required as OpenLyrics labels are lower case
+					.collect(Collectors.joining(" "));
 		}
 	}
 
