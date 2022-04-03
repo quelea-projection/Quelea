@@ -1042,7 +1042,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append(Utils.escapeXML(sequence));
         xml.append("</sequence>");
         xml.append("<lyrics>");
-        for (TextSection section : sectionsInSequence) {
+        for (TextSection section : sectionsWithoutSequence) {
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
@@ -1283,6 +1283,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             ret.addTranslation(currentTranslation, translationLyrics);
         }
         ret.setSequence(sequence);
+        ret.refreshLyrics();
         return ret;
     }
 
