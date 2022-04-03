@@ -6,6 +6,7 @@ quelea (2022.0) stable
   * Bugfix: Schedules containing verses from Revelation no longer break
   * Bugfix: Corrupt bibles now show a sensible error message when they're imported
   * Bugfix: Preview pane now refreshes between previewing database songs and schedule songs
+  * Bugfix: OpenLyrics importer now read verse order/sequence.
   * Bugfix: Corrupt schedule warning sometimes thrown with schedules containing powerpoint presentations
   * Bugfix: Quelea song packs now export song sequences correctly
   * Feature: Register global open file handler
