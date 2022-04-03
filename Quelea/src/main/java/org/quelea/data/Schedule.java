@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -93,6 +93,155 @@ public class Schedule implements Iterable<Displayable> {
     }
 
     /**
+     * Generate a schedule object from a saved file.
+     *
+     * @param file the file where the schedule is saved.
+     * @return the schedule object.
+     */
+    public static Schedule fromFile(File file) {
+        try {
+            LOGGER.log(Level.INFO, "Loading schedule from file: " + file.getAbsolutePath());
+            ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
+            final int BUFFER = 2048;
+            try {
+                Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+                Map<String, String> fileChanges = new HashMap<>();
+                while (enumeration.hasMoreElements()) {
+                    ZipEntry entry = enumeration.nextElement();
+                    if (!entry.getName().startsWith("resources/")) {
+                        continue;
+                    }
+                    try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
+                        int count;
+                        byte[] data = new byte[BUFFER];
+                        File writeFile = new File(entry.getName().substring("resources/".length()));
+                        if (writeFile.exists()) {
+                            LOGGER.log(Level.INFO, "Skipping " + writeFile.getAbsolutePath() + ", already exists");
+                            continue;
+                        }
+                        if (!writeFile.canWrite()) {
+                            LOGGER.log(Level.INFO, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
+                            String[] localPathParts = new File(".").toPath().relativize(writeFile.toPath()).toString().split(Pattern.quote(System.getProperty("file.separator")));
+                            LOGGER.log(Level.INFO, "Write file local path: " + Arrays.toString(localPathParts));
+                            String[] parts = writeFile.getAbsolutePath().split("\\.");
+                            String extension = parts[parts.length - 1];
+                            File tempWriteFile = File.createTempFile("resource", "." + extension);
+                            LOGGER.log(Level.INFO, "Created file " + tempWriteFile.getAbsolutePath());
+                            Path tempResourceFile = Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), localPathParts);
+                            Files.deleteIfExists(tempResourceFile);
+                            Files.createDirectories(tempResourceFile);
+                            tempWriteFile = Files.move(tempWriteFile.toPath(), tempResourceFile, StandardCopyOption.REPLACE_EXISTING).toFile();
+                            LOGGER.log(Level.INFO, "Moved to " + tempWriteFile.getAbsolutePath());
+                            tempWriteFile.deleteOnExit();
+                            LOGGER.log(Level.INFO, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
+                            fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
+                            writeFile = tempWriteFile;
+                        }
+                        FileOutputStream fos = new FileOutputStream(writeFile);
+                        try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+                            while ((count = is.read(data, 0, BUFFER)) != -1) {
+                                dest.write(data, 0, count);
+                            }
+                            dest.flush();
+                        }
+                        LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
+                    }
+                }
+                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
+                if (ret == null) {
+                    return null;
+                }
+                ret.setFile(file);
+                ret.modified = false;
+                return ret;
+            } finally {
+                zipFile.close();
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
+            return null;
+        }
+    }
+
+    /**
+     * Parse some given XML from an inputstream to create a schedule.
+     *
+     * @param inputStream the inputstream where the xml is being read from.
+     * @return the schedule.
+     */
+    private static Schedule parseXML(InputStream inputStream, Map<String, String> fileChanges) {
+        try {
+            /*
+             * TODO: This should solve a problem some people were having with
+             * entering schedules - though I'm not really sure *why* they're
+             * having this problem (it seems to be that there's some funny
+             * characters that end up in the XML file which shouldn't be there.
+             * Character encoding bug perhaps? Oh joy.
+             *
+             * Start bodge.
+             */
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            StringBuilder contentsBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentsBuilder.append(line).append('\n');
+            }
+            String contents = contentsBuilder.toString();
+            contents = contents.replace(new String(new byte[]{11}), "\n");
+            contents = contents.replace(new String(new byte[]{-3}), " ");
+            contents = contents.replace(new String(new byte[]{0}), "");
+            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+            /*
+             * End bodge.
+             */
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
+            NodeList nodes = doc.getFirstChild().getChildNodes();
+            Schedule newSchedule = new Schedule();
+            boolean skipped = false;
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                String name = node.getNodeName();
+                //The non-shortcircuit (single bar) "or" is deliberate here, otherwise after "skipped" is set to true, nothing else will get added.
+                if (name.equalsIgnoreCase("song")) {
+                    skipped = skipped | !newSchedule.add(SongDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("passage")) {
+                    skipped = skipped | !newSchedule.add(BiblePassage.parseXML(node));
+                } else if (name.equalsIgnoreCase("fileimage")) {
+                    skipped = skipped | !newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("filevideo")) {
+                    skipped = skipped | !newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("fileaudio")) {
+                    skipped = skipped | !newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("filepresentation")) {
+                    PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
+                    skipped = skipped | !newSchedule.add(disp);
+                } else if (name.equalsIgnoreCase("timer")) {
+                    skipped = skipped | !newSchedule.add(TimerDisplayable.parseXML(node));
+                } else if (name.equalsIgnoreCase("filepdf")) {
+                    skipped = skipped | !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("fileimagegroup")) {
+                    skipped = skipped | !newSchedule.add(ImageGroupDisplayable.parseXML(node, fileChanges));
+                } else if (name.equalsIgnoreCase("url")) {
+                    skipped = skipped | !newSchedule.add(WebDisplayable.parseXML(node));
+                }
+            }
+            if (skipped) {
+                Platform.runLater(() -> {
+                    Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.header"), LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.text"));
+                });
+            }
+            newSchedule.modified = false;
+            return newSchedule;
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
+            return null;
+        }
+    }
+
+    /**
      * Determine if this schedule has been modified since it was last saved.
      *
      * @return true if it's been modified, false if it hasn't.
@@ -102,21 +251,21 @@ public class Schedule implements Iterable<Displayable> {
     }
 
     /**
-     * Set the file that this schedule should be saved to.
-     *
-     * @param file the file.
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    /**
      * Get the file where this schedule is being saved.
      *
      * @return the file.
      */
     public File getFile() {
         return file;
+    }
+
+    /**
+     * Set the file that this schedule should be saved to.
+     *
+     * @param file the file.
+     */
+    public void setFile(File file) {
+        this.file = file;
     }
 
     /**
@@ -193,76 +342,6 @@ public class Schedule implements Iterable<Displayable> {
     }
 
     /**
-     * Generate a schedule object from a saved file.
-     *
-     * @param file the file where the schedule is saved.
-     * @return the schedule object.
-     */
-    public static Schedule fromFile(File file) {
-        try {
-            LOGGER.log(Level.INFO, "Loading schedule from file: " + file.getAbsolutePath());
-            ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
-            final int BUFFER = 2048;
-            try {
-                Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
-                Map<String, String> fileChanges = new HashMap<>();
-                while (enumeration.hasMoreElements()) {
-                    ZipEntry entry = enumeration.nextElement();
-                    if (!entry.getName().startsWith("resources/")) {
-                        continue;
-                    }
-                    try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
-                        int count;
-                        byte[] data = new byte[BUFFER];
-                        File writeFile = new File(entry.getName().substring("resources/".length()));
-                        if (writeFile.exists()) {
-                            LOGGER.log(Level.INFO, "Skipping " + writeFile.getAbsolutePath() + ", already exists");
-                            continue;
-                        }
-                        if (!writeFile.canWrite()) {
-                            LOGGER.log(Level.INFO, "Can't write to " + writeFile.getAbsolutePath() + ", creating temp file");
-                            String[] localPathParts = new File(".").toPath().relativize(writeFile.toPath()).toString().split(Pattern.quote(System.getProperty("file.separator")));
-                            LOGGER.log(Level.INFO, "Write file local path: " + Arrays.toString(localPathParts));
-                            String[] parts = writeFile.getAbsolutePath().split("\\.");
-                            String extension = parts[parts.length - 1];
-                            File tempWriteFile = File.createTempFile("resource", "." + extension);
-                            LOGGER.log(Level.INFO, "Created file " + tempWriteFile.getAbsolutePath());
-                            Path tempResourceFile = Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), localPathParts);
-                            Files.createDirectories(tempResourceFile);
-                            tempWriteFile = Files.move(tempWriteFile.toPath(), tempResourceFile, StandardCopyOption.REPLACE_EXISTING).toFile();
-                            LOGGER.log(Level.INFO, "Moved to " + tempWriteFile.getAbsolutePath());
-                            tempWriteFile.deleteOnExit();
-                            LOGGER.log(Level.INFO, "Writing out {0} to {1}", new Object[]{writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath()});
-                            fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
-                            writeFile = tempWriteFile;
-                        }
-                        FileOutputStream fos = new FileOutputStream(writeFile);
-                        try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
-                            while ((count = is.read(data, 0, BUFFER)) != -1) {
-                                dest.write(data, 0, count);
-                            }
-                            dest.flush();
-                        }
-                        LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
-                    }
-                }
-                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
-                if (ret == null) {
-                    return null;
-                }
-                ret.setFile(file);
-                ret.modified = false;
-                return ret;
-            } finally {
-                zipFile.close();
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
-            return null;
-        }
-    }
-
-    /**
      * Get this schedule as XML.
      *
      * @return XML describing this schedule.
@@ -295,84 +374,6 @@ public class Schedule implements Iterable<Displayable> {
         }
         xml.append("</schedule>");
         return xml.toString();
-    }
-
-    /**
-     * Parse some given XML from an inputstream to create a schedule.
-     *
-     * @param inputStream the inputstream where the xml is being read from.
-     * @return the schedule.
-     */
-    private static Schedule parseXML(InputStream inputStream, Map<String, String> fileChanges) {
-        try {
-            /*
-             * TODO: This should solve a problem some people were having with
-             * entering schedules - though I'm not really sure *why* they're
-             * having this problem (it seems to be that there's some funny
-             * characters that end up in the XML file which shouldn't be there.
-             * Character encoding bug perhaps? Oh joy.
-             *
-             * Start bodge.
-             */
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-            StringBuilder contentsBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                contentsBuilder.append(line).append('\n');
-            }
-            String contents = contentsBuilder.toString();
-            contents = contents.replace(new String(new byte[]{11}), "\n");
-            contents = contents.replace(new String(new byte[]{-3}), " ");
-            contents = contents.replace(new String(new byte[]{0}), "");
-            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
-            /*
-             * End bodge.
-             */
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
-            NodeList nodes = doc.getFirstChild().getChildNodes();
-            Schedule newSchedule = new Schedule();
-            boolean skipped = false;
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node node = nodes.item(i);
-                String name = node.getNodeName();
-                //The non-shortcircuit (single bar) "or" is deliberate here, otherwise after "skipped" is set to true, nothing else will get added.
-                if (name.equalsIgnoreCase("song")) {
-                    skipped = skipped | !newSchedule.add(SongDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("passage")) {
-                    skipped = skipped | !newSchedule.add(BiblePassage.parseXML(node));
-                } else if (name.equalsIgnoreCase("fileimage")) {
-                    skipped = skipped | !newSchedule.add(ImageDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("filevideo")) {
-                    skipped = skipped | !newSchedule.add(VideoDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("fileaudio")) {
-                    skipped = skipped | !newSchedule.add(AudioDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("filepresentation")) {
-                    PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
-                    skipped = skipped | !newSchedule.add(disp);
-                } else if (name.equalsIgnoreCase("timer")) {
-                    skipped = skipped | !newSchedule.add(TimerDisplayable.parseXML(node));
-                } else if (name.equalsIgnoreCase("filepdf")) {
-                    skipped = skipped | !newSchedule.add(PdfDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("fileimagegroup")) {
-                    skipped = skipped | !newSchedule.add(ImageGroupDisplayable.parseXML(node, fileChanges));
-                } else if (name.equalsIgnoreCase("url")) {
-                    skipped = skipped | !newSchedule.add(WebDisplayable.parseXML(node));
-                }
-            }
-            if(skipped) {
-                Platform.runLater(() -> {
-                    Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.header"), LabelGrabber.INSTANCE.getLabel("schedule.items.skipped.text"));
-                });
-            }
-            newSchedule.modified = false;
-            return newSchedule;
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
-            return null;
-        }
     }
 
     /**
