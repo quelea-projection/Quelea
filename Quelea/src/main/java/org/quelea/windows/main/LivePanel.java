@@ -31,11 +31,7 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -159,7 +155,9 @@ public class LivePanel extends LivePreviewPanel {
         }
         logoIV.setFitHeight(16);
         logoIV.setFitWidth(16);
+        ToggleGroup group = new ToggleGroup();
         logo = new ToggleButton("", logoIV);
+        logo.setToggleGroup(group);
         Utils.setToolbarButtonStyle(logo);
         logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip") + " (F5)"));
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
@@ -194,6 +192,7 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.getItems().add(logo);
         black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
+        black.setToggleGroup(group);
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -215,6 +214,7 @@ public class LivePanel extends LivePreviewPanel {
         clearIV.setFitWidth(16);
         clearIV.setFitHeight(16);
         clear = new ToggleButton("", clearIV);
+        clear.setToggleGroup(group);
         Utils.setToolbarButtonStyle(clear);
         clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F7)"));
         clear.setOnAction((javafx.event.ActionEvent t) -> {
