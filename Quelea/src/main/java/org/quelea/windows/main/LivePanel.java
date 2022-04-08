@@ -235,6 +235,7 @@ public class LivePanel extends LivePreviewPanel {
         hideIV.setFitHeight(16);
         hide = new ToggleButton("", hideIV);
         Utils.setToolbarButtonStyle(hide);
+        hide.setToggleGroup(group);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));
         hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
