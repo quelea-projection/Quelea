@@ -50,10 +50,7 @@ public class AddWebActionHandler implements EventHandler<ActionEvent> {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             String url = result.get();
-            if (!url.startsWith("http")) {
-                url = "http://" + url;
-            }
-            WebDisplayable displayable = new WebDisplayable(url);
+            WebDisplayable displayable = new WebDisplayable(WebDisplayable.sanitiseUrl( url ));
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }
