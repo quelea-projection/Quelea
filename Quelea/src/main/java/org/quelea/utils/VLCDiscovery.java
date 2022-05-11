@@ -2,7 +2,10 @@ package org.quelea.utils;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.quelea.services.utils.LoggerUtils;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.discovery.StandardNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
@@ -17,6 +20,8 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
  */
 public class VLCDiscovery {
 
+    private static Logger LOGGER = LoggerUtils.getLogger();
+
     public NativeDiscovery getNativeDiscovery() {
         return new NativeDiscovery(
                 new DefaultWindowsNativeDiscoveryStrategy(),
@@ -25,19 +30,21 @@ public class VLCDiscovery {
         );
     }
 
-    static class LinuxDiscoveryStrategy extends StandardNativeDiscoveryStrategy {
+    public static class LinuxDiscoveryStrategy extends StandardNativeDiscoveryStrategy {
 
         @Override
         protected Pattern[] getFilenamePatterns() {
             return new Pattern[]{
-                Pattern.compile("libvlc\\.so(?:\\.\\d)*"),
-                Pattern.compile("libvlccore\\.so(?:\\.\\d)*")
+                    Pattern.compile("libvlc\\.so(?:\\.\\d)*"),
+                    Pattern.compile("libvlccore\\.so(?:\\.\\d)*")
             };
         }
 
         @Override
         public final boolean supported() {
-            return RuntimeUtil.isNix();
+            boolean supported = RuntimeUtil.isNix();
+            LOGGER.log(Level.INFO, System.getProperty("os.name") + " linux discovery strategy: " + supported);
+            return supported;
         }
 
         @Override

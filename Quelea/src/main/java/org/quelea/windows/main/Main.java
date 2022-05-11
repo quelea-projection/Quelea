@@ -20,11 +20,14 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import com.sun.jna.NativeLibrary;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -50,6 +53,10 @@ import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import org.quelea.utils.VLCDiscovery;
+import uk.co.caprica.vlcj.discovery.NativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.discovery.windows.DefaultWindowsNativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
  * The main class, sets everything in motion...
@@ -102,6 +109,29 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
+
+                    LOGGER.log(Level.INFO, "VLC discovery debug");
+                    var dss = List.of(new DefaultWindowsNativeDiscoveryStrategy(),
+                            new DefaultMacNativeDiscoveryStrategy(),
+                            new VLCDiscovery.LinuxDiscoveryStrategy());
+                    for (NativeDiscoveryStrategy discoveryStrategy : dss) {
+                        LOGGER.log(Level.INFO, "discoveryStrategy: " + discoveryStrategy);
+                        // Is this strategy supported for this run-time?
+                        boolean supported = discoveryStrategy.supported();
+                        LOGGER.log(Level.INFO, "supported: " + supported);
+                        if (supported) {
+                            String path = discoveryStrategy.discover();
+                            LOGGER.log(Level.INFO, "path: " + path);
+                            if (path != null) {
+                                Stream.of(new File(path).listFiles())
+                                        .map(File::getName)
+                                        .forEach(n->LOGGER.log(Level.INFO, n));
+                                LOGGER.log(Level.INFO, "Discovery found libvlc at '{}'", path);
+                            }
+                        }
+                    }
+
+
                     boolean vlcOk = false;
                     try {
                         vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
