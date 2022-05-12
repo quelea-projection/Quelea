@@ -84,17 +84,20 @@ public final class Main extends Application {
         if (files != null) {
             Set<String> matches = new HashSet<String>(patternsToMatch.length);
             for (File file : files) {
+                LOGGER.log(Level.INFO, "Checking " + file.getName());
                 for (Pattern pattern : patternsToMatch) {
+                    LOGGER.log(Level.INFO, "Checking against pattern " + pattern);
                     Matcher matcher = pattern.matcher(file.getName());
                     if (matcher.matches()) {
-                        // A match was found for this pattern (note that it may be possible to match multiple times, any
-                        // one of those matches will do so a Set is used to ignore duplicates)
                         LOGGER.log(Level.INFO, "Matched '" + file.getName() + "' in '" + directoryName + "'");
                         matches.add(pattern.pattern());
                         if (matches.size() == patternsToMatch.length) {
                             LOGGER.log(Level.INFO, "Matched all required files");
                             return true;
                         }
+                    }
+                    else {
+                        LOGGER.log(Level.INFO, "No match");
                     }
                 }
             }
@@ -152,7 +155,6 @@ public final class Main extends Application {
                         List<String> directoryNames = new ArrayList<String>();
                         discoveryStrategy.onGetDirectoryNames(directoryNames);
                         LOGGER.log(Level.INFO, "directoryNames: " + directoryNames);
-                        // Process each declared directory name
                         for (String directoryName : directoryNames) {
                             LOGGER.log(Level.INFO, "directoryName: " + directoryName);
                             if (find(directoryName, discoveryStrategy.getFilenamePatterns())) {
