@@ -95,8 +95,7 @@ public final class Main extends Application {
                             LOGGER.log(Level.INFO, "Matched all required files");
                             return true;
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.log(Level.INFO, "No match");
                     }
                 }
@@ -151,7 +150,6 @@ public final class Main extends Application {
                     boolean supported = discoveryStrategy.supported();
                     LOGGER.log(Level.INFO, "supported: " + supported);
                     if (supported) {
-
                         List<String> directoryNames = new ArrayList<String>();
                         discoveryStrategy.onGetDirectoryNames(directoryNames);
                         LOGGER.log(Level.INFO, "directoryNames: " + directoryNames);
