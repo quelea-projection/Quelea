@@ -21,11 +21,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import com.sun.jna.NativeLibrary;
 import javafx.application.Application;
@@ -71,6 +75,34 @@ public final class Main extends Application {
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
 
+    private boolean find(String directoryName, Pattern[] patternsToMatch) {
+        File dir = new File(directoryName);
+        if (!dir.exists()) {
+            return false;
+        }
+        File[] files = dir.listFiles();
+        if (files != null) {
+            Set<String> matches = new HashSet<String>(patternsToMatch.length);
+            for (File file : files) {
+                for (Pattern pattern : patternsToMatch) {
+                    Matcher matcher = pattern.matcher(file.getName());
+                    if (matcher.matches()) {
+                        // A match was found for this pattern (note that it may be possible to match multiple times, any
+                        // one of those matches will do so a Set is used to ignore duplicates)
+                        LOGGER.log(Level.INFO, "Matched '" + file.getName() + "' in '" + directoryName + "'");
+                        matches.add(pattern.pattern());
+                        if (matches.size() == patternsToMatch.length) {
+                            LOGGER.log(Level.INFO, "Matched all required files");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        LOGGER.log(Level.INFO, "Failed to match all required files");
+        return false;
+    }
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -111,22 +143,33 @@ public final class Main extends Application {
                 try {
 
                     LOGGER.log(Level.INFO, "VLC discovery debug");
-                    var dss = List.of(new DefaultWindowsNativeDiscoveryStrategy(),
-                            new DefaultMacNativeDiscoveryStrategy(),
-                            new VLCDiscovery.LinuxDiscoveryStrategy());
-                    for (NativeDiscoveryStrategy discoveryStrategy : dss) {
-                        LOGGER.log(Level.INFO, "discoveryStrategy: " + discoveryStrategy);
-                        boolean supported = discoveryStrategy.supported();
-                        LOGGER.log(Level.INFO, "supported: " + supported);
-                        if (supported) {
-                            String path = discoveryStrategy.discover();
-                            LOGGER.log(Level.INFO, "path: " + path);
-                            if (path != null) {
-                                Stream.of(new File(path).listFiles())
-                                        .map(File::getName)
-                                        .forEach(n->LOGGER.log(Level.INFO, n));
-                                LOGGER.log(Level.INFO, "Discovery found libvlc at '{}'", path);
+                    var discoveryStrategy = new VLCDiscovery.LinuxDiscoveryStrategy();
+                    LOGGER.log(Level.INFO, "discoveryStrategy: " + discoveryStrategy);
+                    boolean supported = discoveryStrategy.supported();
+                    LOGGER.log(Level.INFO, "supported: " + supported);
+                    if (supported) {
+
+                        List<String> directoryNames = new ArrayList<String>();
+                        discoveryStrategy.onGetDirectoryNames(directoryNames);
+                        LOGGER.log(Level.INFO, "directoryNames: " + directoryNames);
+                        // Process each declared directory name
+                        for (String directoryName : directoryNames) {
+                            LOGGER.log(Level.INFO, "directoryName: " + directoryName);
+                            if (find(directoryName, discoveryStrategy.getFilenamePatterns())) {
+                                LOGGER.log(Level.INFO, directoryName + " found!");
+                            } else {
+                                LOGGER.log(Level.INFO, directoryName + " not found.");
                             }
+                        }
+
+
+                        String path = discoveryStrategy.discover();
+                        LOGGER.log(Level.INFO, "path: " + path);
+                        if (path != null) {
+                            Stream.of(new File(path).listFiles())
+                                    .map(File::getName)
+                                    .forEach(n -> LOGGER.log(Level.INFO, n));
+                            LOGGER.log(Level.INFO, "Discovery found libvlc at '{}'", path);
                         }
                     }
 
