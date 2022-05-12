@@ -116,7 +116,6 @@ public final class Main extends Application {
                             new VLCDiscovery.LinuxDiscoveryStrategy());
                     for (NativeDiscoveryStrategy discoveryStrategy : dss) {
                         LOGGER.log(Level.INFO, "discoveryStrategy: " + discoveryStrategy);
-                        // Is this strategy supported for this run-time?
                         boolean supported = discoveryStrategy.supported();
                         LOGGER.log(Level.INFO, "supported: " + supported);
                         if (supported) {
