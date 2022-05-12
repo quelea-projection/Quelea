@@ -75,36 +75,6 @@ public final class Main extends Application {
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
 
-    private boolean find(String directoryName, Pattern[] patternsToMatch) {
-        File dir = new File(directoryName);
-        if (!dir.exists()) {
-            return false;
-        }
-        File[] files = dir.listFiles();
-        if (files != null) {
-            Set<String> matches = new HashSet<String>(patternsToMatch.length);
-            for (File file : files) {
-                LOGGER.log(Level.INFO, "Checking " + file.getName());
-                for (Pattern pattern : patternsToMatch) {
-                    LOGGER.log(Level.INFO, "Checking against pattern " + pattern);
-                    Matcher matcher = pattern.matcher(file.getName());
-                    if (matcher.matches()) {
-                        LOGGER.log(Level.INFO, "Matched '" + file.getName() + "' in '" + directoryName + "'");
-                        matches.add(pattern.pattern());
-                        if (matches.size() == patternsToMatch.length) {
-                            LOGGER.log(Level.INFO, "Matched all required files");
-                            return true;
-                        }
-                    } else {
-                        LOGGER.log(Level.INFO, "No match");
-                    }
-                }
-            }
-        }
-        LOGGER.log(Level.INFO, "Failed to match all required files");
-        return false;
-    }
-
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -143,37 +113,6 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
-
-                    LOGGER.log(Level.INFO, "VLC discovery debug");
-                    var discoveryStrategy = new VLCDiscovery.LinuxDiscoveryStrategy();
-                    LOGGER.log(Level.INFO, "discoveryStrategy: " + discoveryStrategy);
-                    boolean supported = discoveryStrategy.supported();
-                    LOGGER.log(Level.INFO, "supported: " + supported);
-                    if (supported) {
-                        List<String> directoryNames = new ArrayList<String>();
-                        discoveryStrategy.onGetDirectoryNames(directoryNames);
-                        LOGGER.log(Level.INFO, "directoryNames: " + directoryNames);
-                        for (String directoryName : directoryNames) {
-                            LOGGER.log(Level.INFO, "directoryName: " + directoryName);
-                            if (find(directoryName, discoveryStrategy.getFilenamePatterns())) {
-                                LOGGER.log(Level.INFO, directoryName + " found!");
-                            } else {
-                                LOGGER.log(Level.INFO, directoryName + " not found.");
-                            }
-                        }
-
-
-                        String path = discoveryStrategy.discover();
-                        LOGGER.log(Level.INFO, "path: " + path);
-                        if (path != null) {
-                            Stream.of(new File(path).listFiles())
-                                    .map(File::getName)
-                                    .forEach(n -> LOGGER.log(Level.INFO, n));
-                            LOGGER.log(Level.INFO, "Discovery found libvlc at '{}'", path);
-                        }
-                    }
-
-
                     boolean vlcOk = false;
                     try {
                         vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
