@@ -47,16 +47,17 @@ public class VLCDiscovery {
 
         @Override
         public void onGetDirectoryNames(List<String> directoryNames) {
+            LOGGER.info("Adding search dirs with root dir " + new File(".").getAbsolutePath());
             directoryNames.add("/usr/lib");
             directoryNames.add("/usr/lib64");
             directoryNames.add("/usr/local/lib");
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
             directoryNames.add("/usr/lib/i386-linux-gnu");
-            directoryNames.add(Paths.get("../usr/lib").normalize().toString());
-            directoryNames.add(Paths.get("../usr/lib64").normalize().toString());
-            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").normalize().toString());
-            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").normalize().toString());
+//            directoryNames.add(Paths.get("../usr/lib").normalize().toString());
+//            directoryNames.add(Paths.get("../usr/lib64").normalize().toString());
+//            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").normalize().toString());
+//            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").normalize().toString());
         }
 
     }
