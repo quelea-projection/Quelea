@@ -54,10 +54,10 @@ public class VLCDiscovery {
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
             directoryNames.add("/usr/lib/i386-linux-gnu");
-//            directoryNames.add(Paths.get("../usr/lib").normalize().toString());
-//            directoryNames.add(Paths.get("../usr/lib64").normalize().toString());
-//            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").normalize().toString());
-//            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib").toAbsolutePath().normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib64").toAbsolutePath().normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").toAbsolutePath().normalize().toString());
         }
 
     }
