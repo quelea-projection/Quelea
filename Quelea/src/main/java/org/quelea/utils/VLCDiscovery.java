@@ -52,10 +52,10 @@ public class VLCDiscovery {
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
             directoryNames.add("/usr/lib/i386-linux-gnu");
-            directoryNames.add(new File("../usr/lib").getAbsolutePath());
-            directoryNames.add(new File("../usr/lib64").getAbsolutePath());
-            directoryNames.add(new File("../usr/lib/x86_64-linux-gnu").getAbsolutePath());
-            directoryNames.add(new File("../usr/lib/i386-linux-gnu").getAbsolutePath());
+//            directoryNames.add(new File("../usr/lib").getAbsolutePath());
+//            directoryNames.add(new File("../usr/lib64").getAbsolutePath());
+//            directoryNames.add(new File("../usr/lib/x86_64-linux-gnu").getAbsolutePath());
+//            directoryNames.add(new File("../usr/lib/i386-linux-gnu").getAbsolutePath());
         }
 
     }
