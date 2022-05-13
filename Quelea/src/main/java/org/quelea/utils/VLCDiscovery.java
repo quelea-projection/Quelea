@@ -7,6 +7,7 @@ import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.discovery.windows.DefaultWindowsNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -52,10 +53,10 @@ public class VLCDiscovery {
             directoryNames.add("/usr/local/lib64");
             directoryNames.add("/usr/lib/x86_64-linux-gnu");
             directoryNames.add("/usr/lib/i386-linux-gnu");
-//            directoryNames.add(new File("../usr/lib").getAbsolutePath());
-//            directoryNames.add(new File("../usr/lib64").getAbsolutePath());
-//            directoryNames.add(new File("../usr/lib/x86_64-linux-gnu").getAbsolutePath());
-//            directoryNames.add(new File("../usr/lib/i386-linux-gnu").getAbsolutePath());
+            directoryNames.add(Paths.get("../usr/lib").normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib64").normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").normalize().toString());
+            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").normalize().toString());
         }
 
     }
