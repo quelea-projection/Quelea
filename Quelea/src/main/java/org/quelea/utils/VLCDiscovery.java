@@ -29,21 +29,14 @@ public class VLCDiscovery {
     private static Logger LOGGER = LoggerUtils.getLogger();
 
     public NativeDiscovery getNativeDiscovery() {
-        return new NativeDiscovery(
-                new DefaultWindowsNativeDiscoveryStrategy(),
-                new DefaultMacNativeDiscoveryStrategy(),
-                new LinuxDiscoveryStrategy()
-        );
+        return new NativeDiscovery(new DefaultWindowsNativeDiscoveryStrategy(), new DefaultMacNativeDiscoveryStrategy(), new LinuxDiscoveryStrategy());
     }
 
     public static class LinuxDiscoveryStrategy extends StandardNativeDiscoveryStrategy {
 
         @Override
         public Pattern[] getFilenamePatterns() {
-            return new Pattern[]{
-                    Pattern.compile("libvlc\\.so(?:\\.\\d)*"),
-                    Pattern.compile("libvlccore\\.so(?:\\.\\d)*")
-            };
+            return new Pattern[]{Pattern.compile("libvlc\\.so(?:\\.\\d)*"), Pattern.compile("libvlccore\\.so(?:\\.\\d)*")};
         }
 
         @Override
@@ -55,9 +48,7 @@ public class VLCDiscovery {
         public void onGetDirectoryNames(List<String> directoryNames) {
             LOGGER.info("Adding search dirs with root dir " + new File(".").getAbsolutePath());
 
-            Stream.of("/usr/lib", "/usr/lib64", "/usr/local/lib", "/usr/local/lib64", "/usr/lib/x86_64-linux-gnu", "/usr/lib/i386-linux-gnu")
-                    .filter(this::candidate)
-                    .forEach(directoryNames::add);
+            Stream.of("/usr/lib", "/usr/lib64", "/usr/local/lib", "/usr/local/lib64", "/usr/lib/x86_64-linux-gnu", "/usr/lib/i386-linux-gnu", Paths.get("/usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString()).filter(this::candidate).forEach(directoryNames::add);
 
             LOGGER.info("Found candidate dirs: " + directoryNames);
 
@@ -75,9 +66,7 @@ public class VLCDiscovery {
 
         public boolean candidate(String path) {
             try {
-                var list = Files.list(Paths.get(path))
-                        .map(p -> p.getFileName().toString())
-                        .collect(Collectors.toList());
+                var list = Files.list(Paths.get(path)).filter(Files::isRegularFile).map(p -> p.getFileName().toString()).collect(Collectors.toList());
                 boolean v = false;
                 boolean core = false;
                 for (String s : list) {
