@@ -1,6 +1,7 @@
 package org.quelea.utils;
 
 import org.quelea.services.utils.LoggerUtils;
+import uk.co.caprica.vlcj.Info;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.discovery.StandardNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
@@ -87,9 +88,12 @@ public class VLCDiscovery {
                         core = true;
                     }
                 }
-                return v && core;
+                boolean res = v && core;
+                LOGGER.info(path + " candidate: " + res);
+                return res;
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                LOGGER.warning(path + " doesn't exist");
+                return false;
             }
         }
 
