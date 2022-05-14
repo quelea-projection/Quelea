@@ -115,6 +115,8 @@ public final class Main extends Application {
             public void run() {
                 try {
                     Files.createTempFile("qstat", ".tmp");
+                    new FontInstaller().setupBundledFonts();
+
                     boolean vlcOk = false;
                     try {
                         vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
@@ -129,7 +131,6 @@ public final class Main extends Application {
                         VLC_INIT = false;
                     }
 
-                    new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
