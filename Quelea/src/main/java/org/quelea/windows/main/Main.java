@@ -126,7 +126,7 @@ public final class Main extends Application {
                     } else {
                         VLC_INIT = false;
                     }
-                    new FontInstaller().setupBundledFonts();
+//                    new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
