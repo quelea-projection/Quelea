@@ -65,6 +65,7 @@ public class VLCDiscovery {
         }
 
         public boolean candidate(String path) {
+            if(true) return true;
             try {
                 var list = Files.list(Paths.get(path)).filter(Files::isRegularFile).map(p -> p.getFileName().toString()).collect(Collectors.toList());
                 boolean v = false;
