@@ -48,7 +48,15 @@ public class VLCDiscovery {
         public void onGetDirectoryNames(List<String> directoryNames) {
             LOGGER.info("Adding search dirs with root dir " + new File(".").getAbsolutePath());
 
-            Stream.of("/usr/lib", "/usr/lib64", "/usr/local/lib", "/usr/local/lib64", "/usr/lib/x86_64-linux-gnu", "/usr/lib/i386-linux-gnu", Paths.get("/usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString()).filter(this::candidate).forEach(directoryNames::add);
+            Stream.of("/usr/lib",
+                            "/usr/lib64",
+                            "/usr/local/lib",
+                            "/usr/local/lib64",
+                            "/usr/lib/x86_64-linux-gnu",
+                            "/usr/lib/i386-linux-gnu",
+                            Paths.get("../usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString())
+                    .filter(this::candidate)
+                    .forEach(directoryNames::add);
 
             LOGGER.info("Found candidate dirs: " + directoryNames);
 
@@ -65,7 +73,7 @@ public class VLCDiscovery {
         }
 
         public boolean candidate(String path) {
-            if(true) return true;
+            if (true) return true;
             try {
                 var list = Files.list(Paths.get(path)).filter(Files::isRegularFile).map(p -> p.getFileName().toString()).collect(Collectors.toList());
                 boolean v = false;
