@@ -186,25 +186,25 @@ public class VLCWindowEmbed extends VLCWindow {
                 LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
             }
         });
-        ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
-        exc.scheduleAtFixedRate(new Runnable() {
-
-            @Override
-            public void run() {
-                if (init) {
-                    runOnVLCThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaPlayer.setAdjustVideo(true);
-                            int hueVal = (int) (hue * 360);
-                            if(hueVal>180) hueVal-=360;
-                            hueVal += 180;
-                            mediaPlayer.setHue(hueVal);
-                        }
-                    });
-                }
-            }
-        }, 0, 30, TimeUnit.MILLISECONDS);
+//        ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
+//        exc.scheduleAtFixedRate(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                if (init) {
+//                    runOnVLCThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mediaPlayer.setAdjustVideo(true);
+//                            int hueVal = (int) (hue * 360);
+//                            if(hueVal>180) hueVal-=360;
+//                            hueVal += 180;
+//                            mediaPlayer.setHue(hueVal);
+//                        }
+//                    });
+//                }
+//            }
+//        }, 0, 30, TimeUnit.MILLISECONDS);
     }
     
     private void createMediaPlayer() {        
