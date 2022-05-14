@@ -20,6 +20,7 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -113,6 +114,7 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
+                    Files.createTempFile("qstat", ".tmp");
                     boolean vlcOk = false;
                     try {
                         vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
@@ -126,7 +128,8 @@ public final class Main extends Application {
                     } else {
                         VLC_INIT = false;
                     }
-//                    new FontInstaller().setupBundledFonts();
+
+                    new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
