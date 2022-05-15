@@ -116,6 +116,8 @@ public final class Main extends Application {
                 try {
                     Files.createTempFile("qstat", ".tmp");
                     new FontInstaller().setupBundledFonts();
+                    Desktop.isDesktopSupported();
+                    Desktop.getDesktop();
 
                     boolean vlcOk = false;
                     try {
