@@ -120,19 +120,21 @@ public final class Main extends Application {
                     Desktop.getDesktop();
                     NativeLibrary.addSearchPath("vlc", "/snap/quelea/current/usr/lib/x86_64-linux-gnu");
 
-                    boolean vlcOk = false;
-                    try {
-                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
-                    } catch (Throwable ex) {
-                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
-                    }
-                    final boolean VLC_OK = vlcOk;
-                    final boolean VLC_INIT;
-                    if (VLC_OK) {
-                        VLC_INIT = VLCWindow.INSTANCE.isInit();
-                    } else {
-                        VLC_INIT = false;
-                    }
+//                    boolean vlcOk = false;
+//                    try {
+//                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
+//                    } catch (Throwable ex) {
+//                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
+//                    }
+//                    final boolean VLC_OK = vlcOk;
+//                    final boolean VLC_INIT;
+//                    if (VLC_OK) {
+//                        VLC_INIT = VLCWindow.INSTANCE.isInit();
+//                    } else {
+//                        VLC_INIT = false;
+//                    }
+                    final boolean VLC_INIT = true;
+                    final boolean VLC_OK = true;
 
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
