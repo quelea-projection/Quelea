@@ -55,7 +55,6 @@ public class VLCDiscovery {
                             "/usr/lib/x86_64-linux-gnu",
                             "/usr/lib/i386-linux-gnu",
                             Paths.get("../usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString())
-                    .filter(this::candidate)
                     .forEach(directoryNames::add);
 
             LOGGER.info("Found candidate dirs: " + directoryNames);
@@ -70,29 +69,6 @@ public class VLCDiscovery {
 //            directoryNames.add(Paths.get("../usr/lib64").toAbsolutePath().normalize().toString());
 //            directoryNames.add(Paths.get("../usr/lib/x86_64-linux-gnu").toAbsolutePath().normalize().toString());
 //            directoryNames.add(Paths.get("../usr/lib/i386-linux-gnu").toAbsolutePath().normalize().toString());
-        }
-
-        public boolean candidate(String path) {
-            if (true) return true;
-            try {
-                var list = Files.list(Paths.get(path)).filter(Files::isRegularFile).map(p -> p.getFileName().toString()).collect(Collectors.toList());
-                boolean v = false;
-                boolean core = false;
-                for (String s : list) {
-                    if (s.startsWith("libvlc.")) {
-                        v = true;
-                    }
-                    if (s.startsWith("libvlccore.")) {
-                        core = true;
-                    }
-                }
-                boolean res = v && core;
-                LOGGER.info(path + " candidate: " + res);
-                return res;
-            } catch (IOException ex) {
-                LOGGER.warning(path + " doesn't exist");
-                return false;
-            }
         }
 
     }
