@@ -118,6 +118,7 @@ public final class Main extends Application {
                     new FontInstaller().setupBundledFonts();
                     Desktop.isDesktopSupported();
                     Desktop.getDesktop();
+                    NativeLibrary.addSearchPath("vlc", "/snap/quelea/997/usr/lib/x86_64-linux-gnu");
 
                     boolean vlcOk = false;
                     try {
