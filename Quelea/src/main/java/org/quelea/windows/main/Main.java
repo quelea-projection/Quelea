@@ -114,11 +114,11 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
+                    NativeLibrary.addSearchPath("vlc", "/snap/quelea/current/usr/lib/x86_64-linux-gnu");
                     Files.createTempFile("qstat", ".tmp");
                     new FontInstaller().setupBundledFonts();
                     Desktop.isDesktopSupported();
                     Desktop.getDesktop();
-                    NativeLibrary.addSearchPath("vlc", "/snap/quelea/current/usr/lib/x86_64-linux-gnu");
 
 //                    boolean vlcOk = false;
 //                    try {
