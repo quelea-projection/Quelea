@@ -57,7 +57,6 @@ public class EasyWorshipParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-        LOGGER.log(Level.INFO, "Easyworship importer from {0}", file.getParent());
         try {
             Class.forName("com.googlecode.paradox.Driver");
             try (Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
