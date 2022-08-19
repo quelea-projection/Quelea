@@ -7,7 +7,8 @@
     ],
     "mainclass": "org.quelea.windows.main.Main",
     "vmargs": [
-        "Xmx1G"
+        "Xmx2G",
+        "XX:+UseParallelGC"
     ],
     "resources": [
         "dist/bibles",

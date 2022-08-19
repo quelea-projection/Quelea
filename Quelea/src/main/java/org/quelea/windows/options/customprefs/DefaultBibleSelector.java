@@ -139,13 +139,20 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
             File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
                 QueleaProperties.get().setLastDirectory(file.getParentFile());
-                try {
-                    Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
-                    BibleManager.get().refreshAndLoad();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Error copying bible file", ex);
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"),
-                            LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
+                if(Bible.parseBible(file)==null) {
+                    LOGGER.log(Level.WARNING, "Tried to add corrupt bible: ", file.getAbsolutePath());
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"),
+                            LabelGrabber.INSTANCE.getLabel("bible.load.error.question"));
+                }
+                else {
+                    try {
+                        Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
+                        BibleManager.get().refreshAndLoad();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Error copying bible file", ex);
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"),
+                                LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
+                    }
                 }
             }
 

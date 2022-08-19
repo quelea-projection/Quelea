@@ -46,6 +46,8 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.LivePanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -308,6 +310,13 @@ public class MultimediaControls extends StackPane {
             VLCWindow.INSTANCE.setHue(0);
             posSlider.setDisable(false);
             muteButton.setDisable(false);
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if(lp.getBlacked()) {
+                lp.clickBlacked();
+            }
+            if(lp.getLogoed()) {
+                lp.clickLogoed();
+            }
         } else {
             playButton.setImage(PLAY_IMAGE);
             VLCWindow.INSTANCE.pause();

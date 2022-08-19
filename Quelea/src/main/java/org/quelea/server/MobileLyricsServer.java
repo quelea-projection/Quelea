@@ -145,6 +145,7 @@ public class MobileLyricsServer {
             }
             byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -190,6 +191,7 @@ public class MobileLyricsServer {
             }
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -217,6 +219,7 @@ public class MobileLyricsServer {
             
             byte[] bytes = html.toString().getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -267,6 +270,7 @@ public class MobileLyricsServer {
             String response = getLyrics(true);
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -281,6 +285,7 @@ public class MobileLyricsServer {
             String response = getText();
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -295,6 +300,7 @@ public class MobileLyricsServer {
             String response = getTitle();
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -319,6 +325,7 @@ public class MobileLyricsServer {
                 }
             }
             he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
             OutputStream os = he.getResponseBody();
             os.write(response.getBytes(Charset.forName("UTF-8")));

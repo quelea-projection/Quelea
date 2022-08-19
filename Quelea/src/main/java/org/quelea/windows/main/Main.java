@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -20,11 +20,19 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import com.sun.jna.NativeLibrary;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -50,6 +58,10 @@ import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import org.quelea.utils.VLCDiscovery;
+import uk.co.caprica.vlcj.discovery.NativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.discovery.windows.DefaultWindowsNativeDiscoveryStrategy;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
  * The main class, sets everything in motion...
@@ -72,6 +84,7 @@ public final class Main extends Application {
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
      * <p>
+     *
      * @param stage the stage JavaFX provides that we don't use (ignored)
      */
     @Override
@@ -101,20 +114,28 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
-                    boolean vlcOk = false;
-                    try {
-                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
-                    } catch (Throwable ex) {
-                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
-                    }
-                    final boolean VLC_OK = vlcOk;
-                    final boolean VLC_INIT;
-                    if (VLC_OK) {
-                        VLC_INIT = VLCWindow.INSTANCE.isInit();
-                    } else {
-                        VLC_INIT = false;
-                    }
+                    NativeLibrary.addSearchPath("vlc", "/snap/quelea/current/usr/lib/x86_64-linux-gnu");
+                    Files.createTempFile("qstat", ".tmp");
                     new FontInstaller().setupBundledFonts();
+                    Desktop.isDesktopSupported();
+                    Desktop.getDesktop();
+
+//                    boolean vlcOk = false;
+//                    try {
+//                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
+//                    } catch (Throwable ex) {
+//                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
+//                    }
+//                    final boolean VLC_OK = vlcOk;
+//                    final boolean VLC_INIT;
+//                    if (VLC_OK) {
+//                        VLC_INIT = VLCWindow.INSTANCE.isInit();
+//                    } else {
+//                        VLC_INIT = false;
+//                    }
+                    final boolean VLC_INIT = true;
+                    final boolean VLC_OK = true;
+
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
@@ -276,14 +297,14 @@ public final class Main extends Application {
                     List<String> cmdParams = getParameters().getRaw();
                     if (!cmdParams.isEmpty()) {
                         String schedulePath = cmdParams.get(cmdParams.size() - 1);
-                        if (!schedulePath.contains("--userhome=") && !schedulePath.contains("-psn_")){
+                        if (!schedulePath.contains("--userhome=") && !schedulePath.contains("-psn_")) {
                             LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                             Platform.runLater(() -> {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             });
                         }
                     }
-                    
+
                     if (Desktop.isDesktopSupported()) {
                         Desktop desktop = Desktop.getDesktop();
                         if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
@@ -347,6 +368,7 @@ public final class Main extends Application {
     /**
      * If it's appropriate, show the warning about only having 1 monitor.
      * <p/>
+     *
      * @param numMonitors the number of monitors.
      */
     private void showMonitorWarning(int numMonitors) {

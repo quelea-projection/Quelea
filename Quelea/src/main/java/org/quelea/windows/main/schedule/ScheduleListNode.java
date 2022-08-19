@@ -19,6 +19,7 @@ package org.quelea.windows.main.schedule;
 
 import javafx.animation.FadeTransition;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -46,7 +47,7 @@ public class ScheduleListNode extends HBox {
     public ScheduleListNode(Displayable displayable) {
         super(10);
         setAlignment(Pos.CENTER_LEFT);
-        ImageView icon = displayable.getPreviewIcon();
+        Node icon = displayable.getPreviewIcon();
         liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
         liveIcon.setFitHeight(10);
         liveIcon.setFitWidth(10);

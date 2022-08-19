@@ -7,13 +7,13 @@
 
 **Are you here to download the latest version? Great! You want one of these:**
 
-[**2021.0 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2021.0/quelea-2021.0-x64-windows-install.exe)
+[**2022.0 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2022.0/quelea-2022.0-x64-windows-install.exe)
 
-[**2021.0 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2021.0/quelea-2021.0-crossplatform-install.jar)
+[**2022.0 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2022.0/quelea-2022.0-crossplatform-install.jar)
 
-[**2021.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2021.0/quelea-2021.0-mac.zip)
+[**2022.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2022.0/quelea-2022.0-mac.zip)
 
-[**2021.0 - Linux**](https://snapcraft.io/quelea)<br>
+[**2022.0 - Linux**](https://snapcraft.io/quelea)<br>
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
 **Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**

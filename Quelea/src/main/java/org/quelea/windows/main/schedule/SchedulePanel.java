@@ -17,9 +17,7 @@
  */
 package org.quelea.windows.main.schedule;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,12 +38,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.displayable.TextDisplayable;
-import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -197,6 +191,9 @@ public class SchedulePanel extends BorderPane {
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 updateScheduleDisplay();
             }
+        });
+        scheduleList.getListView().focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) updateScheduleDisplay();
         });
 
         ToolBar header = new ToolBar();

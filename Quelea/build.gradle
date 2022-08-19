@@ -15,6 +15,22 @@ plugins {
     id 'com.bmuschko.izpack' version '3.0'
 }
 
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+}
+
 javafx {
     version = "17"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
@@ -200,7 +216,7 @@ dependencies {
     implementation group: 'org.openoffice', name: 'jurt', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'juh', version: '4.1.2'
     implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
-    implementation group: 'org.quelea', name: 'planning-center', version: '0.2'
+    implementation group: 'org.quelea', name: 'planning-center', version: '0.3-SNAPSHOT', changing: true
 
     implementation group: 'org.openoffice', name: 'unoil', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
@@ -226,8 +242,8 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
 
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
 }
 
 jar {

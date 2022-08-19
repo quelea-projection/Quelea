@@ -18,10 +18,11 @@
 package org.quelea.data.displayable;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
@@ -184,11 +185,22 @@ public class WebDisplayable implements Displayable {
     }
 
     public void setUrl(String url) {
-        if (!url.startsWith("http")) {
-            url = "http://" + url;
-        }
+        url = sanitiseUrl(url);
         this.url = url;
         webEngine.load(url);
+    }
+
+    public static String sanitiseUrl(String unsafeUrl) {
+        try {
+            URI uri = new URI(unsafeUrl);
+            if ( uri.getScheme() == null ){
+                uri = new URI("http://"+unsafeUrl);
+            }
+            return uri.toString();
+        }catch(URISyntaxException e){
+            LOGGER.warning("Failed to parse url \""+unsafeUrl+"\" "+e.getMessage());
+            return "https://quelea.org/";
+        }
     }
 
     public void zoom(boolean zoomIn) {

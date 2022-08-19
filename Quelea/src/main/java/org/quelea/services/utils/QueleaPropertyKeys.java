@@ -31,6 +31,7 @@ public class QueleaPropertyKeys {
     public static final String maxFontSizeKey = "max.font.size";
     public static final String additionalLineSpacingKey = "additional.line.spacing";
     public static final String thumbnailSizeKey = "thumbnail.size";
+    public static final String planningCentrePrevDaysKey = "planning.center.prev.days";
     public static final String showExtraLivePanelToolbarOptionsKey = "show.extra.live.panel.toolbar.options";
     public static final String linkPreviewAndLiveDividers = "link.preview.and.live.dividers";
     public static final String clearLiveOnRemoveKey = "clear.live.on.remove";

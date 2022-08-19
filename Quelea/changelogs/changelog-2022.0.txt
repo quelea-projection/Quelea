@@ -3,4 +3,13 @@ quelea (2022.0) stable
   * Upgrade to Java 11 / OpenJFX 17 as base
   * Implement global default translation option
   * Bugfix: Resources with the same name in different folders no longer clash
+  * Bugfix: Schedules containing verses from Revelation no longer break
+  * Bugfix: Corrupt bibles now show a sensible error message when they're imported
+  * Bugfix: Preview pane now refreshes between previewing database songs and schedule songs
+  * Bugfix: OpenLyrics importer now read verse order/sequence.
+  * Bugfix: Corrupt schedule warning sometimes thrown with schedules containing powerpoint presentations
+  * Bugfix: Quelea song packs now export song sequences correctly
   * Feature: Register global open file handler
+  * Feature: Videos now uncheck black / logo buttons when autoplayed
+  * Feature: CORS enabled on mobile lyrics endpoint so custom webpages can access lyric content
+  * Various code quality fixes courtesy of Hacktoberfest contributors - thanks to everyone who contributed!
