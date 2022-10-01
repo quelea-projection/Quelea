@@ -250,8 +250,8 @@ public class CreateTimerPanel extends Stage {
     }
 
     private boolean parsable(String newValue) {
-        Boolean b = (parse(newValue) != -1) || (parseTime(newValue) != null);
-        return b;
+        return (parse(newValue) != -1) || (parseTime(newValue) != null);
+        
     }
 
     private int parse(String newValue) {
