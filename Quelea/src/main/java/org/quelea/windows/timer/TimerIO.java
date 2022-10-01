@@ -54,9 +54,7 @@ public class TimerIO {
      * @param f the file to save the timer to
      */
     public static void timerToFile(TimerDisplayable t, File f) throws IOException {
-        if (f.exists()) {
-
-        } else {
+        if (!f.exists()) {
             f.createNewFile();
         }
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"))) {
