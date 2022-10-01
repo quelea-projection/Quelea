@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,13 +57,13 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
  * @author Michael
  */
 public class VLCWindowEmbed extends VLCWindow {
-    
+
     /**
      * Use this thread for all VLC media player stuff to keep this class thread
      * safe.
      */
     private static final ExecutorService VLC_EXECUTOR;
-    
+
     //Easier for debugging
     static {
         VLC_EXECUTOR = Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -73,7 +73,7 @@ public class VLCWindowEmbed extends VLCWindow {
             }
         });
     }
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     protected static final VLCWindow EMBED_INSTANCE = new VLCWindowEmbed();
     private JFrame frame;
@@ -88,27 +88,27 @@ public class VLCWindowEmbed extends VLCWindow {
     private boolean disposeFrame = false;
 
     static public boolean setFullScreen(final JFrame frame, boolean doPack) {
-        
+
         // ops! the projector is not running fullscreen, so just display it as it
         if (QueleaProperties.get().isProjectorModeCoords()) {
             frame.setUndecorated(true);
             frame.setVisible(true);
             return true;
         }
-            
+
         int projectorScreen = QueleaProperties.get().getProjectorScreen();
-        
+
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
         if (projectorScreen < 0 || projectorScreen >= gs.length) {
             projectorScreen = 0;
         }
-        
+
         GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
         boolean result = device.isFullScreenSupported();
 
         frame.dispose();
-        
+
         // this code works well on linux, but not on windows
         if (result && Utils.isLinux()) {
             frame.setUndecorated(true);
@@ -136,7 +136,7 @@ public class VLCWindowEmbed extends VLCWindow {
         // this code works well on windows, not on linux
         else {
             frame.setUndecorated(true);
-            
+
             frame.setPreferredSize(gs[projectorScreen].getDefaultConfiguration().getBounds().getSize());
             frame.setLocation(gs[projectorScreen].getDefaultConfiguration().getBounds().x, frame.getY());
 
@@ -155,7 +155,7 @@ public class VLCWindowEmbed extends VLCWindow {
         }
         return result;
     }
-    
+
     private VLCWindowEmbed() {
 
         runOnVLCThread(() -> {
@@ -165,21 +165,21 @@ public class VLCWindowEmbed extends VLCWindow {
                     frame.setBackground(Color.BLACK);
                     frame.setType(JFrame.Type.UTILITY);
                     frame.setTitle(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
-                    
+
                     canvas = new Canvas();
                     canvas.setBackground(Color.BLACK);
                 });
-                
+
                 mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0", "--no-xlib");
                 videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
                 createMediaPlayer();
-                
+
                 SwingUtilities.invokeAndWait(() -> {
                     frame.add(canvas);
                     setFullScreen(frame, false);
                     frame.toBack();
                 });
-                
+
                 init = true;
                 LOGGER.log(Level.INFO, "Video initialised ok");
             } catch (Exception ex) {
@@ -206,8 +206,8 @@ public class VLCWindowEmbed extends VLCWindow {
             }
         }, 0, 30, TimeUnit.MILLISECONDS);
     }
-    
-    private void createMediaPlayer() {        
+
+    private void createMediaPlayer() {
         mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
         mediaPlayer.setVideoSurface(videoSurface);
         mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
@@ -548,7 +548,7 @@ public class VLCWindowEmbed extends VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-                
+
                 try {
                     SwingUtilities.invokeLater(() -> {
                         if (visible) {
@@ -567,9 +567,9 @@ public class VLCWindowEmbed extends VLCWindow {
                 }
             }
         });
-            
+
     }
-    
+
     @Override
     public void setLocation(final int x, final int y) {
         runOnVLCThread(new Runnable() {
@@ -624,7 +624,7 @@ public class VLCWindowEmbed extends VLCWindow {
                 }
             }
         });
-        
+
 //      System.out.println("refreshPosition() start");
         runOnVLCThread(new Runnable() {
             @Override
@@ -642,7 +642,7 @@ public class VLCWindowEmbed extends VLCWindow {
         });
 //      System.out.println("refreshPosition() end");
     }
-    
+
     @Override
     public void refreshPosition() {
         refreshPositionImmediate();

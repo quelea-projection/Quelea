@@ -20,19 +20,11 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import com.sun.jna.NativeLibrary;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -58,10 +50,6 @@ import org.quelea.utils.DesktopApi;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import org.quelea.utils.VLCDiscovery;
-import uk.co.caprica.vlcj.discovery.NativeDiscoveryStrategy;
-import uk.co.caprica.vlcj.discovery.mac.DefaultMacNativeDiscoveryStrategy;
-import uk.co.caprica.vlcj.discovery.windows.DefaultWindowsNativeDiscoveryStrategy;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
  * The main class, sets everything in motion...
@@ -114,28 +102,20 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
-                    NativeLibrary.addSearchPath("vlc", "/snap/quelea/current/usr/lib/x86_64-linux-gnu");
-                    Files.createTempFile("qstat", ".tmp");
+                    boolean vlcOk = false;
+                    try {
+                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
+                    } catch (Throwable ex) {
+                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
+                    }
+                    final boolean VLC_OK = vlcOk;
+                    final boolean VLC_INIT;
+                    if (VLC_OK) {
+                        VLC_INIT = VLCWindow.INSTANCE.isInit();
+                    } else {
+                        VLC_INIT = false;
+                    }
                     new FontInstaller().setupBundledFonts();
-                    Desktop.isDesktopSupported();
-                    Desktop.getDesktop();
-
-//                    boolean vlcOk = false;
-//                    try {
-//                        vlcOk = new VLCDiscovery().getNativeDiscovery().discover();
-//                    } catch (Throwable ex) {
-//                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
-//                    }
-//                    final boolean VLC_OK = vlcOk;
-//                    final boolean VLC_INIT;
-//                    if (VLC_OK) {
-//                        VLC_INIT = VLCWindow.INSTANCE.isInit();
-//                    } else {
-//                        VLC_INIT = false;
-//                    }
-                    final boolean VLC_INIT = true;
-                    final boolean VLC_OK = true;
-
                     new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
 
                     final ObservableList<Screen> monitors = Screen.getScreens();
