@@ -38,7 +38,7 @@ public class ImageGroupDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-            clear();
+        clear();
         if(getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
         }
