@@ -18,8 +18,6 @@
 package org.quelea.windows.main;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -28,7 +26,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -61,36 +58,27 @@ public class PreviewPanel extends LivePreviewPanel {
         goLiveIV.setFitWidth(16);
         liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), goLiveIV);
         liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text") + " (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
-        liveButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
+        liveButton.setOnAction(t -> {
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
                 ListView<Displayable> list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView();
                 if (list.getSelectionModel().getSelectedIndex() < list.getItems().size() - 1 && QueleaProperties.get().getAdvanceOnLive()) {
                     list.getSelectionModel().clearAndSelect(list.getSelectionModel().getSelectedIndex() + 1);
                 }
-            }
         });
         header.getItems().add(liveButton);
         liveButton.setDisable(true);
         setTop(header);
-        setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCharacter().equals(" ")) {
-                    goLive();
-                }
+        setOnKeyTyped(t -> {
+            if (t.getCharacter().equals(" ")) {
+                goLive();
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if (t.getCode() == KeyCode.RIGHT) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
-                } else if (t.getCode() == KeyCode.LEFT) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
-                }
+        setOnKeyPressed(t -> {
+            if (t.getCode() == KeyCode.RIGHT) {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
+            } else if (t.getCode() == KeyCode.LEFT) {
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
             }
         });
     }
