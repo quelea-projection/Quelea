@@ -53,18 +53,24 @@ public class PreviewPanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView goLiveIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/golivearrow-light.png" : "file:icons/golivearrow.png"));
+        ImageView goLiveIV = new ImageView(
+                new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/golivearrow-light.png"
+                        : "file:icons/golivearrow.png"));
         goLiveIV.setFitHeight(16);
         goLiveIV.setFitWidth(16);
         liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), goLiveIV);
-        liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text") + " (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
+        liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text") + " ("
+                + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
         liveButton.setOnAction(t -> {
-            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
-                ListView<Displayable> list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView();
-                if (list.getSelectionModel().getSelectedIndex() < list.getItems().size() - 1 && QueleaProperties.get().getAdvanceOnLive()) {
-                    list.getSelectionModel().clearAndSelect(list.getSelectionModel().getSelectedIndex() + 1);
-                }
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(),
+                    ((ContainedPanel) getCurrentPane()).getCurrentIndex());
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+            ListView<Displayable> list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel()
+                    .getScheduleList().getListView();
+            if (list.getSelectionModel().getSelectedIndex() < list.getItems().size() - 1
+                    && QueleaProperties.get().getAdvanceOnLive()) {
+                list.getSelectionModel().clearAndSelect(list.getSelectionModel().getSelectedIndex() + 1);
+            }
         });
         header.getItems().add(liveButton);
         liveButton.setDisable(true);
@@ -105,7 +111,8 @@ public class PreviewPanel extends LivePreviewPanel {
         if (d instanceof WebDisplayable) {
             final WebDisplayable webDisplayable = (WebDisplayable) d;
             Platform.runLater(() -> {
-                if (!webDisplayable.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable())) {
+                if (!webDisplayable
+                        .equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable())) {
                     getWebPanel().addWebView(webDisplayable);
                     getWebPanel().blockButtons(false);
                 } else {
