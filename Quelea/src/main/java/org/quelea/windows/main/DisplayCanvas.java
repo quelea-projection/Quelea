@@ -62,7 +62,7 @@ public class DisplayCanvas extends StackPane {
     private final Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
-    private Priority drawingPriority = Priority.LOW;
+    private Priority drawingPriority;
     private final boolean playVideo;
 
     public enum Type {
