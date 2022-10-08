@@ -96,7 +96,7 @@ public class EpicWorshipParser implements SongParser {
     }
 
     private String format(String s) {
-        String n = "";
+        String n;
         n = s.split(":", 2)[1];
         n = n.replace("\"", "");
         return n;
