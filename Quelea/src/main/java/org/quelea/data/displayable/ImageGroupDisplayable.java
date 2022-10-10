@@ -139,9 +139,7 @@ public class ImageGroupDisplayable implements Displayable {
     @Override
     public Collection<File> getResources() {
         List<File> f = new ArrayList<>();
-        for (File file : files) {
-            f.add(file);
-        }
+        Collections.addAll(f, files);
         return f;
     }
 
