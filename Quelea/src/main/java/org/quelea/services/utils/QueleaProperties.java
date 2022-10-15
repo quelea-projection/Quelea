@@ -1431,7 +1431,7 @@ public final class QueleaProperties extends SortedProperties {
      * @return the URL to download Quelea.
      */
     public String getDownloadLocation() {
-        return "https://github.com/quelea-projection/Quelea/releases";
+        return "https://github.com/quelea-projection/Quelea/releases/";
     }
 
     /**
