@@ -55,6 +55,7 @@ import javafx.scene.text.Text;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -849,7 +850,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 if (cpText != null && !cpText.isEmpty()) {
                     smallLinesList.add(cpText);
                 }
-                smallLinesList.add("CCLI License #" + churchCcliNum);
+                smallLinesList.add(LabelGrabber.INSTANCE.getLabel("ccli.licence") + " #" + churchCcliNum);
                 smallLines = smallLinesList.toArray(new String[smallLinesList.size()]);
             }
             sectionsWithoutSequence.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
