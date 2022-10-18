@@ -17,41 +17,33 @@
  */
 package org.quelea.data.displayable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import org.quelea.data.imagegroup.ImageGroup;
-import org.quelea.data.imagegroup.ImageGroupFactory;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
-import org.w3c.dom.Node;
+ import javafx.scene.image.Image;
+ import javafx.scene.image.ImageView;
+ import org.jetbrains.annotations.NotNull;
+ import org.quelea.data.imagegroup.ImageGroup;
+ import org.quelea.data.imagegroup.ImageGroupFactory;
+ import org.quelea.services.utils.QueleaProperties;
+ import org.quelea.services.utils.Utils;
+ import org.w3c.dom.Node;
+ import org.w3c.dom.NodeList;
 
-/**
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.*;
+
+ /**
  * A displayable that's an image group.
  * <p/>
  * @author Arvid, based on PresentationDisplayable
  */
 public class ImageGroupDisplayable implements Displayable {
-
-    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final File[] files;
     private final ImageGroup presentation;
+    private final String title;
 
-    /**
-     * Create a new image group displayable
-     * <p/>
-     * @param file the file to create the PDF presentation from.
-     */
-    public ImageGroupDisplayable(File[] file) throws IOException {
+     public ImageGroupDisplayable(File[] file, String groupTitle) throws IOException {
         this.files = file;
+        this.title = groupTitle;
         presentation = new ImageGroupFactory().getPresentation(file);
         if (presentation == null) {
             throw new IOException("Error with image group, couldn't open " + Arrays.toString(file));
@@ -78,6 +70,10 @@ public class ImageGroupDisplayable implements Displayable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<fileimagegroup>");
+        ret.append("<title>");
+        ret.append(Utils.escapeXML(title));
+        ret.append("</title>");
+        ret.append("<files>");
         for (File f : files) {
             String loc;
             if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
@@ -87,6 +83,7 @@ public class ImageGroupDisplayable implements Displayable {
             }
             ret.append(Utils.escapeXML(loc)).append(";");
         }
+        ret.append("</files>");
         ret.append("</fileimagegroup>");
         return ret.toString();
     }
@@ -99,15 +96,35 @@ public class ImageGroupDisplayable implements Displayable {
      * @return the object as defined by the XML.
      */
     public static ImageGroupDisplayable parseXML(Node node, Map<String, String> fileChanges) throws IOException {
-        String[] files = node.getTextContent().split(";");
-        ArrayList<File> tmp = new ArrayList<>();
-        for (String f : files) {
-            tmp.add(Utils.getChangedFile(f, fileChanges));
+        // Check for the title node. Since title is a later update, we want to maintain compatibility with older exports.
+        String title = null;
+        NodeList childNodes = node.getChildNodes();
+        if (childNodes.getLength() > 0) {
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node childNode = childNodes.item(i);
+                if ("title".equals(childNode.getNodeName())) {
+                    title = childNode.getTextContent();
+                } else if ("files".equals(childNode.getNodeName())) {
+                    node = childNode;
+                }
+            }
         }
-        return new ImageGroupDisplayable(tmp.toArray(new File[tmp.size()]));
+        return imageGroupFromXml(node, fileChanges, title);
     }
 
-    /**
+     @NotNull
+     private static ImageGroupDisplayable imageGroupFromXml(Node node, Map<String, String> fileChanges, String title) throws IOException {
+         String[] files = node.getTextContent().split(";");
+         ArrayList<File> tmp = new ArrayList<>();
+         for (String f : files) {
+             tmp.add(Utils.getChangedFile(f, fileChanges));
+         }
+         File[] fileArray = tmp.toArray(new File[0]);
+         if (title == null) title = concatenatedFileNames(fileArray);
+         return new ImageGroupDisplayable(fileArray, title);
+     }
+
+     /**
      * Get the preview icon of this image group.
      * <p/>
      * @return the imagegroup preview icon.
@@ -124,11 +141,16 @@ public class ImageGroupDisplayable implements Displayable {
      */
     @Override
     public String getPreviewText() {
-        StringBuilder sb = new StringBuilder("");
+        return this.title;
+    }
+
+    @NotNull
+    public static String concatenatedFileNames(File[] files) {
+        StringBuilder sb = new StringBuilder();
         for (File f : files) {
             sb.append(f.getName()).append(", ");
         }
-        return "Image Group: " + sb.toString().substring(0, sb.toString().lastIndexOf(","));
+        return "Image Group: " + sb.substring(0, sb.toString().lastIndexOf(","));
     }
 
     /**
@@ -139,9 +161,7 @@ public class ImageGroupDisplayable implements Displayable {
     @Override
     public Collection<File> getResources() {
         List<File> f = new ArrayList<>();
-        for (File file : files) {
-            f.add(file);
-        }
+        Collections.addAll(f, files);
         return f;
     }
 
