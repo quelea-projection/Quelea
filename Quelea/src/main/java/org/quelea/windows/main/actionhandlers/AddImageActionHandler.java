@@ -18,14 +18,12 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -36,6 +34,13 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The action handler for adding images.
@@ -72,13 +77,21 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                         try {
                             if (!halt) {
                                 Platform.runLater(() -> {
+                                    TextInputDialog dialog = new TextInputDialog();
+                                    dialog.setTitle("Rename image group");
+                                    dialog.setHeaderText("Image Group");
+                                    dialog.setGraphic(new ImageView(new Image("file:icons/image-group-schedule.png")));
+                                    Optional<String> result = dialog.showAndWait();
+                                    String imageGroupTitle;
+                                    File[] filesArray = files.toArray(new File[0]);
+                                    imageGroupTitle = result.orElseGet(() -> ImageGroupDisplayable.concatenatedFileNames(filesArray));
                                     try {
-                                        ImageGroupDisplayable displayable = new ImageGroupDisplayable(files.toArray(new File[files.size()]));
+                                        ImageGroupDisplayable displayable = new ImageGroupDisplayable(filesArray, imageGroupTitle);
                                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                     } catch (IOException ex) {
                                         System.err.println("IO " + ex);
                                         if (!halt) {
-                                            Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
+                                            Platform.runLater(() -> Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.imageGroupTitle"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message")));
                                         }
                                     }
                                 });
