@@ -710,10 +710,9 @@ public class RemoteControlServer {
                 final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-                OutputStream os = he.getResponseBody();
-                os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
-                os.flush();
+                try(OutputStream os = he.getResponseBody()) {
+                    os.write(response.getBytes(Charset.forName("UTF-8")));
+                }
                 RCHandler.transposeSong(he);
             } else {
                 reload(he);
