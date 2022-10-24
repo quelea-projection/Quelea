@@ -712,8 +712,8 @@ public class RemoteControlServer {
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
-                os.close();
                 os.flush();
+                os.close();
                 RCHandler.transposeSong(he);
             } else {
                 reload(he);
