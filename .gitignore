@@ -19,7 +19,7 @@ Quelea/build/*
 Quelea/out-mac/*
 Quelea/dist/*
 Quelea/nbproject/*
-Quelea/.idea/*
+.idea/*
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
 
