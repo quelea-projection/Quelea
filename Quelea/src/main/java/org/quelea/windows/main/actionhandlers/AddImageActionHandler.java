@@ -77,14 +77,17 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                         try {
                             if (!halt) {
                                 Platform.runLater(() -> {
-                                    TextInputDialog dialog = new TextInputDialog();
-                                    dialog.setTitle("Rename image group");
-                                    dialog.setHeaderText("Image Group");
-                                    dialog.setGraphic(new ImageView(new Image("file:icons/image-group-schedule.png")));
-                                    Optional<String> result = dialog.showAndWait();
-                                    String imageGroupTitle;
                                     File[] filesArray = files.toArray(new File[0]);
-                                    imageGroupTitle = result.orElseGet(() -> ImageGroupDisplayable.concatenatedFileNames(filesArray));
+
+                                    TextInputDialog dialog = new TextInputDialog();
+                                    dialog.setTitle(LabelGrabber.INSTANCE.getLabel("dialog.image.group.title"));
+                                    dialog.setHeaderText(LabelGrabber.INSTANCE.getLabel("dialog.image.group.header"));
+                                    dialog.setGraphic(new ImageView(new Image("file:icons/image-group-schedule.png")));
+
+                                    String fallbackTitle = ImageGroupDisplayable.concatenatedFileNames(filesArray);
+                                    dialog.getEditor().setText(fallbackTitle);
+                                    Optional<String> result = dialog.showAndWait();
+                                    String imageGroupTitle = result.orElse(fallbackTitle);
                                     try {
                                         ImageGroupDisplayable displayable = new ImageGroupDisplayable(filesArray, imageGroupTitle);
                                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);

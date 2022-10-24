@@ -784,3 +784,5 @@ translation.text.options=Translation Text Options
 use.default.translation.label=Use Default Translation
 translation.name.label=Translation name
 ccli.licence=CCLI Licence
+dialog.image.group.header=Image Group
+dialog.image.group.title=Rename image group
