@@ -181,13 +181,16 @@ public class RCHandler {
     }
 
     public static boolean isLoggedOn(String ip) {
-        boolean found = false;
         for (String s : devices) {
             if (s.equals(ip)) {
-                found = true;
+                return true;// The device was found in the authentication list
             }
         }
-        return found;
+        if (QueleaProperties.get().getRemoteControlPassword().length() == 0){
+            addDevice(ip);// If the password is empty then add unconditionally
+            return true;// Then return that the device is in the list
+        }
+        return false;// The device was not found in the authentication list
     }
 
     public static void logout(String ip) {
