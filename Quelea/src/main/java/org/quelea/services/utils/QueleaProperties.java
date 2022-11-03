@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
+import static org.quelea.services.utils.QueleaPropertyKeys.midiInterface;
 
 /**
  * Manages the properties specific to Quelea.
@@ -2561,4 +2562,83 @@ public final class QueleaProperties extends SortedProperties {
     public boolean getDisableDirectShowForWVC1() {
         return Boolean.parseBoolean(getProperty(disableDirectShowForWVC1Key, "true"));
     }
+    public boolean getPreviewPanelBypass() {
+        return Boolean.parseBoolean(getProperty(previewPanelBypass, "false"));
+    }
+
+    public void setPreviewPanelBypass(boolean previewPanelBypassON) {
+        setProperty(previewPanelBypass, String.valueOf(previewPanelBypassON));
+    }
+	
+	//---------------------MIDI section
+    public boolean getUseMidiControl() {
+        return Boolean.parseBoolean(getProperty(midiEnabled, "true"));
+    }
+    public void setUseMidiControl(boolean val) {
+        setProperty(midiEnabled, Boolean.toString(val));
+        write();
+    }
+
+    public String getMidiDeviceInterface() {  return getProperty(midiInterface, "Reaper-Quelea");  }
+    public void setMidiDeviceInterface(String midiInterfaceName){
+        setProperty(midiInterface, midiInterfaceName);
+        write();
+    }
+
+    public int getGlobalMidiChannel() {  return Integer.parseInt(getProperty(midiGlobalChannel, "16"));  }
+    public void setGlobalMidiChannel(int globalMidiChannel){
+        setProperty(midiGlobalChannel, Integer.toString(globalMidiChannel));
+        write();
+    }
+
+    public String getMidiAction_Clear               () {  return getProperty( midiAction_Clear			, "true,NOTE_ON,16, 0" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Screen	 	 ClearToggleHandler()
+    public String getMidiAction_Black               () {  return getProperty( midiAction_Black			, "true,NOTE_ON,16, 1" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Screen	 	 BlackToggleHandler()
+    public String getMidiAction_GoToItem            () {  return getProperty( midiAction_Gotoitem		, "true,NOTE_ON,16, 9" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 GotoItemHandler()
+    public String getMidiAction_Next                () {  return getProperty( midiAction_Next			, "true,NOTE_ON,16, 5" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 NextSlideHandler()
+    public String getMidiAction_NextItem            () {  return getProperty( midiAction_Nextitem		, "true,NOTE_ON,16, 6" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 NextItemHandler()
+    public String getMidiAction_Play                () {  return getProperty( midiAction_Play			, "true,NOTE_ON,16, 8" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Multimedia  PlayHandler()
+    public String getMidiAction_Prev                () {  return getProperty( midiAction_Prev			, "true,NOTE_ON,16, 4" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 PreviousSlideHandler()
+    public String getMidiAction_PrevItem            () {  return getProperty( midiAction_Previtem		, "true,NOTE_ON,16, 3" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 PreviousItemHandler()
+    public String getMidiAction_Section             () {  return getProperty( midiAction_Section		, "true,NOTE_ON,16, 7" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Navigate	 SectionHandler()
+    public String getMidiAction_Tlogo				() {  return getProperty( midiAction_Tlogo			, "true,NOTE_ON,16, 2" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Screen	 	 LogoToggleHandler()
+    public String getMidiAction_TransposeDown1		() {  return getProperty( midiAction_TransposeDown1	, "true,NOTE_ON,16,23" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeDown2		() {  return getProperty( midiAction_TransposeDown2	, "true,NOTE_ON,16,22" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeDown3		() {  return getProperty( midiAction_TransposeDown3	, "true,NOTE_ON,16,21" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeDown4		() {  return getProperty( midiAction_TransposeDown4	, "true,NOTE_ON,16,20" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeDown5		() {  return getProperty( midiAction_TransposeDown5	, "true,NOTE_ON,16,19" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeDown6		() {  return getProperty( midiAction_TransposeDown6	, "true,NOTE_ON,16,18" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp0		() {  return getProperty( midiAction_TransposeUp0	, "true,NOTE_ON,16,24" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp1		() {  return getProperty( midiAction_TransposeUp1	, "true,NOTE_ON,16,25" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp2		() {  return getProperty( midiAction_TransposeUp2	, "true,NOTE_ON,16,26" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp3		() {  return getProperty( midiAction_TransposeUp3	, "true,NOTE_ON,16,27" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp4		() {  return getProperty( midiAction_TransposeUp4	, "true,NOTE_ON,16,28" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp5		() {  return getProperty( midiAction_TransposeUp5	, "true,NOTE_ON,16,29" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+    public String getMidiAction_TransposeUp6		() {  return getProperty( midiAction_TransposeUp6	, "true,NOTE_ON,16,30" );  } //  Enabled,MidiType,MidiChanel,MidiValue - Edit		 TransposeSongHandler()
+
+    public void setMidiAction_Black             (String midiAction_Black_Str			) {  setProperty( midiAction_Black			, midiAction_Black_Str			); write(); } //  Screen
+    public void setMidiAction_Clear             (String midiAction_Clear_Str			) {  setProperty( midiAction_Clear			, midiAction_Clear_Str			); write(); } //  Screen
+    public void setMidiAction_GoToItem			(String midiAction_Gotoitem_Str			) {  setProperty( midiAction_Gotoitem		, midiAction_Gotoitem_Str		); write(); } //  Navigate
+    public void setMidiAction_Next				(String midiAction_Next_Str				) {  setProperty( midiAction_Next			, midiAction_Next_Str			); write(); } //  Navigate
+    public void setMidiAction_NextItem			(String midiAction_Nextitem_Str			) {  setProperty( midiAction_Nextitem		, midiAction_Nextitem_Str		); write(); } //  Navigate
+    public void setMidiAction_Play				(String midiAction_Play_Str				) {  setProperty( midiAction_Play			, midiAction_Play_Str			); write(); } //  Multimeda
+    public void setMidiAction_Prev				(String midiAction_Prev_Str				) {  setProperty( midiAction_Prev			, midiAction_Prev_Str			); write(); } //  Navigate
+    public void setMidiAction_PrevItem			(String midiAction_Previtem_Str			) {  setProperty( midiAction_Previtem		, midiAction_Previtem_Str		); write(); } //  Navigate
+    public void setMidiAction_Section			(String midiAction_Section_Str			) {  setProperty( midiAction_Section		, midiAction_Section_Str		); write(); } //  Navigate
+    public void setMidiAction_Tlogo             (String midiAction_Tlogo_Str			) {  setProperty( midiAction_Tlogo			, midiAction_Tlogo_Str			); write(); } //  Screen
+    public void setMidiAction_TransposeDown1	(String midiAction_TransposeDown1_Str	) {  setProperty( midiAction_TransposeDown1	, midiAction_TransposeDown1_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeDown2	(String midiAction_TransposeDown2_Str	) {  setProperty( midiAction_TransposeDown2	, midiAction_TransposeDown2_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeDown3	(String midiAction_TransposeDown3_Str	) {  setProperty( midiAction_TransposeDown3	, midiAction_TransposeDown3_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeDown4	(String midiAction_TransposeDown4_Str	) {  setProperty( midiAction_TransposeDown4	, midiAction_TransposeDown4_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeDown5	(String midiAction_TransposeDown5_Str	) {  setProperty( midiAction_TransposeDown5	, midiAction_TransposeDown5_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeDown6	(String midiAction_TransposeDown6_Str	) {  setProperty( midiAction_TransposeDown6	, midiAction_TransposeDown6_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp0		(String midiAction_TransposeUp0_Str		) {  setProperty( midiAction_TransposeUp0	, midiAction_TransposeUp0_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp1		(String midiAction_TransposeUp1_Str		) {  setProperty( midiAction_TransposeUp1	, midiAction_TransposeUp1_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp2		(String midiAction_TransposeUp2_Str		) {  setProperty( midiAction_TransposeUp2	, midiAction_TransposeUp2_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp3		(String midiAction_TransposeUp3_Str		) {  setProperty( midiAction_TransposeUp3	, midiAction_TransposeUp3_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp4		(String midiAction_TransposeUp4_Str		) {  setProperty( midiAction_TransposeUp4	, midiAction_TransposeUp4_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp5		(String midiAction_TransposeUp5_Str		) {  setProperty( midiAction_TransposeUp5	, midiAction_TransposeUp5_Str	); write(); } //  Edit
+    public void setMidiAction_TransposeUp6		(String midiAction_TransposeUp6_Str		) {  setProperty( midiAction_TransposeUp6	, midiAction_TransposeUp6_Str	); write(); } //  Edit
+
+    //------------------------------------
+
 }

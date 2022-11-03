@@ -607,4 +607,28 @@ public class RCHandler {
             }
         }
     }
+
+    public static void transposeSong(int semiTones) {
+            if (!(-6 <= semiTones && semiTones <= 6))
+            {
+                LOGGER.log(Level.WARNING, "Semitone input out of scope ["+semiTones+"]");
+                return;
+            }
+
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            Displayable d = p.getLivePanel().getDisplayable();
+            if (d instanceof SongDisplayable) {
+                Utils.fxRunAndWait(() -> {
+                    SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
+                    songEntryWindow.resetEditSong((SongDisplayable) d);
+                    songEntryWindow.getBasicSongPanel().transposeSong(semiTones);
+                    //songEntryWindow.saveSong();
+                    int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(d);
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+                    p.getPreviewPanel().goLive();
+                });
+            }
+
+    }
 }

@@ -141,5 +141,36 @@ public class QueleaPropertyKeys {
     public static final String useDefaultTranslation = "use.default.translation";
     public static final String defaultTranslationName = "default.translation.name";
     public static final String disableDirectShowForWVC1Key = "disable.directshow.for.wvc1";
+    public static final String previewPanelBypass = "preview.panel.bypass";// Bypass
+	// ----------------- MIDI section begin -----------------
+    public static final String midiEnabled = "midi.enabled";// midi
+    public static final String midiInterface = "midi.interface";//midi
+    public static final String midiGlobalChannel = "midi.globalChannel";//midi
+    public static final String midiAction_Black				=	"midi.Action.Black";  			//  Screen	 	 BlackToggleHandler()
+    public static final String midiAction_Clear				=	"midi.Action.Clear";  			//  Screen	 	 ClearToggleHandler()
+    public static final String midiAction_Gotoitem			=	"midi.Action.Gotoitem";  		//  Navigate	 GotoItemHandler()
+    public static final String midiAction_Next				=	"midi.Action.Next";  			//  Navigate	 NextSlideHandler()
+    public static final String midiAction_Nextitem			=	"midi.Action.Nextitem";  		//  Navigate	 NextItemHandler()
+    public static final String midiAction_Play				=	"midi.Action.Play";  			//  Multimeda	 PlayHandler()
+    public static final String midiAction_Prev				=	"midi.Action.Prev";  			//  Navigate	 PreviousSlideHandler()
+    public static final String midiAction_Previtem			=	"midi.Action.Previtem";  		//  Navigate	 PreviousItemHandler()
+    public static final String midiAction_Section			=	"midi.Action.Section";  		//  Navigate	 SectionHandler()
+    public static final String midiAction_Tlogo				=	"midi.Action.Tlogo";  			//  Screen	 	 LogoToggleHandler()
+    public static final String midiAction_TransposeDown1	=	"midi.Action.TransposeDown1";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeDown2	=	"midi.Action.TransposeDown2";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeDown3	=	"midi.Action.TransposeDown3";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeDown4	=	"midi.Action.TransposeDown4";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeDown5	=	"midi.Action.TransposeDown5";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeDown6	=	"midi.Action.TransposeDown6";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp0		=	"midi.Action.TransposeUp0";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp1		=	"midi.Action.TransposeUp1";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp2		=	"midi.Action.TransposeUp2";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp3		=	"midi.Action.TransposeUp3";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp4		=	"midi.Action.TransposeUp4";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp5		=	"midi.Action.TransposeUp5";  	//  Edit		 TransposeSongHandler()
+    public static final String midiAction_TransposeUp6		=	"midi.Action.TransposeUp6";  	//  Edit		 TransposeSongHandler()
+
+    // ----------------- MIDI section end -----------------
+
 
 }
