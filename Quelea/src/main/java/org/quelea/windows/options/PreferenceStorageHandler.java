@@ -266,7 +266,7 @@ public class PreferenceStorageHandler implements StorageHandler {
                 if (QueleaProperties.get().getProperty(breadcrumb) != null && !QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
                 }
-                if (breadcrumb.equals(QueleaPropertyKeys.remoteControlPasswordKey) && object.toString().trim().isEmpty()) {
+                if (breadcrumb.equals(QueleaPropertyKeys.remoteControlPasswordKey) && object.toString().trim().isEmpty() && false) {//The empty password check disabled by default
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("password.empty.label"), LabelGrabber.INSTANCE.getLabel("password.empty.message"), QueleaApp.get().getMainWindow());
                     QueleaProperties.get().setProperty(breadcrumb, "quelea");
                 } else {
