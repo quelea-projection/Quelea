@@ -32,8 +32,7 @@ import org.quelea.services.utils.QueleaProperties;
 
 import java.util.List;
 
-class MidiEvent
-{
+class MidiEvent {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     public boolean Enabled = true;
     public int type     = ShortMessage.NOTE_ON;
@@ -162,8 +161,8 @@ public class MidiInterfaceConnector
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     // State variables
-    private boolean midiInputReady = false;
-    private boolean midiOutputReady = false;
+    private static boolean midiInputReady = false;// Flag to indicate the input is ready
+    private static boolean midiOutputReady = false;// Flag to indicate the output is ready
     private boolean RemoteControlDeferToMidiMode = false;
 
     //MIDI input and output devices
@@ -183,7 +182,7 @@ public class MidiInterfaceConnector
         LOGGER.log(Level.INFO, "Setup midi connection with [{0}]",defaultMidiDeviceInterface);
         updateMidiEventPropertyList();
         this.setupMidiInputConnection(defaultMidiDeviceInterface);
-        //this.setupMidiOutputConnection(defaultMidiDeviceInterface);
+        this.setupMidiOutputConnection(defaultMidiDeviceInterface);
     }
 
     public void updateMidiEventPropertyList() {
@@ -218,8 +217,11 @@ public class MidiInterfaceConnector
         }
     }
 
-
     public void setupMidiInputConnection(String InputDevice) throws MidiUnavailableException {
+
+        // Before anything we have to make sure device are closed
+        closeInputDevice();
+
         LOGGER.log(Level.INFO, "Get midi device list");
         // Get midi information
         MidiDevice.Info[] midiInfo = MidiSystem.getMidiDeviceInfo();
@@ -251,21 +253,7 @@ public class MidiInterfaceConnector
                             "  max receivers: " + device.getMaxReceivers());
                     break;
                 }
-/*
-                // Get the correct midi OUTPUT device
-                if (InputDevice.equals(midiInfo[d].toString()) && device.getMaxReceivers() != 0)  {
-                    LOGGER.log(Level.INFO, "Quelea connector MIDI device OUTPUT Located [" + midiInfo[d] + "]");
-                    QueleaMidiDev_OUT = device;
 
-                    //Info for the midi device
-                    LOGGER.log(Level.INFO, "Deivce[" + String.valueOf(d) + "] [" + midiInfo[d] + "]"+"\n"+
-                            "Transmitter list size for the device is ["+ deviceTransmitters.size()+"]"+
-                            "  max transmitters: " + device.getMaxTransmitters()+"\n"+
-                            "Receiver list size for the device is ["+ deviceReceivers.size()+"]"+
-                            "  max receivers: " + device.getMaxReceivers());
-                    break;
-                }
-*/
             } catch (MidiUnavailableException e) {   // if anything goes wrong disable midi control
                 QueleaProperties.get().setUseMidiControl(false);
                 LOGGER.log(Level.WARNING, "MIDI device listing failed! Midi control disabled!");
@@ -277,6 +265,7 @@ public class MidiInterfaceConnector
         if (QueleaMidiDev_IN == null)
         {
             LOGGER.log(Level.INFO, "Quelea connector MIDI INPUT device NOT located!");
+            return;
         }
         else
         {
@@ -291,7 +280,7 @@ public class MidiInterfaceConnector
                 catch (MidiUnavailableException e)
                 {   // if anything goes wrong disable midi control
                     QueleaProperties.get().setUseMidiControl(false);
-                    LOGGER.log(Level.WARNING, "MIDI INPUT device listing failed! Midi control disabled!");
+                    LOGGER.log(Level.WARNING, "MIDI INPUT device couldn't open! Midi control disabled!");
                     return;
                 }
             }
@@ -302,9 +291,14 @@ public class MidiInterfaceConnector
             LOGGER.log(Level.INFO, "Default transmitter ["+ externalTransmitter.toString()+"]");
             externalTransmitter.setReceiver( new QueleaInputMidiReceiver(QueleaMidiDev_IN.getDeviceInfo().toString()) );
         }
+        midiInputReady = true;
     }
 
     public void setupMidiOutputConnection(String OutputDevice) throws MidiUnavailableException {
+
+        // Before anything we have to make sure device are closed
+        closeOutputDevice();
+
         LOGGER.log(Level.INFO, "Get midi device list");
         // Get midi information
         MidiDevice.Info[] midiInfo = MidiSystem.getMidiDeviceInfo();
@@ -323,94 +317,93 @@ public class MidiInterfaceConnector
                 //Get list of transmitters for this device
                 List<Transmitter> deviceTransmitters = device.getTransmitters();
 
-                //Info for the midi device
-                LOGGER.log(Level.INFO, "Deivce[" + String.valueOf(d) + "] [" + midiInfo[d] + "]"+"\n"+
-                        "Transmitter list size for the device is ["+ deviceTransmitters.size()+"]"+
-                        "  max transmitters: " + device.getMaxTransmitters()+"\n"+
-                        "Receiver list size for the device is ["+ deviceReceivers.size()+"]"+
-                        "  max receivers: " + device.getMaxReceivers());
 
-                if (OutputDevice.equals(midiInfo[d].toString()) && device.getMaxTransmitters() != 0)  {
-                    LOGGER.log(Level.INFO, "Quelea connector MIDI device INPUT Located [" + midiInfo[d] + "]");
-                    QueleaMidiDev_IN = device;
-                    // break;
-                }
-
+                // Get the correct midi OUTPUT device
                 if (OutputDevice.equals(midiInfo[d].toString()) && device.getMaxReceivers() != 0)  {
                     LOGGER.log(Level.INFO, "Quelea connector MIDI device OUTPUT Located [" + midiInfo[d] + "]");
                     QueleaMidiDev_OUT = device;
-                    // break;
+
+                    //Info for the midi device
+                    LOGGER.log(Level.INFO, "Deivce[" + String.valueOf(d) + "] [" + midiInfo[d] + "]"+"\n"+
+                            "Transmitter list size for the device is ["+ deviceTransmitters.size()+"]"+
+                            "  max transmitters: " + device.getMaxTransmitters()+"\n"+
+                            "Receiver list size for the device is ["+ deviceReceivers.size()+"]"+
+                            "  max receivers: " + device.getMaxReceivers());
+                    break;
                 }
 
             } catch (MidiUnavailableException e) {   // if anything goes wrong disable midi control
                 QueleaProperties.get().setUseMidiControl(false);
-                LOGGER.log(Level.WARNING, "MIDI device listing failed! Midi control disabled!");
+                LOGGER.log(Level.WARNING, "MIDI OUTPUT device couldn't open! Midi control disabled");
                 return;
             }
         }
 
         // If the device is located
-        if (QueleaMidiDev_IN == null)
+        if (QueleaMidiDev_OUT == null)
         {
-            LOGGER.log(Level.INFO, "Quelea connector MIDI device NOT located!");
+            LOGGER.log(Level.INFO, "Quelea connector MIDI OUTPUT device NOT located!");
+            return;
         }
         else
         {
             // If the device is located
-            if (!(QueleaMidiDev_IN.isOpen()))
+            if (!(QueleaMidiDev_OUT.isOpen()))
             {
                 try
                 {
-                    QueleaMidiDev_IN.open();
-                    LOGGER.log(Level.INFO, "MIDI device successfully opened.");
+                    QueleaMidiDev_OUT.open();
+                    LOGGER.log(Level.INFO, "MIDI OUTPUT device successfully opened.");
                 }
                 catch (MidiUnavailableException e)
                 {   // if anything goes wrong disable midi control
                     QueleaProperties.get().setUseMidiControl(false);
-                    LOGGER.log(Level.WARNING, "MIDI device listing failed! Midi control disabled!");
+                    LOGGER.log(Level.WARNING, "MIDI OUTPUT device listing failed! Midi control disabled!");
                     return;
                 }
             }
 
 
             //Get list of transmitters for this device
-            Transmitter defautlTransmitter = MidiSystem.getTransmitter();
-            LOGGER.log(Level.INFO, "Default transmitter ["+defautlTransmitter.toString()+"]");
-            defautlTransmitter.setReceiver( new QueleaInputMidiReceiver(QueleaMidiDev_IN.getDeviceInfo().toString()) );
+            Transmitter externalTransmitter = QueleaMidiDev_IN.getTransmitter();;
+            LOGGER.log(Level.INFO, "Default transmitter ["+ externalTransmitter.toString()+"]");
+            externalTransmitter.setReceiver( new QueleaInputMidiReceiver(QueleaMidiDev_IN.getDeviceInfo().toString()) );
         }
+        midiOutputReady = true;
     }
 
-    public void testTone() throws InvalidMidiDataException, MidiUnavailableException
-    {
+    public void closeInputDevice(){
+        // If the device is located
+        if (QueleaMidiDev_IN != null && QueleaMidiDev_IN.isOpen())
+        {
+            QueleaMidiDev_IN.close();
+            LOGGER.log(Level.INFO, "INPUT MIDI device successfully is now closed.");
+        }
+        QueleaMidiDev_IN = null;//Reset the device
+        midiInputReady = false;
+    }
 
-        //------------------------- FOR DEBUG
-        ShortMessage myMsg = new ShortMessage();
-        // Start playing the note Middle C (60),
-        // moderately loud (velocity = 93).
-        myMsg.setMessage(ShortMessage.NOTE_ON, 0, 60, 93);
-        long timeStamp = -1;
-        Receiver       rcvr = MidiSystem.getReceiver();
-        rcvr.send(myMsg, timeStamp);
-
-        //------------------------------- FOR DEBUG
-
-
+    public void closeOutputDevice(){
+        // If the device is located
+        if (QueleaMidiDev_OUT != null && QueleaMidiDev_OUT.isOpen())
+        {
+            QueleaMidiDev_OUT.close();
+            LOGGER.log(Level.INFO, "OUTPUT MIDI device successfully is now closed.");
+        }
+        QueleaMidiDev_OUT = null;//Reset the device
+        midiOutputReady = false;
     }
 
     @Override
-    public void finalize() throws Throwable {
+    protected void finalize() throws Throwable {
         //super.finalize();
         // If the device is located
-        if (!(QueleaMidiDev_IN.isOpen()))
-        {
-            QueleaMidiDev_IN.close();
-            LOGGER.log(Level.INFO, "MIDI device successfully is now closed.");
-        }
+        closeInputDevice();
+        closeOutputDevice();
     }
 
 
-    public class QueleaOutputMidiTransmitter implements Transmitter
-    {
+    public class QueleaOutputMidiTransmitter implements Transmitter {
 
         @Override
         public void setReceiver(Receiver receiver) {
@@ -428,8 +421,7 @@ public class MidiInterfaceConnector
         }
     }
 
-    public class QueleaInputMidiReceiver implements Receiver
-    {
+    public class QueleaInputMidiReceiver implements Receiver {
         private String name;
         public QueleaInputMidiReceiver(String toString) {
             this.name = name;
@@ -477,5 +469,20 @@ public class MidiInterfaceConnector
         public void close() {
 
         }
+    }
+
+    public void testTone() throws InvalidMidiDataException, MidiUnavailableException {
+        //------------------------- FOR DEBUG
+        ShortMessage myMsg = new ShortMessage();
+        // Start playing the note Middle C (60),
+        // moderately loud (velocity = 93).
+        myMsg.setMessage(ShortMessage.NOTE_ON, 0, 60, 93);
+        long timeStamp = -1;
+        Receiver       rcvr = MidiSystem.getReceiver();
+        rcvr.send(myMsg, timeStamp);
+
+        //------------------------------- FOR DEBUG
+
+
     }
 }
