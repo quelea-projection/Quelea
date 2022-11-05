@@ -138,6 +138,12 @@ class MidiEvent {
         //return  msg;
         return (new ShortMessage(type,channel,note,velocity));
     }
+    public ShortMessage toMidiMessage(int velocity_) throws InvalidMidiDataException {
+        //ShortMessage msg = new ShortMessage();
+        //msg.setMessage(type,channel,note,velocity);
+        //return  msg;
+        return (new ShortMessage(type,channel,note,velocity_));
+    }
     public boolean match(@NotNull MidiMessage m ) throws InvalidMidiDataException {
         byte[] LB = this.toMidiMessage().getMessage();
         byte[] b = m.getMessage();
@@ -168,6 +174,7 @@ public class MidiInterfaceConnector
     //MIDI input and output devices
     private MidiDevice QueleaMidiDev_IN = null;
     private MidiDevice QueleaMidiDev_OUT = null;
+    private Receiver OutputExternalReceiver = null;
 
     // Midi event map
     private Map<String,MidiEvent> midiEventMap = new HashMap<>();
@@ -366,13 +373,20 @@ public class MidiInterfaceConnector
 
             // !!! Here is a bit different. DO WE WANT TO CONNECT TO ONE RECIEVER OR MULTIPLE ONES?
             //Get a receiver for this device
-            Receiver externalReceivers = QueleaMidiDev_OUT.getReceiver();;
-            LOGGER.log(Level.INFO, "External transmitter ["+ externalReceivers.toString()+"]");
+            OutputExternalReceiver = QueleaMidiDev_OUT.getReceiver();;
+            LOGGER.log(Level.INFO, "External transmitter ["+ OutputExternalReceiver.toString()+"]");
 
         }
         midiOutputReady = true;
     }
 
+    public void sendMidiEvenMsg(String midiEventKey,int velocity) throws InvalidMidiDataException {
+        if (OutputExternalReceiver != null)
+        {// -1 means ASAP
+            OutputExternalReceiver.send( midiEventMap.get(midiEventKey).toMidiMessage(velocity), -1);
+        }
+        // Call logging function
+    }
     public void closeInputDevice(){
         // If the device is located
         if (QueleaMidiDev_IN != null && QueleaMidiDev_IN.isOpen())
@@ -392,6 +406,7 @@ public class MidiInterfaceConnector
             LOGGER.log(Level.INFO, "OUTPUT MIDI device successfully is now closed.");
         }
         QueleaMidiDev_OUT = null;//Reset the device
+        OutputExternalReceiver= null;// Also reset the receiver
         midiOutputReady = false;
     }
 
