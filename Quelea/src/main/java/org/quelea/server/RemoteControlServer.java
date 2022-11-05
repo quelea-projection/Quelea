@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.InvalidMidiDataException;
 
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
@@ -60,6 +61,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -463,6 +465,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "logo";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -478,6 +492,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "black";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -508,6 +534,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "next";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -523,6 +561,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "prev";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -538,6 +588,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "nextItem";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -553,6 +615,18 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            // If the midi module is active, the call can be  immediate or deferred: check ip, check call
+            String mek = "prevItem";//MIDI event key
+            if (isMidiActive() && isMidiOutDevReady()) {
+                try {
+                    QueleaApp.get().getMidiInterfaceConnector().sendMidiEvenMsg(mek,0);
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                // If the event is defered
+                if (isDeferred(he.getRemoteAddress().getAddress().toString(),mek)){ return; };
+            }
+
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
@@ -1120,4 +1194,27 @@ public class RemoteControlServer {
         }
 
     }
+
+    //--------------- Set of MIDI control functions
+    private boolean isMidiActive(){
+        return QueleaProperties.get().getUseMidiControl();
+    }
+
+    private boolean isMidiOutDevReady() {
+        try {
+            if (QueleaApp.get() != null && QueleaApp.get().getMidiInterfaceConnector() != null) {
+                return QueleaApp.get().getMidiInterfaceConnector().getOutputReadyState();
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error checking MIDI output device readiness", e);
+            return false;
+        }
+    }
+
+    private boolean isDeferred(String ip,String call){
+        return false;
+    }
+
 }
