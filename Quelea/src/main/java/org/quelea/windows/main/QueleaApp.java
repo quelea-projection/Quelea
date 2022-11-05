@@ -23,6 +23,7 @@ import java.util.List;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.server.AutoDetectServer;
+import org.quelea.server.MidiInterfaceConnector;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
@@ -40,6 +41,7 @@ public class QueleaApp {
     private DisplayStage stageWindow;
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
+    private MidiInterfaceConnector mcm = null;//Midi Control Module
     private AutoDetectServer ads;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
@@ -187,4 +189,13 @@ public class QueleaApp {
     public void setAutoDetectServer(AutoDetectServer ads) {
         this.ads = ads;
     }
+
+    public MidiInterfaceConnector getMidiInterfaceConnector() {
+        return mcm;
+    }
+    public void setMidiInterfaceConnector(MidiInterfaceConnector mic) {
+        this.mcm = mic;
+    }
+
+
 }
