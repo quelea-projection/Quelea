@@ -26,6 +26,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,29 +57,29 @@ public class EasyWorshipParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-        List<SongDisplayable> ret = new ArrayList<>();
         try {
             Class.forName("com.googlecode.paradox.Driver");
-            LOGGER.log(Level.INFO, "Easyworship importer from {0}", file.getParent());
-            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
-            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM \"Songs.DB\"");
-            while(rs.next()) {
-                String title = rs.getString("Title");
-                String author = rs.getString("Author");
-                if(author == null) {
-                    author = "";
+            try (Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
+                 ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM \"Songs.DB\"")) {
+                List<SongDisplayable> ret = new ArrayList<>();
+                while (rs.next()) {
+                    String title = rs.getString("Title");
+                    String author = rs.getString("Author");
+                    if (author == null) {
+                        author = "";
+                    }
+                    String lyrics = rs.getString("Words");
+                    String copyright = rs.getString("Copyright");
+                    String num = rs.getString("Song Number");
+                    ret.add(getSong(title, author, lyrics, copyright, num));
                 }
-                String lyrics = rs.getString("Words");
-                String copyright = rs.getString("Copyright");
-                String num = rs.getString("Song Number");
-                ret.add(getSong(title, author, lyrics, copyright, num));
+                return ret;
             }
-
         }
         catch(ClassNotFoundException | SQLException ex) {
-            LOGGER.log(Level.INFO, "Couldn't import using SQL from " + file.getParent(), ex);
+            LOGGER.log(Level.INFO, ex, () -> "Couldn't import using SQL from " + file.getParent());
+            return Collections.emptyList();
         }
-        return ret;
     }
 
     private SongDisplayable getSong(String title, String author, String songContent, String copyright, String ccli) {

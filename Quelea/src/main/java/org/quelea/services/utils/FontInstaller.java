@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Registers the Quelea bundled fonts with the JVM.
@@ -43,8 +44,8 @@ public class FontInstaller {
      */
     public void setupBundledFonts() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        try {
-            Files.list(Paths.get("icons", "bundledfonts")).forEach((Path path) -> {
+        try (Stream<Path> fontFiles = Files.list(Paths.get("icons", "bundledfonts"))){
+            fontFiles.forEach((Path path) -> {
                 File file = path.toFile();
                 if (file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                     try {

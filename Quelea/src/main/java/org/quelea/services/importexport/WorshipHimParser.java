@@ -49,11 +49,10 @@ public class WorshipHimParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) {
         List<SongDisplayable> ret = new ArrayList<>();
-        try {
-            Database d = new DatabaseBuilder()
-                    .setReadOnly(true)
-                    .setFile(location)
-                    .open();
+        try (Database d = new DatabaseBuilder()
+                .setReadOnly(true)
+                .setFile(location)
+                .open()){
 
             Table table = d.getTable("Songs");
             for (Row row : table) {
