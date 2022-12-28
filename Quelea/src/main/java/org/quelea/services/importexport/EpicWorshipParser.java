@@ -44,55 +44,55 @@ public class EpicWorshipParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), Utils.getEncoding(location)));
         ArrayList<SongDisplayable> ret = new ArrayList<>();
-        String fullContents = bfr.readLine();
-        String songsWhole = fullContents.substring(10, fullContents.length() - 2);
-        String[] songInfoList = songsWhole.split("\\},\\{");
-        for (String songInfo : songInfoList) {
-            songInfo = songInfo.replace("{", "").replace("{", "");
-            Matcher m1 = NAME.matcher(songInfo);
-            String name = "";
-            String author = "";
-            String lyrics = "";
-            if (m1.find()) {
-                name = m1.group(0);
-                name = format(name);
-            }
-
-            Matcher m2 = AUTHOR.matcher(songInfo);
-            if (m2.find()) {
-                author = m2.group(0);
-                author = format(author);
-            }
-
-            Matcher m3 = LYRICS.matcher(songInfo);
-            if (m3.find()) {
-                lyrics = m3.group(0);
-                lyrics = format(lyrics);
-            }
-
-            SongDisplayable s = new SongDisplayable(name, author);
-
-            ArrayList<String> section = new ArrayList<>();
-            int sectionCount = 0;
-            String[] lines = lyrics.split("\\\\n");
-            for (String line : lines) {
-                if (!line.isEmpty()) {
-                    section.add(line);
-                } else {
-                    String[] sectionsArray = new String[section.size()];
-                    s.addSection(sectionCount, new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray), true));
-                    sectionCount++;
-                    section.clear();
+        try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), Utils.getEncoding(location)))){
+            String fullContents = bfr.readLine();
+            String songsWhole = fullContents.substring(10, fullContents.length() - 2);
+            String[] songInfoList = songsWhole.split("\\},\\{");
+            for (String songInfo : songInfoList) {
+                songInfo = songInfo.replace("{", "").replace("{", "");
+                Matcher m1 = NAME.matcher(songInfo);
+                String name = "";
+                String author = "";
+                String lyrics = "";
+                if (m1.find()) {
+                    name = m1.group(0);
+                    name = format(name);
                 }
-            }
-            String[] sectionsArray = new String[section.size()];
-            s.addSection(sectionCount, new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray), true));
 
-            ret.add(s);
+                Matcher m2 = AUTHOR.matcher(songInfo);
+                if (m2.find()) {
+                    author = m2.group(0);
+                    author = format(author);
+                }
+
+                Matcher m3 = LYRICS.matcher(songInfo);
+                if (m3.find()) {
+                    lyrics = m3.group(0);
+                    lyrics = format(lyrics);
+                }
+
+                SongDisplayable s = new SongDisplayable(name, author);
+
+                ArrayList<String> section = new ArrayList<>();
+                int sectionCount = 0;
+                String[] lines = lyrics.split("\\\\n");
+                for (String line : lines) {
+                    if (!line.isEmpty()) {
+                        section.add(line);
+                    } else {
+                        String[] sectionsArray = new String[section.size()];
+                        s.addSection(sectionCount, new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray), true));
+                        sectionCount++;
+                        section.clear();
+                    }
+                }
+                String[] sectionsArray = new String[section.size()];
+                s.addSection(sectionCount, new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray), true));
+
+                ret.add(s);
+            }
         }
-        bfr.close();
         return ret;
     }
 
