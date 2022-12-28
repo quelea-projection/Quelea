@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -1084,16 +1085,12 @@ public final class Utils {
 	 * @return a list of all extracted files.
 	 */
 	private static List<File> extractZipWithCharset(File zip, Charset charset) {
-		try {
-			LOGGER.log(Level.INFO, "Extracting zip file {0}", zip.getAbsolutePath());
-			int BUFFER = 2048;
-			ZipFile zipFile;
-			if (charset == null) {
-				zipFile = new ZipFile(zip);
-			} else {
-				zipFile = new ZipFile(zip, charset);
-			}
-
+		LOGGER.log(Level.INFO, "Extracting zip file {0}", zip.getAbsolutePath());
+		int BUFFER = 2048;
+		if (charset == null) {
+			charset = StandardCharsets.UTF_8;
+		}
+		try (ZipFile zipFile = new ZipFile(zip, charset)) {
 			File tempFolder = Files.createTempDirectory("qzipextract").toFile();
 			tempFolder.deleteOnExit();
 
