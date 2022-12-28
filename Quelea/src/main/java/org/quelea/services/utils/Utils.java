@@ -1143,9 +1143,11 @@ public final class Utils {
 		if (encoding == null) {
 			encoding = "UTF-8";
 			LOGGER.log(Level.WARNING, "Couldn't detect encoding, defaulting to " + encoding + " for " + file.getAbsolutePath());
-		}else{
+		}
+		else
+		{
 			LOGGER.log(Level.INFO, "Detected " + encoding + " encoding for " + file.getAbsolutePath());
-		};
+		}
 
 		return encoding;
 	}
