@@ -62,6 +62,7 @@ public class SongBeamerParser implements SongParser {
             rawLinesBuilder.append(fileLine).append("\n");
         }
         String rawLines = rawLinesBuilder.toString();
+        reader.close();
 
         Map<String, String> songProps = new HashMap<>();
         for (String line : rawLines.split("\n")) {

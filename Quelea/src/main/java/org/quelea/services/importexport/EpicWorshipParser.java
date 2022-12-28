@@ -92,6 +92,7 @@ public class EpicWorshipParser implements SongParser {
 
             ret.add(s);
         }
+        bfr.close();
         return ret;
     }
 
