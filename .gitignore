@@ -22,5 +22,6 @@ Quelea/nbproject/*
 .idea/*
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
+Quelea/bin/*
 
 Thumbs.db
