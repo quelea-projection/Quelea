@@ -1133,14 +1133,22 @@ public final class Utils {
 	}
 
 	public static String getEncoding(File file) {
-		String encoding = "UTF-8";
+		String encoding;
 		try {
 			encoding = UniversalDetector.detectCharset(file);
-			LOGGER.log(Level.INFO, "Detected " + encoding + " encoding for " + file.getAbsolutePath());
 		}
 		catch (IOException ex) {
-			LOGGER.log(Level.WARNING, "Couldn't detect encoding, defaulting to " + encoding);
+			encoding = null;
 		}
+		if (encoding == null) {
+			encoding = "UTF-8";
+			LOGGER.log(Level.WARNING, "Couldn't detect encoding, defaulting to " + encoding + " for " + file.getAbsolutePath());
+		}
+		else
+		{
+			LOGGER.log(Level.INFO, "Detected " + encoding + " encoding for " + file.getAbsolutePath());
+		}
+
 		return encoding;
 	}
 
