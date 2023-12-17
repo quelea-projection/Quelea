@@ -19,7 +19,7 @@ jobs:
       - name: Environment setup
         run: |
           sudo apt install -y wine xvfb
-          dpkg --add-architecture i386 && apt-get update && apt-get install wine32
+          sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install wine32
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
