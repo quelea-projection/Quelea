@@ -7,6 +7,7 @@ jobs:
           sudo apt install -y wine xvfb oraclejdk11
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Build
         run: |
           cd Quelea
           chmod +x gradlew
