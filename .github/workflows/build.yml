@@ -18,8 +18,8 @@ jobs:
           sudo apt-get -y install ./zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
       - name: Environment setup
         run: |
-          sudo apt install -y wine wine32 xvfb
-#          dpkg --add-architecture i386 && apt-get update
+          sudo apt install -y wine xvfb
+          dpkg --add-architecture i386 && apt-get update && apt-get install wine32
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
