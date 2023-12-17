@@ -9,9 +9,14 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '11'
       - name: Environment setup
         run: |
-          sudo apt install -y wine xvfb oraclejdk11
+          sudo apt install -y wine xvfb
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
