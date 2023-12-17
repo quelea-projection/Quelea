@@ -1,3 +1,10 @@
+name: Master updated
+
+on:
+  push:
+    branches:
+      - 'master'
+
 jobs:
   release:
     runs-on: ubuntu-latest
