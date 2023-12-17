@@ -19,7 +19,6 @@ package org.quelea.windows.main;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -34,7 +33,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
 import org.quelea.windows.main.widgets.TestImage;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.utils.PlatformUtils;
 
 /**
@@ -101,16 +99,6 @@ public class DisplayStage extends Stage {
             scene.setFill(null);
         }
         setScene(scene);
-        if (playVideo) {
-            addVLCListeners();
-        }
-    }
-
-    private void addVLCListeners() {
-        widthProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
-        heightProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
-        xProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
-        yProperty().addListener((observable, oldValue, newValue) -> VLCWindow.INSTANCE.refreshPosition());
     }
 
     /**

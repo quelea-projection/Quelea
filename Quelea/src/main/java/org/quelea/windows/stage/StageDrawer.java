@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,6 @@ package org.quelea.windows.stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.animation.FadeTransition;
@@ -52,7 +51,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.utils.Chord;
 import org.quelea.windows.lyrics.FormattedText;
 import org.quelea.windows.main.WordDrawer;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 
@@ -155,7 +153,7 @@ public class StageDrawer extends WordDrawer {
                 FormattedText nextLineFt = new FormattedText(nextLine);
                 nextLineFt.setFont(font);
                 setPositionX(nextLineFt, metrics, nextLine);
-                
+
                 while (nextLine.length() < line.getLine().length()) {
                     nextLine += " ";
                 }
@@ -257,58 +255,21 @@ public class StageDrawer extends WordDrawer {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        boolean sameVid = false;
-        if (theme.getBackground() instanceof VideoBackground && VLCWindow.INSTANCE.getLastLocation() != null) {
-            String newLocation = ((VideoBackground) theme.getBackground()).getVLCVidString();
-            String[] locationParts = newLocation.split("[\\r\\n]+");
-            if (locationParts.length > 1) {
-                newLocation = locationParts[0];
-            }
-            String oldLocation = VLCWindow.INSTANCE.getLastLocation();
-            if (newLocation.equals(oldLocation)) {
-                sameVid = true;
-            }
-        }
         this.theme = theme;
         Image image;
         ColorAdjust colourAdjust = null;
         image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
 
         Node newBackground;
-        if (image == null) {
-            final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
-            if (!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
-                final String location = vidBackground.getVLCVidString();
-                final boolean stretch = vidBackground.getStretch();
-                String[] locationParts = location.split("[\\r\\n]+");
-                VLCWindow.INSTANCE.refreshPosition();
-                VLCWindow.INSTANCE.show();
-                VLCWindow.INSTANCE.setRepeat(true);
-                if (locationParts.length == 1) {
-                    VLCWindow.INSTANCE.play(locationParts[0], null, stretch);
-                } else {
-                    VLCWindow.INSTANCE.play(locationParts[0], locationParts[1], stretch);
-                }
-                VLCWindow.INSTANCE.setHue(vidBackground.getHue());
-            }
-            if (sameVid && VLCWindow.INSTANCE.getHue() != ((VideoBackground) theme.getBackground()).getHue()) {
-                VLCWindow.INSTANCE.fadeHue(vidBackground.getHue());
-            }
-            newBackground = null; //transparent
-        } else {
-            if (getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
-                VLCWindow.INSTANCE.stop();
-            }
-            final ImageView newImageView = getCanvas().getNewImageView();
-            newImageView.setFitHeight(getCanvas().getHeight());
-            newImageView.setFitWidth(getCanvas().getWidth());
-            newImageView.setImage(image);
-            if (colourAdjust != null) {
-                newImageView.setEffect(colourAdjust);
-            }
-            getCanvas().getChildren().add(newImageView);
-            newBackground = newImageView;
+        final ImageView newImageView = getCanvas().getNewImageView();
+        newImageView.setFitHeight(getCanvas().getHeight());
+        newImageView.setFitWidth(getCanvas().getWidth());
+        newImageView.setImage(image);
+        if (colourAdjust != null) {
+            newImageView.setEffect(colourAdjust);
         }
+        getCanvas().getChildren().add(newImageView);
+        newBackground = newImageView;
         getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
@@ -495,7 +456,7 @@ public class StageDrawer extends WordDrawer {
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
     }
-    
+
     private static String widenInitialSpaces(String str) {
         StringBuilder ret = new StringBuilder(str.length());
         boolean initialSpace = true;

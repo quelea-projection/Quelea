@@ -66,7 +66,6 @@ public class LibrarySongPreviewCanvas extends StackPane {
             drawer.setTheme(newTheme);
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText(displayable, 0);
-            canvas.setCurrentDisplayable(displayable);
         }
     }
 

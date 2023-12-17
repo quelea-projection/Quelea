@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,13 @@
 package org.quelea.windows.multimedia;
 
 import java.io.File;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -44,15 +48,26 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import org.freedesktop.gstreamer.Format;
+import org.freedesktop.gstreamer.elements.PlayBin;
+import org.freedesktop.gstreamer.event.SeekFlags;
+import org.freedesktop.gstreamer.fx.FXImageSink;
+import org.quelea.data.GlobalThemeStore;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.WordDrawer;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
  * position slider on a gradient background.
  * <p/>
+ *
  * @author Michael
  */
 public class MultimediaControls extends StackPane {
@@ -81,6 +96,14 @@ public class MultimediaControls extends StackPane {
     private final ImageView muteButton;
     private boolean looping;
 
+    private Runnable onPlay;
+    private Runnable onPause;
+    private Runnable onStop;
+    private Consumer<Double> onSeek;
+    private Consumer<Boolean> onLoopChanged;
+
+    private Consumer<Double> onVolumeChanged;
+
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
         Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(1, Color.GREY)};
@@ -97,49 +120,46 @@ public class MultimediaControls extends StackPane {
         rect.setEffect(ds);
         getChildren().add(rect);
 
+        onPlay = () -> {
+        };
+        onVolumeChanged = v -> {
+        };
         playButton = new ImageView(PLAY_IMAGE);
         setButtonParams(playButton);
         playButton.setTranslateX(-30);
         getChildren().add(playButton);
-        playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    play();
-                }
-                volSlider.setVisible(false);
+        playButton.setOnMouseClicked(t -> {
+            if (!disableControls) {
+                play();
             }
+            volSlider.setVisible(false);
         });
 
+        onPause = () -> {
+        };
+        onStop = () -> {
+        };
         stopButton = new ImageView(STOP_IMAGE);
-        stopButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    reset();
-                }
-                volSlider.setVisible(false);
+        stopButton.setOnMouseClicked(t -> {
+            if (!disableControls) {
+                reset();
             }
+            volSlider.setVisible(false);
         });
         setButtonParams(stopButton);
         stopButton.setTranslateX(30);
         getChildren().add(stopButton);
 
+        onSeek = d -> {
+        };
         posSlider = new Slider(0, 1, 0);
         posSlider.setDisable(true);
-        posSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if (disablePosSliderListener) {
-                    return;
-                }
-                if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
-                    VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
-                    long time = (long) (VLCWindow.INSTANCE.getProgressPercent() * VLCWindow.INSTANCE.getTotal());
-                    if (VLCWindow.INSTANCE.getTotal() != 0) {
-                        elapsedTime.setText(getTime(time));
-                    }
-                }
+        posSlider.valueProperty().addListener(o -> {
+            if (disablePosSliderListener) {
+                return;
+            }
+            if (posSlider.isValueChanging()) {
+                onSeek.accept(posSlider.getValue());
             }
         });
         posSlider.setTranslateY(30);
@@ -153,12 +173,11 @@ public class MultimediaControls extends StackPane {
             if (!disableControls) {
                 if (loopButton.getImage().equals(LOOP_IMAGE_OFF)) {
                     loopButton.setImage(LOOP_IMAGE_ON);
-                    looping = true;
+                    onLoopChanged.accept(true);
                 } else {
                     loopButton.setImage(LOOP_IMAGE_OFF);
-                    looping = false;
+                    onLoopChanged.accept(false);
                 }
-                VLCWindow.INSTANCE.setRepeat(looping);
             }
         });
         setButtonParams(loopButton);
@@ -171,28 +190,24 @@ public class MultimediaControls extends StackPane {
         muteButton.setFitWidth(20);
         muteButton.setPreserveRatio(true);
 
-        volSlider = new Slider(0, 100, 0);
+        volSlider = new Slider(0, 1, 1);
         volSlider.setMaxHeight(70);
         volSlider.setVisible(false);
         volSlider.setOrientation(Orientation.VERTICAL);
         volSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
             Double vol1 = volSlider.getValue();
             vol = vol1.intValue();
-            VLCWindow.INSTANCE.setVolume(vol);
+            onVolumeChanged.accept(vol1);
         });
         muteButton.setTranslateY(30);
         muteButton.setTranslateX(posSlider.getMaxWidth() - 80);
         getChildren().add(muteButton);
         muteButton.setOnMouseClicked((MouseEvent t) -> {
             if (!disableControls) {
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        volSlider.setVisible(!volSlider.isVisible());
-                        volSlider.setValue(VLCWindow.INSTANCE.getVolume());
-                        volSlider.requestFocus();
-                    }
+                Platform.runLater(() -> {
+                    volSlider.setVisible(!volSlider.isVisible());
+//                        volSlider.setValue(VLCWindow.INSTANCE.getVolume());
+                    volSlider.requestFocus();
                 });
             }
         });
@@ -224,60 +239,54 @@ public class MultimediaControls extends StackPane {
         totalTime.setTextFill(Color.WHITE);
         getChildren().add(totalTime);
 
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
-                    Platform.runLater(new Runnable() {
+//        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+//        service.scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
+//                    Platform.runLater(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+//                            if (VLCWindow.INSTANCE.getTotal() != 0) {
+//                                elapsedTime.setText(getTime(VLCWindow.INSTANCE.getTime()));
+//                                totalTime.setText(getTime(VLCWindow.INSTANCE.getTotal()));
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
 
-                        @Override
-                        public void run() {
-                            posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
-                            if (VLCWindow.INSTANCE.getTotal() != 0) {
-                                elapsedTime.setText(getTime(VLCWindow.INSTANCE.getTime()));
-                                totalTime.setText(getTime(VLCWindow.INSTANCE.getTotal()));
-                            }
-                        }
-                    });
-                }
-            }
-        }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
-
-        ScheduledExecutorService update = Executors.newSingleThreadScheduledExecutor();
-        update.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !volSlider.isValueChanging()) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            volSlider.setValue(VLCWindow.INSTANCE.getVolume());
-                        }
-                    });
-                }
-            }
-        }, 0, 2000, TimeUnit.MILLISECONDS);
-        VLCWindow.INSTANCE.setOnFinished(new Runnable() {
-            @Override
-            public void run() {
-                if (getScene() != null && !disableControls && !looping) {
-                    reset();
-                }
-            }
-        });
+//        ScheduledExecutorService update = Executors.newSingleThreadScheduledExecutor();
+//        update.scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !volSlider.isValueChanging()) {
+//                    Platform.runLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            volSlider.setValue(VLCWindow.INSTANCE.getVolume());
+//                        }
+//                    });
+//                }
+//            }
+//        }, 0, 2000, TimeUnit.MILLISECONDS);
+//        VLCWindow.INSTANCE.setOnFinished(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (getScene() != null && !disableControls && !looping) {
+//                    reset();
+//                }
+//            }
+//        });
     }
 
     public void loadMultimedia(String path) {
         reset();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
-        }
-        String[] locationParts = path.split("[\\r\\n]+");
-        if (locationParts.length == 1) {
-            VLCWindow.INSTANCE.load(locationParts[0], null, false);
-        } else {
-            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], false);
         }
     }
 
@@ -300,32 +309,61 @@ public class MultimediaControls extends StackPane {
         }
     }
 
+    public void setOnPlay(Runnable onPlay) {
+        this.onPlay = onPlay;
+    }
+
+    public void setOnPause(Runnable onPause) {
+        this.onPause = onPause;
+    }
+
+    public void setOnStop(Runnable onStop) {
+        this.onStop = onStop;
+    }
+
+    public void setOnSeek(Consumer<Double> onSeek) {
+        this.onSeek = onSeek;
+    }
+
+    public void setOnLoopChanged(Consumer<Boolean> onLoopChanged) {
+        this.onLoopChanged = onLoopChanged;
+    }
+
+    public void setOnVolumeChanged(Consumer<Double> onVolumeChanged) {
+        this.onVolumeChanged = onVolumeChanged;
+    }
+
+    public void setPosition(double pos) {
+        if (!posSlider.isValueChanging()) {
+            posSlider.setValue(pos);
+        }
+    }
+
     public void play() {
         playpause = !playpause;
         if (playpause) {
             playButton.setImage(PAUSE_IMAGE);
-            VLCWindow.INSTANCE.setRepeat(looping);
-            VLCWindow.INSTANCE.setHue(0);
-            VLCWindow.INSTANCE.play();
-            VLCWindow.INSTANCE.setHue(0);
+
+//            VLCWindow.INSTANCE.setRepeat(looping);
+//            VLCWindow.INSTANCE.play();
+
             posSlider.setDisable(false);
             muteButton.setDisable(false);
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if(lp.getBlacked()) {
+            if (lp.getBlacked()) {
                 lp.clickBlacked();
             }
-            if(lp.getLogoed()) {
+            if (lp.getLogoed()) {
                 lp.clickLogoed();
             }
+            onPlay.run();
         } else {
             playButton.setImage(PLAY_IMAGE);
-            VLCWindow.INSTANCE.pause();
+            onPause.run();
         }
     }
 
     public void reset() {
-        VLCWindow.INSTANCE.stop();
-        VLCWindow.INSTANCE.setHue(0);
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {
@@ -341,18 +379,16 @@ public class MultimediaControls extends StackPane {
             elapsedTime.setText("");
             totalTime.setText("");
         });
+        onStop.run();
     }
 
     private void setButtonParams(final ImageView button) {
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    button.setEffect(new Glow(0.5));
-                }
+        button.setOnMouseEntered(t -> {
+            if (!disableControls) {
+                button.setEffect(new Glow(0.5));
             }
         });
-        button.setOnMouseExited(new EventHandler<MouseEvent>() {
+        button.setOnMouseExited(new EventHandler<>() {
             @Override
             public void handle(MouseEvent t) {
                 button.setEffect(null);

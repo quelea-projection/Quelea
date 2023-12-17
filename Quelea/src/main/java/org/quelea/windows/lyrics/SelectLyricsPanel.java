@@ -36,6 +36,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPreview;
 import org.quelea.windows.stage.StageDrawer;
+
 import java.util.logging.Logger;
 
 /**
@@ -118,7 +119,6 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param index the index of the displayable to show.
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
-//        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
         lyricsList.itemsProperty().get().clear();
         lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
@@ -245,7 +245,6 @@ public class SelectLyricsPanel extends AbstractPanel {
             
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);
-            canvas.setCurrentDisplayable(getCurrentDisplayable());
         }
     }
 

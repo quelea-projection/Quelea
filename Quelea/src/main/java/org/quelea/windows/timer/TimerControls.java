@@ -33,7 +33,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.Timer;
-import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The timer controls containing a play / pause button, stop button
@@ -92,8 +91,6 @@ public class TimerControls extends StackPane {
         setButtonParams(stopButton);
         stopButton.setTranslateX(30);
         getChildren().add(stopButton);
-
-        VLCWindow.INSTANCE.setRepeat(true);
     }
 
     public void loadMultimedia(String path, boolean stretch) {
@@ -104,9 +101,9 @@ public class TimerControls extends StackPane {
         }
         String[] locationParts = path.split("[\\r\\n]+");
         if (locationParts.length == 1) {
-            VLCWindow.INSTANCE.load(locationParts[0], null, stretch);
+//            VLCWindow.INSTANCE.load(locationParts[0], null, stretch);
         } else {
-            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
+//            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
         }
         this.sync = true;
     }
@@ -139,7 +136,7 @@ public class TimerControls extends StackPane {
                 playButton.setImage(PLAY_IMAGE_DISABLE);
             }
             if (vlc) {
-                VLCWindow.INSTANCE.pause();
+//                VLCWindow.INSTANCE.pause();
             }
             if (timer != null) {
                 timer.pause();
@@ -154,10 +151,10 @@ public class TimerControls extends StackPane {
                 playButton.setImage(PAUSE_IMAGE_DISABLE);
             }
             if (vlc) {
-                VLCWindow.INSTANCE.setRepeat(true);
-                VLCWindow.INSTANCE.setHue(0);
-                VLCWindow.INSTANCE.play();
-                VLCWindow.INSTANCE.setHue(0);
+//                VLCWindow.INSTANCE.setRepeat(true);
+//                VLCWindow.INSTANCE.setHue(0);
+//                VLCWindow.INSTANCE.play();
+//                VLCWindow.INSTANCE.setHue(0);
                 if (stageTimer != null && timer != null && sync) {
                     timer.synchronise(stageTimer);
                     sync = false;
@@ -179,7 +176,7 @@ public class TimerControls extends StackPane {
         } else {
             playButton.setImage(PLAY_IMAGE);
             if (vlc) {
-                VLCWindow.INSTANCE.stop();
+//                VLCWindow.INSTANCE.stop();
             }
             timer.stop();
             if (stageTimer != null) {

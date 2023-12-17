@@ -29,9 +29,6 @@ import javax.swing.JFrame;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.player.MediaPlayer;
 
 /**
  * Class for setting up a new instance of VLC in the background
@@ -42,7 +39,6 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
 public class RecordingEncoder {
 
     private final JFrame ourFrame = new JFrame();
-    private EmbeddedMediaPlayerComponent mp;
     private String mediaPath = "";
     private final String[] options;
     private StatusPanel statusPanel;
@@ -51,38 +47,6 @@ public class RecordingEncoder {
     public RecordingEncoder(String mediaUrl, String[] options) {
         this.options = options;
         this.mediaPath = mediaUrl;
-        new NativeDiscovery().discover();
-        mp = new EmbeddedMediaPlayerComponent() {
-
-            @Override
-            public void finished(MediaPlayer mediaPlayer) {
-                // Delete the WAV file when convertion is done
-                String error;
-                Path path = Paths.get(mediaUrl);
-                do {
-                    try {
-                        Files.delete(path);
-                        error = "";
-                        mediaPlayer.release();
-                    } catch (NoSuchFileException | DirectoryNotEmptyException x) {
-                        error = "";
-                    } catch (IOException x) {
-                        // File is still being read by the system,
-                        // keep trying to delete until it's avaiable again.
-                        error = "busy";
-                    }
-                } while (!error.equals(""));
-                if (statusPanel != null) {
-                    Platform.runLater(() -> {
-                        statusPanel.done();
-                    });
-                }
-                converting = false;
-            }
-        };
-        
-        // Set up VLC window
-        ourFrame.setContentPane(mp);
         ourFrame.setSize(1, 1);
         ourFrame.setVisible(true);
         ourFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,7 +54,6 @@ public class RecordingEncoder {
 
     public void run() {
         // Start converting
-        mp.getMediaPlayer().playMedia(mediaPath, options);
         // Hide the VLC window
         ourFrame.setVisible(false);
         ourFrame.dispose();

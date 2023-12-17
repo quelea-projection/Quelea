@@ -68,7 +68,6 @@ import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.stage.StageDrawer;
 
 /**
@@ -544,7 +543,6 @@ public class ScheduleList extends StackPane {
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if ((d == live || listView.getItems().size() == 1) && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
-                VLCWindow.INSTANCE.stop();
                 WordDrawer drawer;
                 if (QueleaApp.get().getProjectionWindow().getCanvas().isStageView()) {
                     drawer = new StageDrawer();

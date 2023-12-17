@@ -60,7 +60,6 @@ import org.quelea.windows.main.actionhandlers.RecordingsHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
@@ -220,19 +219,15 @@ public class RCHandler {
                 return LabelGrabber.INSTANCE.getLabel("play");
             }
         }
-        if (VLCWindow.INSTANCE.isPlaying()) {
-            return LabelGrabber.INSTANCE.getLabel("pause");
-        } else {
-            return LabelGrabber.INSTANCE.getLabel("play");
-        }
+        return LabelGrabber.INSTANCE.getLabel("play");
+//        else if (lp.getVideoPanel().isPlaying()) {
+//            return LabelGrabber.INSTANCE.getLabel("pause");
+//        } else {
+//            return LabelGrabber.INSTANCE.getLabel("play");
+//        }
     }
 
     public static void play() {
-        if (VLCWindow.INSTANCE.isPlaying()) {
-            VLCWindow.INSTANCE.pause();
-        } else {
-            VLCWindow.INSTANCE.play();
-        }
         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
         if (lp.getDisplayable() instanceof TimerDisplayable) {
             lp.getTimerPanel().togglePause();

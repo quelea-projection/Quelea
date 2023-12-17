@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -34,7 +32,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
@@ -60,7 +57,6 @@ public class DisplayCanvas extends StackPane {
     private final LogoImage logoImage;
     private final Rectangle black = new Rectangle();
     private final Node noticeOverlay;
-    private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority drawingPriority;
     private final boolean playVideo;
@@ -190,10 +186,6 @@ public class DisplayCanvas extends StackPane {
         }
     }
 
-    public void clearCurrentDisplayable() {
-        setCurrentDisplayable(null);
-    }
-
     public void clearNonPermanentChildren() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
         for (Node node : list) {
@@ -201,20 +193,6 @@ public class DisplayCanvas extends StackPane {
                 getChildren().remove(node);
             }
         }
-    }
-
-    /**
-     * @return the currentDisplayable
-     */
-    public Displayable getCurrentDisplayable() {
-        return currentDisplayable;
-    }
-
-    /**
-     * @param currentDisplayable the currentDisplayable to set
-     */
-    public void setCurrentDisplayable(Displayable currentDisplayable) {
-        this.currentDisplayable = currentDisplayable;
     }
 
     /**

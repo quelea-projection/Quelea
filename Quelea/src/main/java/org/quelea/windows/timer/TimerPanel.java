@@ -97,7 +97,6 @@ public class TimerPanel extends AbstractPanel {
             if (canvas.getPlayVideo()) {
                 playVideo = true;
             }
-            canvas.setCurrentDisplayable(displayable);
             drawer.setPlayVideo(canvas.getPlayVideo());
             drawer.draw(displayable);
         }

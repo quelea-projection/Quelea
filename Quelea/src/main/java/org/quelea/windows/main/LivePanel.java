@@ -62,7 +62,6 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
@@ -237,46 +236,41 @@ public class LivePanel extends LivePreviewPanel {
         Utils.setToolbarButtonStyle(hide);
         hide.setToggleGroup(group);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));
-        hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                int projectorScreen = QueleaProperties.get().getProjectorScreen();
-                int stageScreen = QueleaProperties.get().getStageScreen();
-                final ObservableList<Screen> monitors = Screen.getScreens();
+        hide.setOnAction(t -> {
+            int projectorScreen = QueleaProperties.get().getProjectorScreen();
+            int stageScreen = QueleaProperties.get().getStageScreen();
+            final ObservableList<Screen> monitors = Screen.getScreens();
 
-                DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
-                DisplayStage stageWindow = QueleaApp.get().getStageWindow();
+            DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
+            DisplayStage stageWindow = QueleaApp.get().getStageWindow();
 
-                final boolean lyricsHidden;
-                if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
-                    lyricsHidden = true;
+            final boolean lyricsHidden;
+            if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
+                lyricsHidden = true;
+            } else {
+                lyricsHidden = false;
+            }
+
+            final boolean stageHidden;
+            if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
+                stageHidden = true;
+            } else {
+                stageHidden = false;
+            }
+
+            if (!lyricsHidden) {
+                if (hide.isSelected()) {
+                    appWindow.hide();
                 } else {
-                    lyricsHidden = false;
+                    appWindow.show();
                 }
-
-                final boolean stageHidden;
-                if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
-                    stageHidden = true;
+            }
+            if (!stageHidden) {
+                if (hide.isSelected()) {
+                    stageWindow.hide();
                 } else {
-                    stageHidden = false;
+                    stageWindow.show();
                 }
-
-                if (!lyricsHidden) {
-                    if (hide.isSelected()) {
-                        appWindow.hide();
-                    } else {
-                        appWindow.show();
-                    }
-                }
-                if (!stageHidden) {
-                    if (hide.isSelected()) {
-                        stageWindow.hide();
-                    } else {
-                        stageWindow.show();
-                    }
-                }
-                VLCWindow.INSTANCE.refreshPosition();
-//                VLCWindow.INSTANCE.setHideButton(hide.isSelected());
             }
         });
         //header.getItems().add(hide);
@@ -471,20 +465,12 @@ public class LivePanel extends LivePreviewPanel {
         }
         if (d instanceof WebDisplayable) {
             updateWebPreview = Executors.newSingleThreadScheduledExecutor();
-            updateWebPreview.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (d != null && d instanceof WebDisplayable) {
-                                getWebPanel().setLoading();
-                                getWebPanel().getImagePreview().setImage(geWebPreviewImage());
-                            }
-                        }
-                    });
+            updateWebPreview.scheduleAtFixedRate(() -> Platform.runLater(() -> {
+                if (d != null && d instanceof WebDisplayable) {
+                    getWebPanel().setLoading();
+                    getWebPanel().getImagePreview().setImage(geWebPreviewImage());
                 }
-            }, 0, QueleaProperties.get().getWebDisplayableRefreshRate(), TimeUnit.MILLISECONDS);
+            }), 0, QueleaProperties.get().getWebDisplayableRefreshRate(), TimeUnit.MILLISECONDS);
         }
         if (oldD instanceof WebDisplayable) {
             ((WebDisplayable) oldD).dispose();

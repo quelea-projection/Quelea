@@ -16,7 +16,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.Timer;
-import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.utils.FXFontMetrics;
 
 /**
@@ -75,8 +74,6 @@ public class TimerDrawer extends DisplayableDrawer {
                 if (playVideo) {
                     controlPanel.loadMultimedia(((VideoBackground) td.getTheme().getBackground()).getVLCVidString(),
                             ((VideoBackground) td.getTheme().getBackground()).getStretch());
-                    VLCWindow.INSTANCE.refreshPosition();
-                    VLCWindow.INSTANCE.show();
                     controlPanel.reset();
                 }
             } else if (td.getTheme().getBackground() instanceof ImageBackground) {
@@ -99,7 +96,6 @@ public class TimerDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        getCanvas().clearCurrentDisplayable();
     }
 
     @Override
@@ -168,7 +164,6 @@ public class TimerDrawer extends DisplayableDrawer {
                 setPlayVideo(main.getPlayVideo());
                 controlPanel.loadMultimedia(((VideoBackground) back).getVLCVidString(),
                         ((VideoBackground) back).getStretch());
-                VLCWindow.INSTANCE.show();
                 controlPanel.setTimer(timer, true);
                 if (stageTimer != null) {
                     sync = true;
