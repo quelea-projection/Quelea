@@ -851,7 +851,7 @@ public final class QueleaProperties extends SortedProperties {
      * @return the location of the facebook page.
      */
     public String getWikiPageLocation() {
-        return getProperty(wikiPageKey, "http://quelea.org/wiki/index.php/Main_Page");
+        return getProperty(wikiPageKey, "http://quelea.org/wiki/");
     }
 
     /**
