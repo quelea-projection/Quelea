@@ -22,7 +22,7 @@ jobs:
           QBOT_TOKEN: ${{ secrets.QBOT_TOKEN }}
         run: |
           git clone https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./doc
-      - name: Build
+      - name: Find missing labels
         run: |
           cd main/Quelea
           chmod +x gradlew
