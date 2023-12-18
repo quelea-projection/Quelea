@@ -46,7 +46,7 @@ public class GStreamerUtils {
                     System.setProperty("jna.library.path", jnaPath + File.pathSeparator + gstPath);
                 }
             }
-        } else if(Platform.isLinux()) {
+        } else if (Platform.isLinux()) {
             LOGGER.log(Level.INFO, "Detected Linux");
             String gstPath = System.getProperty("gstreamer.path",
                     "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
@@ -54,10 +54,13 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
             if (!gstPath.isEmpty()) {
                 String jnaPath = System.getProperty("jna.library.path", "").trim();
+                LOGGER.log(Level.INFO, "JNA path is: " + jnaPath);
                 if (jnaPath.isEmpty()) {
                     System.setProperty("jna.library.path", gstPath);
+                    LOGGER.log(Level.INFO, "JNA path was empty, is now: " + System.getProperty("jna.library.path"));
                 } else {
                     System.setProperty("jna.library.path", jnaPath + File.pathSeparator + gstPath);
+                    LOGGER.log(Level.INFO, "JNA path is now: " + System.getProperty("jna.library.path"));
                 }
             }
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
