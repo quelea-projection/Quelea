@@ -1,0 +1,32 @@
+name: Master updated
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Java
+        run: |
+          curl -O https://cdn.azul.com/zulu/bin/zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
+          sudo apt-get -y install ./zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
+      - name: Checkout main source
+        uses: actions/checkout@v4
+        with:
+          path: 'main'
+      - name: Checkout doc source
+        uses: actions/checkout@v4
+        with:
+          repository: 'quelea-projection/quelea-projection.github.io'
+          path: 'doc'
+      - name: Build
+        run: |
+          cd main/Quelea
+          chmod +x gradlew
+          chmod +x build-install.sh
+          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
+          cd ../..
+          cp main/Quelea/dist/missinglabels.js doc/repo/lang/
