@@ -21,11 +21,10 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install wine32
-          wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
+          wget http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -O is.exe
           Xvfb $DISPLAY &
           wine wineboot --init
-          echo "Installing INNOSETUP"
-          wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
+          wine is.exe /VERYSILENT /SUPPRESSMSGBOXES
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
