@@ -11,9 +11,6 @@ jobs:
     steps:
       - name: Setup Java
         run: |
-          sudo apt-get -q update
-          sudo apt-get -yq install gnupg curl
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9
           curl -O https://cdn.azul.com/zulu/bin/zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
           sudo apt-get -y install ./zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
       - name: Environment setup
@@ -29,17 +26,13 @@ jobs:
           DISPLAY: :99
         run: |
           wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
-          echo "Using display $DISPLAY"
           Xvfb $DISPLAY &
           wine wineboot --init
           echo "Installing INNOSETUP"
           wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
-          ls -l $HOME/.wine
-          ls -l $HOME/.wine/drive_c/
-          ls -l "$HOME/.wine/drive_c/Program Files (x86)"
-          ls -l "$HOME/.wine/drive_c/Program Files (x86)/Inno Setup 5"
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
-          ls -l
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+          ls -l
+          ls -l dist/standalone
