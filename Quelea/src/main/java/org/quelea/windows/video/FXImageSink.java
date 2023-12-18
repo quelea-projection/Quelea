@@ -58,6 +58,7 @@ public class FXImageSink {
     private final ReadOnlyObjectWrapper<Image> image;
     private Sample activeSample;
     private Buffer activeBuffer;
+    private List<Sample> oldSamples;
 
     /**
      * Create an FXImageSink. A new AppSink element will be created that can be
@@ -74,6 +75,7 @@ public class FXImageSink {
      */
     public FXImageSink(AppSink sink) {
         this.sink = sink;
+        oldSamples = new ArrayList<>();
         sink.set("emit-signals", true);
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
@@ -111,8 +113,6 @@ public class FXImageSink {
     public AppSink getSinkElement() {
         return sink;
     }
-
-    List<Sample> oldSamples = new ArrayList<>();
 
     private void updateImage(Sample newSample) {
         if (!Platform.isFxApplicationThread()) {
