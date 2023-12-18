@@ -28,8 +28,9 @@ jobs:
           chmod +x gradlew
           chmod +x build-install.sh
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
-          echo "Going up"
           cd ../..
-          echo "Copying"
           cp main/Quelea/dist/missinglabels.js doc/lang/
-          echo "Done"
+          cd doc
+          git add lang/missinglabels.js
+          git commit -m "Update missing labels file"
+          git push
