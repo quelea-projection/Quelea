@@ -1,4 +1,4 @@
-name: Master updated
+name: Update missing labels
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'master'
 
 jobs:
-  release:
+  update-labels:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Java
@@ -28,5 +28,8 @@ jobs:
           chmod +x gradlew
           chmod +x build-install.sh
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
+          echo "Going up"
           cd ../..
+          echo "Copying"
           cp main/Quelea/dist/missinglabels.js doc/repo/lang/
+          echo "Done"
