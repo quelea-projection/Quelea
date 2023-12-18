@@ -31,5 +31,5 @@ jobs:
           echo "Going up"
           cd ../..
           echo "Copying"
-          cp main/Quelea/dist/missinglabels.js doc/repo/lang/
+          cp main/Quelea/dist/missinglabels.js doc/lang/
           echo "Done"
