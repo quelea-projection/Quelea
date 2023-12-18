@@ -1,0 +1,6 @@
+quelea (2024.0) stable
+
+  * Migrate to GStreamer for video playback
+  * Videos can now be played in preview windows
+  * Video backgrounds now animate in preview windows
+  * Various minor bugfixes
