@@ -20,6 +20,8 @@ jobs:
         run: |
           sudo apt install -y wine xvfb
           sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install wine32
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Build
         run: |
           cd Quelea
