@@ -22,6 +22,11 @@ jobs:
           sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install wine32
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Run headless test
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: |
+
       - name: Build
         run: |
           cd Quelea
@@ -30,9 +35,9 @@ jobs:
           wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
           echo "BOOTING WINE"
           wineboot --update
-          echo "INIT VFB"
-          Xvfb :0 -screen 0 1024x768x16 &
-          echo "RUN WINE INNOSETUP"
-          export DISPLAY=:0
-          wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
+#          echo "INIT VFB"
+#          Xvfb :0 -screen 0 1024x768x16 &
+#          echo "RUN WINE INNOSETUP"
+#          export DISPLAY=:0
+          xvfb-run wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
           "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist"
