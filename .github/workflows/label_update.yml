@@ -34,5 +34,5 @@ jobs:
           git add lang/missinglabels.js
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Update missing labels file"
+          git commit -m "Update missing labels file" || true
           git push
