@@ -28,6 +28,7 @@ jobs:
         env:
           DISPLAY: :99
         run: |
+          wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
           echo "Using display $DISPLAY"
           Xvfb $DISPLAY &
           wine wineboot --init
