@@ -19,12 +19,21 @@ jobs:
       - name: Environment setup
         run: |
           sudo apt install -y wine xvfb
-          sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install wine32
+          sudo dpkg --add-architecture i386
+          sudo apt-get install wine32
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
+        env:
+          DISPLAY: 99
         run: |
+          echo "Using display $DISPLAY"
+          Xvfb $DISPLAY &
+          wine wineboot --init
+          waitonprocess wineserver
+          wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
-          "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist"
+          ls -l
+          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
