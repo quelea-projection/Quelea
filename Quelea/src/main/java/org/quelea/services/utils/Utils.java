@@ -852,14 +852,14 @@ public final class Utils {
 		ret.add("WMV");
 		ret.add("ogm");
 		ret.add("OGM");
+		ret.add("ogg");
+		ret.add("OGG");
 		ret.add("mrl");
 		ret.add("MRL");
 		ret.add("asx");
 		ret.add("ASX");
 		ret.add("m2ts");
 		ret.add("M2TS");
-		ret.add("vlcarg");
-		ret.add("VLCARG");
 		return ret;
 	}
 
