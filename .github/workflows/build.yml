@@ -28,7 +28,8 @@ jobs:
           chmod +x gradlew
           chmod +x build-install.sh
           wget http://files.jrsoftware.org/is/5/innosetup-5.6.1.exe
-          echo "BOOTING WINE"
-          wineboot --update
-          xvfb-run wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
+#          echo "BOOTING WINE"
+#          wineboot --update
+#          echo "RUNNING WINE"
+#          xvfb-run wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
           "./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist"
