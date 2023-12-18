@@ -404,7 +404,6 @@ gstreamer.warning.title=Couldn't find GStreamer
 gstreamer.warning.message=Quelea couldn't find GStreamer on your system. Without it, Quelea won't be able to play videos, audio, and show songs with video backgrounds. Do you want to download it now? You'll need to restart Quelea after you've installed GStreamer for the changes to take effect.
 continue.without.gstreamer=Continue without GStreamer
 download.gstreamer=Download GStreamer
-continue.without.gstreamer=Continue without GStreamer
 startup.error.title=Startup Error
 startup.error.text=Sorry, Quelea couldn't start for some reason on your system. If you'd like help trying to get it to run, please shoot off an email to support@quelea.org and attach the debug log file ($1).\n\nAlternatively, feel free to ask on the Quelea discuss group (https://quelea.discourse.group).
 filefilters.description.survivor.songbook=Survivor acetates file
