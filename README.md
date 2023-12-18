@@ -1,8 +1,3 @@
-![Github All Releases](https://img.shields.io/github/downloads/quelea-projection/Quelea/total.svg)
- [![Build Status](https://travis-ci.com/quelea-projection/Quelea.svg?branch=master)](https://travis-ci.com/quelea-projection/Quelea) 
-[![quelea](https://snapcraft.io/quelea/badge.svg)](https://snapcraft.io/quelea)
-[![quelea](https://snapcraft.io/quelea/trending.svg?name=0)](https://snapcraft.io/quelea) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
- 
 # Quelea
 
 **Are you here to download the latest version? Great! You want one of these:**
