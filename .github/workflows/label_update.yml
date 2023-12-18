@@ -18,7 +18,7 @@ jobs:
         with:
           path: 'main'
       - name: Checkout doc source
-        with:
+        env:
           QBOT_TOKEN: ${{ secret.QBOT_TOKEN }}
         run: |
           git clone https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./doc
