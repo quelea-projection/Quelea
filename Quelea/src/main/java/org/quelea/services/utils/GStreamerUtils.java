@@ -4,9 +4,14 @@ import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class GStreamerUtils {
+
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     private GStreamerUtils() {
     }
@@ -41,7 +46,21 @@ public class GStreamerUtils {
                     System.setProperty("jna.library.path", jnaPath + File.pathSeparator + gstPath);
                 }
             }
-
+        } else if(Platform.isLinux()) {
+            LOGGER.log(Level.INFO, "Detected Linux");
+            String gstPath = System.getProperty("gstreamer.path",
+                    "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
+            LOGGER.log(Level.INFO, "GStreamer path is: " + System.getProperty("gstreamer.path"));
+            LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
+            if (!gstPath.isEmpty()) {
+                String jnaPath = System.getProperty("jna.library.path", "").trim();
+                if (jnaPath.isEmpty()) {
+                    System.setProperty("jna.library.path", gstPath);
+                } else {
+                    System.setProperty("jna.library.path", jnaPath + File.pathSeparator + gstPath);
+                }
+            }
+            LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
         }
     }
 
@@ -58,7 +77,7 @@ public class GStreamerUtils {
                             "GSTREAMER_1_0_ROOT_MINGW_X86_64",
                             "GSTREAMER_1_0_ROOT_X86_64")
                     .map(System::getenv)
-                    .filter(p -> p != null)
+                    .filter(Objects::nonNull)
                     .map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\")
                     .findFirst().orElse("");
         } else {
