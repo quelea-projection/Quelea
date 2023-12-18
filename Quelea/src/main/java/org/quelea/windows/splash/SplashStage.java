@@ -24,6 +24,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -39,6 +41,8 @@ import org.quelea.services.utils.Utils;
  */
 public class SplashStage extends Stage {
 
+    public static final Font VERSION_FONT = new Font("Arial", 14);
+
     /**
      * Create a new splash window.
      */
@@ -49,8 +53,13 @@ public class SplashStage extends Stage {
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
         ImageView imageView = new ImageView(splashImage);
+        Text version = new Text(QueleaProperties.VERSION.getVersionString());
+        version.setFont(VERSION_FONT);
+        version.setX(321);
+        version.setY(208);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
+        mainPane.getChildren().add(version);
         Scene scene = new Scene(mainPane);
         if (QueleaProperties.get().getUseDarkTheme()) {
             scene.getStylesheets().add("org/modena_dark.css");
