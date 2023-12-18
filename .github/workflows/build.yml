@@ -31,7 +31,6 @@ jobs:
           echo "Using display $DISPLAY"
           Xvfb $DISPLAY &
           wine wineboot --init
-          waitonprocess wineserver
           wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
           cd Quelea
           chmod +x gradlew
