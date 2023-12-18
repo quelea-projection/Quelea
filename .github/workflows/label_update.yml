@@ -18,10 +18,10 @@ jobs:
         with:
           path: 'main'
       - name: Checkout doc source
-        uses: actions/checkout@v4
         with:
-          repository: 'quelea-projection/quelea-projection.github.io'
-          path: 'doc'
+          QBOT_TOKEN: ${{ secret.QBOT_TOKEN }}
+        run: |
+          git clone https://quelea-bot:${QBOT_TOKEN}@github.com/quelea-projection/quelea-projection.github.io.git ./doc
       - name: Build
         run: |
           cd main/Quelea
