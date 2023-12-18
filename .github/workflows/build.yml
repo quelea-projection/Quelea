@@ -33,6 +33,7 @@ jobs:
           Xvfb $DISPLAY &
           wine wineboot --init
           wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
+          ls -l "~/.wine/drive_c/Program Files (x86)/Inno Setup 5"
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
