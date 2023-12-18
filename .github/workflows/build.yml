@@ -36,3 +36,13 @@ jobs:
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
           ls -l
           ls -l dist/standalone
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: Quelea/dist/standalone/*
+          tag: CI-RELEASE
+          overwrite: true
+          prerelease: true
+          make_latest: false
+          file_glob: true
+          body: "CI release"
