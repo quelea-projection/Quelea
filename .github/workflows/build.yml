@@ -34,10 +34,6 @@ jobs:
           wine wineboot --init
           echo "Installing INNOSETUP"
           wine innosetup-5.6.1.exe /VERYSILENT /SUPPRESSMSGBOXES
-          ls -l ~/.wine
-          ls -l ~/.wine/drive_c/
-          ls -l "~/.wine/drive_c/Program Files (x86)"
-          ls -l "~/.wine/drive_c/Program Files (x86)/Inno Setup 5"
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
