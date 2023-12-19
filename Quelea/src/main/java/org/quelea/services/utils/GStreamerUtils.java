@@ -52,13 +52,14 @@ public class GStreamerUtils {
                     "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
 
 
+            System.out.println(new File("/snap/").exists());
             System.out.println(new File("/usr/lib/").exists());
             System.out.println(new File("/usr/lib/x86_64-linux-gnu/").exists());
             System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
             System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
 
             System.out.println("-----");
-            File f = new File("/usr/lib");
+            File f = new File("/snap/");
             String[] list = f.list();
             for(String s : list) {
                 System.out.println(s);
