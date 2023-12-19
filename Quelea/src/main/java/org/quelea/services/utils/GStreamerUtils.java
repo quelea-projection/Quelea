@@ -51,6 +51,10 @@ public class GStreamerUtils {
             String gstPath = System.getProperty("gstreamer.path",
                     "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
 
+            gstPath = new File(System.getenv("SNAP"), gstPath).getAbsolutePath();
+
+
+            System.out.println(System.getenv("SNAP"));
 
             System.out.println(new File("/snap/").exists());
             System.out.println(new File("/usr/lib/").exists());
@@ -65,7 +69,7 @@ public class GStreamerUtils {
                 System.out.println(s);
             }
             System.out.println("-----");
-            f = new File("/usr/lib/x86_64-linux-gnu");
+            f = new File(System.getenv("SNAP"), "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
             list = f.list();
             for(String s : list) {
                 System.out.println(s);
