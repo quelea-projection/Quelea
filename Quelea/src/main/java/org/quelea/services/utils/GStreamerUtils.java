@@ -24,6 +24,7 @@ public class GStreamerUtils {
      * used to override. On Linux, assumes GStreamer is in the path already.
      */
     public static void configurePaths() {
+        System.setProperty("jna.debug_load", "true");
         if (Platform.isWindows()) {
             String gstPath = System.getProperty("gstreamer.path", findWindowsLocation());
             if (!gstPath.isEmpty()) {
@@ -46,16 +47,14 @@ public class GStreamerUtils {
                     System.setProperty("jna.library.path", jnaPath + File.pathSeparator + gstPath);
                 }
             }
-        } else if (Platform.isLinux()) {
-            LOGGER.log(Level.INFO, "Detected Linux");
+        } else if (System.getenv("SNAP") != null) {
+            LOGGER.log(Level.INFO, "Detected Snap Linux");
             System.setProperty("jna.tmpdir", System.getProperty("java.io.tmpdir"));
-            String gstPath = System.getProperty("gstreamer.path",
-                    "/usr/lib/x86_64-linux-gnu/");
 
-            gstPath = new File(System.getenv("SNAP"), gstPath).getAbsolutePath();
+            String gstPath = new File(System.getenv("SNAP"), System.getProperty("gstreamer.path",
+                    "/usr/lib/x86_64-linux-gnu/")).getAbsolutePath();
+            LOGGER.log(Level.INFO, "gst path is " + gstPath);
 
-            LOGGER.log(Level.INFO, "GStreamer path is: " + System.getProperty("gstreamer.path"));
-            LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
             if (!gstPath.isEmpty()) {
                 String jnaPath = System.getProperty("jna.library.path", "").trim();
                 LOGGER.log(Level.INFO, "JNA path is: " + jnaPath);
@@ -68,8 +67,6 @@ public class GStreamerUtils {
                 }
             }
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
-
-            System.setProperty("jna.debug_load", "true");
         }
     }
 
