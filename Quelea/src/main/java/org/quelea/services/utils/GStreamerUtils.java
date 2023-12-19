@@ -64,8 +64,8 @@ public class GStreamerUtils {
                 System.out.println(s);
             }
             System.out.println("-----");
-            File f = new File("/usr/lib/x86_64-linux-gnu");
-            String[] list = f.list();
+            f = new File("/usr/lib/x86_64-linux-gnu");
+            list = f.list();
             for(String s : list) {
                 System.out.println(s);
             }
