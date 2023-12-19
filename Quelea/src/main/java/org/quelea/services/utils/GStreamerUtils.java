@@ -50,11 +50,26 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "Detected Linux");
             String gstPath = System.getProperty("gstreamer.path",
                     "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
-            File f = new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
+
+
+            System.out.println(new File("/usr/lib/").exists());
+            System.out.println(new File("/usr/lib/x86_64-linux-gnu/").exists());
+            System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
+            System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
+
+            System.out.println("-----");
+            File f = new File("/usr/lib");
             String[] list = f.list();
             for(String s : list) {
                 System.out.println(s);
             }
+            System.out.println("-----");
+            File f = new File("/usr/lib/x86_64-linux-gnu");
+            String[] list = f.list();
+            for(String s : list) {
+                System.out.println(s);
+            }
+
             LOGGER.log(Level.INFO, "GStreamer path is: " + System.getProperty("gstreamer.path"));
             LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
             if (!gstPath.isEmpty()) {
