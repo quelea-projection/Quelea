@@ -1,9 +1,16 @@
 package org.quelea.services.utils;
 
+import com.sun.jna.Library;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
+import org.freedesktop.gstreamer.lowlevel.GFunctionMapper;
+import org.freedesktop.gstreamer.lowlevel.GNative;
+import org.freedesktop.gstreamer.lowlevel.GTypeMapper;
+import org.freedesktop.gstreamer.lowlevel.GstAPI;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +60,7 @@ public class GStreamerUtils {
 
             gstPath = new File(System.getenv("SNAP"), gstPath).getAbsolutePath();
 
+            GNative.loadLibrary("gstreaner-1.0", GstAPI.class, options);
 
             System.out.println(System.getenv("SNAP"));
             System.out.println(new File(System.getenv("SNAP")).exists());
@@ -74,6 +82,11 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
         }
     }
+
+    private static final Map<String, Object> options = new HashMap<String, Object>() {{
+        put(Library.OPTION_TYPE_MAPPER, new GTypeMapper());
+        put(Library.OPTION_FUNCTION_MAPPER, new GFunctionMapper());
+    }};
 
     /**
      * Query over a stream of possible environment variables for GStreamer
