@@ -1,17 +1,9 @@
 package org.quelea.services.utils;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
-import org.freedesktop.gstreamer.lowlevel.GFunctionMapper;
-import org.freedesktop.gstreamer.lowlevel.GTypeMapper;
-import org.freedesktop.gstreamer.lowlevel.GstAPI;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +48,7 @@ public class GStreamerUtils {
             }
         } else if (Platform.isLinux()) {
             LOGGER.log(Level.INFO, "Detected Linux");
+            System.setProperty("jna.tmpdir", System.getProperty("java.io.tmpdir"));
             String gstPath = System.getProperty("gstreamer.path",
                     "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
 
@@ -77,27 +70,8 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
 
             System.setProperty("jna.debug_load", "true");
-//            System.out.println("JNAtmp: " + System.getProperty("jna.tmpdir"));
-            System.out.println("Jtemp: " + System.getProperty("java.io.tmpdir"));
-            System.out.println(new File(System.getProperty("java.io.tmpdir")).canExecute());
-            System.out.println(new File(System.getProperty("java.io.tmpdir")).canRead());
-            System.out.println(new File(System.getProperty("java.io.tmpdir")).canWrite());
-
-            try {
-                File tf = File.createTempFile("tmp", ".tmp");
-                System.out.println("CREATED: " + tf.getAbsolutePath());
-            }
-            catch(IOException ex) {
-                ex.printStackTrace();
-            }
-            Native.loadLibrary("gstreamer-1.0", GstAPI.class, options);
         }
     }
-
-    private static final Map<String, Object> options = new HashMap<String, Object>() {{
-        put(Library.OPTION_TYPE_MAPPER, new GTypeMapper());
-        put(Library.OPTION_FUNCTION_MAPPER, new GFunctionMapper());
-    }};
 
     /**
      * Query over a stream of possible environment variables for GStreamer
