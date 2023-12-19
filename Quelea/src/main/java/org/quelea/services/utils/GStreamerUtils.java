@@ -1,6 +1,7 @@
 package org.quelea.services.utils;
 
 import com.sun.jna.Library;
+import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
 import org.freedesktop.gstreamer.lowlevel.GFunctionMapper;
@@ -76,7 +77,7 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
 
             System.setProperty("jna.debug_load", "true");
-            GNative.loadLibrary("gstreamer-1.0", GstAPI.class, options);
+            Native.loadLibrary("gstreamer-1.0", GstAPI.class, options);
         }
     }
 
