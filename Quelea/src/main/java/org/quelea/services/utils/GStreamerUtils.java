@@ -55,25 +55,8 @@ public class GStreamerUtils {
 
 
             System.out.println(System.getenv("SNAP"));
-
-            System.out.println(new File("/snap/").exists());
-            System.out.println(new File("/usr/lib/").exists());
-            System.out.println(new File("/usr/lib/x86_64-linux-gnu/").exists());
-            System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
-            System.out.println(new File("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/").exists());
-
-            System.out.println("-----");
-            File f = new File("/snap/");
-            String[] list = f.list();
-            for(String s : list) {
-                System.out.println(s);
-            }
-            System.out.println("-----");
-            f = new File(System.getenv("SNAP"), "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
-            list = f.list();
-            for(String s : list) {
-                System.out.println(s);
-            }
+            System.out.println(new File(System.getenv("SNAP")).exists());
+            System.out.println(new File(gstPath).exists());
 
             LOGGER.log(Level.INFO, "GStreamer path is: " + System.getProperty("gstreamer.path"));
             LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
