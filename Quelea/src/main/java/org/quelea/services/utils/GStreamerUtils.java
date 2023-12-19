@@ -60,12 +60,6 @@ public class GStreamerUtils {
 
             gstPath = new File(System.getenv("SNAP"), gstPath).getAbsolutePath();
 
-            GNative.loadLibrary("gstreaner-1.0", GstAPI.class, options);
-
-            System.out.println(System.getenv("SNAP"));
-            System.out.println(new File(System.getenv("SNAP")).exists());
-            System.out.println(new File(gstPath).exists());
-
             LOGGER.log(Level.INFO, "GStreamer path is: " + System.getProperty("gstreamer.path"));
             LOGGER.log(Level.INFO, "GStreamer path with default is: " + gstPath);
             if (!gstPath.isEmpty()) {
@@ -80,6 +74,8 @@ public class GStreamerUtils {
                 }
             }
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
+
+            GNative.loadLibrary("gstreamer-1.0", GstAPI.class, options);
         }
     }
 
