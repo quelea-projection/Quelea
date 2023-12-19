@@ -50,7 +50,7 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "Detected Linux");
             System.setProperty("jna.tmpdir", System.getProperty("java.io.tmpdir"));
             String gstPath = System.getProperty("gstreamer.path",
-                    "/usr/lib/x86_64-linux-gnu/gstreamer-1.0/");
+                    "/usr/lib/x86_64-linux-gnu/");
 
             gstPath = new File(System.getenv("SNAP"), gstPath).getAbsolutePath();
 
