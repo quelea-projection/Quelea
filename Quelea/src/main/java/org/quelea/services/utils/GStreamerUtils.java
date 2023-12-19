@@ -75,6 +75,7 @@ public class GStreamerUtils {
             }
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
 
+            System.setProperty("jna.debug_load", "true"));
             GNative.loadLibrary("gstreamer-1.0", GstAPI.class, options);
         }
     }
