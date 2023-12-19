@@ -9,6 +9,7 @@ import org.freedesktop.gstreamer.lowlevel.GTypeMapper;
 import org.freedesktop.gstreamer.lowlevel.GstAPI;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -81,6 +82,14 @@ public class GStreamerUtils {
             System.out.println(new File(System.getProperty("java.io.tmpdir")).canExecute());
             System.out.println(new File(System.getProperty("java.io.tmpdir")).canRead());
             System.out.println(new File(System.getProperty("java.io.tmpdir")).canWrite());
+
+            try {
+                File tf = File.createTempFile("tmp", ".tmp");
+                System.out.println("CREATED: " + tf.getAbsolutePath());
+            }
+            catch(IOException ex) {
+                ex.printStackTrace();
+            }
             Native.loadLibrary("gstreamer-1.0", GstAPI.class, options);
         }
     }
