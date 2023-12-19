@@ -77,7 +77,7 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "jna.library.path is: " + System.getProperty("jna.library.path"));
 
             System.setProperty("jna.debug_load", "true");
-            System.out.println("JNAtmp: " + System.getProperty("jna.tmpdir"));
+//            System.out.println("JNAtmp: " + System.getProperty("jna.tmpdir"));
             System.out.println("Jtemp: " + System.getProperty("java.io.tmpdir"));
             System.out.println(new File(System.getProperty("java.io.tmpdir")).canExecute());
             System.out.println(new File(System.getProperty("java.io.tmpdir")).canRead());
