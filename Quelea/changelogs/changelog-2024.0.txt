@@ -4,4 +4,5 @@ quelea (2024.0) stable
   * Videos can now be played in preview windows
   * Video backgrounds now animate in preview windows
   * Include all item types in printed order of service schedule
+  * Allow renaming of image group
   * Various minor bugfixes
