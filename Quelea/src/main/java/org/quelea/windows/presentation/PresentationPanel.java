@@ -39,12 +39,7 @@ import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.image.ImageDrawer;
-import org.quelea.windows.main.AbstractPanel;
-import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.LivePanel;
-import org.quelea.windows.main.LivePreviewPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.*;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
@@ -162,7 +157,7 @@ public class PresentationPanel extends AbstractPanel {
                                 LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
                                 if (lp.getDisplayable() instanceof PresentationDisplayable) {
                                     String result = PowerPointHandler.getCurrentSlide();
-                                    if (!result.contains("not running") && !result.equals("")) {
+                                    if (!result.contains("not running") && !result.isEmpty()) {
                                         int i = Integer.parseInt(result);
                                         presentationPreview.select(i, false);
                                     }
@@ -223,7 +218,7 @@ public class PresentationPanel extends AbstractPanel {
                                                         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
                                                         if (lp.getDisplayable() instanceof PresentationDisplayable) {
                                                             String result = PowerPointHandler.getCurrentSlide();
-                                                            if (!result.contains("not running") && !result.equals("")) {
+                                                            if (!result.contains("not running") && !result.isEmpty()) {
                                                                 int i = Integer.parseInt(result);
                                                                 presentationPreview.select(i, false);
                                                             }
@@ -364,7 +359,7 @@ public class PresentationPanel extends AbstractPanel {
         if (QueleaProperties.get().getUsePP()) {
             PowerPointHandler.gotoNext();
             String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.equals("")) {
+            if (!result.contains("not running") && !result.isEmpty()) {
                 int i = Integer.parseInt(result);
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
             }
@@ -379,7 +374,7 @@ public class PresentationPanel extends AbstractPanel {
         if (QueleaProperties.get().getUsePP()) {
             PowerPointHandler.gotoPrevious();
             String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.equals("")) {
+            if (!result.contains("not running") && !result.isEmpty()) {
                 int i = Integer.parseInt(result);
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
             }
