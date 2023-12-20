@@ -80,12 +80,7 @@ public class ThemePanel extends BorderPane {
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
         positionSelector.prefHeightProperty().bind(heightProperty());
-        DisplayCanvas canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateCallback() {
-                updateTheme(true);
-            }
-        }, Priority.LOW);
+        DisplayCanvas canvas = new DisplayCanvas(false, () -> updateTheme(true), Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
@@ -205,20 +200,17 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                WordDrawer drawer;
-                if (preview.getCanvas().isStageView()) {
-                    drawer = new StageDrawer();
-                } else {
-                    drawer = new LyricDrawer();
-                }
-                drawer.setCanvas(preview.getCanvas());
-                drawer.setTheme(theme);
-                drawer.setText(text, null, null, false, -1);
-
+        Platform.runLater(() -> {
+            WordDrawer drawer;
+            if (preview.getCanvas().isStageView()) {
+                drawer = new StageDrawer();
+            } else {
+                drawer = new LyricDrawer();
             }
+            drawer.setCanvas(preview.getCanvas());
+            drawer.setTheme(theme);
+            drawer.setText(text, null, null, false, -1);
+
         });
     }
 

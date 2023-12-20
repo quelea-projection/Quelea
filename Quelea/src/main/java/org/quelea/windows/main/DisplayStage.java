@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.main;
 
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
@@ -30,10 +29,12 @@ import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.PlatformUtils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
 import org.quelea.windows.main.widgets.TestImage;
-import org.quelea.utils.PlatformUtils;
+
+import java.util.logging.Logger;
 
 /**
  * The full screen window used for displaying the projection.
@@ -62,14 +63,13 @@ public class DisplayStage extends Stage {
      * a normal projection view.
      */
     public DisplayStage(Bounds area, boolean stageView) {
-        final boolean playVideo = !stageView;
         initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setAreaImmediate(area);
         StackPane scenePane = new StackPane();
         scenePane.setStyle("-fx-background-color: transparent;");
-        canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
+        canvas = new DisplayCanvas(stageView, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setCursor(BLANK_CURSOR);
         scenePane.getChildren().add(canvas);
         if (stageView) {

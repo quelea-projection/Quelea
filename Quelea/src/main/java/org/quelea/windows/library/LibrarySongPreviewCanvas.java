@@ -46,11 +46,10 @@ public class LibrarySongPreviewCanvas extends StackPane {
      */
     public LibrarySongPreviewCanvas() {
         setMaxSize(250, 167);
-        canvas = new DisplayCanvas(false, false, false, this::updateCanvas, DisplayCanvas.Priority.LOW);
+        canvas = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         canvas.setMaxSize(250, 167);
         getChildren().add(canvas);
         setOpacity(0);
-//        setStyle("-fx-background-color: #555555;");
         setVisible(false);
         setMouseTransparent(true);
     }

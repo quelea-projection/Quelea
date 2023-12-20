@@ -61,7 +61,7 @@ public class MultimediaPanel extends AbstractPanel {
         controlPanel.setDisableControls(false);
         drawer = new MultimediaDrawer(controlPanel);
         //new Image("file:icons/vid preview.png")
-        vidPreview = new DisplayCanvas(false, false, true, this::updateCanvas, DisplayCanvas.Priority.LOW);
+        vidPreview = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(vidPreview);
         BorderPane.setMargin(controlPanel, new Insets(30));
         setCenter(controlPanel);
@@ -92,7 +92,7 @@ public class MultimediaPanel extends AbstractPanel {
             }
         });
         
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, this::updateCanvas, DisplayCanvas.Priority.LOW);
+        DisplayCanvas dummyCanvas = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(dummyCanvas);
     }
 

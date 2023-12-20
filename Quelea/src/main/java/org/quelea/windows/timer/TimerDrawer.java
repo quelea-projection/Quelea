@@ -1,6 +1,7 @@
 package org.quelea.windows.timer;
 
 import java.util.Calendar;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
@@ -19,13 +20,11 @@ import org.quelea.windows.main.widgets.Timer;
 import org.quelea.utils.FXFontMetrics;
 
 /**
- *
  * @author tomaszpio@gmail.com, Michael, Ben
  */
 public class TimerDrawer extends DisplayableDrawer {
 
     private final TimerControls controlPanel;
-    private boolean playVideo;
     private Timer timer;
     private Timer stageTimer;
     private DisplayCanvas main;
@@ -71,11 +70,9 @@ public class TimerDrawer extends DisplayableDrawer {
             StackPane.setAlignment(timer, timer.getTextPosition());
 
             if (td.getTheme().getBackground() instanceof VideoBackground) {
-                if (playVideo) {
-                    controlPanel.loadMultimedia(((VideoBackground) td.getTheme().getBackground()).getVLCVidString(),
-                            ((VideoBackground) td.getTheme().getBackground()).getStretch());
-                    controlPanel.reset();
-                }
+                controlPanel.loadMultimedia(((VideoBackground) td.getTheme().getBackground()).getVLCVidString(),
+                        ((VideoBackground) td.getTheme().getBackground()).getStretch());
+                controlPanel.reset();
             } else if (td.getTheme().getBackground() instanceof ImageBackground) {
                 ImageView imageView = main.getNewImageView();
                 imageView.setImage(((ImageBackground) td.getTheme().getBackground()).getImage());
@@ -161,7 +158,6 @@ public class TimerDrawer extends DisplayableDrawer {
             main.clearNonPermanentChildren();
             Background back = theme.getBackground();
             if (back instanceof VideoBackground) {
-                setPlayVideo(main.getPlayVideo());
                 controlPanel.loadMultimedia(((VideoBackground) back).getVLCVidString(),
                         ((VideoBackground) back).getStretch());
                 controlPanel.setTimer(timer, true);
@@ -186,15 +182,12 @@ public class TimerDrawer extends DisplayableDrawer {
         }
     }
 
-    public void setPlayVideo(boolean playVideo) {
-        this.playVideo = playVideo;
-        if (playVideo) {
-            if (main != null) {
-                main.clearNonPermanentChildren();
-            }
-            if (stage != null) {
-                stage.clearNonPermanentChildren();
-            }
+    public void setPlayVideo() {
+        if (main != null) {
+            main.clearNonPermanentChildren();
+        }
+        if (stage != null) {
+            stage.clearNonPermanentChildren();
         }
     }
 }

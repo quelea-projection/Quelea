@@ -85,12 +85,7 @@ public class ThemePreviewPanel extends VBox {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         final ThemeDTO updateTheme = theme;
-        canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateCallback() {
-                updateThemePreviewCanvas(updateTheme);
-            }
-        }, Priority.LOW);
+        canvas = new DisplayCanvas( false, () -> updateThemePreviewCanvas(updateTheme), Priority.LOW);
         canvas.setPrefSize(200, 160);
         updateThemePreviewCanvas(theme);
         String name;
