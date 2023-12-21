@@ -283,12 +283,6 @@ public class ScheduleList extends StackPane {
                     add(new ImageDisplayable(file));
                 } else if (Utils.fileIsVideo(file)) {
                     add(new VideoDisplayable(file.getPath()));
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            Utils.getVidBlankImage(file); //Cache preview image
-                        }
-                    }.start();
                 } else if (file.getPath().matches("(.*)(ppt|pptx)")) {
                     List<File> presentation = new ArrayList<>();
                     presentation.add(file);

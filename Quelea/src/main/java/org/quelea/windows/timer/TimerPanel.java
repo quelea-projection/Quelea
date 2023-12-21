@@ -47,17 +47,17 @@ public class TimerPanel extends AbstractPanel {
     private final TimerDrawer drawer;
     private final TimerControls controlPanel;
     private final Text previewText;
+    private final DisplayCanvas timerPreview;
 
     /**
      * Create a new image panel.
      */
     public TimerPanel() {
         this.controlPanel = new TimerControls();
-        controlPanel.setDisableControls(true);
+        controlPanel.setDisableControls(false);
         drawer = new TimerDrawer(controlPanel);
-        ImageView img = new ImageView(new Image("file:icons/vid preview.png"));
         BorderPane.setMargin(controlPanel, new Insets(30));
-        setCenter(controlPanel);
+        setTop(controlPanel);
         VBox centerBit = new VBox(5);
         centerBit.setAlignment(Pos.CENTER);
         previewText = new Text();
@@ -65,10 +65,12 @@ public class TimerPanel extends AbstractPanel {
         previewText.setFill(Color.WHITE);
         BorderPane.setMargin(centerBit, new Insets(10));
         centerBit.getChildren().add(previewText);
-        img.fitHeightProperty().bind(heightProperty().subtract(200));
-        img.fitWidthProperty().bind(widthProperty().subtract(20));
-        centerBit.getChildren().add(img);
-        setBottom(centerBit);
+        timerPreview = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
+        registerDisplayCanvas(timerPreview);
+        centerBit.getChildren().add(timerPreview);
+        timerPreview.prefHeightProperty().bind(heightProperty().subtract(200));
+        timerPreview.prefWidthProperty().bind(widthProperty().subtract(20));
+        setCenter(centerBit);
         setMinWidth(50);
         setMinHeight(50);
         setStyle("-fx-background-color:grey;");
@@ -84,8 +86,6 @@ public class TimerPanel extends AbstractPanel {
         });
 
 
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
-        registerDisplayCanvas(dummyCanvas);
     }
 
     @Override
@@ -94,7 +94,6 @@ public class TimerPanel extends AbstractPanel {
         previewText.setText(displayable.getName());
         for (DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
-            drawer.setPlayVideo();
             drawer.draw(displayable);
         }
     }

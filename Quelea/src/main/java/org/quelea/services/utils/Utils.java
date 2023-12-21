@@ -294,24 +294,6 @@ public final class Utils {
 	}
 
 	/**
-	 * Split the options from a single string into an array recognised by VLC.
-	 *
-	 * @param options the input options.
-	 * @return the options split as an array.
-	 */
-	public static String[] splitVLCOpts(String options) {
-		String[] parts = options.split(" \\:");
-		String[] ret = new String[parts.length];
-		for (int i = 0; i < parts.length; i++) {
-			ret[i] = parts[i].trim();
-			if (!ret[i].startsWith(":")) {
-				ret[i] = ":" + ret[i];
-			}
-		}
-		return ret;
-	}
-
-	/**
 	 * Get the string to pass VLC from the given video file. In many cases this
 	 * is just the path, in the case of vlcarg files it is the contents of the
 	 * file to pass VLC.
@@ -333,16 +315,6 @@ public final class Utils {
 		} else {
 			return path;
 		}
-	}
-
-	/**
-	 * Converts an AWT rectangle to a JavaFX bounds object.
-	 * <p/>
-	 * @param rect the rectangle to convert.
-	 * @return the equivalent bounds.
-	 */
-	public static Bounds getBoundsFromRect(Rectangle rect) {
-		return new BoundingBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
 	}
 
 	/**
@@ -482,78 +454,6 @@ public final class Utils {
 	}
 
 	/**
-	 * Wrap a runnable as one having a low priority.
-	 * <p/>
-	 * @param task the runnable to wrap.
-	 * @return a runnable having a low priority.
-	 */
-	public static Runnable wrapAsLowPriority(final Runnable task) {
-		return new Runnable() {
-			@SuppressWarnings("CallToThreadYield")
-			@Override
-			public void run() {
-				Thread t = Thread.currentThread();
-				int oldPriority = t.getPriority();
-				t.setPriority(Thread.MIN_PRIORITY);
-				Thread.yield();
-				task.run();
-				t.setPriority(oldPriority);
-			}
-		};
-	}
-
-	/**
-	 * Get a font identical to the one given apart from in size.
-	 * <p/>
-	 * @param font the original font.
-	 * @param size the size of the new font.
-	 * @return the resized font.
-	 */
-	public static Font getDifferentSizeFont(Font font, float size) {
-		Map<TextAttribute, Object> attributes = new HashMap<>();
-		for (Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
-			attributes.put(entry.getKey(), entry.getValue());
-		}
-		if (attributes.get(TextAttribute.SIZE) != null) {
-			attributes.put(TextAttribute.SIZE, size);
-		}
-		return new Font(attributes);
-	}
-
-	/**
-	 * Calculates the largest size of the given font for which the given string
-	 * will fit into the given size.
-	 * <p/>
-	 * @param g the graphics to use in the current context.
-	 * @param font the original font to base the returned font on.
-	 * @param string the string to fit.
-	 * @param width the maximum width available.
-	 * @param height the maximum height available.
-	 * @return the maximum font size that fits into the given area.
-	 */
-	public static int getMaxFittingFontSize(Graphics g, Font font, String string, int width, int height) {
-		int minSize = 0;
-		int maxSize = 288;
-		int curSize = font.getSize();
-
-		while (maxSize - minSize > 2) {
-			FontMetrics fm = g.getFontMetrics(new Font(font.getName(), font.getStyle(), curSize));
-			int fontWidth = fm.stringWidth(string);
-			int fontHeight = fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent();
-
-			if ((fontWidth > width) || (fontHeight > height)) {
-				maxSize = curSize;
-				curSize = (maxSize + minSize) / 2;
-			} else {
-				minSize = curSize;
-				curSize = (minSize + maxSize) / 2;
-			}
-		}
-
-		return curSize;
-	}
-
-	/**
 	 * Get the difference between two colours, from 0 to 100 where 100 is most
 	 * difference and 0 is least different.
 	 * <p/>
@@ -574,19 +474,6 @@ public final class Utils {
 	 */
 	public static String removeTags(String str) {
 		return str.replaceAll("\\<.*?>", "");
-	}
-
-	/**
-	 * Determine whether the given stage is completely on the given screen.
-	 * <p/>
-	 * @param stage the stage to check.
-	 * @param monitorNum the monitor number to check.
-	 * @return true if the frame is totally on the screen, false otherwise.
-	 */
-	public static boolean isFrameOnScreen(Stage stage, int monitorNum) {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		final GraphicsDevice[] gds = ge.getScreenDevices();
-		return gds[monitorNum].getDefaultConfiguration().getBounds().contains(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
 	}
 
 	public static boolean fxThread() {
@@ -722,27 +609,6 @@ public final class Utils {
 		} catch (IOException ex) {
 			LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
 			return errorText;
-		}
-	}
-
-	/**
-	 * Resize a given image to the given width and height.
-	 * <p/>
-	 * @param image the image to resize.
-	 * @param width the width of the new image.
-	 * @param height the height of the new image.
-	 * @return the resized image.
-	 */
-	public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-		if (width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
-			BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = bdest.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g.drawImage(image, 0, 0, width, height, null);
-			return bdest;
-		} else {
-			return image;
 		}
 	}
 
@@ -966,53 +832,6 @@ public final class Utils {
 		}
 		return image;
 	}
-	private static final Map<File, WritableImage> videoPreviewCache = new SoftHashMap<>();
-
-	/**
-	 * Get an image to be shown as the background in place of a playing video.
-	 * <p/>
-	 * @param videoFile the video file for which to get the preview image.
-	 * @return the image to be shown in place of a playing video.
-	 */
-	public static Image getVidBlankImage(File videoFile) {
-		synchronized (videoPreviewCache) {
-			if (!fileIsVideo(videoFile)) {
-				return new Image("file:icons/audio preview.png");
-			}
-			if (videoFile.isFile()) {
-				try {
-					WritableImage ret = videoPreviewCache.get(videoFile);
-					if (ret == null) {
-						BufferedImage bi = AWTFrameGrab.getFrame(videoFile, 0);
-						if (bi != null) {
-							if (bi.getWidth() > 720 || bi.getHeight() > 480) {
-								bi = scaleImage(bi, 720);
-							}
-							ret = SwingFXUtils.toFXImage(bi, null);
-						}
-					}
-					videoPreviewCache.put(videoFile, ret);
-					return ret;
-				} catch (Exception ex) {
-					LOGGER.log(Level.INFO, "Couldn''t get video preview image for {0}", videoFile.getAbsolutePath());
-					return new Image("file:icons/vid preview.png");
-				}
-			} else {
-				return new Image("file:icons/vid preview.png");
-			}
-		}
-	}
-
-	private static BufferedImage scaleImage(BufferedImage orig, int width) {
-		double ratio = orig.getWidth() / orig.getHeight();
-		int height = (int) (width / ratio);
-		BufferedImage resized = new BufferedImage(width, height, orig.getType());
-		Graphics2D g = resized.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawImage(orig, 0, 0, width, height, 0, 0, orig.getWidth(), orig.getHeight(), null);
-		g.dispose();
-		return resized;
-	}
 
 	/**
 	 * Parse a colour string to a colour.
@@ -1046,19 +865,6 @@ public final class Utils {
 			blue /= 255;
 		}
 		return new Color(red, green, blue, 1);
-	}
-
-	public static String escapeHTML(String s) {
-		StringBuilder out = new StringBuilder();
-		for (int i = 0; i < s.length(); i++) {
-			char c = s.charAt(i);
-			if (c > 127 || c == '"' || c == '<' || c == '>') {
-				out.append("&#").append((int) c).append(";");
-			} else {
-				out.append(c);
-			}
-		}
-		return out.toString();
 	}
 
 	/**

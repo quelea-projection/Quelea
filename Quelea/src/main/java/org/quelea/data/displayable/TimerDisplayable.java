@@ -331,7 +331,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         }
     }
 
-    public void addDrawer(TimerDrawer drawer) {
+    public void setDrawer(TimerDrawer drawer) {
         this.drawer = drawer;
     }
 

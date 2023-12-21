@@ -91,9 +91,6 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
                 tp.setTheme(tp.getTheme());
                 selectedDisplayable.setTheme(tp.getTheme());
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable().equals(selectedDisplayable)) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
-                }
             }
             s.hide();
         });

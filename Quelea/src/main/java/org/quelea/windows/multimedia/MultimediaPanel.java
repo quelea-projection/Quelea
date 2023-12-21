@@ -91,9 +91,6 @@ public class MultimediaPanel extends AbstractPanel {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
             }
         });
-        
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
-        registerDisplayCanvas(dummyCanvas);
     }
 
     @Override

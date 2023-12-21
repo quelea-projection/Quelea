@@ -23,8 +23,6 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -140,7 +138,7 @@ public class PresentationPanel extends AbstractPanel {
                                     } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
                                         presentationPreview.advanceSlide(true);
                                     } else {
-                                        if (livePanel.getIndex() != livePanel.getLenght()) {
+                                        if (livePanel.getIndex() != livePanel.getLength()) {
                                             livePanel.advance();
                                         } else {
                                             livePanel.selectFirstLyric();
@@ -194,7 +192,7 @@ public class PresentationPanel extends AbstractPanel {
                                                     } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
                                                         presentationPreview.advanceSlide(true);
                                                     } else {
-                                                        if (livePanel.getIndex() != livePanel.getLenght()) {
+                                                        if (livePanel.getIndex() != livePanel.getLength()) {
                                                             livePanel.advance();
                                                         } else {
                                                             livePanel.selectFirstLyric();

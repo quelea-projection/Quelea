@@ -1,9 +1,11 @@
 package org.quelea.windows.timer;
 
+import java.io.File;
 import java.util.Calendar;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
@@ -18,6 +20,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.Timer;
 import org.quelea.utils.FXFontMetrics;
+import org.quelea.windows.video.VidDisplay;
 
 /**
  * @author tomaszpio@gmail.com, Michael, Ben
@@ -27,18 +30,20 @@ public class TimerDrawer extends DisplayableDrawer {
     private final TimerControls controlPanel;
     private Timer timer;
     private Timer stageTimer;
-    private DisplayCanvas main;
-    private DisplayCanvas stage;
+    private DisplayCanvas mainCanvas;
+    private DisplayCanvas stageCanvas;
     private StackPane stack;
+    private VidDisplay vidDisplay;
 
     public TimerDrawer(TimerControls controlPanel) {
         this.controlPanel = controlPanel;
+        this.vidDisplay = new VidDisplay();
     }
 
     @Override
     public void draw(Displayable displayable) {
         TimerDisplayable td = (TimerDisplayable) displayable;
-        td.addDrawer(this);
+        td.setDrawer(this);
         int seconds = td.getSeconds();
         if (seconds == -1) {
             Calendar now = Calendar.getInstance();
@@ -49,44 +54,53 @@ public class TimerDrawer extends DisplayableDrawer {
         }
 
         if (getCanvas().isStageView()) {
-            stage = getCanvas();
+            stageCanvas = getCanvas();
             stageTimer = new Timer(seconds, td.getPretext(), td.getPosttext());
             stageTimer.setTheme(td.getTheme());
-            controlPanel.setStageTimer(stageTimer);
+            controlPanel.addTimer(stageTimer);
             stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
             stageTimer.setEffect(null);
-            ImageView imageView = stage.getNewImageView();
+            ImageView imageView = stageCanvas.getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
-            stage.getChildren().add(0, imageView);
-            stage.getChildren().add(stageTimer);
-            stageTimer.setFontSize(pickFontSize(td.getTheme().getFont(), stageTimer, stage));
+            stageCanvas.getChildren().add(0, imageView);
+            stageCanvas.getChildren().add(stageTimer);
+            stageTimer.setFontSize(pickFontSize(td.getTheme().getFont(), stageTimer, stageCanvas));
             stageTimer.toFront();
         } else {
-            main = getCanvas();
+            mainCanvas = getCanvas();
             timer = new Timer(seconds, td.getPretext(), td.getPosttext());
             timer.setTheme(td.getTheme());
-            controlPanel.setTimer(timer, td.getTheme().getBackground() instanceof VideoBackground);
+            controlPanel.addTimer(timer);
             stack = new StackPane();
             StackPane.setAlignment(timer, timer.getTextPosition());
 
             if (td.getTheme().getBackground() instanceof VideoBackground) {
+                String url = ((VideoBackground) td.getTheme().getBackground()).getVLCVidString();
                 controlPanel.loadMultimedia(((VideoBackground) td.getTheme().getBackground()).getVLCVidString(),
                         ((VideoBackground) td.getTheme().getBackground()).getStretch());
                 controlPanel.reset();
+
+                ImageView imageView = mainCanvas.getNewImageView();
+                imageView.imageProperty().bind(vidDisplay.imageProperty());
+                imageView.setPreserveRatio(true);
+                vidDisplay.setURI(new File(url).toURI());
+                vidDisplay.setLoop(true);
+                vidDisplay.play();
+                mainCanvas.getChildren().add(0, imageView);
             } else if (td.getTheme().getBackground() instanceof ImageBackground) {
-                ImageView imageView = main.getNewImageView();
+                ImageView imageView = mainCanvas.getNewImageView();
                 imageView.setImage(((ImageBackground) td.getTheme().getBackground()).getImage());
-                main.getChildren().add(0, imageView);
+                mainCanvas.getChildren().add(0, imageView);
             } else if (td.getTheme().getBackground() instanceof ColourBackground) {
-                ImageView imageView = main.getNewImageView();
+                ImageView imageView = mainCanvas.getNewImageView();
                 imageView.setImage(Utils.getImageFromColour(((ColourBackground) td.getTheme().getBackground()).getColour()));
-                main.getChildren().add(0, imageView);
+                mainCanvas.getChildren().add(0, imageView);
             } else {
                 // New background type?
             }
             stack.getChildren().add(timer);
-            main.getChildren().add(stack);
-            timer.setFontSize(pickFontSize(td.getTheme().getFont(), timer, main));
+            mainCanvas.getChildren().add(stack);
+            timer.setFontSize(pickFontSize(td.getTheme().getFont(), timer, mainCanvas));
             timer.toFront();
         }
     }
@@ -149,29 +163,29 @@ public class TimerDrawer extends DisplayableDrawer {
             stageTimer.setTheme(theme);
             stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
             stageTimer.setEffect(null);
-            stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stage));
+            stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stageCanvas));
             stageTimer.toFront();
         }
         if (timer != null) {
             timer.setTheme(theme);
-            timer.setFontSize(pickFontSize(theme.getFont(), timer, main));
-            main.clearNonPermanentChildren();
+            timer.setFontSize(pickFontSize(theme.getFont(), timer, mainCanvas));
+            mainCanvas.clearNonPermanentChildren();
             Background back = theme.getBackground();
             if (back instanceof VideoBackground) {
                 controlPanel.loadMultimedia(((VideoBackground) back).getVLCVidString(),
                         ((VideoBackground) back).getStretch());
-                controlPanel.setTimer(timer, true);
+                controlPanel.addTimer(timer);
                 if (stageTimer != null) {
                     sync = true;
                 }
             } else if (back instanceof ImageBackground) {
-                ImageView imageView = main.getNewImageView();
+                ImageView imageView = mainCanvas.getNewImageView();
                 imageView.setImage(((ImageBackground) back).getImage());
-                main.getChildren().add(0, imageView);
+                mainCanvas.getChildren().add(0, imageView);
             } else if (back instanceof ColourBackground) {
-                ImageView imageView = main.getNewImageView();
+                ImageView imageView = mainCanvas.getNewImageView();
                 imageView.setImage(Utils.getImageFromColour(((ColourBackground) back).getColour()));
-                main.getChildren().add(0, imageView);
+                mainCanvas.getChildren().add(0, imageView);
             } else {
                 // New background type?
             }
@@ -179,15 +193,6 @@ public class TimerDrawer extends DisplayableDrawer {
         }
         if (sync) {
             timer.synchronise(stageTimer);
-        }
-    }
-
-    public void setPlayVideo() {
-        if (main != null) {
-            main.clearNonPermanentChildren();
-        }
-        if (stage != null) {
-            stage.clearNonPermanentChildren();
         }
     }
 }

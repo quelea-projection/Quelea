@@ -1,6 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
- * 
+ *
  * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.timer;
 
-import java.io.File;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -31,12 +30,17 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.Timer;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The timer controls containing a play / pause button, stop button
  * <p/>
+ *
  * @author Michael and Ben
  */
 public class TimerControls extends StackPane {
@@ -51,12 +55,11 @@ public class TimerControls extends StackPane {
     private final ImageView playButton;
     private final ImageView stopButton;
     private boolean disableControls;
-    private Timer timer;
-    private boolean vlc;
-    private Timer stageTimer;
+    private Set<Timer> timers;
     private boolean sync = false;
 
     public TimerControls() {
+        timers = new HashSet<>();
         Rectangle rect = new Rectangle(230, 80);
         Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(1, Color.GREY)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
@@ -94,17 +97,6 @@ public class TimerControls extends StackPane {
     }
 
     public void loadMultimedia(String path, boolean stretch) {
-        vlc = true;
-        //reset();
-        if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
-            path = Utils.getVLCStringFromFile(new File(path));
-        }
-        String[] locationParts = path.split("[\\r\\n]+");
-        if (locationParts.length == 1) {
-//            VLCWindow.INSTANCE.load(locationParts[0], null, stretch);
-        } else {
-//            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
-        }
         this.sync = true;
     }
 
@@ -135,37 +127,14 @@ public class TimerControls extends StackPane {
             } else {
                 playButton.setImage(PLAY_IMAGE_DISABLE);
             }
-            if (vlc) {
-//                VLCWindow.INSTANCE.pause();
-            }
-            if (timer != null) {
-                timer.pause();
-            }
-            if (stageTimer != null) {
-                stageTimer.pause();
-            }
+            timers.forEach(Timer::pause);
         } else {
             if (!disableControls) {
                 playButton.setImage(PAUSE_IMAGE);
             } else {
                 playButton.setImage(PAUSE_IMAGE_DISABLE);
             }
-            if (vlc) {
-//                VLCWindow.INSTANCE.setRepeat(true);
-//                VLCWindow.INSTANCE.setHue(0);
-//                VLCWindow.INSTANCE.play();
-//                VLCWindow.INSTANCE.setHue(0);
-                if (stageTimer != null && timer != null && sync) {
-                    timer.synchronise(stageTimer);
-                    sync = false;
-                }
-            }
-            if (stageTimer != null) {
-                stageTimer.play();
-            }
-            if (timer != null) {
-                timer.play();
-            }
+            timers.forEach(Timer::play);
         }
     }
 
@@ -175,13 +144,7 @@ public class TimerControls extends StackPane {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {
             playButton.setImage(PLAY_IMAGE);
-            if (vlc) {
-//                VLCWindow.INSTANCE.stop();
-            }
-            timer.stop();
-            if (stageTimer != null) {
-                stageTimer.stop();
-            }
+            timers.forEach(Timer::stop);
 
         }
         playpause = false;
@@ -201,19 +164,14 @@ public class TimerControls extends StackPane {
         button.setTranslateY(-10);
     }
 
-    public void setTimer(Timer timer, boolean vlc) {
-        this.timer = timer;
-        this.vlc = vlc;
-    }
-
-    public void setStageTimer(Timer timer) {
-        stageTimer = timer;
+    public void addTimer(Timer timer) {
+        timers.add(timer);
     }
 
     public void togglePause() {
         play(playButton.getImage().equals(PAUSE_IMAGE));
     }
-    
+
     public boolean status() {
         return playButton.getImage().equals(PAUSE_IMAGE);
     }

@@ -284,7 +284,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @return the currently selected displayable index.
      */
 
-    public int getLenght() {
+    public int getLength() {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             return presentationPanel.getSlideCount();
         } else if (PDF_LABEL.equals(currentLabel)) {
