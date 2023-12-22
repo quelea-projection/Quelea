@@ -6,4 +6,5 @@ quelea (2024.0) stable
   * Include all item types in printed order of service schedule
   * Allow renaming of image group
   * Prevent blacked stage view option
+  * Regression: VLCARG files will no longer work (afraid this is a necessary casualty of moving to GStreamer)
   * Various minor bugfixes
