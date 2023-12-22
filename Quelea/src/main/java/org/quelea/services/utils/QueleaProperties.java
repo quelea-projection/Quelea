@@ -2311,6 +2311,15 @@ public final class QueleaProperties extends SortedProperties {
         write();
     }
 
+    public boolean getBlackStageWithMain() {
+        return Boolean.parseBoolean(getProperty(blackStageviewWithMainKey, "true"));
+    }
+
+    public void setBlackStageWithMain(boolean black) {
+        setProperty(blackStageviewWithMainKey, Boolean.toString(black));
+        write();
+    }
+
     /**
      * Get the directory used for storing countdown timers.
      * <p>

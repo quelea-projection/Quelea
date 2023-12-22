@@ -194,19 +194,21 @@ public class LivePanel extends LivePreviewPanel {
         black.setToggleGroup(group);
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
-        black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                if (getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP()) {
-                    PowerPointHandler.screenBlack();
-                }
-                HashSet<DisplayCanvas> canvases = new HashSet<>();
-                canvases.addAll(getCanvases());
-                for (DisplayCanvas canvas : canvases) {
+        black.setOnAction(t -> {
+            if (getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP()) {
+                PowerPointHandler.screenBlack();
+            }
+            HashSet<DisplayCanvas> canvases = new HashSet<>();
+            canvases.addAll(getCanvases());
+            for (DisplayCanvas canvas : canvases) {
+                if(!canvas.isStageView() || QueleaProperties.get().getBlackStageWithMain()) {
                     canvas.setBlacked(black.isSelected());
                 }
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
+                else {
+                    canvas.setBlacked(false);
+                }
             }
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(black);
         ImageView clearIV = new ImageView(new Image("file:icons/clear.png"));

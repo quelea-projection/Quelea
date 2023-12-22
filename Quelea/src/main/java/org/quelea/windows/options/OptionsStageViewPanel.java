@@ -79,6 +79,7 @@ public class OptionsStageViewPanel {
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"), QueleaProperties.get().getStageLyricsColor()).customKey(stageLyricsColorKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"), QueleaProperties.get().getStageChordColor()).customKey(stageChordColorKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("clear.stage.view"), new SimpleBooleanProperty(QueleaProperties.get().getClearStageWithMain())).customKey(clearStageviewWithMainKey),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("black.stage.view"), new SimpleBooleanProperty(QueleaProperties.get().getBlackStageWithMain())).customKey(blackStageviewWithMainKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.clock"), new SimpleBooleanProperty(QueleaProperties.get().getStageShowClock())).customKey(stageShowClockKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("use.24h.clock"), new SimpleBooleanProperty(QueleaProperties.get().getUse24HourClock())).customKey(use24hClockKey)
         );
