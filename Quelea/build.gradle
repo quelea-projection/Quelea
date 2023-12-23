@@ -85,6 +85,13 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     outfile = "Quelea64.exe"
 }
 
+task downloadGStreamer {
+    def f = new File('gs.msi')
+    if (!f.exists()) {
+        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.22.8/msvc/gstreamer-1.0-msvc-x86_64-1.22.8.msi').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}
+
 task copyToDist {
     doLast {
         copy {from configurations.runtimeClasspath into project.distdir + "/lib"} //libraries
@@ -176,7 +183,7 @@ task zipMacPackr(type: Zip) {
 runPackr.finalizedBy(zipMacPackr);
 
 task dist(type: GradleBuild) {
-    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
+    tasks = ['labelcheck', 'downloadGStreamer', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
 
 dependencies {
