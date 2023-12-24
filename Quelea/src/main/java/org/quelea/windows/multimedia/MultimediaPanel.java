@@ -17,11 +17,8 @@
  */
 package org.quelea.windows.multimedia;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -30,9 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
@@ -49,7 +44,6 @@ public class MultimediaPanel extends AbstractPanel {
     private final MultimediaDrawer drawer;
     private final MultimediaControls controlPanel;
     private final Text previewText;
-    private final DisplayCanvas vidPreview;
     private MultimediaDisplayable displayable;
     private boolean live = false;
 
@@ -60,8 +54,7 @@ public class MultimediaPanel extends AbstractPanel {
         this.controlPanel = new MultimediaControls();
         controlPanel.setDisableControls(false);
         drawer = new MultimediaDrawer(controlPanel);
-        //new Image("file:icons/vid preview.png")
-        vidPreview = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
+        DisplayCanvas vidPreview = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(vidPreview);
         BorderPane.setMargin(controlPanel, new Insets(30));
         setCenter(controlPanel);
@@ -75,8 +68,6 @@ public class MultimediaPanel extends AbstractPanel {
         vidPreview.prefHeightProperty().bind(heightProperty().subtract(200));
         vidPreview.prefWidthProperty().bind(widthProperty().subtract(20));
         centerBit.getChildren().add(vidPreview);
-//        vidPreview.setMinHeight(100);
-//        vidPreview.setMaxHeight(100);
         setBottom(centerBit);
         setMinWidth(50);
         setMinHeight(50);
