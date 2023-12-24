@@ -90,5 +90,5 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFil
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; IconFilename: "{app}\icons\logo.ico"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\gs.msi"" /qb INSTALLLEVEL=1000"; WorkingDir: {tmp};
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\gs.msi"" /qb- INSTALLLEVEL=1000"; WorkingDir: {tmp};
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Flags: shellexec postinstall skipifsilent
