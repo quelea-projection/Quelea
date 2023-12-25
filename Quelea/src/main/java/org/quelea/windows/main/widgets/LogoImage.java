@@ -22,6 +22,9 @@ import javafx.scene.layout.StackPane;
 import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.video.VidLogoDisplay;
+
+import java.net.URI;
 
 /**
  * The logo image - on a separate stack pane with its background colour set so
@@ -58,10 +61,21 @@ public class LogoImage extends StackPane {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
         }
         else {
-            logoImage.setImage(ImageManager.INSTANCE.getImage(QueleaProperties.get().getLogoImageURI()));
-            logoImage.setPreserveRatio(true);
+            String uri = QueleaProperties.get().getLogoImageURI();
+            if(isVid(uri)) {
+                VidLogoDisplay.INSTANCE.setURI(URI.create(uri));
+                logoImage.imageProperty().bind(VidLogoDisplay.INSTANCE.imageProperty());
+            }
+            else {
+                logoImage.setImage(ImageManager.INSTANCE.getImage(uri));
+                logoImage.setPreserveRatio(true);
+            }
         }
         logoImage.fitWidthProperty().bind(widthProperty());
         logoImage.fitHeightProperty().bind(heightProperty());
+    }
+
+    private boolean isVid(String uri) {
+        return Utils.getVideoExtensions().stream().anyMatch(uri::endsWith);
     }
 }

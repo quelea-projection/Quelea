@@ -2001,7 +2001,7 @@ public final class QueleaProperties extends SortedProperties {
      * @return the logo image
      */
     public String getLogoImageURI() {
-        return "file:" + getProperty(logoImageLocationKey, "icons/logo default.png");
+        return new File(getProperty(logoImageLocationKey, "icons/logo default.png")).toURI().toString();
     }
 
     /**
