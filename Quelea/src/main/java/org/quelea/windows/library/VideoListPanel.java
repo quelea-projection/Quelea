@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,6 +50,7 @@ import java.util.logging.Logger;
 /**
  * The panel displayed on the library to select the list of videos..
  * <p/>
+ *
  * @author Ben
  */
 public class VideoListPanel extends BorderPane {
@@ -58,7 +59,7 @@ public class VideoListPanel extends BorderPane {
     private static final String BORDER_STYLE_SELECTED = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane videoList;
-    private String dir;
+    private final String dir;
     private Thread updateThread;
     private final VidPreviewDisplay vidPreviewDisplay;
     public static final Image BLANK = new Image("file:icons/vid preview.png");
@@ -66,6 +67,7 @@ public class VideoListPanel extends BorderPane {
     /**
      * Create a new video list panel.
      * <p/>
+     *
      * @param dir the directory to use.
      */
     public VideoListPanel(String dir) {
@@ -133,39 +135,48 @@ public class VideoListPanel extends BorderPane {
                 File file = files[i];
                 LOGGER.log(Level.INFO, "Checking file {0}", file);
                 if (Utils.fileIsVideo(file) && !file.isDirectory()) {
-                    final ImageView view = new ImageView();
-                    final Label fileLabel = new Label(trim17(file.getName()));
+                    addVideoFile(file);
+                }
+            }
+        });
+        updateThread.start();
+    }
 
-                    view.setImage(vidPreviewDisplay.getPreviewImg(file.toURI()));
+    public void addVideoFile(File file) {
+        LOGGER.log(Level.INFO, "Adding video file {0} to panel", file);
+        final ImageView view = new ImageView();
+        final Label fileLabel = new Label(trim17(file.getName()));
 
-                    Platform.runLater(() -> {
-                        final VBox viewBox = new VBox();
-                        viewBox.setAlignment(Pos.CENTER);
-                        view.setPreserveRatio(true);
-                        view.setFitWidth(160);
-                        view.setFitHeight(90);
-                        view.setOnMouseClicked((MouseEvent t) -> {
-                            if (t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
-                                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new VideoDisplayable(file.getAbsolutePath()));
-                            } else if (t.getButton() == MouseButton.SECONDARY) {
-                                ContextMenu removeMenu = new ContextMenu();
-                                MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.video.text"));
-                                removeItem.setOnAction((ActionEvent t1) -> {
-                                    final boolean[] reallyDelete = new boolean[]{false};
-                                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.video.title"),
-                                            LabelGrabber.INSTANCE.getLabel("delete.video.confirmation")).addYesButton((ActionEvent t2) -> {
-                                        reallyDelete[0] = true;
-                                    }).addNoButton((ActionEvent t3) -> {
-                                    }).build().showAndWait();
-                                    if (reallyDelete[0]) {
-                                        file.delete();
-                                        videoList.getChildren().remove(viewBox);
-                                    }
-                                });
-                                removeMenu.getItems().add(removeItem);
-                                removeMenu.show(view, t.getScreenX(), t.getScreenY());
-                            }
-                        });
+        view.setImage(vidPreviewDisplay.getPreviewImg(file.toURI()));
+
+        Platform.runLater(() -> {
+            final VBox viewBox = new VBox();
+            viewBox.setAlignment(Pos.CENTER);
+            view.setPreserveRatio(true);
+            view.setFitWidth(160);
+            view.setFitHeight(90);
+            view.setOnMouseClicked((MouseEvent t) -> {
+                if (t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new VideoDisplayable(file.getAbsolutePath()));
+                } else if (t.getButton() == MouseButton.SECONDARY) {
+                    ContextMenu removeMenu = new ContextMenu();
+                    MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.video.text"));
+                    removeItem.setOnAction((ActionEvent t1) -> {
+                        final boolean[] reallyDelete = new boolean[]{false};
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.video.title"),
+                                LabelGrabber.INSTANCE.getLabel("delete.video.confirmation")).addYesButton((ActionEvent t2) -> {
+                            reallyDelete[0] = true;
+                        }).addNoButton((ActionEvent t3) -> {
+                        }).build().showAndWait();
+                        if (reallyDelete[0]) {
+                            file.delete();
+                            videoList.getChildren().remove(viewBox);
+                        }
+                    });
+                    removeMenu.getItems().add(removeItem);
+                    removeMenu.show(view, t.getScreenX(), t.getScreenY());
+                }
+            });
 //                            view.setOnDragDetected((MouseEvent t) -> {
 //                                Dragboard db = startDragAndDrop(TransferMode.ANY);
 //                                ClipboardContent content = new ClipboardContent();
@@ -173,15 +184,11 @@ public class VideoListPanel extends BorderPane {
 //                                db.setContent(content);
 //                                t.consume();
 //                            });
-                        viewBox.getChildren().add(view);
-                        viewBox.getChildren().add(fileLabel);
-                        setupHover(viewBox, file.getName());
-                        videoList.getChildren().add(viewBox);
-                    });
-                }
-            }
+            viewBox.getChildren().add(view);
+            viewBox.getChildren().add(fileLabel);
+            setupHover(viewBox, file.getName());
+            videoList.getChildren().add(viewBox);
         });
-        updateThread.start();
     }
 
     private void setupHover(final Node view, String fileName) {
@@ -199,8 +206,8 @@ public class VideoListPanel extends BorderPane {
     }
 
     private static String trim17(String toTrim) {
-        if(toTrim.length()>17) {
-            return toTrim.substring(0,16) + "..";
+        if (toTrim.length() > 17) {
+            return toTrim.substring(0, 16) + "..";
         }
         return toTrim;
     }
