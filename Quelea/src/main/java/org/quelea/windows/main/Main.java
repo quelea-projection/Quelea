@@ -32,6 +32,7 @@ import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
+import org.quelea.server.MidiInterfaceConnector;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.GStreamerInitState;
@@ -156,6 +157,20 @@ public final class Main extends Application {
                 } else {
                     LOGGER.log(Level.INFO, "Remote control disabled");
                 }
+
+				// -MIDI CONTROL -----------------------------------------------
+				if (QueleaProperties.get().getUseMidiControl()) {
+					LOGGER.log(Level.INFO, "Starting midi control interface with [{0}]", QueleaProperties.get().getMidiDeviceInterface());
+					try {
+						MidiInterfaceConnector midiController = new MidiInterfaceConnector(QueleaProperties.get().getMidiDeviceInterface());
+						//QueleaApp.get().setMidiInterfaceConnector(midiController);// This one is for the panel
+					} catch (Exception ex) {
+						LOGGER.log(Level.INFO, "Couldn't create midi control interface", ex);
+					}
+				} else {
+					LOGGER.log(Level.INFO, "Midi control disabled");
+				}
+				//------------------------------------------------------------
 
                 if (QueleaProperties.get().getUseMobLyrics() || QueleaProperties.get().getUseRemoteControl()) {
                     LOGGER.log(Level.INFO, "Starting auto-detection server on {0}", QueleaProperties.get().getAutoDetectPort());
