@@ -33,27 +33,33 @@ public class VidPreviewDisplay {
     }
 
     public synchronized Image getPreviewImg(URI uri) {
-        if(uri == null || playBin == null) {
+        if (uri == null || playBin == null) {
             return VideoListPanel.BLANK;
         }
 
-        LOGGER.log(Level.INFO,"PROCESSING URI " + uri);
+        LOGGER.log(Level.INFO, "PROCESSING URI " + uri);
         playBin.setURI(uri);
         playBin.getState();
         playBin.pause();
         playBin.getState();
         playBin.getState();
         Sample s = playBin.emit(Sample.class, "convert-sample", Caps.fromString("video/x-raw,format=BGRA"));
-        Structure capsStruct = s.getCaps().getStructure(0);
-        int width = capsStruct.getInteger("width");
-        int height = capsStruct.getInteger("height");
-        Buffer activeBuffer = s.getBuffer();
-        PixelBuffer<ByteBuffer> pixelBuffer = new PixelBuffer<>(width, height,
-                activeBuffer.map(false), PixelFormat.getByteBgraPreInstance());
-        WritableImage img = new WritableImage(pixelBuffer);
-        playBin.stop();
-        playBin.getState();
-        return img;
+        if (s == null) {
+            playBin.stop();
+            playBin.getState();
+            return VideoListPanel.BLANK;
+        } else {
+            Structure capsStruct = s.getCaps().getStructure(0);
+            int width = capsStruct.getInteger("width");
+            int height = capsStruct.getInteger("height");
+            Buffer activeBuffer = s.getBuffer();
+            PixelBuffer<ByteBuffer> pixelBuffer = new PixelBuffer<>(width, height,
+                    activeBuffer.map(false), PixelFormat.getByteBgraPreInstance());
+            WritableImage img = new WritableImage(pixelBuffer);
+            playBin.stop();
+            playBin.getState();
+            return img;
+        }
     }
 
 }
