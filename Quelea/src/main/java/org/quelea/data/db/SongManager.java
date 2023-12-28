@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.application.Platform;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
@@ -42,6 +44,7 @@ import org.quelea.windows.main.widgets.LoadingPane;
 /**
  * Manage songs persistent operations.
  * <p/>
+ *
  * @author Michael
  */
 public final class SongManager {
@@ -66,6 +69,7 @@ public final class SongManager {
      * Get the singleton instance of this class. Return null if there was an
      * error with the database.
      * <p/>
+     *
      * @return the singleton instance of this class.
      */
     public static synchronized SongManager get() {
@@ -82,6 +86,7 @@ public final class SongManager {
     /**
      * Get the underlying search index used by this database.
      * <p/>
+     *
      * @return the search index.
      */
     public SongSearchIndex getIndex() {
@@ -91,6 +96,7 @@ public final class SongManager {
     /**
      * Register a database listener with this database.
      * <p/>
+     *
      * @param listener the listener.
      */
     public void registerDatabaseListener(DatabaseListener listener) {
@@ -113,6 +119,7 @@ public final class SongManager {
     /**
      * Get all the songs in the database.
      * <p/>
+     *
      * @return an array of all the songs in the database.
      */
     public synchronized SongDisplayable[] getSongs(LoadingPane loadingPane) {
@@ -190,9 +197,10 @@ public final class SongManager {
     /**
      * Add a song to the database.
      * <p/>
-     * @param songs the songs to add.
+     *
+     * @param songs      the songs to add.
      * @param fireUpdate true if the update should be fired to listeners when
-     * adding this song, false otherwise.
+     *                   adding this song, false otherwise.
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean addSong(final SongDisplayable[] songs, final boolean fireUpdate) {
@@ -240,6 +248,7 @@ public final class SongManager {
     /**
      * Update a song in the database.
      * <p/>
+     *
      * @param song the song to update.
      * @return true if the operation succeeded, false otherwise.
      */
@@ -250,9 +259,10 @@ public final class SongManager {
     /**
      * Update a song in the database.
      * <p/>
-     * @param song the song to update.
+     *
+     * @param song          the song to update.
      * @param addIfNotFound true if the song should be added if it's not found,
-     * false otherwise.
+     *                      false otherwise.
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean updateSong(final SongDisplayable song, boolean addIfNotFound) {
@@ -302,24 +312,41 @@ public final class SongManager {
     /**
      * Remove a song from the database.
      * <p/>
+     *
      * @param song the song to remove.
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean removeSong(final SongDisplayable song) {
-        LOGGER.log(Level.INFO, "Removing song {0}", song.getID());
+        return removeSongs(List.of(song));
+    }
+
+    /**
+     * Remove songs from the database.
+     * <p/>
+     *
+     * @param songs the songs to remove.
+     * @return true if the operation succeeded, false otherwise.
+     */
+    public synchronized boolean removeSongs(final List<SongDisplayable> songs) {
+        List<Long> ids = songs.stream().map(SongDisplayable::getID).collect(Collectors.toList());
+        LOGGER.log(Level.INFO, "Removing songs {0}", ids);
         cacheSongs.clear();
         try {
             HibernateUtil.execute((Session session) -> {
-                Song deletedSong = new SongDao(session).getSongById(song.getID());
-                session.delete(deletedSong);
+                for (SongDisplayable song : songs) {
+                    Song deletedSong = new SongDao(session).getSongById(song.getID());
+                    session.delete(deletedSong);
+                }
             });
         } catch (IllegalStateException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't remove song " + song.getID(), ex);
+            LOGGER.log(Level.WARNING, "Couldn't remove songs " + ids, ex);
             return false;
         }
-        index.remove(song);
+        for (SongDisplayable song : songs) {
+            index.remove(song);
+        }
         fireUpdate();
-        LOGGER.log(Level.INFO, "Removed song {0}", song.getID());
+        LOGGER.log(Level.INFO, "Removed song {0}", ids);
         return true;
     }
 

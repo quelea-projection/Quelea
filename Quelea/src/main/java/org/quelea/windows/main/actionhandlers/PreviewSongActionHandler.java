@@ -35,7 +35,7 @@ public class PreviewSongActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         PreviewPanel prevPanel = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel();
-        SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+        SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValues().get(0);
         prevPanel.setDisplayable(song, 0);
     }
     

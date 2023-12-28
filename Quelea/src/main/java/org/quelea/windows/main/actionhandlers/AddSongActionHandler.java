@@ -27,6 +27,8 @@ import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.SchedulePanel;
 
+import java.util.List;
+
 /**
  * The action listener for adding a song, called when something fires off an
  * action that adds a song from the library to the schedule.
@@ -50,21 +52,23 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
-        SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-        if(QueleaProperties.get().getSongOverflow() || !updateInDB) {
-            song = new SongDisplayable(song);
-        }
-        if(!updateInDB) {
-            song.setID(-1);
-            song.setNoDBUpdate();
-        }
-        if(QueleaProperties.get().getUseDefaultTranslation()) {
-            String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
-            if(defaultTranslation!=null && !defaultTranslation.trim().isEmpty()) {
-                song.setCurrentTranslationLyrics(defaultTranslation);
+        List<SongDisplayable> songs = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValues();
+        for(SongDisplayable song : songs) {
+            if (QueleaProperties.get().getSongOverflow() || !updateInDB) {
+                song = new SongDisplayable(song);
             }
+            if (!updateInDB) {
+                song.setID(-1);
+                song.setNoDBUpdate();
+            }
+            if (QueleaProperties.get().getUseDefaultTranslation()) {
+                String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                    song.setCurrentTranslationLyrics(defaultTranslation);
+                }
+            }
+            schedulePanel.getScheduleList().add(song);
+            libraryPanel.getLibrarySongPanel().getSearchBox().clear();
         }
-        schedulePanel.getScheduleList().add(song);
-        libraryPanel.getLibrarySongPanel().getSearchBox().clear();
     }
 }

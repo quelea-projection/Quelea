@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.library;
 
+import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +32,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -60,21 +62,20 @@ public class LibrarySongList extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibraryPopupMenu popupMenu;
-    private ListView<SongDisplayable> songList;
-    private LoadingPane loadingOverlay;
-    private LibrarySongPreviewCanvas previewCanvas;
-    private AddSongPromptOverlay addSongOverlay;
+    private final ListView<SongDisplayable> songList;
+    private final LoadingPane loadingOverlay;
+    private final LibrarySongPreviewCanvas previewCanvas;
+    private final AddSongPromptOverlay addSongOverlay;
 
     /**
      * Create a new library song list.
      * <p/>
      * @param popup true if we want a popup menu to appear on items in this list
-     * when right clicked, false if not.
-     * @popup true if this list should popup a context menu when right clicked,
-     * false otherwise.
+     * when right-clicked, false if not.
      */
     public LibrarySongList(boolean popup) {
         songList = new ListView<>();
+        songList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         loadingOverlay = new LoadingPane();
         addSongOverlay = new AddSongPromptOverlay();
         setAlignment(Pos.CENTER);
@@ -101,7 +102,7 @@ public class LibrarySongList extends StackPane {
                 }
             });
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = (lv) -> {
-            final ListCell<SongDisplayable> cell = new ListCell<SongDisplayable>() {
+            final ListCell<SongDisplayable> cell = new ListCell<>() {
                 @Override
                 protected void updateItem(SongDisplayable item, boolean empty) {
                     super.updateItem(item, empty);
@@ -158,6 +159,7 @@ public class LibrarySongList extends StackPane {
             }
         });
         songList.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldSong, song) -> {
+            popupMenu.setMultipleSelected(songList.getSelectionModel().getSelectedIndices().size()>1);
             if (previewCanvas != null) {
                 previewCanvas.setSong(song);
                 if (song != null && QueleaProperties.get().getShowDBSongPreview()) {
@@ -178,14 +180,8 @@ public class LibrarySongList extends StackPane {
         if (popup) {
             songList.setCellFactory(DisplayableListCell.forListView(popupMenu, callback, null));
         }
-        new Thread() {
-            public void run() {
-                refresh();
-            }
-        }.start();
-        SongManager.get().registerDatabaseListener(() -> {
-            refresh();
-        });
+        new Thread(this::refresh).start();
+        SongManager.get().registerDatabaseListener(this::refresh);
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
     private Future<?> filterFuture;
@@ -268,12 +264,12 @@ public class LibrarySongList extends StackPane {
     }
 
     /**
-     * Get the currently selected song.
+     * Get the currently selected songs.
      * <p/>
-     * @return the currently selected song, or null if none is selected.
+     * @return the currently selected song, or an empty list if none is selected.
      */
-    public SongDisplayable getSelectedValue() {
-        return songList.selectionModelProperty().get().getSelectedItem();
+    public List<SongDisplayable> getSelectedValues() {
+        return songList.selectionModelProperty().get().getSelectedItems();
     }
 
     /**
@@ -299,13 +295,14 @@ public class LibrarySongList extends StackPane {
             setLoading(true);
         });
         final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs(loadingOverlay));
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                songList.itemsProperty().set(songs);
-                setLoading(false);
-            }
+        Platform.runLater(() -> {
+            songList.itemsProperty().set(songs);
+            setLoading(false);
         });
+    }
+
+    private boolean hasMultipleSelected() {
+        return songList.getSelectionModel().getSelectedItems().size() > 1;
     }
 
     public void setLoading(boolean loading) {
