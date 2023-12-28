@@ -2545,4 +2545,8 @@ public final class QueleaProperties extends SortedProperties {
     public void setUseDarkTheme(boolean useDarkTheme) {
         setProperty(darkThemeKey, String.valueOf(useDarkTheme));
     }
+
+    public boolean getDisableDirectShowForWVC1() {
+        return Boolean.parseBoolean(getProperty(disableDirectShowForWVC1Key, "true"));
+    }
 }
