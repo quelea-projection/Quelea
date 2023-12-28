@@ -47,7 +47,7 @@ public class VidPreviewDisplay {
         if (s == null) {
             playBin.stop();
             playBin.getState();
-            return VideoListPanel.BLANK;
+            return VideoListPanel.UNSUPPORTED;
         } else {
             Structure capsStruct = s.getCaps().getStructure(0);
             int width = capsStruct.getInteger("width");

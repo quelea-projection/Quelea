@@ -63,6 +63,7 @@ public class VideoListPanel extends BorderPane {
     private Thread updateThread;
     private final VidPreviewDisplay vidPreviewDisplay;
     public static final Image BLANK = new Image("file:icons/vid preview.png");
+    public static final Image UNSUPPORTED = new Image("file:icons/unsupported vid preview.png");
 
     /**
      * Create a new video list panel.
