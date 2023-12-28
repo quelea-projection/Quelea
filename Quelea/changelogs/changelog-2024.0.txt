@@ -7,5 +7,6 @@ quelea (2024.0) stable
   * Allow renaming of image group
   * Prevent blacked stage view option
   * Logo display now supports video files
+  * Unsupported videos now have clear unsupported preview image
   * Critical fix: Using the French language no longer crashes Quelea when opening the options dialog
   * Various minor bugfixes
