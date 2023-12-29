@@ -18,12 +18,16 @@
 package org.quelea.windows.library;
 
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -38,6 +42,8 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.video.VidPreviewDisplay;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -148,7 +154,7 @@ public class VideoListPanel extends BorderPane {
         final ImageView view = new ImageView();
         final Label fileLabel = new Label(trim17(file.getName()));
 
-        view.setImage(vidPreviewDisplay.getPreviewImg(file.toURI()));
+        view.setImage(resize(vidPreviewDisplay.getPreviewImg(file.toURI())));
 
         Platform.runLater(() -> {
             final VBox viewBox = new VBox();
@@ -211,5 +217,14 @@ public class VideoListPanel extends BorderPane {
             return toTrim.substring(0, 16) + "..";
         }
         return toTrim;
+    }
+
+    private Image resize(Image image) {
+        var sImg = SwingFXUtils.fromFXImage(image, null).getScaledInstance(160,90,0);
+        BufferedImage bimage = new BufferedImage(sImg.getWidth(null), sImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(sImg, 0, 0, null);
+        bGr.dispose();
+        return SwingFXUtils.toFXImage(bimage, null);
     }
 }
