@@ -718,6 +718,8 @@ public final class Utils {
 		ret.add("ASX");
 		ret.add("m2ts");
 		ret.add("M2TS");
+		ret.add("ts");
+		ret.add("TS");
 		return ret;
 	}
 
