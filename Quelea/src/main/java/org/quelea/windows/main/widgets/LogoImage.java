@@ -67,6 +67,7 @@ public class LogoImage extends StackPane {
                 logoImage.imageProperty().bind(VidLogoDisplay.INSTANCE.imageProperty());
             }
             else {
+                logoImage.imageProperty().unbind();
                 logoImage.setImage(ImageManager.INSTANCE.getImage(uri));
                 logoImage.setPreserveRatio(true);
             }
