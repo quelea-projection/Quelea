@@ -125,9 +125,13 @@ public class LabelGrabber extends ResourceBundle {
             return label;
         }
         int pos = 0;
+        var labArr = labels.keySet().toArray();
         for (String s : labels.stringPropertyNames()) {
             if (getLabel(s).equalsIgnoreCase(label)) {
-                return engLabels.get(labels.keySet().toArray()[pos]).toString();
+                Object foundKey = engLabels.get(labArr[pos]);
+                if (foundKey != null) {
+                    return foundKey.toString();
+                }
             }
             pos++;
         }

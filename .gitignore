@@ -19,9 +19,11 @@ Quelea/build/*
 Quelea/out-mac/*
 Quelea/dist/*
 Quelea/nbproject/*
-.idea/*
+Quelea/.idea/*
+Quelea/output/*
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
 Quelea/bin/*
 
 Thumbs.db
+gs.msi

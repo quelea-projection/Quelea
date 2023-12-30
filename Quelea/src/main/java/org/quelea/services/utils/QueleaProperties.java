@@ -44,7 +44,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
  */
 public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2024.0", VersionType.BETA);
+    public static final Version VERSION = new Version("2024.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
@@ -2001,7 +2001,7 @@ public final class QueleaProperties extends SortedProperties {
      * @return the logo image
      */
     public String getLogoImageURI() {
-        return "file:" + getProperty(logoImageLocationKey, "icons/logo default.png");
+        return new File(getProperty(logoImageLocationKey, "icons/logo default.png")).toURI().toString();
     }
 
     /**
@@ -2544,5 +2544,9 @@ public final class QueleaProperties extends SortedProperties {
 
     public void setUseDarkTheme(boolean useDarkTheme) {
         setProperty(darkThemeKey, String.valueOf(useDarkTheme));
+    }
+
+    public boolean getDisableDirectShowForWVC1() {
+        return Boolean.parseBoolean(getProperty(disableDirectShowForWVC1Key, "true"));
     }
 }

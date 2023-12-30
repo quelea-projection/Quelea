@@ -7,4 +7,8 @@ quelea (2024.0) stable
   * Allow renaming of image group
   * Prevent blacked stage view option
   * Regression: VLCARG files will no longer work (afraid this is a necessary casualty of moving to GStreamer)
+  * Logo display now supports video files
+  * Unsupported videos now have clear unsupported preview image
+  * Allow multiple selection in song database
+  * Critical fix: Using the French language no longer crashes Quelea when opening the options dialog
   * Various minor bugfixes

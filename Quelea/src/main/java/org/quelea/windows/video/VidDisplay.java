@@ -68,7 +68,7 @@ public class VidDisplay {
         }
     }
 
-    public ReadOnlyObjectProperty<Image> imageProperty() {
+    public ReadOnlyObjectProperty<? extends Image> imageProperty() {
         if (fxImageSink == null) {
             return new ReadOnlyObjectWrapper<>(BLANK_IMG);
         }

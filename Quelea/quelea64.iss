@@ -61,6 +61,7 @@ Type: filesandordirs; Name: "{app}/winjre"
 Type: filesandordirs; Name: "{app}/winjre64"
 
 [Files]
+Source: gs.msi; DestDir: {tmp}; Flags: deleteafterinstall;
 Source: "build/launch4j/Quelea64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist/Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
@@ -89,4 +90,5 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFil
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; IconFilename: "{app}\icons\logo.ico"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\gs.msi"" /qb- INSTALLLEVEL=1000"; WorkingDir: {tmp};
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Flags: shellexec postinstall skipifsilent

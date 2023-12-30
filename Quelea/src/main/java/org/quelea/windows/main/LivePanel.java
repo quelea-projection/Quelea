@@ -167,7 +167,7 @@ public class LivePanel extends LivePreviewPanel {
                     if (QueleaProperties.get().getLastDirectory() != null) {
                         chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
                     }
-                    chooser.getExtensionFilters().add(FileFilters.IMAGES);
+                    chooser.getExtensionFilters().add(FileFilters.IMAGE_VIDEOS);
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                     if (file != null) {

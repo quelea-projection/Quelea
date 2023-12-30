@@ -85,6 +85,13 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     outfile = "Quelea64.exe"
 }
 
+task downloadGStreamer {
+    def f = new File('gs.msi')
+    if (!f.exists()) {
+        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.22.8/msvc/gstreamer-1.0-msvc-x86_64-1.22.8.msi').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}
+
 task copyToDist {
     doLast {
         copy {from configurations.runtimeClasspath into project.distdir + "/lib"} //libraries
@@ -176,7 +183,7 @@ task zipMacPackr(type: Zip) {
 runPackr.finalizedBy(zipMacPackr);
 
 task dist(type: GradleBuild) {
-    tasks = ['labelcheck', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
+    tasks = ['labelcheck', 'downloadGStreamer', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
 
 dependencies {
@@ -185,14 +192,12 @@ dependencies {
     implementation 'com.googlecode.paradoxdriver:paradoxdriver:1.5.0'
     implementation 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
     implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.6.0'
-    implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.0.0'
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
-    implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.2.5'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.5'
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.5'
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.36.0.3'
     implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
     implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
-    implementation group: 'org.jcodec', name: 'jcodec', version: '0.2.5'
-    implementation group: 'org.jcodec', name: 'jcodec-javase', version: '0.2.5'
 
     implementation 'net.java.dev.jna:jna:5.10.0'
     implementation 'net.java.dev.jna:jna-platform:5.10.0'
