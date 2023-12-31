@@ -48,6 +48,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.SongDisplayableList;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.widgets.AddSongPromptOverlay;
@@ -139,11 +140,23 @@ public class LibrarySongList extends StackPane {
                 }
             };
             cell.setOnDragDetected((event) -> {
-                SongDisplayable displayable = cell.getItem();
-                if (displayable != null) {
+                SongDisplayable draggedDisplayable = cell.getItem();
+                List<SongDisplayable> selectedDisplayables = getSelectedValues();
+
+                List<SongDisplayable> toDrag;
+                if(!selectedDisplayables.isEmpty()) {
+                    toDrag = selectedDisplayables;
+                }
+                else if(draggedDisplayable!=null){
+                    toDrag = List.of(draggedDisplayable);
+                } else {
+                    toDrag = List.of();
+                }
+                
+                if (!toDrag.isEmpty()) {
                     Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
                     ClipboardContent content = new ClipboardContent();
-                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
+                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(toDrag));
                     db.setContent(content);
                 }
                 event.consume();
@@ -160,13 +173,11 @@ public class LibrarySongList extends StackPane {
         });
         songList.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldSong, song) -> {
             popupMenu.setMultipleSelected(songList.getSelectionModel().getSelectedIndices().size()>1);
-            if (previewCanvas != null) {
-                previewCanvas.setSong(song);
-                if (song != null && QueleaProperties.get().getShowDBSongPreview()) {
-                    previewCanvas.show();
-                } else {
-                    previewCanvas.hide();
-                }
+            previewCanvas.setSong(song);
+            if (song != null && QueleaProperties.get().getShowDBSongPreview()) {
+                previewCanvas.show();
+            } else {
+                previewCanvas.hide();
             }
             if(QueleaProperties.get().getImmediateSongDBPreview()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);

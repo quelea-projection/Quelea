@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,6 +41,7 @@ import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.utils.SongDisplayableList;
 import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.imagegroup.ImageGroupPanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
@@ -119,10 +121,10 @@ public abstract class LivePreviewPanel extends BorderPane {
             }
         });
         setOnDragDropped(event -> {
-            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
-                final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                if (displayable != null) {
-                    setDisplayable(displayable, 0);
+            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList) {
+                final List<SongDisplayable> displayables = ((SongDisplayableList) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
+                if (!displayables.isEmpty()) {
+                    setDisplayable(displayables.get(0), 0);
                 }
             }
             event.consume();
