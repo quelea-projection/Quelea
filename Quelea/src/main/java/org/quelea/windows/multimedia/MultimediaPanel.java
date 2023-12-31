@@ -182,6 +182,7 @@ public class MultimediaPanel extends AbstractPanel {
      */
     @Override
     public void removeCurrentDisplayable() {
+        controlPanel.reset();
         super.removeCurrentDisplayable();
     }
 }
