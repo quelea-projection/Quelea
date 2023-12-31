@@ -17,14 +17,6 @@
  */
 package org.quelea.services.utils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -33,6 +25,14 @@ import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.notice.NoticeDrawer.NoticePosition;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 
@@ -2432,6 +2432,9 @@ public final class QueleaProperties extends SortedProperties {
         return new File(getQueleaUserHome(), "notices");
     }
 
+    public String[] getAddAndGoLiveKeys() {
+        return getProperty("add.and.go.live.keys", "Ctrl,Alt,L").split(",");
+    }
     public String[] getNewSongKeys() {
         return getProperty("new.song.keys", "Ctrl,Alt,N").split(",");
     }

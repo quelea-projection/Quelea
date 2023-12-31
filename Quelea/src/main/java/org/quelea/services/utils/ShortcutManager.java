@@ -21,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
@@ -82,6 +83,13 @@ public class ShortcutManager {
             } else if (checkCombination(QueleaProperties.get().getBibleFocusKeys())) {
                 mainPanel.getLibraryPanel().getTabPane().getSelectionModel().select(1);
                 mainPanel.getLibraryPanel().getBiblePanel().getBookSelector().requestFocus();
+            } else if (checkCombination(QueleaProperties.get().getAddAndGoLiveKeys())) {
+                if (mainPanel.getLibraryPanel().getTabPane().getSelectionModel().isSelected(0) && mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().size() == 1) {
+                    SongDisplayable displayable = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().get(0);
+                    mainPanel.getSchedulePanel().getScheduleList().add(displayable);
+                    mainPanel.getSchedulePanel().getScheduleList().getSelectionModel().select(displayable);
+                    mainPanel.getPreviewPanel().goLive();
+                }
             }
             keyCodeBuilder.clear();
         });
