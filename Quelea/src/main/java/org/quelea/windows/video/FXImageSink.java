@@ -134,7 +134,6 @@ public class FXImageSink {
         activeBuffer = newSample.getBuffer();
 
         if (image.get().getWidth() != width || image.get().getHeight() != height) {
-            System.out.println("Creating new image");
             image.set(new WritableImage(width, height));
         }
 
