@@ -33,8 +33,8 @@ import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * A wrapper connecting a GStreamer AppSink and a JavaFX Image, making use of
@@ -48,6 +48,7 @@ import java.util.List;
 public class FXImageSink {
 
     private final static String DEFAULT_CAPS;
+    private final static int OLD_SAMPLE_BUFFER_SIZE = 2;
 
     static {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
@@ -61,7 +62,7 @@ public class FXImageSink {
     private final ReadOnlyObjectWrapper<WritableImage> image;
     private Sample activeSample;
     private Buffer activeBuffer;
-    private final List<Sample> oldSamples;
+    private final Queue<Sample> oldSamples;
 
     /**
      * Create an FXImageSink. A new AppSink element will be created that can be
@@ -78,7 +79,7 @@ public class FXImageSink {
      */
     public FXImageSink(AppSink sink) {
         this.sink = sink;
-        oldSamples = new ArrayList<>();
+        oldSamples = new ArrayBlockingQueue<>(OLD_SAMPLE_BUFFER_SIZE + 1);
         sink.set("emit-signals", true);
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
@@ -143,9 +144,8 @@ public class FXImageSink {
         if (oldBuffer != null) {
             oldBuffer.unmap();
         }
-
-        while (oldSamples.size() > 2) {
-            oldSamples.remove(0).dispose();
+        while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
+            oldSamples.remove().dispose();
         }
 
     }
