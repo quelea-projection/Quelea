@@ -381,7 +381,7 @@ public class PreferenceStorageHandler implements StorageHandler {
                 default:
                     try {
                         Object object = gson.fromJson(property, Object.class);
-                        if (breadcrumb.contains("position") || breadcrumb.contains("alignment")) {
+                        if (breadcrumb.contains("position") || breadcrumb.contains("alignment") || breadcrumb.contains("show.on.slides")) {
                             return LabelGrabber.INSTANCE.getLabel(object.toString().toLowerCase());
                         } else {
                             return object;
