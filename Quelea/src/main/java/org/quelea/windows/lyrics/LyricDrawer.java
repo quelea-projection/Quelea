@@ -634,7 +634,7 @@ public class LyricDrawer extends WordDrawer {
             smallText = new String[0];
         }
 
-        setText(bigText, null, smallText, fade, uniformFontSize);
+        setText(bigText, translationArr, smallText, fade, uniformFontSize);
     }
 
     /**
