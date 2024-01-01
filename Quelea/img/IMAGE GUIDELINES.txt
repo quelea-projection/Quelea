@@ -14,7 +14,7 @@ This folder is for background images that we want to include in the release of Q
 
  - Themed backgrounds (Easter, Christmas, etc.) are fine, even encouraged, as long as they conform to the above.
 
- - Obvious point, but be sensible. If you think it'd be contraversial, take people's focus away from the words, or anything like that - don't use it.
+ - Obvious point, but be sensible. If you think it'd be controversial, take people's focus away from the words, or anything like that - don't use it.
 
  - Be mindful of licensing. Using free existing work is ok, but to be on the safe side I'd prefer it if we explicitly checked with the author beforehand to make sure it's ok to include. They may want some form of attribution, I've no problem at all with including something somewhere thanking those who have contributed images. We'll cross this bridge if we come to it.
 
