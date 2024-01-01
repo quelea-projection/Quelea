@@ -59,6 +59,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
@@ -624,7 +625,16 @@ public class LyricDrawer extends WordDrawer {
                 translationArr = translationText.split("\n");
             }
         }
-        setText(bigText, translationArr, displayable.getSections()[index].getSmallText(), fade, uniformFontSize);
+
+        String[] smallText = displayable.getSections()[index].getSmallText();
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("first")) && index > 0) {
+            smallText = new String[0];
+        }
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("last")) && index < displayable.getSections().length - 1) {
+            smallText = new String[0];
+        }
+
+        setText(bigText, null, smallText, fade, uniformFontSize);
     }
 
     /**
