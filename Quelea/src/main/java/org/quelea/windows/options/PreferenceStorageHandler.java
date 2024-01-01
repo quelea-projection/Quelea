@@ -248,6 +248,7 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.smallBibleTextVPositionKey:
             case QueleaPropertyKeys.smallSongTextHPositionKey:
             case QueleaPropertyKeys.smallSongTextVPositionKey:
+            case QueleaPropertyKeys.smallSongTextShowOnSlidesKey:
             case QueleaPropertyKeys.stageTextAlignmentKey:
                 String pos = LabelGrabber.INSTANCE.getEngKey(object.toString());
                 if (pos != null) {

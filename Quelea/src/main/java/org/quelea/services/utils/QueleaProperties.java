@@ -2125,6 +2125,15 @@ public final class QueleaProperties extends SortedProperties {
         write();
     }
 
+    public String getSmallSongTextShowOnSlides() {
+        return getProperty(smallSongTextShowOnSlidesKey, "all");
+    }
+
+    public void setSmallSongTextShowOnSlides(String showOnSlides) {
+        setProperty(smallSongTextShowOnSlidesKey, showOnSlides);
+        write();
+    }
+
     public String getSmallBibleTextPositionH() {
         return getProperty(smallBibleTextHPositionKey, "right");
     }

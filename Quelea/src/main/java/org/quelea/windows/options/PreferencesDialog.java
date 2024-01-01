@@ -192,6 +192,17 @@ public class PreferencesDialog extends Stage {
         return setting;
     }
 
+    public static Setting getShowOnSlidesSelector(String label, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+        Setting setting = Setting.of(label, FXCollections.observableArrayList(
+                LabelGrabber.INSTANCE.getLabel("all"),
+                LabelGrabber.INSTANCE.getLabel("first"),
+                LabelGrabber.INSTANCE.getLabel("last")),
+                new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
+        if (booleanBind != null)
+            bindings.put((Field) setting.getElement(), booleanBind.not());
+        return setting;
+    }
+
     public void updatePos() {
         DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
         DisplayStage stageWindow = QueleaApp.get().getStageWindow();
