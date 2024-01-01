@@ -17,9 +17,10 @@
  */
 package org.quelea.windows.lyrics;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.sun.jna.Pointer;
@@ -627,10 +628,10 @@ public class LyricDrawer extends WordDrawer {
         }
 
         String[] smallText = displayable.getSections()[index].getSmallText();
-        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("first")) && index > 0) {
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equals("first") && index > 0) {
             smallText = new String[0];
         }
-        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("last")) && index < displayable.getSections().length - 1) {
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equals("last") && index < displayable.getSections().length - 1) {
             smallText = new String[0];
         }
 
