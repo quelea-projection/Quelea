@@ -25,6 +25,9 @@ repositories {
     mavenCentral()
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.quelea'
+        }
         mavenContent {
             snapshotsOnly()
         }
