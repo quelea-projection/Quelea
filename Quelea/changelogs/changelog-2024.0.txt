@@ -5,6 +5,7 @@ quelea (2024.0) stable
   * Video backgrounds now animate in preview windows
   * Include all item types in printed order of service schedule
   * Allow renaming of image group
+  * Song information can now be shown on first, last or all slides
   * Prevent blacked stage view option
   * Regression: VLCARG files will no longer work (afraid this is a necessary casualty of moving to GStreamer)
   * Logo display now supports video files
