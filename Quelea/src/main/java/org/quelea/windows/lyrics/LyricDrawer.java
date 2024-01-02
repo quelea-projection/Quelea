@@ -17,15 +17,16 @@
  */
 package org.quelea.windows.lyrics;
 
-import java.awt.*;
-import java.io.File;
-import java.util.*;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
-import com.sun.jna.Pointer;
-import javafx.animation.*;
-import javafx.application.Platform;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -43,14 +44,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import org.freedesktop.gstreamer.Bus;
-import org.freedesktop.gstreamer.Format;
-import org.freedesktop.gstreamer.GstObject;
-import org.freedesktop.gstreamer.State;
-import org.freedesktop.gstreamer.elements.PlayBin;
-import org.freedesktop.gstreamer.event.SeekFlags;
-import org.freedesktop.gstreamer.fx.FXImageSink;
-import org.freedesktop.gstreamer.lowlevel.GObjectAPI;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
@@ -60,7 +53,6 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
@@ -72,8 +64,6 @@ import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 import org.quelea.windows.video.VidDisplay;
-
-import static org.freedesktop.gstreamer.lowlevel.GObjectAPI.GOBJECT_API;
 
 /**
  * Responsible for drawing lyrics and their background.
