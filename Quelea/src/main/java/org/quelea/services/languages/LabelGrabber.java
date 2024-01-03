@@ -124,6 +124,7 @@ public class LabelGrabber extends ResourceBundle {
         if (english) {
             return label;
         }
+
         int pos = 0;
         var labArr = labels.keySet().toArray();
         for (String s : labels.stringPropertyNames()) {
@@ -135,7 +136,8 @@ public class LabelGrabber extends ResourceBundle {
             }
             pos++;
         }
-        return null;
+
+        return label;
     }
 
     @Override
