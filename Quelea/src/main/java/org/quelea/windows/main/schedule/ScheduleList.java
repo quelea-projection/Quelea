@@ -20,13 +20,16 @@ package org.quelea.windows.main.schedule;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -34,7 +37,14 @@ import javafx.util.Callback;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.*;
+import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
@@ -65,11 +75,11 @@ import java.util.logging.Logger;
  */
 public class ScheduleList extends StackPane {
 
-    private ListView<Displayable> listView;
+    private final ListView<Displayable> listView;
     private Schedule schedule;
-    private Rectangle markerRect;
+    private final Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
+    private final ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
     private int localDragIndex = -1;
     private Displayable tempDisp = null;
 
@@ -94,11 +104,11 @@ public class ScheduleList extends StackPane {
         markerRect.setVisible(false);
         getChildren().add(markerRect);
         markerRect.toFront();
-        Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
+        Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<>() {
             @Override
             public ListCell<Displayable> call(ListView<Displayable> p) {
 
-                final ListCell<Displayable> listCell = new ListCell<Displayable>() {
+                final ListCell<Displayable> listCell = new ListCell<>() {
                     @Override
                     public void updateItem(Displayable item, boolean empty) {
                         super.updateItem(item, empty);
@@ -117,26 +127,22 @@ public class ScheduleList extends StackPane {
                     }
                 };
                 cells.add(listCell);
-                listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
+                listCell.setOnDragDetected(event -> {
 
-                    @Override
-                    public void handle(MouseEvent event) {
-
-                        if (listCell.getItem() != null) {
-                            localDragIndex = listCell.getIndex();
-                            Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
-                            ClipboardContent content = new ClipboardContent();
-                            if (listCell.getItem() instanceof SongDisplayable) {
-                                content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList((SongDisplayable) listCell.getItem()));
-                            } else {
-                                content.putString("tempdisp");
-                                tempDisp = listCell.getItem();
-                            }
-
-                            db.setContent(content);
-                            event.consume();
-                            db.setDragView(listCell.snapshot(null, null));
+                    if (listCell.getItem() != null) {
+                        localDragIndex = listCell.getIndex();
+                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        if (listCell.getItem() instanceof SongDisplayable) {
+                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList((SongDisplayable) listCell.getItem()));
+                        } else {
+                            content.putString("tempdisp");
+                            tempDisp = listCell.getItem();
                         }
+
+                        db.setContent(content);
+                        event.consume();
+                        db.setDragView(listCell.snapshot(null, null));
                     }
                 });
                 listCell.setOnDragEntered(event -> {
