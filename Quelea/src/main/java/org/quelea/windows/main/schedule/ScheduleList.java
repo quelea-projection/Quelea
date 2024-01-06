@@ -34,9 +34,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -251,28 +253,34 @@ public class ScheduleList extends StackPane {
                 }
             });
         } else {
-            String imageLocation = db.getString();
+            String dbLocation = db.getString();
             boolean useTempDisp = false;
-            if (imageLocation != null) {
-                useTempDisp = imageLocation.equals("tempdisp");
-                if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(imageLocation)) && !useTempDisp) {
+            if (dbLocation != null) {
+                boolean isVideo = Utils.fileIsVideo(new File(dbLocation));
+                useTempDisp = dbLocation.equals("tempdisp");
+                if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(dbLocation)) && !useTempDisp) {
                     try {
-                        Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
+                        Utils.copyFile(new File(dbLocation), new File(QueleaProperties.get().getImageDir(), new File(dbLocation).getName()));
                     } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
                     }
                 }
-                boolean isSong = true;
-                isSong = !(listCell == null || listCell.isEmpty());
+                boolean isSong = !(listCell == null || listCell.isEmpty());
                 if (isSong) {
                     if (!(listCell.getItem() instanceof TextDisplayable)) {
                         isSong = false;
                     }
                 }
                 if (!isSong && !useTempDisp) {
-                    ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
+                    Displayable visualDisplayable;
+                    if(isVideo) {
+                        visualDisplayable = new VideoDisplayable(dbLocation);
+                    }
+                    else {
+                        visualDisplayable = new ImageDisplayable(new File(dbLocation));
+                    }
                     useTempDisp = true;
-                    tempDisp = img;
+                    tempDisp = visualDisplayable;
                 } else {
                     if (useTempDisp) {
 
@@ -288,7 +296,15 @@ public class ScheduleList extends StackPane {
                             if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                 dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
                             }
-                            ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+                            Background background;
+                            if(isVideo) {
+                                background = new VideoBackground(new File(dbLocation).getName(), 0, true);
+                            }
+                            else {
+                                background = new ImageBackground(new File(dbLocation).getName());
+                            }
+
+                            ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), background, dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
                             for (TextSection section : textDisplayable.getSections()) {
                                 section.setTheme(newTheme);
                             }

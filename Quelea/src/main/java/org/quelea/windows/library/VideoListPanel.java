@@ -184,13 +184,13 @@ public class VideoListPanel extends BorderPane {
                     removeMenu.show(view, t.getScreenX(), t.getScreenY());
                 }
             });
-//                            view.setOnDragDetected((MouseEvent t) -> {
-//                                Dragboard db = startDragAndDrop(TransferMode.ANY);
-//                                ClipboardContent content = new ClipboardContent();
-//                                content.putString(file.getAbsolutePath());
-//                                db.setContent(content);
-//                                t.consume();
-//                            });
+            view.setOnDragDetected((MouseEvent t) -> {
+                Dragboard db = startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(file.getAbsolutePath());
+                db.setContent(content);
+                t.consume();
+            });
             viewBox.getChildren().add(view);
             viewBox.getChildren().add(fileLabel);
             setupHover(viewBox, file.getName());
@@ -220,7 +220,7 @@ public class VideoListPanel extends BorderPane {
     }
 
     private Image resize(Image image) {
-        var sImg = SwingFXUtils.fromFXImage(image, null).getScaledInstance(160,90,0);
+        var sImg = SwingFXUtils.fromFXImage(image, null).getScaledInstance(160, 90, 0);
         BufferedImage bimage = new BufferedImage(sImg.getWidth(null), sImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D bGr = bimage.createGraphics();
         bGr.drawImage(sImg, 0, 0, null);
