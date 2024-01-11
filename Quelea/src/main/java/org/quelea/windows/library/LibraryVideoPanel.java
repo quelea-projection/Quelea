@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +53,6 @@ import org.quelea.windows.main.QueleaApp;
 public class LibraryVideoPanel extends BorderPane {
 
     private final VideoListPanel videoPanel;
-    private final ToolBar toolbar;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -61,8 +61,7 @@ public class LibraryVideoPanel extends BorderPane {
     public LibraryVideoPanel() {
         videoPanel = new VideoListPanel(QueleaProperties.get().getVidDir().getAbsolutePath());
         setCenter(videoPanel);
-        toolbar = new ToolBar();
-
+        ToolBar toolbar = new ToolBar();
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.videos.panel")));
         addButton.setOnAction((ActionEvent t) -> {
@@ -74,7 +73,7 @@ public class LibraryVideoPanel extends BorderPane {
             chooser.setInitialDirectory(QueleaProperties.get().getVidDir().getAbsoluteFile());
             List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
             if(files != null) {
-                final boolean[] refresh = new boolean[]{false};
+                List<Path> copiedPaths = new ArrayList<>();
                 for(final File f : files) {
                     QueleaProperties.get().setLastDirectory(f.getParentFile());
                     try {
@@ -85,8 +84,8 @@ public class LibraryVideoPanel extends BorderPane {
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), (ActionEvent t1) -> {
                                         try {
                                             Files.delete(Paths.get(videoPanel.getDir(), f.getName()));
-                                            Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
-                                            refresh[0] = true;
+                                            Path targetFile = Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                            copiedPaths.add(targetFile);
                                         }
                                         catch(IOException e) {
                                             LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
@@ -97,16 +96,17 @@ public class LibraryVideoPanel extends BorderPane {
                             d.showAndWait();
                         }
                         else {
-                            Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
-                            refresh[0] = true;
+                            Path targetFile = Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                            LOGGER.log(Level.INFO, "Copied file to " + targetFile);
+                            copiedPaths.add(targetFile);
                         }
                     }
                     catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "Could not copy file into VideoPanel from FileChooser selection", ex);
                     }
                 }
-                if(refresh[0]) {
-                    videoPanel.refresh();
+                for(Path path : copiedPaths) {
+                    videoPanel.addVideoFile(path.toFile());
                 }
             }
         });
@@ -116,14 +116,5 @@ public class LibraryVideoPanel extends BorderPane {
         Utils.setToolbarButtonStyle(addButton);
         toolbar.getItems().add(addButton);
         setLeft(toolbarBox);
-    }
-
-    /**
-     * Get the video list panel.
-     * <p/>
-     * @return the video list panel.
-     */
-    public VideoListPanel getVideoPanel() {
-        return videoPanel;
     }
 }

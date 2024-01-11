@@ -2,6 +2,8 @@ package org.quelea.services.utils;
 
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
+import org.freedesktop.gstreamer.PluginFeature;
+import org.freedesktop.gstreamer.Registry;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,6 +24,22 @@ public class GStreamerUtils {
     }
 
     /**
+     * Sometimes the default plugin priorities cause issues on some systems.
+     * <p>
+     * This method will reorganise plugin priorities for maximum compatibility.
+     * It can be overridden by various properties defined in quelea.properties.
+     */
+    public static void setFeaturePriorities() {
+        if (QueleaProperties.get().getDisableDirectShowForWVC1()) {
+            try (var feature = Registry.get().lookupFeature("dshowvdec_wvc1")) {
+                if (feature != null) {
+                    feature.setRank(PluginFeature.Rank.NONE.intValue());
+                }
+            }
+        }
+    }
+
+    /**
      * Configures paths to the GStreamer libraries. On Windows queries various
      * GStreamer environment variables, and then sets up the PATH environment
      * variable. On macOS, adds the location to jna.library.path (macOS binaries
@@ -39,14 +57,12 @@ public class GStreamerUtils {
                 if (systemPath == null || systemPath.trim().isEmpty()) {
                     Kernel32.INSTANCE.SetEnvironmentVariable("PATH", gstPath);
                 } else {
-                    Kernel32.INSTANCE.SetEnvironmentVariable("PATH", gstPath
-                            + File.pathSeparator + systemPath);
+                    Kernel32.INSTANCE.SetEnvironmentVariable("PATH", gstPath + File.pathSeparator + systemPath);
                 }
             }
         } else if (Platform.isMac()) {
             LOGGER.log(Level.INFO, "Detected Mac OS");
-            String gstPath = System.getProperty("gstreamer.path",
-                    "/Library/Frameworks/GStreamer.framework/Libraries/");
+            String gstPath = System.getProperty("gstreamer.path", "/Library/Frameworks/GStreamer.framework/Libraries/");
             LOGGER.log(Level.INFO, "gst path is " + gstPath);
             if (!gstPath.isEmpty()) {
                 String jnaPath = System.getProperty("jna.library.path", "").trim();
@@ -60,8 +76,7 @@ public class GStreamerUtils {
             LOGGER.log(Level.INFO, "Detected Snap Linux");
             System.setProperty("jna.tmpdir", System.getProperty("java.io.tmpdir"));
 
-            String gstPath = new File(getenv("SNAP"), System.getProperty("gstreamer.path",
-                    "/usr/lib/x86_64-linux-gnu/")).getAbsolutePath();
+            String gstPath = new File(getenv("SNAP"), System.getProperty("gstreamer.path", "/usr/lib/x86_64-linux-gnu/")).getAbsolutePath();
             LOGGER.log(Level.INFO, "gst path is " + gstPath);
 
             if (!gstPath.isEmpty()) {
@@ -88,15 +103,7 @@ public class GStreamerUtils {
      */
     private static String findWindowsLocation() {
         if (Platform.is64Bit()) {
-            return Stream.of(getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64"),
-                            getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64"),
-                            getenv("GSTREAMER_1_0_ROOT_X86_64"),
-                            DEFAULT_WINDOWS_PATH)
-                    .filter(Objects::nonNull)
-                    .map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\")
-                    .filter(p -> Files.exists(Path.of(p)))
-                    .findFirst()
-                    .orElse("");
+            return Stream.of(getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64"), getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64"), getenv("GSTREAMER_1_0_ROOT_X86_64"), DEFAULT_WINDOWS_PATH).filter(Objects::nonNull).map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\").filter(p -> Files.exists(Path.of(p))).findFirst().orElse("");
         } else {
             return "";
         }

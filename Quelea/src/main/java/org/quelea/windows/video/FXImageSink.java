@@ -25,13 +25,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelBuffer;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
-import org.freedesktop.gstreamer.*;
+import org.freedesktop.gstreamer.Buffer;
+import org.freedesktop.gstreamer.Caps;
+import org.freedesktop.gstreamer.FlowReturn;
+import org.freedesktop.gstreamer.Sample;
+import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * A wrapper connecting a GStreamer AppSink and a JavaFX Image, making use of
@@ -45,6 +48,7 @@ import java.util.List;
 public class FXImageSink {
 
     private final static String DEFAULT_CAPS;
+    private final static int OLD_SAMPLE_BUFFER_SIZE = 2;
 
     static {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
@@ -55,10 +59,10 @@ public class FXImageSink {
     }
 
     private final AppSink sink;
-    private final ReadOnlyObjectWrapper<Image> image;
+    private final ReadOnlyObjectWrapper<WritableImage> image;
     private Sample activeSample;
     private Buffer activeBuffer;
-    private List<Sample> oldSamples;
+    private final Queue<Sample> oldSamples;
 
     /**
      * Create an FXImageSink. A new AppSink element will be created that can be
@@ -75,7 +79,7 @@ public class FXImageSink {
      */
     public FXImageSink(AppSink sink) {
         this.sink = sink;
-        oldSamples = new ArrayList<>();
+        oldSamples = new ArrayBlockingQueue<>(OLD_SAMPLE_BUFFER_SIZE + 1);
         sink.set("emit-signals", true);
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
@@ -90,7 +94,7 @@ public class FXImageSink {
             return FlowReturn.OK;
         });
         sink.setCaps(Caps.fromString(DEFAULT_CAPS));
-        image = new ReadOnlyObjectWrapper<>();
+        image = new ReadOnlyObjectWrapper<>(new WritableImage(1, 1));
     }
 
     /**
@@ -101,7 +105,7 @@ public class FXImageSink {
      *
      * @return image property for current video frame
      */
-    public ReadOnlyObjectProperty<Image> imageProperty() {
+    public ReadOnlyObjectProperty<? extends Image> imageProperty() {
         return image.getReadOnlyProperty();
     }
 
@@ -130,18 +134,18 @@ public class FXImageSink {
         int height = capsStruct.getInteger("height");
         activeBuffer = newSample.getBuffer();
 
-        PixelBuffer<ByteBuffer> pixelBuffer = new PixelBuffer<>(width, height,
-                activeBuffer.map(false), PixelFormat.getByteBgraPreInstance());
-        WritableImage img = new WritableImage(pixelBuffer);
-        image.set(img);
+        if (image.get().getWidth() != width || image.get().getHeight() != height) {
+            image.set(new WritableImage(width, height));
+        }
+
+        image.get().getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getByteBgraPreInstance(), activeBuffer.map(false), width * 4);
 
         if (oldSample != null) oldSamples.add(oldSample);
         if (oldBuffer != null) {
             oldBuffer.unmap();
         }
-
-        while (oldSamples.size() > 2) {
-            oldSamples.remove(0).dispose();
+        while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
+            oldSamples.remove().dispose();
         }
 
     }
@@ -163,7 +167,7 @@ public class FXImageSink {
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("Not on FX application thread");
         }
-        image.set(null);
+        image.set(new WritableImage(1, 1));
         if (activeBuffer != null) {
             activeBuffer.unmap();
             activeBuffer = null;

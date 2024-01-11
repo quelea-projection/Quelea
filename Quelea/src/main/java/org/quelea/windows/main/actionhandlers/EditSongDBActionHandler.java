@@ -40,7 +40,7 @@ public class EditSongDBActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         Platform.runLater(() -> {
             SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
-            SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+            SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().get(0);
             if(song != null) {
                 songEntryWindow.resetEditSong(song);
                 songEntryWindow.show();

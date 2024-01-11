@@ -16,25 +16,14 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import javax.imageio.ImageIO;
-
 import org.freedesktop.gstreamer.Gst;
+import org.freedesktop.gstreamer.PluginFeature;
+import org.freedesktop.gstreamer.Registry;
 import org.freedesktop.gstreamer.Version;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
@@ -44,9 +33,28 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.*;
+import org.quelea.services.utils.FontInstaller;
+import org.quelea.services.utils.GStreamerInitState;
+import org.quelea.services.utils.GStreamerUtils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.ShortcutManager;
+import org.quelea.services.utils.UpdateChecker;
+import org.quelea.services.utils.UserFileChecker;
+import org.quelea.services.utils.Utils;
 import org.quelea.utils.DesktopApi;
 import org.quelea.windows.splash.SplashStage;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The main class, sets everything in motion...
@@ -100,6 +108,7 @@ public final class Main extends Application {
                 boolean gok;
                 try {
                     Gst.init(Version.BASELINE, "Quelea");
+                    GStreamerUtils.setFeaturePriorities();
                     gok = true;
                 }
                 catch(UnsatisfiedLinkError err) {

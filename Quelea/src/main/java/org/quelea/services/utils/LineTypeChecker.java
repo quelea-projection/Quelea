@@ -49,10 +49,6 @@ public class LineTypeChecker {
         this.line = line;
     }
     
-    public static void main(String[] args) {
-        System.out.println(new LineTypeChecker("his face is").getLineType());
-    }
-
     /**
      * Get the line type.
      *

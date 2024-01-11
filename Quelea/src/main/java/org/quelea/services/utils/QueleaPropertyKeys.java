@@ -95,6 +95,7 @@ public class QueleaPropertyKeys {
     public static final String smallSongTextHPositionKey = "small.song.text.h.position";
     public static final String smallSongTextVPositionKey = "small.song.text.v.position";
     public static final String smallSongTextSizeKey = "small.song.text.size";
+    public static final String smallSongTextShowOnSlidesKey = "small.song.text.show.on.slides";
     public static final String smallBibleTextHPositionKey = "small.bible.text.h.position";
     public static final String smallBibleTextVPositionKey = "small.bible.text.v.position";
     public static final String smallBibleTextSizeKey = "small.bible.text.size";
@@ -139,5 +140,6 @@ public class QueleaPropertyKeys {
     public static final String slideTransitionOutDurationKey = "slide.transition.duration.out";
     public static final String useDefaultTranslation = "use.default.translation";
     public static final String defaultTranslationName = "default.translation.name";
+    public static final String disableDirectShowForWVC1Key = "disable.directshow.for.wvc1";
 
 }

@@ -82,7 +82,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.text.StringEscapeUtils;
 import org.javafx.dialog.Dialog;
-import org.jcodec.api.awt.AWTFrameGrab;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
@@ -107,13 +106,6 @@ public final class Utils {
 	 */
 	private Utils() {
 		throw new AssertionError();
-	}
-
-	/**
-	 * Beep!
-	 */
-	public static void beep() {
-		Toolkit.getDefaultToolkit().beep();
 	}
 
 	public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
@@ -726,6 +718,8 @@ public final class Utils {
 		ret.add("ASX");
 		ret.add("m2ts");
 		ret.add("M2TS");
+		ret.add("ts");
+		ret.add("TS");
 		return ret;
 	}
 

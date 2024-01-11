@@ -24,6 +24,7 @@ Quelea/output/*
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
 Quelea/bin/*
+Quelea/private/*
 
 Thumbs.db
 gs.msi

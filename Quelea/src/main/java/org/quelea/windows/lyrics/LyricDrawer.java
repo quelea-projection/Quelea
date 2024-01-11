@@ -18,13 +18,15 @@
 package org.quelea.windows.lyrics;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
-import com.sun.jna.Pointer;
-import javafx.animation.*;
-import javafx.application.Platform;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -42,14 +44,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import org.freedesktop.gstreamer.Bus;
-import org.freedesktop.gstreamer.Format;
-import org.freedesktop.gstreamer.GstObject;
-import org.freedesktop.gstreamer.State;
-import org.freedesktop.gstreamer.elements.PlayBin;
-import org.freedesktop.gstreamer.event.SeekFlags;
-import org.freedesktop.gstreamer.fx.FXImageSink;
-import org.freedesktop.gstreamer.lowlevel.GObjectAPI;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
@@ -70,8 +64,6 @@ import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 import org.quelea.windows.video.VidDisplay;
-
-import static org.freedesktop.gstreamer.lowlevel.GObjectAPI.GOBJECT_API;
 
 /**
  * Responsible for drawing lyrics and their background.
@@ -624,7 +616,16 @@ public class LyricDrawer extends WordDrawer {
                 translationArr = translationText.split("\n");
             }
         }
-        setText(bigText, translationArr, displayable.getSections()[index].getSmallText(), fade, uniformFontSize);
+
+        String[] smallText = displayable.getSections()[index].getSmallText();
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equals("first") && index > 0) {
+            smallText = new String[0];
+        }
+        if (QueleaProperties.get().getSmallSongTextShowOnSlides().equals("last") && index < displayable.getSections().length - 1) {
+            smallText = new String[0];
+        }
+
+        setText(bigText, translationArr, smallText, fade, uniformFontSize);
     }
 
     /**
