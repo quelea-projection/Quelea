@@ -302,7 +302,7 @@ public final class Main extends Application {
                         mainWindow.show();
                     }
                     showMonitorWarning(monitorNumber);
-                    if (!gstreamerOk) {
+                    if (!gstreamerOk && !QueleaProperties.get().getDisableVideo()) {
                         QueleaProperties.get().setConvertRecordings(false);
                         String message = LabelGrabber.INSTANCE.getLabel("gstreamer.warning.message");
                         Dialog.Builder gstreamerWarningDialogBuilder = new Dialog.Builder()
