@@ -111,6 +111,7 @@ public class QueleaPropertyKeys {
     public static final String translateClientSecretKey = "translate.client.secret";
     public static final String clearStageviewWithMainKey = "clear.stageview.with.main";
     public static final String blackStageviewWithMainKey = "black.stageview.with.main";
+    public static final String disableVideoKey = "disable.video";
     public static final String songOverflowKey = "song.overflow";
     public static final String autoDetectPortKey = "auto.detect.port";
     public static final String stageShowClockKey = "stage.show.clock";

@@ -22,8 +22,6 @@ import javafx.collections.ObservableList;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.freedesktop.gstreamer.Gst;
-import org.freedesktop.gstreamer.PluginFeature;
-import org.freedesktop.gstreamer.Registry;
 import org.freedesktop.gstreamer.Version;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
@@ -104,16 +102,21 @@ public final class Main extends Application {
 
         new Thread(() -> {
             try {
-                GStreamerUtils.configurePaths();
                 boolean gok;
-                try {
-                    Gst.init(Version.BASELINE, "Quelea");
-                    GStreamerUtils.setFeaturePriorities();
-                    gok = true;
-                }
-                catch(UnsatisfiedLinkError err) {
-                    LOGGER.log(Level.WARNING, "No GStreamer", err);
+
+                if(QueleaProperties.get().getDisableVideo()) {
                     gok = false;
+                }
+                else {
+                    GStreamerUtils.configurePaths();
+                    try {
+                        Gst.init(Version.BASELINE, "Quelea");
+                        GStreamerUtils.setFeaturePriorities();
+                        gok = true;
+                    } catch (UnsatisfiedLinkError err) {
+                        LOGGER.log(Level.WARNING, "No GStreamer", err);
+                        gok = false;
+                    }
                 }
                 GStreamerInitState.INIT_SUCCESS = gok;
                 final boolean gstreamerOk = gok;
@@ -299,7 +302,7 @@ public final class Main extends Application {
                         mainWindow.show();
                     }
                     showMonitorWarning(monitorNumber);
-                    if (!gstreamerOk) {
+                    if (!gstreamerOk && !QueleaProperties.get().getDisableVideo()) {
                         QueleaProperties.get().setConvertRecordings(false);
                         String message = LabelGrabber.INSTANCE.getLabel("gstreamer.warning.message");
                         Dialog.Builder gstreamerWarningDialogBuilder = new Dialog.Builder()
