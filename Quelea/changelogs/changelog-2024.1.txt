@@ -1,0 +1,4 @@
+quelea (2024.1) stable
+
+
+  * Various minor bugfixes

@@ -176,7 +176,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.wikiPageKey;
  */
 public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2024.0", VersionType.RELEASE);
+    public static final Version VERSION = new Version("2024.1", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
