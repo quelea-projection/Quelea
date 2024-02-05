@@ -32,7 +32,10 @@ parts:
       wget https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
       tar -xf zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
       ls -l
+      PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin
       JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
+      ls -l zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
+      echo $JAVA_HOME
       ./gradlew --debug -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar downloadUbuntuJvm copyToDist
 #    gradle-openjdk-version: "21"
 #    gradle-options: [--debug, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, downloadUbuntuJvm, copyToDist]
