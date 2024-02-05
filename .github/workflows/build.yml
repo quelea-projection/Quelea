@@ -32,6 +32,7 @@ jobs:
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
+          JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           ls -l /usr/lib/jvm/
           echo $JAVA_HOME
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
