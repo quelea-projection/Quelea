@@ -1,4 +1,4 @@
 quelea (2024.1) stable
 
-
+  * Fix UTF-8 filename issue with snap build
   * Various minor bugfixes
