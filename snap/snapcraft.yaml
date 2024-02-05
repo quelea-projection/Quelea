@@ -31,4 +31,12 @@ parts:
       rm -vf zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/lib/security/blocked.certs
       PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin
       JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
-      ./gradlew --debug -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar downloadUbuntuJvm copyToDist
+      ls -l zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
+      ls -l zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin
+      ls -l gradle-8.6
+      ls -l gradle-8.6/bin
+      echo $JAVA_HOME
+      echo $PATH
+      cat /etc/resolv.conf
+      printenv
+      gradle --debug -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar downloadUbuntuJvm copyToDist
