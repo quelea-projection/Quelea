@@ -43,6 +43,7 @@ parts:
       ls -l gradle-8.6/bin
       echo $JAVA_HOME
       echo $PATH
+      cat /etc/resolv.conf
       ./gradlew --debug -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar downloadUbuntuJvm copyToDist
 #    gradle-openjdk-version: "21"
 #    gradle-options: [--debug, -Dnightly=true, -Dversionsuffix=CI-UNSTABLE, clean, jar, downloadUbuntuJvm, copyToDist]
