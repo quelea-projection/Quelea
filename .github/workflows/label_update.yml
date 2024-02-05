@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Setup Java
         run: |
-          curl -O https://cdn.azul.com/zulu/bin/zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
-          sudo apt-get -y install ./zulu11.68.17-ca-fx-jdk11.0.21-linux_amd64.deb
+          curl -O https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
+          sudo apt-get -y install ./zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
+          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
       - name: Checkout main source
         uses: actions/checkout@v4
         with:
