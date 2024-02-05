@@ -10,6 +10,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.EJB3ImplicitNamingStrategy;
 
 /**
  * Hibernate Utility class with a convenient method to get Session Factory
@@ -41,7 +42,7 @@ public class HibernateUtil {
             cfg.setProperty("hibernate.hbm2ddl.auto", "update");
             cfg.setProperty("hibernate.implicit_naming_strategy", "legacy-hbm");
             cfg.setProperty("hibernate.connection.characterEncoding", "utf8");
-//            cfg.setImplicitNamingStrategy(new EJB3ImplicitNamingStrategy());
+            cfg.setImplicitNamingStrategy(new EJB3ImplicitNamingStrategy());
             cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
