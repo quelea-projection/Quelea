@@ -13,7 +13,6 @@ jobs:
         run: |
           curl -O https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
           sudo apt-get -y install ./zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
-          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
       - name: Environment setup
         env:
           DISPLAY: :99
@@ -30,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Build
         run: |
+          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh

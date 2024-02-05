@@ -13,7 +13,6 @@ jobs:
         run: |
           curl -O https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
           sudo apt-get -y install ./zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
-          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
       - name: Checkout main source
         uses: actions/checkout@v4
         with:
@@ -26,6 +25,7 @@ jobs:
       - name: Find missing labels
         run: |
           cd main/Quelea
+          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           chmod +x gradlew
           chmod +x build-install.sh
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
