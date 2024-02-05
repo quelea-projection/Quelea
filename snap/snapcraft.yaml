@@ -29,7 +29,10 @@ parts:
       wget https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
       tar -xf zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
       rm -vf zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/lib/security/blocked.certs
-      PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin
+      wget https://services.gradle.org/distributions/gradle-8.6-bin.zip
+      unzip gradle-8.6-bin.zip
+      ls -l
+      PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin:$(pwd)/gradle-8.6/bin
       JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
       ls -l zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
       ls -l zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin
