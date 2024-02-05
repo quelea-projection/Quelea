@@ -32,6 +32,7 @@ jobs:
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
+          echo $JAVA_HOME
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
