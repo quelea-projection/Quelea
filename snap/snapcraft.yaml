@@ -1,7 +1,7 @@
 name: quelea
 version: '2024.1'
-base: core20
-summary: Church projection
+base: core18
+summary: Church prjection
 description: |
   Quelea is a free and open source software application that projects
   multimedia content in your church service.
