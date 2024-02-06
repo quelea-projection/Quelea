@@ -1,6 +1,6 @@
 name: quelea
 version: '2024.1'
-base: core
+base: core20
 summary: Church prjection
 description: |
   Quelea is a free and open source software application that projects
