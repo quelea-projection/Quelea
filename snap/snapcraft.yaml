@@ -33,5 +33,9 @@ parts:
       PATH=$PATH:$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/bin:$(pwd)/gradle-8.6/bin
       JAVA_HOME=$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean downloadJres jar downloadUbuntuJvm copyToDist
+      printenv
+      echo "SNAP DIR"
+      echo $SNAP
       ls -l $SNAP
+      echo "SNAP DIR JAR"
       ls -l $SNAP/jar
