@@ -26,11 +26,10 @@ parts:
     build-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     stage-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
-      wget https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.1-linux_x64.tar.gz
-      tar -xf zulu21.32.17-ca-fx-jdk21.0.1-linux_x64.tar.gz
-      rm -vf zulu21.32.17-ca-fx-jdk21.0.1-linux_x64/lib/security/blocked.certs
+      wget https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
+      tar -xf zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
       wget https://services.gradle.org/distributions/gradle-8.6-bin.zip
       unzip gradle-8.6-bin.zip
-      PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.1-linux_x64/bin:$(pwd)/gradle-8.6/bin
-      JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.1-linux_x64
+      PATH=$PATH:$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/bin:$(pwd)/gradle-8.6/bin
+      JAVA_HOME=$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean jar downloadUbuntuJvm copyToDist
