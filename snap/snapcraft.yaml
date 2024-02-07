@@ -38,14 +38,14 @@ parts:
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean downloadJres jar downloadUbuntuJvm copyToDist
     override-stage: |
       snapcraftctl stage
+      mkdir $SNAPCRAFT_STAGE/jar/jvm
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
+      cp -a /build/quelea/parts/quelea/build/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/. $SNAPCRAFT_STAGE/jvm
     override-prime: |
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
       chmod +x $SNAPCRAFT_PRIME/jar/launch.sh
       rm -rf $SNAPCRAFT_PRIME/jar/winjre64
-      ls -l $SNAPCRAFT_PRIME
-      ls -l $SNAPCRAFT_PRIME/jar
       
       
