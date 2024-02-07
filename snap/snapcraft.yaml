@@ -26,6 +26,9 @@ parts:
     build-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     stage-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
+      echo HEREERERE
+      pwd
+      ls -l
       wget https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
       tar -xf zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
       wget https://services.gradle.org/distributions/gradle-8.6-bin.zip
