@@ -40,7 +40,7 @@ parts:
       snapcraftctl stage
       mkdir -p $SNAPCRAFT_STAGE/jar/jvm
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
-      cp -a /build/quelea/parts/quelea/build/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/. $SNAPCRAFT_STAGE/jvm
+      cp -a /build/quelea/parts/quelea/build/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/. $SNAPCRAFT_STAGE/jar/jvm
     override-prime: |
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
