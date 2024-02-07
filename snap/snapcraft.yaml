@@ -23,7 +23,7 @@ parts:
   quelea:
     plugin: nil
     source: Quelea
-    build-packages: [unzip, wget]
+    build-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     stage-packages: [gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
       echo HEREERERE
@@ -41,8 +41,8 @@ parts:
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
     override-prime: |
       snapcraftctl prime
-      mkdir $SNAPCRAFT_PRIME/jar
-      cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
+      mkdir $SNAPCRAFT_STAGE/jar
+      cp -a $SNAPCRAFT_PRIME/jar/. $SNAPCRAFT_PRIME/jar/.
       ls -l $SNAPCRAFT_PRIME
       ls -l $SNAPCRAFT_PRIME/jar
       
