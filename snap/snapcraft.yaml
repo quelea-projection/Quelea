@@ -35,6 +35,6 @@ parts:
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean downloadJres jar downloadUbuntuJvm copyToDist
     override-stage: |
       snapcraftctl stage
-      ls -l $SNAP/dist
+      ls -l $SNAP
       ls -l $SNAPCRAFT_STAGE
       
