@@ -19,7 +19,7 @@ architectures:
 
 apps:
   quelea:
-    command: echo "quelea"
+    command: echo quelea
     plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
 parts:
