@@ -38,7 +38,7 @@ parts:
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean downloadJres jar downloadUbuntuJvm copyToDist
     override-stage: |
       snapcraftctl stage
-      cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE
+      cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
       ls -l $SNAP
       ls -l $SNAPCRAFT_STAGE
       
