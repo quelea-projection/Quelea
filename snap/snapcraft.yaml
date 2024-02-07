@@ -16,12 +16,12 @@ architectures:
 
 apps:
   quelea:
-    command: sh $SNAP/launch.sh
+    command: sh $SNAP/jar/launch.sh
     plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
 parts:
   quelea:
-    plugin: dump
+    plugin: nil
     source: Quelea
     build-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     stage-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
@@ -39,6 +39,10 @@ parts:
     override-stage: |
       snapcraftctl stage
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
-      ls -l $SNAP
-      ls -l $SNAPCRAFT_STAGE
+    override-prime: |
+      snapcraftctl prime
+      cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
+      ls -l $SNAPCRAFT_PRIME
+      ls -l $SNAPCRAFT_PRIME/jar
+      
       
