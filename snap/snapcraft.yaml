@@ -1,11 +1,13 @@
 name: quelea
 version: '2024.1'
 base: core20
-summary: Church prjection
+summary: Church projection software
 description: |
   Quelea is a free and open source software application that projects
   multimedia content in your church service.
 confinement: strict
+issues: https://github.com/quelea-projection/Quelea/issues
+license: GPL-3.0
 
 environment:
     JAVA_HOME: $SNAP/jar/jvm
@@ -40,9 +42,9 @@ parts:
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
-      chmod +x $SNAPCRAFT_PRIME/launch.sh
-      rm -rf $SNAPCRAFT_PRIME/winjre64
       ls -l $SNAPCRAFT_PRIME
       ls -l $SNAPCRAFT_PRIME/jar
+      chmod +x $SNAPCRAFT_PRIME/launch.sh
+      rm -rf $SNAPCRAFT_PRIME/winjre64
       
       
