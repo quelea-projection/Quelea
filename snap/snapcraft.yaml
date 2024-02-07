@@ -74,8 +74,6 @@ parts:
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
       chmod +x $SNAPCRAFT_PRIME/jar/launch.sh
       rm -rf $SNAPCRAFT_PRIME/jar/winjre64
-      export GDK_PIXBUF_MODULEDIR=/snap/quelea/current/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
       glib-compile-schemas $SNAPCRAFT_PRIME/usr/share/glib-2.0/schemas/
-      $SNAPCRAFT_PRIME/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PRIME/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/loaders.cache
       
       
