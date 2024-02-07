@@ -44,7 +44,7 @@ parts:
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
       ls -l $SNAPCRAFT_PRIME
       ls -l $SNAPCRAFT_PRIME/jar
-      chmod +x $SNAPCRAFT_PRIME/launch.sh
-      rm -rf $SNAPCRAFT_PRIME/winjre64
+      chmod +x $SNAPCRAFT_PRIME/jar/launch.sh
+      rm -rf $SNAPCRAFT_PRIME/jar/winjre64
       
       
