@@ -41,6 +41,7 @@ parts:
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
     override-prime: |
       snapcraftctl prime
+      mkdir $SNAPCRAFT_STAGE/jar
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
       ls -l $SNAPCRAFT_PRIME
       ls -l $SNAPCRAFT_PRIME/jar
