@@ -40,6 +40,8 @@ parts:
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
+      chmod +x $SNAPCRAFT_STAGE/launch.sh
+      rm -rf $SNAPCRAFT_PRIME/winjre64
       ls -l $SNAPCRAFT_PRIME
       ls -l $SNAPCRAFT_PRIME/jar
       
