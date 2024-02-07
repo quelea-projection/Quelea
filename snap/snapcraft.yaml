@@ -8,6 +8,7 @@ description: |
 confinement: strict
 issues: https://github.com/quelea-projection/Quelea/issues
 license: GPL-3.0
+grade: devel
 
 environment:
     JAVA_HOME: $SNAP/jar/jvm
@@ -18,7 +19,7 @@ architectures:
 
 apps:
   quelea:
-    command: sh $SNAP/jar/launch.sh
+    command: $SNAP/jar/launch.sh
     plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
 parts:
@@ -42,9 +43,9 @@ parts:
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
       cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
-      ls -l $SNAPCRAFT_PRIME
-      ls -l $SNAPCRAFT_PRIME/jar
       chmod +x $SNAPCRAFT_PRIME/jar/launch.sh
       rm -rf $SNAPCRAFT_PRIME/jar/winjre64
+      ls -l $SNAPCRAFT_PRIME
+      ls -l $SNAPCRAFT_PRIME/jar
       
       
