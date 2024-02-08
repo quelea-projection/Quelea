@@ -1,4 +1,5 @@
 quelea (2024.1) stable
 
+  * Upgrade to Java21 and OpenJFX 21
   * Fix UTF-8 filename issue with snap build
   * Various minor bugfixes
