@@ -8,7 +8,6 @@ description: |
 confinement: strict
 issues: https://github.com/quelea-projection/Quelea/issues
 license: GPL-3.0
-grade: devel
 
 environment:
     JAVA_HOME: $SNAP/jar/jvm
