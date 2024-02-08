@@ -55,18 +55,18 @@ parts:
     build-packages: [unzip, wget, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
-      wget https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
-      tar -xf zulu17.48.15-ca-fx-jdk17.0.10-linux_x64.tar.gz
+      wget https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
+      tar -xf zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
       wget https://services.gradle.org/distributions/gradle-8.6-bin.zip
       unzip gradle-8.6-bin.zip
-      PATH=$PATH:$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/bin:$(pwd)/gradle-8.6/bin
-      JAVA_HOME=$(pwd)/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64
+      PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin:$(pwd)/gradle-8.6/bin
+      JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean downloadJres jar downloadUbuntuJvm copyToDist
     override-stage: |
       snapcraftctl stage
       mkdir -p $SNAPCRAFT_STAGE/jar/jvm
       cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
-      cp -a /build/quelea/parts/quelea/build/zulu17.48.15-ca-fx-jdk17.0.10-linux_x64/. $SNAPCRAFT_STAGE/jar/jvm
+      cp -a /build/quelea/parts/quelea/build/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/. $SNAPCRAFT_STAGE/jar/jvm
     override-prime: |
       snapcraftctl prime
       mkdir $SNAPCRAFT_PRIME/jar
