@@ -61,7 +61,7 @@ parts:
       unzip gradle-8.6-bin.zip
       PATH=$PATH:$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64/bin:$(pwd)/gradle-8.6/bin
       JAVA_HOME=$(pwd)/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64
-      gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres downloadGStreamer createQueleaExe64 copyToDist runPackr izpack releaseSummary
+      gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres downloadGStreamer createQueleaExe64 copyToDist
     override-stage: |
       snapcraftctl stage
       mkdir -p $SNAPCRAFT_STAGE/jar/jvm

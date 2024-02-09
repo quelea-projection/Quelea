@@ -92,20 +92,6 @@ task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { /
     outfile = "Quelea64.exe"
 }
 
-task downloadUbuntuJvm {
-    def f = new File('jre.tar.gz')
-    if (!f.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz').withInputStream{ i -> f.withOutputStream{ it << i }}
-    }
-    doLast {
-        copy {
-            from tarTree(resources.gzip('jre.tar.gz'))
-            into getProjectDir()
-        }
-        file("zulu21.32.17-ca-fx-jdk21.0.2-linux_x64").renameTo(file("jvm"))
-    }
-}
-
 task downloadGStreamer {
     def f = new File('gs.msi')
     if (!f.exists()) {
