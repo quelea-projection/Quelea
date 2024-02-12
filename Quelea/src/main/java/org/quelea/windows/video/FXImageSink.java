@@ -18,6 +18,7 @@
  */
 package org.quelea.windows.video;
 
+import com.sun.jna.Pointer;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -32,7 +33,11 @@ import org.freedesktop.gstreamer.Sample;
 import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 
+import java.lang.module.ModuleFinder;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -50,16 +55,36 @@ public class FXImageSink {
     private final static String DEFAULT_CAPS;
     private final static int OLD_SAMPLE_BUFFER_SIZE = 2;
 
+    private static final Field mapInfoBufferField;
+    private static final Field pointerPeerField;
+    private static final Field bufferAddress;
+    private static final Field bufferCapacity;
+
     static {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
             DEFAULT_CAPS = "video/x-raw, format=BGRx";
         } else {
             DEFAULT_CAPS = "video/x-raw, format=xRGB";
         }
+
+        try {
+            mapInfoBufferField = Buffer.class.getDeclaredField("mapInfo");
+            mapInfoBufferField.setAccessible(true);
+            pointerPeerField = Pointer.class.getDeclaredField("peer");
+            pointerPeerField.setAccessible(true);
+            bufferAddress = java.nio.Buffer.class.getDeclaredField("address");
+            bufferAddress.setAccessible(true);
+            bufferCapacity = java.nio.Buffer.class.getDeclaredField("capacity");
+            bufferCapacity.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private final AppSink sink;
     private final ReadOnlyObjectWrapper<WritableImage> image;
+    private IntBuffer imageBuffer;
+    private PixelBuffer<IntBuffer> pixelBuffer;
     private Sample activeSample;
     private Buffer activeBuffer;
     private final Queue<Sample> oldSamples;
@@ -94,7 +119,10 @@ public class FXImageSink {
             return FlowReturn.OK;
         });
         sink.setCaps(Caps.fromString(DEFAULT_CAPS));
-        image = new ReadOnlyObjectWrapper<>(new WritableImage(1, 1));
+
+        imageBuffer = ByteBuffer.allocateDirect(4).asIntBuffer();
+        pixelBuffer = new PixelBuffer<>(1, 1, imageBuffer, PixelFormat.getIntArgbPreInstance());
+        image = new ReadOnlyObjectWrapper<>(new WritableImage(pixelBuffer));
     }
 
     /**
@@ -118,7 +146,19 @@ public class FXImageSink {
         return sink;
     }
 
+    long lastTs = 0;
+    int frames = 0;
+
     private void updateImage(Sample newSample) {
+        long ts = System.currentTimeMillis();
+        if(ts-lastTs>1000) {
+            System.out.println(frames);
+            frames = 1;
+            lastTs= ts;
+        }
+        else {
+            frames++;
+        }
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("Not on FX application thread");
         }
@@ -135,10 +175,45 @@ public class FXImageSink {
         activeBuffer = newSample.getBuffer();
 
         if (image.get().getWidth() != width || image.get().getHeight() != height) {
-            image.set(new WritableImage(width, height));
+            imageBuffer = ByteBuffer.allocateDirect(width*height*4).asIntBuffer();
+            pixelBuffer = new PixelBuffer<>(width, height, imageBuffer, PixelFormat.getIntArgbPreInstance());
+            image.set(new WritableImage(pixelBuffer));
         }
 
-        image.get().getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getByteBgraPreInstance(), activeBuffer.map(false), width * 4);
+        IntBuffer gBuffer = activeBuffer.map(false).asIntBuffer();
+
+        try {
+//            GstBufferAPI.MapInfoStruct mapInfo = (GstBufferAPI.MapInfoStruct) mapInfoBufferField.get(activeBuffer);
+//            long baseAddress = (long)pointerPeerField.get(mapInfo.data);
+//            long size = mapInfo.size.longValue();
+
+            long baseAddress = bufferAddress.getLong(gBuffer);
+            long size = bufferCapacity.getInt(gBuffer);
+
+//            System.out.println(baseAddress + "  "+ size);
+
+//            imageBuffer.rewind();
+
+            bufferAddress.setLong(imageBuffer, baseAddress);
+            bufferCapacity.setInt(imageBuffer, (int)size);
+            imageBuffer.position(0);
+            imageBuffer.limit((int)size);
+//            System.out.println(imageBuffer.get(4140000));
+//            System.out.println(gBuffer.get(4140000));
+//            System.out.println(gBuffer.getClass());
+//            System.out.println(imageBuffer.getClass());
+//            imageBuffer.put(gBuffer);
+
+//            imageBuffer.flip();
+
+            pixelBuffer.updateBuffer(b -> null);
+
+
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        }
+
+//        image.get().getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getByteBgraPreInstance(), activeBuffer.map(false), width * 4);
 
         if (oldSample != null) oldSamples.add(oldSample);
         if (oldBuffer != null) {
@@ -147,6 +222,9 @@ public class FXImageSink {
         while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
             oldSamples.remove().dispose();
         }
+
+//        long dur = System.nanoTime() - val;
+//        System.out.println("REFRESH TIME: " + dur / 1000);
 
     }
 
