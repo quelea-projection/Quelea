@@ -33,7 +33,6 @@ import org.freedesktop.gstreamer.Sample;
 import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 
-import java.lang.module.ModuleFinder;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
