@@ -328,6 +328,12 @@ public class RCHandler {
             songID = Long.parseLong(songIDString);
             SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
 
+            if (QueleaProperties.get().getUseDefaultTranslation()) {
+                String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                    sd.setCurrentTranslationLyrics(defaultTranslation);
+                }
+            }
             Utils.fxRunAndWait(() -> {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(sd);
             });
