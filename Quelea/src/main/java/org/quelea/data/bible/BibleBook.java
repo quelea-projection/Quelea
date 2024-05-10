@@ -170,12 +170,7 @@ public final class BibleBook implements BibleInterface, Serializable {
         } else {
             ret.bookName = "";
         }
-        
-        if (node.getAttributes().getNamedItem("bsname") != null) {
-            ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
-        } else {
-            ret.bsname = ret.bookName;
-        }
+
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
             if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
@@ -187,7 +182,7 @@ public final class BibleBook implements BibleInterface, Serializable {
                 if ret.bookName == "" && i == 0 {
                     Node caption = list.item(i).getFirstChild();
                     if (caption != null && caption.getNodeName().equalsIgnoreCase("caption")) {
-                        ret.bookNumber = caption.getTextContent()
+                        ret.bookNumber = caption.getNodeValue()
                     }
                 }
             }
@@ -195,6 +190,12 @@ public final class BibleBook implements BibleInterface, Serializable {
 
         if ret.bookName == "" {
             ret.bookName = defaultBookName;
+        }
+
+        if (node.getAttributes().getNamedItem("bsname") != null) {
+            ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
+        } else {
+            ret.bsname = ret.bookName;
         }
 
         LOGGER.log(Level.INFO, "Parsed " + ret.getChapters().length + " chapters in " + ret.bookName);
