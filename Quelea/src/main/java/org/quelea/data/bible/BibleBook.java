@@ -182,7 +182,7 @@ public final class BibleBook implements BibleInterface, Serializable {
                 if ret.bookName == "" && i == 0 {
                     Node caption = list.item(i).getFirstChild();
                     if (caption != null && caption.getNodeName().equalsIgnoreCase("caption")) {
-                        ret.bookNumber = caption.getNodeValue()
+                        ret.bookName = caption.getNodeValue()
                     }
                 }
             }
