@@ -168,14 +168,9 @@ public final class BibleBook implements BibleInterface, Serializable {
         } else if (node.getAttributes().getNamedItem("osisID") != null) {
             ret.bookName = node.getAttributes().getNamedItem("osisID").getNodeValue();
         } else {
-            ret.bookName = defaultBookName;
+            ret.bookName = "";
         }
-        
-        if (node.getAttributes().getNamedItem("bsname") != null) {
-            ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
-        } else {
-            ret.bsname = ret.bookName;
-        }
+
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
             if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
@@ -183,8 +178,26 @@ public final class BibleBook implements BibleInterface, Serializable {
                 BibleChapter chapter = BibleChapter.parseXML(list.item(i), i);
                 chapter.setBook(ret);
                 ret.addChapter(chapter);
+
+                if (ret.bookName == "" && i == 0) {
+                    Node caption = list.item(i).getFirstChild();
+                    if (caption != null && caption.getNodeName().equalsIgnoreCase("caption")) {
+                        ret.bookName = caption.getNodeValue();
+                    }
+                }
             }
         }
+
+        if (ret.bookName == "") {
+            ret.bookName = defaultBookName;
+        }
+
+        if (node.getAttributes().getNamedItem("bsname") != null) {
+            ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
+        } else {
+            ret.bsname = ret.bookName;
+        }
+
         LOGGER.log(Level.INFO, "Parsed " + ret.getChapters().length + " chapters in " + ret.bookName);
         return ret;
     }
