@@ -179,16 +179,16 @@ public final class BibleBook implements BibleInterface, Serializable {
                 chapter.setBook(ret);
                 ret.addChapter(chapter);
 
-                if ret.bookName == "" && i == 0 {
+                if (ret.bookName == "" && i == 0) {
                     Node caption = list.item(i).getFirstChild();
                     if (caption != null && caption.getNodeName().equalsIgnoreCase("caption")) {
-                        ret.bookName = caption.getNodeValue()
+                        ret.bookName = caption.getNodeValue();
                     }
                 }
             }
         }
 
-        if ret.bookName == "" {
+        if (ret.bookName == "") {
             ret.bookName = defaultBookName;
         }
 
