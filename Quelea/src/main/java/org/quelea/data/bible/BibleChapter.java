@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,7 +19,9 @@ package org.quelea.data.bible;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.quelea.services.utils.Utils;
@@ -36,6 +38,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
     private static int statId = 0;
     private final int num;
     private final Map<Integer, BibleVerse> verses;
+    private final List<String> captions;
     private transient SoftReference<String> softRefText;
     private final int id = statId++;
     private BibleBook book;
@@ -48,6 +51,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
     private BibleChapter(int num) {
         this.num = num;
         verses = new HashMap<>();
+        captions = new ArrayList<>();
     }
 
     @Override
@@ -141,6 +145,12 @@ public final class BibleChapter implements BibleInterface, Serializable {
                     ret.addVerse(verse);
                 }
             }
+            else if (list.item(i).getNodeName().equalsIgnoreCase("caption")) {
+                String caption = list.item(i).getTextContent();
+                if (caption != null) {
+                    ret.addCaption(caption);
+                }
+            }
         }
         return ret;
     }
@@ -185,6 +195,16 @@ public final class BibleChapter implements BibleInterface, Serializable {
         verses.put(verse.getNum(), verse);
     }
 
+
+    /**
+     * Add a caption to this chapter.
+     * <p/>
+     * @param caption the caption to add.
+     */
+    private void addCaption(String caption) {
+        captions.add(caption);
+    }
+
     /**
      * Get all the verses in this chapter .
      * <p/>
@@ -192,6 +212,15 @@ public final class BibleChapter implements BibleInterface, Serializable {
      */
     public BibleVerse[] getVerses() {
         return verses.values().toArray(new BibleVerse[verses.size()]);
+    }
+
+    /**
+     * Get all the captions in this chapter .
+     * <p/>
+     * @return all the captions in the chapter.
+     */
+    public String[] getCaptions() {
+        return captions.toArray(new String[captions.size()]);
     }
 
     /**

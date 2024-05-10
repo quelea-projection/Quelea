@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of Quelea, free projection software for churches.
- * 
- * 
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -149,6 +149,17 @@ public final class BibleBook implements BibleInterface, Serializable {
      */
     public static BibleBook parseXML(Node node, int defaultBookNum, String defaultBookName) {
         BibleBook ret = new BibleBook();
+
+        NodeList list = node.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
+                    || list.item(i).getNodeName().equalsIgnoreCase("c")) {
+                BibleChapter chapter = BibleChapter.parseXML(list.item(i), i);
+                chapter.setBook(ret);
+                ret.addChapter(chapter);
+            }
+        }
+
         if (node.getAttributes().getNamedItem("bnumber") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue().trim());
         } else if (node.getAttributes().getNamedItem("number") != null) {
@@ -167,24 +178,16 @@ public final class BibleBook implements BibleInterface, Serializable {
             ret.bookName = node.getAttributes().getNamedItem("name").getNodeValue();
         } else if (node.getAttributes().getNamedItem("osisID") != null) {
             ret.bookName = node.getAttributes().getNamedItem("osisID").getNodeValue();
-        } else {
-            ret.bookName = defaultBookName;
+        } else if (ret.getChapters().length > 0 && ret.getChapter(0).getCaptions().length > 0) {
+            ret.bookName = ret.getChapter(0).getCaptions()[0];
         }
-        
+
         if (node.getAttributes().getNamedItem("bsname") != null) {
             ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
         } else {
             ret.bsname = ret.bookName;
         }
-        NodeList list = node.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
-                    || list.item(i).getNodeName().equalsIgnoreCase("c")) {
-                BibleChapter chapter = BibleChapter.parseXML(list.item(i), i);
-                chapter.setBook(ret);
-                ret.addChapter(chapter);
-            }
-        }
+
         LOGGER.log(Level.INFO, "Parsed " + ret.getChapters().length + " chapters in " + ret.bookName);
         return ret;
     }
