@@ -135,7 +135,7 @@ public final class FileFilters {
     /**
      * The file filter used for MainTable.dat.
      */
-    public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
+    public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat, Song.tbdbt)", "MainTable.dat", "Song.tbdbt");
     /**
      * The file filter used for ProPresenter songs.
      */
