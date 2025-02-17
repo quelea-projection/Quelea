@@ -805,6 +805,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
         lyrics = lyrics.replace("<>", " ");
+
+        // Remove lines that contain only whitespace characers
+        // so they are used as e section-split
+        lyrics = lyrics.replaceAll("\\n\\s+\\n", "\n\n");
+        lyrics = lyrics.replaceAll("\\r\\s+\\r", "\r\r");
+        lyrics = lyrics.replaceAll("\\r\\n\\s+\\r\\n", "\r\n\r\n");
+        
         for (String section : lyrics.split("(\n\n)|(\r\r)|(\r\n\r\n)")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
