@@ -7,12 +7,12 @@ on:
 
 jobs:
   update-labels:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Setup Java
         run: |
-          curl -O https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
-          sudo apt-get -y install ./zulu21.32.17-ca-fx-jdk21.0.2-linux_amd64.deb
+          curl -O https://cdn.azul.com/zulu/bin/zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
+          sudo apt-get -y install ./zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
       - name: Checkout main source
         uses: actions/checkout@v4
         with:
