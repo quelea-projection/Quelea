@@ -130,9 +130,15 @@ public class ScheduleList extends StackPane {
                 };
                 cells.add(listCell);
                 listCell.setOnDragDetected(event -> {
-
                     if (listCell.getItem() != null) {
+                        // Get the current index of the cell being dragged, regardless of selection state
                         localDragIndex = listCell.getIndex();
+                        
+                        // Make sure the item is selected before starting the drag operation
+                        if (!listView.getSelectionModel().isSelected(localDragIndex)) {
+                            listView.getSelectionModel().clearAndSelect(localDragIndex);
+                        }
+                        
                         Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
                         ClipboardContent content = new ClipboardContent();
                         if (listCell.getItem() instanceof SongDisplayable) {
@@ -141,7 +147,7 @@ public class ScheduleList extends StackPane {
                             content.putString("tempdisp");
                             tempDisp = listCell.getItem();
                         }
-
+                
                         db.setContent(content);
                         event.consume();
                         db.setDragView(listCell.snapshot(null, null));
@@ -191,6 +197,10 @@ public class ScheduleList extends StackPane {
                     if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                         event.acceptTransferModes(TransferMode.ANY);
                     }
+                });
+                listCell.setOnDragDone(event -> {
+                    localDragIndex = -1;
+                    event.consume();
                 });
                 listCell.setOnDragDropped(event -> dragDropped(event, listCell));
                 return listCell;
@@ -377,6 +387,7 @@ public class ScheduleList extends StackPane {
             }
         }
         event.consume();
+        localDragIndex = -1;
     }
 
     /**
