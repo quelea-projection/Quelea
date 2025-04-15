@@ -26,10 +26,9 @@ jobs:
         env:
           DISPLAY: :99
         run: |
-          sudo apt install -y wine xvfb
           sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install wine32
+          sudo apt update
+          sudo apt install -y wine wine32 xvfb
           wget http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -O is.exe
           Xvfb $DISPLAY &
           wine wineboot --init
