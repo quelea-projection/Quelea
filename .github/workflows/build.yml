@@ -41,7 +41,7 @@ jobs:
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
           cd Quelea
-          gradle tar runPackr izpack releaseSummary
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE tar runPackr izpack releaseSummary
 
       - name: Create standalone
         if: ${{ matrix.os == 'windows-latest' }}
