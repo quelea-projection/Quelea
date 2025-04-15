@@ -28,9 +28,11 @@ modules:
     sources:
       - type: archive
         url: https://github.com/ebbez/Quelea/releases/download/CI-RELEASE/quelea-CI-UNSTABLE-java-app.tar.gz
+        sha256: f0726bc14784039b6300e18e4b6c076ccea5774af2fde42392e78887dbf4a619
         strip-components: 1
       - type: file
         url: https://raw.githubusercontent.com/ebbez/Quelea/refs/heads/master/flatpak/quelea.desktop
+        sha256: 8d84ca22c1323385afc943158cdc6fd8fab03d2484675c0736f87bb4ed8bc61c
       - type: script
         dest-filename: quelea
         commands:
