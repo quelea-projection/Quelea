@@ -47,7 +47,7 @@ jobs:
             dist
 
       - name: Upload binaries to release
-        uses: softprops/action-gh-release
+        uses: softprops/action-gh-release@v2
         with:
           files: Quelea/dist/standalone/*
           tag: CI-RELEASE
