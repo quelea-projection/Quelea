@@ -7,7 +7,10 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,35 +20,40 @@ jobs:
         with:
           java-version: '21'
           distribution: 'adopt'
-          cache: 'gradle'
       
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          version: '8.13'
 
-      - name: Environment setup
-        env:
-          DISPLAY: :99
+      - name: Windows innosetup
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install -y wine wine32 xvfb
-          wget http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -O is.exe
-          Xvfb $DISPLAY &
-          wine wineboot --init
-          wine is.exe /VERYSILENT /SUPPRESSMSGBOXES
+          Invoke-WebRequest -Uri  http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -OutFile is.exe
+          .\is.exe /VERYSILENT /SUPPRESSMSGBOXES
 
       - name: Build
         run: |
           cd Quelea
-          chmod +x gradlew
-          chmod +x build-install.sh
-          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres jar copyToDist
+
+      - name: Create standalones
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          cd Quelea
+          gradle tar runPackr izpack releaseSummary
+
+      - name: Create standalone
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          cd Quelea
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE innosetup releaseSummary
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v2
         with:
           files: Quelea/dist/standalone/*
-          tag: CI-RELEASE
+          tag_name: CI-RELEASE
           prerelease: true
           make_latest: false
           body: "**This is a CI Build, built from the latest copy of the source code automatically. 
