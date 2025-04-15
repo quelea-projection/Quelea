@@ -28,7 +28,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/ebbez/Quelea/releases/download/CI-RELEASE/quelea-CI-UNSTABLE-java-app.tar.gz
-        sha256: f0726bc14784039b6300e18e4b6c076ccea5774af2fde42392e78887dbf4a619
+        sha256: c58f46e84ae06e5b4192cac40df0efc6b89eaa41eb01448a5b8b8b728cce85c1
         strip-components: 1
       - type: file
         url: https://raw.githubusercontent.com/ebbez/Quelea/refs/heads/master/flatpak/quelea.desktop
@@ -37,9 +37,9 @@ modules:
         dest-filename: quelea
         commands:
           - cd /app
-          - java 
+          - java
             --add-opens java.base/java.nio=ALL-UNNAMED 
-            --add-opens java.base/java.lang=ALL-UNNAMED 
+            --add-opens java.base/java.lang=ALL-UNNAMED
             --add-exports=javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED 
             --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED 
             --add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED 
