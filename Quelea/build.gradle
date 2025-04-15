@@ -320,4 +320,5 @@ task releaseSummary(type:JavaExec) {
 
 tasks.named("izPackCreateInstaller") {
     dependsOn(tasks.named("zipMacPackr"))
+    dependsOn(tasks.named('tar'))
 }
