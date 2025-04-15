@@ -7,12 +7,21 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Java
-        run: |
-          curl -O https://cdn.azul.com/zulu/bin/zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
-          sudo apt-get -y install ./zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
+        uses: setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          cache: 'gradle'
+      
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
       - name: Environment setup
         env:
           DISPLAY: :99
@@ -25,22 +34,27 @@ jobs:
           Xvfb $DISPLAY &
           wine wineboot --init
           wine is.exe /VERYSILENT /SUPPRESSMSGBOXES
-      - name: Checkout
-        uses: actions/checkout@v4
+
       - name: Build
         run: |
-          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
-          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+          ./gradlew 
+            -Dnightly=true 
+            -Dversionsuffix=CI-UNSTABLE 
+            clean 
+            dist
+
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+        uses: softprops/action-gh-release
         with:
-          file: Quelea/dist/standalone/*
+          files: Quelea/dist/standalone/*
           tag: CI-RELEASE
-          overwrite: true
           prerelease: true
           make_latest: false
-          file_glob: true
-          body: "**This is a CI Build, built from the latest copy of the source code automatically. It's not an official release and we don't recommend using this in production.**<br/>Quelea is also distributed as a Linux snap package. To install it, make sure snap is installed then run:<pre>sudo snap install --edge quelea</pre>"
+          body: "**This is a CI Build, built from the latest copy of the source code automatically. 
+                It's not an official release and we don't recommend using this in production.**<br/>
+                Quelea is also distributed as a Linux snap package. To install it, make 
+                sure snap is installed then run:
+                <pre>sudo snap install --edge quelea</pre>"
