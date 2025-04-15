@@ -22,8 +22,8 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 -t /app/bin quelea
-      - install -Dm644 quelea.desktop /app/share/applications
-      - install -Dm644 icons/logo64.png /app/share/hicolor/64x64/
+      - install -Dm644 quelea.desktop /app/share/applications/quelea.desktop
+      - install -Dm644 icons/logo64.png /app/share/icons/hicolor/64x64/logo64.png
       - cp -a ./ /app/
     sources:
       - type: archive
@@ -40,6 +40,16 @@ modules:
           - java 
             --add-opens java.base/java.nio=ALL-UNNAMED 
             --add-opens java.base/java.lang=ALL-UNNAMED 
+            --add-exports=javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED 
+            --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED 
+            --add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED 
+            --add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED 
+            --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED 
+            --add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED 
+            -Djdk.gtk.verbose=true 
+            -DVLCJ_INITX=no 
+            -Dfile.encoding=UTF-8 
+            -Dprism.dirtyopts=false
             -jar Quelea.jar
 
 finish-args:
