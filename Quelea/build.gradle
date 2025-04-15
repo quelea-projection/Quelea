@@ -297,7 +297,8 @@ task tar(type: Tar) {
 
     from 'dist/'
     into "Quelea-${versionsuffix}-java-app"
-    include "bibles/",
+    include "lib/",
+            "bibles/",
             "dictionaries/",
             "icons/",
             "img/",
