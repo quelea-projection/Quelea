@@ -39,11 +39,7 @@ jobs:
           cd Quelea
           chmod +x gradlew
           chmod +x build-install.sh
-          ./gradlew 
-            -Dnightly=true 
-            -Dversionsuffix=CI-UNSTABLE 
-            clean 
-            dist
+          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v2
