@@ -101,12 +101,12 @@ task downloadGStreamer {
 task downloadJres {
     def mf = new File('macjre.zip')
     if (!mf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-macosx_x64.zip').withInputStream{ i -> mf.withOutputStream{ it << i }}
+        new URL('https://cdn.azul.com/zulu/bin/zulu21.40.17-ca-fx-jre21.0.6-macosx_x64.zip').withInputStream{ i -> mf.withOutputStream{ it << i }}
     }
 
     def wf = new File('winjre64.zip')
     if (!wf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-win_x64.zip').withInputStream{ i -> wf.withOutputStream{ it << i }}
+        new URL('https://cdn.azul.com/zulu/bin/zulu21.40.17-ca-fx-jre21.0.6-win_x64.zip').withInputStream{ i -> wf.withOutputStream{ it << i }}
     }
 
     doLast {
