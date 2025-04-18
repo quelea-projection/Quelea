@@ -50,10 +50,9 @@ ext {
     WindowsInstallerName="quelea-" + versionsuffix + "-x86-windows-install.exe"
     WindowsInstaller64Name="quelea-" + versionsuffix + "-x64-windows-install.exe"
     MacInstallerName="quelea-" + versionsuffix + "-mac.zip"
-    DebInstallerName ="quelea-" + versionsuffix + "-deb-install.deb"
+    JavaAppName="quelea-" + versionsuffix + "-java-app.tar.gz"
 
     CPInstaller ="dist/standalone/" + CPInstallerName
-    DebInstaller ="dist/standalone/" + DebInstallerName
     WindowsInstaller="dist/standalone/" + ext.WindowsInstallerName
     WindowsInstaller64="dist/standalone/" + ext.WindowsInstaller64Name
 }
@@ -210,7 +209,7 @@ task zipMacPackr(type: Zip) {
 runPackr.finalizedBy(zipMacPackr);
 
 task dist(type: GradleBuild) {
-    tasks = ['labelcheck', 'downloadJres', 'downloadGStreamer', 'createQueleaExe64', 'copyToDist', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
+    tasks = ['labelcheck', 'downloadJres', 'downloadGStreamer', 'createQueleaExe64', 'copyToDist', 'tar', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
 
 dependencies {
@@ -291,6 +290,30 @@ jar {
     }
 }
 
+task tar(type: Tar) {
+    archiveFileName = JavaAppName
+    destinationDirectory = file("dist/standalone/")
+    compression = Compression.GZIP
+
+    from 'dist/'
+    into "Quelea-${versionsuffix}-java-app"
+    include "lib/",
+            "bibles/",
+            "dictionaries/",
+            "icons/",
+            "img/",
+            "languages/",
+            "licenses/",
+            "server/",
+            "themes/",
+            "vid/",
+            "fopcfg.xml",
+            "quelea.properties",
+            "scheduleformat.xsl",
+            "songformat.xsl",
+            "Quelea.jar"
+}
+
 task releaseSummary(type:JavaExec) {
     mainClass = 'org.quelea.services.utils.ReleaseSummaryGenerator'
     classpath = sourceSets.main.runtimeClasspath
@@ -298,4 +321,5 @@ task releaseSummary(type:JavaExec) {
 
 tasks.named("izPackCreateInstaller") {
     dependsOn(tasks.named("zipMacPackr"))
+    dependsOn(tasks.named('tar'))
 }
