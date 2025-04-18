@@ -1,0 +1,66 @@
+id: org.quelea.Quelea
+
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+
+sdk: org.freedesktop.Sdk
+
+command: quelea
+
+modules:
+  - name: openjdk-jre24
+    buildsystem: simple
+    build-commands:
+      - cp -a . /app/jre
+    sources:
+      - type: archive
+        url: https://cdn.azul.com/zulu/bin/zulu24.28.85-ca-fx-jre24.0.0-linux_x64.tar.gz
+        sha256: 74fd6b44281319ca228a194122acf0ed1d7cc6f3b64d6293ba9ee69795174913
+        strip-components: 1
+
+  - name: quelea
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 -t /app/bin quelea
+      - install -Dm644 quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
+      - install -Dm644 icons/logo64.png /app/share/icons/hicolor/64x64/apps/org.quelea.Quelea.png
+      - cp -a ./ /app/
+    sources:
+      - type: archive
+        url: https://github.com/ebbez/Quelea/releases/download/CI-RELEASE/quelea-CI-UNSTABLE-java-app.tar.gz
+        sha256: 48dfdd536e251accad8fb6240e7bdd0c9fdb1d287788710bca90073815e0656f
+        strip-components: 1
+      - type: file
+        url: https://raw.githubusercontent.com/ebbez/Quelea/refs/heads/flatpak/flatpak/quelea.desktop
+        sha256: 8d84ca22c1323385afc943158cdc6fd8fab03d2484675c0736f87bb4ed8bc61c
+      - type: script
+        dest-filename: quelea
+        commands:
+          - cd /app
+          - java
+            --add-opens java.base/java.nio=ALL-UNNAMED 
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-exports=javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED 
+            --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED 
+            --add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED 
+            --add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED 
+            --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED 
+            --add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED 
+            -Djdk.gtk.verbose=true 
+            -DVLCJ_INITX=no 
+            -Dfile.encoding=UTF-8 
+            -Dprism.dirtyopts=false
+            -jar Quelea.jar
+
+finish-args:
+  # X11
+  - --socket=x11
+  # GPU acceleration if needed
+  - --device=dri
+  # Needs to talk to the network:
+  - --share=network
+  # Needs to save files locally
+  - --filesystem=home
+  # Environment variables for running Java apps
+  - --env=PATH=/app/jre/bin:/app/bin:/usr/bin
+  - --env=JAVA_HOME=/app/jre
