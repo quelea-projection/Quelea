@@ -28,7 +28,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Windows innosetup
-        if: ${{ contains('windows', matrix.os) }}
+        if: ${{ contains(matrix.os, 'windows') }}
         run: |
           Invoke-WebRequest -Uri  http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -OutFile is.exe
           .\is.exe /VERYSILENT /SUPPRESSMSGBOXES
@@ -39,13 +39,13 @@ jobs:
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres jar copyToDist
 
       - name: Create MacOS standalone and CP-installer
-        if: ${{ !contains('windows', matrix.os) }}
+        if: ${{ !contains(matrix.os, 'windows') }}
         run: |
           cd Quelea
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack releaseSummary
 
       - name: Create Windows standalone
-        if: ${{ contains('windows', matrix.os) }}
+        if: ${{ contains(matrix.os, 'windows') }}
         run: |
           cd Quelea
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE downloadGStreamer createQueleaExe64 innosetup releaseSummary
