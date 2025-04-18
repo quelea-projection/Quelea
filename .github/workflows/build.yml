@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - 'master'
-    paths:
-      - 'Quelea/**'
+    # paths:
+    #   - 'Quelea/**'
 
 jobs:
   release:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-2025, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Windows innosetup
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ contains('windows', matrix.os) }}
         run: |
           Invoke-WebRequest -Uri  http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -OutFile is.exe
           .\is.exe /VERYSILENT /SUPPRESSMSGBOXES
@@ -39,13 +39,13 @@ jobs:
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres jar copyToDist
 
       - name: Create MacOS standalone and CP-installer
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ !contains('windows', matrix.os) }}
         run: |
           cd Quelea
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack releaseSummary
 
       - name: Create Windows standalone
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ contains('windows', matrix.os) }}
         run: |
           cd Quelea
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE downloadGStreamer createQueleaExe64 innosetup releaseSummary
