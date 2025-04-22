@@ -4,43 +4,61 @@ on:
   push:
     branches:
       - 'master'
+    # paths:
+    #   - 'Quelea/**'
 
 jobs:
   release:
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        os: [windows-2025, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup Java
-        run: |
-          curl -O https://cdn.azul.com/zulu/bin/zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
-          sudo apt-get -y install ./zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
-      - name: Environment setup
-        env:
-          DISPLAY: :99
-        run: |
-          sudo apt install -y wine xvfb
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install wine32
-          wget http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -O is.exe
-          Xvfb $DISPLAY &
-          wine wineboot --init
-          wine is.exe /VERYSILENT /SUPPRESSMSGBOXES
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          java-package: 'jdk+fx'
+          distribution: 'zulu'
+      
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Windows innosetup
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: |
+          Invoke-WebRequest -Uri  http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -OutFile is.exe
+          .\is.exe /VERYSILENT /SUPPRESSMSGBOXES
+
       - name: Build
         run: |
-          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           cd Quelea
-          chmod +x gradlew
-          chmod +x build-install.sh
-          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres jar copyToDist
+
+      - name: Create MacOS standalone and CP-installer
+        if: ${{ !contains(matrix.os, 'windows') }}
+        run: |
+          cd Quelea
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack releaseSummary
+
+      - name: Create Windows standalone
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: |
+          cd Quelea
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE downloadGStreamer createQueleaExe64 innosetup releaseSummary
+
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+        uses: softprops/action-gh-release@v2
         with:
-          file: Quelea/dist/standalone/*
-          tag: CI-RELEASE
-          overwrite: true
+          files: Quelea/dist/standalone/*
+          tag_name: CI-RELEASE
           prerelease: true
           make_latest: false
-          file_glob: true
-          body: "**This is a CI Build, built from the latest copy of the source code automatically. It's not an official release and we don't recommend using this in production.**<br/>Quelea is also distributed as a Linux snap package. To install it, make sure snap is installed then run:<pre>sudo snap install --edge quelea</pre>"
+          body: "**This is a CI Build, built from the latest copy of the source code automatically. 
+                It's not an official release and we don't recommend using this in production.**<br/>
+                Quelea is also distributed as a Linux snap package. To install it, make 
+                sure snap is installed then run:
+                <pre>sudo snap install --edge quelea</pre>"
