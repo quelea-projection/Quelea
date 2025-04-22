@@ -120,7 +120,8 @@ task downloadJres {
 
 task copyToDist {
     doLast {
-        copy {from configurations.runtimeClasspath into project.distdir + "/lib"} //libraries
+        copy {from configurations.runtimeClasspath into project.distdir + "/libjfx" include "javafx*" } // all JavaFX libraries
+        copy {from configurations.runtimeClasspath into project.distdir + "/lib" exclude "javafx*" } // all libraries except JavaFX libraries
         copy {from "themes" into project.distdir + "/themes"}
         copy {from "icons" into project.distdir + "/icons"}
         copy {from "bibles" into project.distdir + "/bibles"}
