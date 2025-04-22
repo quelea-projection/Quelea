@@ -42,7 +42,7 @@ jobs:
         if: ${{ !contains(matrix.os, 'windows') }}
         run: |
           cd Quelea
-          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack releaseSummary
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack tar releaseSummary
 
       - name: Create Windows standalone
         if: ${{ contains(matrix.os, 'windows') }}
