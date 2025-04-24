@@ -68,6 +68,7 @@ jobs:
 
       - name: Build Flatpak
         run: |
+          flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           cd flatpak
           flatpak-builder --repo=repo builddir org.quelea.Quelea.yml --force-clean
           flatpak build-bundle repo/ ../Quelea/dist/standalone/quelea-CI-UNSTABLE.flatpak org.quelea.Quelea --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
