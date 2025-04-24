@@ -29,11 +29,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       
-      - name: Setup Wine
+      - name: Install Wine and Flatpak
         run: |
           sudo dpkg --add-architecture i386
           sudo apt update
-          sudo apt install wine wine32 wine64
+          sudo apt install wine wine32 wine64 flatpak flatpak-builder
 
       - name: Setup Inno Setup cache
         id: cache-innosetup
