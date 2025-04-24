@@ -27,8 +27,7 @@ modules:
       - cp -a ./ /app/
     sources:
       - type: archive
-        url: https://github.com/ebbez/Quelea/releases/download/CI-RELEASE/quelea-CI-UNSTABLE-java-app.tar.gz
-        sha256: 48dfdd536e251accad8fb6240e7bdd0c9fdb1d287788710bca90073815e0656f
+        path: ../Quelea/dist/standalone/quelea-CI-UNSTABLE-java-app.tar.gz
         strip-components: 1
       - type: file
         url: https://raw.githubusercontent.com/ebbez/Quelea/refs/heads/flatpak/flatpak/quelea.desktop
