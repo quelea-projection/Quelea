@@ -3,9 +3,13 @@ name: Build CI release
 on:
   push:
     branches:
-      - 'master'
+      - master
     # paths:
     #   - 'Quelea/**'
+
+  pull_request:
+    branches:
+      - master
 
 jobs:
   release:
@@ -54,6 +58,7 @@ jobs:
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
 
       - name: Upload binaries to release
+        if: ${{ github.event_name == 'push' }}
         uses: softprops/action-gh-release@v2
         with:
           files: Quelea/dist/standalone/*
@@ -65,3 +70,9 @@ jobs:
                 Quelea is also distributed as a Linux snap package. To install it, make 
                 sure snap is installed then run:
                 <pre>sudo snap install --edge quelea</pre>"
+
+      - name: Upload standalones as artifact of PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          path: Quelea/dist/standalone/
