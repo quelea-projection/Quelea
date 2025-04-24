@@ -68,6 +68,7 @@
         <pack name="base" required="yes" preselected="yes" hidden="true">
             <description>Core components</description>
             <fileset dir="lib" targetdir="$INSTALL_PATH/lib"/>
+            <fileset dir="libjfx" targetdir="$INSTALL_PATH/lib"/>
             <file src="vbs" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
