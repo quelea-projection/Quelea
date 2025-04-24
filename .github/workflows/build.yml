@@ -9,10 +9,7 @@ on:
 
 jobs:
   release:
-    strategy:
-      matrix:
-        os: [windows-2025, ubuntu-24.04]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,29 +23,35 @@ jobs:
       
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Windows innosetup
-        if: ${{ contains(matrix.os, 'windows') }}
+      
+      - name: Setup Wine
         run: |
-          Invoke-WebRequest -Uri  http://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -OutFile is.exe
-          .\is.exe /VERYSILENT /SUPPRESSMSGBOXES
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install wine wine32 wine64
+
+      - name: Setup Inno Setup cache
+        id: cache-innosetup
+        uses: actions/cache@v4
+        with:
+          path: ~/.wine/drive_c/Program Files (x86)/Inno Setup 6
+          key: ${{ runner.os }}-innosetup
+
+      - name: Install InnoSetup
+        if: ${{ ! steps.cache-innosetup.outputs.cache-hit }} # || true on Inno Setup update
+        env:
+          DISPLAY: :99
+          WINEDEBUG: -all,err+all
+          WINEARCH: win64
+        run: |
+          Xvfb $DISPLAY &
+          curl -SL "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe" -o is.exe
+          wine is.exe /SP- /VERYSILENT /ALLUSERS /SUPPRESSMSGBOXES
 
       - name: Build
         run: |
           cd Quelea
-          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres jar copyToDist
-
-      - name: Create MacOS standalone and CP-installer
-        if: ${{ !contains(matrix.os, 'windows') }}
-        run: |
-          cd Quelea
-          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE runPackr izpack releaseSummary
-
-      - name: Create Windows standalone
-        if: ${{ contains(matrix.os, 'windows') }}
-        run: |
-          cd Quelea
-          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE downloadGStreamer createQueleaExe64 innosetup releaseSummary
+          gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v2
