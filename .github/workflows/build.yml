@@ -70,7 +70,7 @@ jobs:
         run: |
           flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           cd flatpak
-          flatpak-builder --repo=repo builddir org.quelea.Quelea.yml --force-clean
+          flatpak-builder --force-clean --user --install-deps-from=flathub --repo=repo builddir org.quelea.Quelea.yml
           flatpak build-bundle repo/ ../Quelea/dist/standalone/quelea-CI-UNSTABLE.flatpak org.quelea.Quelea --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload binaries to release
