@@ -40,10 +40,16 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/quelea-projection/Quelea/refs/heads/master/screenshot.png</image>
+      <image>https://github.com/quelea-projection/Quelea/raw/e00d97b97ec8f8ddc3edd5f90bc7f24716601656/screenshot.png</image>
       <caption>Main Quelea dashboard view</caption>
     </screenshot>
   </screenshots>
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <display_length compare="ge">768</display_length>
+  </recommends>
 
   <releases>
     <release version="2024.1" date="2024-05-11">
@@ -80,11 +86,12 @@
           </ul>
       </description>
     </release>
+    <release version="2022.0" date="2022-04-29" />
+    <release version="2021.0" date="2021-10-09" />
+    <release version="2020.0" date="2020-08-19" />
+    <release version="2019.1" date="2019-07-09" />
+    <release version="2019.0" date="2019-03-11" />
+    <release version="2018.1" date="2018-06-07" />
+    <release version="2018.0" date="2018-05-31" />
   </releases>
-
-  <recommends>
-    <control>keyboard</control>
-    <control>pointing</control>
-    <display_length compare="ge">768</display_length>
-  </recommends>
 </component>
