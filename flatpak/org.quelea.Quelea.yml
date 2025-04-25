@@ -22,16 +22,17 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 -t /app/bin quelea
-      - install -Dm644 quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
+      - install -Dm644 org.quelea.Quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
       - install -Dm644 icons/logo64.png /app/share/icons/hicolor/64x64/apps/org.quelea.Quelea.png
       - cp -a ./ /app/
     sources:
       - type: archive
         path: ../Quelea/dist/standalone/quelea-CI-UNSTABLE-java-app.tar.gz
         strip-components: 1
+
       - type: file
-        url: https://raw.githubusercontent.com/ebbez/Quelea/refs/heads/flatpak/flatpak/quelea.desktop
-        sha256: 8d84ca22c1323385afc943158cdc6fd8fab03d2484675c0736f87bb4ed8bc61c
+        path: org.quelea.Quelea.desktop
+        
       - type: script
         dest-filename: quelea
         commands:
