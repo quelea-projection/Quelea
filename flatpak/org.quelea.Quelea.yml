@@ -55,6 +55,7 @@ modules:
 finish-args:
   # X11
   - --socket=x11
+  - --share=ipc
   # GPU acceleration if needed
   - --device=dri
   # Needs to talk to the network:
