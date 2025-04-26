@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          java-package: 'jdk+fx'
-          distribution: 'zulu'
+          java-package: 'jdk'
+          distribution: 'temurin'
       
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
