@@ -39,10 +39,6 @@ javafx {
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
 
-wrapper {
-    gradleVersion = '4.10.2'
-}
-
 ext {
     versionsuffix = System.properties["versionsuffix"]!=null ? System.properties["versionsuffix"] : project.queleaversion
 
