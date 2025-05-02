@@ -3,6 +3,7 @@ When changing the version number, it needs to be changed in:
 1) Version constant in QueleaProperties.java (remember the minor version constant as the second argument if this is an Alpha / Beta / another dev release.)
 2) gradle.properties
 3) snap/snapcraft.yaml
+4) Add a <release> tag to releases in flatpak/org.quelea.Quelea.metainfo.xml (Linux metainfo)
 
 Everything else should now be automated.
 
