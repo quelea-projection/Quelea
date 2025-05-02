@@ -51,7 +51,7 @@
     <display_length compare="ge">768</display_length>
   </recommends>
 
-    <releases>
+  <releases>
     <release version="2024.1" date="2024-05-11">
       <url type="details">https://github.com/quelea-projection/Quelea/blob/master/Quelea/changelogs/changelog-2024.1.txt</url>
       <description>
