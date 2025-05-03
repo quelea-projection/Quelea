@@ -28,11 +28,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       
-      - name: Setup Wine
+      - name: Install Wine and Flatpak
         run: |
           sudo dpkg --add-architecture i386
           sudo apt update
-          sudo apt install wine wine32 wine64
+          sudo apt install wine wine32 wine64 flatpak flatpak-builder
 
       - name: Setup Inno Setup cache
         id: cache-innosetup
@@ -56,6 +56,21 @@ jobs:
         run: |
           cd Quelea
           gradle -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+
+      - name: Cache Flatpak
+        uses: actions/cache@v4
+        with:
+          path: |
+            flatpak/repo
+            flatpak/builddir
+          key: flatpak
+
+      - name: Build Flatpak
+        run: |
+          flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          cd flatpak
+          flatpak-builder --force-clean --user --install-deps-from=flathub --repo=repo builddir org.quelea.Quelea.yml
+          flatpak build-bundle repo/ ../Quelea/dist/standalone/quelea-CI-UNSTABLE.flatpak org.quelea.Quelea --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload binaries to release
         if: ${{ github.event_name == 'push' }}

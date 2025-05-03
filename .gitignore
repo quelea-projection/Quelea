@@ -27,5 +27,9 @@ Quelea/.nb-gradle/*
 Quelea/bin/*
 Quelea/private/*
 
+flatpak/**/builddir
+flatpak/**/.flatpak-builder
+flatpak/**/repo
+
 Thumbs.db
 gs.msi
