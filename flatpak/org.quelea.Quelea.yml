@@ -39,7 +39,7 @@ modules:
     build-commands:
       - install -Dm755 -t /app/bin quelea
       - install -Dm644 org.quelea.Quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
-      - install -Dm644 icons/logo64.png /app/share/icons/hicolor/64x64/apps/org.quelea.Quelea.png
+      - install -Dm644 icons/logo512.png /app/share/icons/hicolor/512x512/apps/org.quelea.Quelea.png
       - cp -a ./ /app/
     sources:
       - type: archive
