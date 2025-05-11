@@ -13,6 +13,8 @@ finish-args:
   - --share=ipc
   # GPU acceleration if needed
   - --device=dri
+  # Audio
+  - --socket=pulseaudio
   # Needs to talk to the network:
   - --share=network
   # Needs to save files locally
