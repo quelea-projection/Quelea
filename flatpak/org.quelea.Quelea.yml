@@ -40,6 +40,7 @@ modules:
       - install -Dm755 -t /app/bin quelea
       - install -Dm644 org.quelea.Quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
       - install -Dm644 icons/logo512.png /app/share/icons/hicolor/512x512/apps/org.quelea.Quelea.png
+      - install -Dm644 org.quelea.Quelea.metainfo.xml /app/share/metainfo/org.quelea.Quelea.metainfo.xml
       - cp -a ./ /app/
     sources:
       - type: archive
@@ -48,6 +49,9 @@ modules:
 
       - type: file
         path: org.quelea.Quelea.desktop
+
+      - type: file
+        path: org.quelea.Quelea.metainfo.xml
         
       - type: script
         dest-filename: quelea
