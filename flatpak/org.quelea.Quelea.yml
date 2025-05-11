@@ -13,6 +13,8 @@ finish-args:
   - --share=ipc
   # GPU acceleration if needed
   - --device=dri
+  # Audio
+  - --socket=pulseaudio
   # Needs to talk to the network:
   - --share=network
   # Needs to save files locally
@@ -28,16 +30,26 @@ modules:
       - cp -a . /app/jre
     sources:
       - type: archive
-        url: https://cdn.azul.com/zulu/bin/zulu24.28.85-ca-fx-jre24.0.0-linux_x64.tar.gz
-        sha256: 74fd6b44281319ca228a194122acf0ed1d7cc6f3b64d6293ba9ee69795174913
+        url: https://cdn.azul.com/zulu/bin/zulu24.30.13-ca-fx-jre24.0.1-linux_x64.tar.gz
+        sha256: a65fe80a3ff4c352709bec1750e93d5680f73eb43b3bb7d6b7ab60c6fca5669f 
         strip-components: 1
+        only-arches:
+          - x86_64
+
+      - type: archive
+        url: https://cdn.azul.com/zulu/bin/zulu24.30.13-ca-fx-jre24.0.1-linux_aarch64.tar.gz
+        sha256: 3b2097972e08da3acf84bf12fc59909a7c0b7a4037738f01f8f9ec3fd249b971
+        strip-components: 1
+        only-arches:
+          - aarch64
 
   - name: quelea
     buildsystem: simple
     build-commands:
       - install -Dm755 -t /app/bin quelea
       - install -Dm644 org.quelea.Quelea.desktop /app/share/applications/org.quelea.Quelea.desktop
-      - install -Dm644 icons/logo64.png /app/share/icons/hicolor/64x64/apps/org.quelea.Quelea.png
+      - install -Dm644 icons/logo512.png /app/share/icons/hicolor/512x512/apps/org.quelea.Quelea.png
+      - install -Dm644 org.quelea.Quelea.metainfo.xml /app/share/metainfo/org.quelea.Quelea.metainfo.xml
       - cp -a ./ /app/
     sources:
       - type: archive
@@ -46,6 +58,9 @@ modules:
 
       - type: file
         path: org.quelea.Quelea.desktop
+
+      - type: file
+        path: org.quelea.Quelea.metainfo.xml
         
       - type: script
         dest-filename: quelea
