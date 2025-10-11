@@ -151,7 +151,7 @@ public class FXImageSink {
     private void updateImage(Sample newSample) {
         long ts = System.currentTimeMillis();
         if(ts-lastTs>1000) {
-            System.out.println(frames);
+//            System.out.println(frames);
             frames = 1;
             lastTs= ts;
         }
