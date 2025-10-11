@@ -55,10 +55,10 @@ parts:
     build-packages: [unzip, wget]
     stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
-      wget -O jvm.tar.gz https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-fx-jdk21.0.2-linux_x64.tar.gz
+      wget -O jvm.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
       mkdir jvm
       tar -xf jvm.tar.gz -C jvm --strip-components 1
-      wget -O gradle.zip https://services.gradle.org/distributions/gradle-8.6-bin.zip
+      wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.1.0-bin.zip
       unzip gradle.zip
       PATH=$PATH:$(pwd)/jvm/bin:$(pwd)/gradle-8.6/bin
       JAVA_HOME=$(pwd)/jvm

@@ -24,20 +24,20 @@ finish-args:
   - --env=JAVA_HOME=/app/jre
 
 modules:
-  - name: openjdk-jre24
+  - name: openjdk-jre25
     buildsystem: simple
     build-commands:
       - cp -a . /app/jre
     sources:
       - type: archive
-        url: https://cdn.azul.com/zulu/bin/zulu24.30.13-ca-fx-jre24.0.1-linux_x64.tar.gz
+        url: https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
         sha256: a65fe80a3ff4c352709bec1750e93d5680f73eb43b3bb7d6b7ab60c6fca5669f 
         strip-components: 1
         only-arches:
           - x86_64
 
       - type: archive
-        url: https://cdn.azul.com/zulu/bin/zulu24.30.13-ca-fx-jre24.0.1-linux_aarch64.tar.gz
+        url: https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_aarch64.tar.gz
         sha256: 3b2097972e08da3acf84bf12fc59909a7c0b7a4037738f01f8f9ec3fd249b971
         strip-components: 1
         only-arches:

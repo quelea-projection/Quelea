@@ -2,14 +2,14 @@ buildscript {
     dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:3.0.5'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.39.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.52.0"
     }
 }
 
 plugins {
     id 'application'
     id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'edu.sc.seis.launch4j' version '3.0.5'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'com.bmuschko.izpack' version '3.0'
@@ -35,7 +35,7 @@ repositories {
 }
 
 javafx {
-    version = "21"
+    version = "25"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
 
@@ -59,15 +59,15 @@ tasks.withType(JavaCompile) {
     }
 }
 
-task removeDist(type: Delete) {
+tasks.register('removeDist', Delete) {
     delete "dist"
     delete "out-mac"
     delete "bundlejre"
 }
 
 compileJava   {
-    sourceCompatibility = '21'
-    targetCompatibility = '21'
+    sourceCompatibility = '25'
+    targetCompatibility = '25'
 }
 
 clean.finalizedBy(removeDist)
@@ -76,33 +76,33 @@ compileJava.finalizedBy(dependencyUpdates)
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ext.mainClass = 'org.quelea.windows.main.MainStub'
 
-task createQueleaExe64(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
+tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
     mainClassName = 'org.quelea.windows.main.MainStub'
     mutexName = "queleamutex"
     supportUrl = "https://quelea.discourse.group/"
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8","-Dprism.dirtyopts=false","--add-opens java.base/java.nio=ALL-UNNAMED","-Dglass.accessible.force=false","--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED","--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED","--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED","--add-opens java.base/java.lang=ALL-UNNAMED","--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
+    jvmOptions = ["-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "--add-opens java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens java.base/java.lang=ALL-UNNAMED", "--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
     outfile = "Quelea64.exe"
 }
 
-task downloadGStreamer {
+tasks.register('downloadGStreamer') {
     def f = new File('gs.msi')
     if (!f.exists()) {
-        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.22.8/msvc/gstreamer-1.0-msvc-x86_64-1.22.8.msi').withInputStream{ i -> f.withOutputStream{ it << i }}
+        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.22.8/msvc/gstreamer-1.0-msvc-x86_64-1.22.8.msi').withInputStream { i -> f.withOutputStream { it << i } }
     }
 }
 
-task downloadJres {
+tasks.register('downloadJres') {
     def mf = new File('macjre.zip')
     if (!mf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu21.40.17-ca-fx-jre21.0.6-macosx_x64.zip').withInputStream{ i -> mf.withOutputStream{ it << i }}
+        new URL('https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-macosx_x64.zip').withInputStream { i -> mf.withOutputStream { it << i } }
     }
 
     def wf = new File('winjre64.zip')
     if (!wf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu21.40.17-ca-fx-jre21.0.6-win_x64.zip').withInputStream{ i -> wf.withOutputStream{ it << i }}
+        new URL('https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-win_x64.zip').withInputStream { i -> wf.withOutputStream { it << i } }
     }
 
     doLast {
@@ -113,42 +113,44 @@ task downloadJres {
     }
 }
 
-task copyToDist {
+tasks.register('copyToDist') {
     doLast {
-        copy {from configurations.runtimeClasspath into project.distdir + "/libjfx" include "javafx*" } // all JavaFX libraries
-        copy {from configurations.runtimeClasspath into project.distdir + "/lib" exclude "javafx*" } // all libraries except JavaFX libraries
-        copy {from "themes" into project.distdir + "/themes"}
-        copy {from "icons" into project.distdir + "/icons"}
-        copy {from "bibles" into project.distdir + "/bibles"}
-        copy {from "server" into project.distdir + "/server"}
-        copy {from "vid" into project.distdir + "/vid"}
-        copy {from "vbs" into project.distdir + "/vbs"}
-        copy {from "licenses" into project.distdir + "/licenses"}
-        copy {from "languages" into project.distdir + "/languages"}
-        copy {from "dictionaries" into project.distdir + "/dictionaries"}
-        copy {from "img" into project.distdir + "/img"}
-        copy {from "timer" into project.distdir + "/timer"}
-        copy {from "src" into project.distdir + "/src"}
-        copy {from zipTree("bundlejre/winjre64.zip") into project.distdir}
-        file("dist/zulu21.40.17-ca-fx-jre21.0.6-win_x64").renameTo(file("dist/winjre64"))
-        copy {from file("build/libs/Quelea.jar") into file(project.distdir)}
-        copy {from file("README.TXT") into file(project.distdir)}
-        copy {from file("quelea.properties") into file(project.distdir)}
-        copy {from file("scheduleformat.xsl") into file(project.distdir)}
-        copy {from file("songformat.xsl") into file(project.distdir)}
-        copy {from file("fopcfg.xml") into file(project.distdir)}
-        copy {from file("Quelea.bat") into file(project.distdir)}
-        copy {from file("quelea.iss") into file(project.distdir)}
-        copy {from file("quelea64.iss") into file(project.distdir)}
-        copy {from file("build-install.bat") into file(project.distdir)}
-        copy {from file("build-install.sh") into file(project.distdir)}
-        copy {from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt"}}
-        copy {from file("launch.sh") into file(project.distdir)}
-        copy {from file("licenses/copyright") into file(project.distdir + "/queleadoc")}
+        copy { from configurations.runtimeClasspath into project.distdir + "/libjfx" include "javafx*" }
+        // all JavaFX libraries
+        copy { from configurations.runtimeClasspath into project.distdir + "/lib" exclude "javafx*" }
+        // all libraries except JavaFX libraries
+        copy { from "themes" into project.distdir + "/themes" }
+        copy { from "icons" into project.distdir + "/icons" }
+        copy { from "bibles" into project.distdir + "/bibles" }
+        copy { from "server" into project.distdir + "/server" }
+        copy { from "vid" into project.distdir + "/vid" }
+        copy { from "vbs" into project.distdir + "/vbs" }
+        copy { from "licenses" into project.distdir + "/licenses" }
+        copy { from "languages" into project.distdir + "/languages" }
+        copy { from "dictionaries" into project.distdir + "/dictionaries" }
+        copy { from "img" into project.distdir + "/img" }
+        copy { from "timer" into project.distdir + "/timer" }
+        copy { from "src" into project.distdir + "/src" }
+        copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
+        file("dist/zulu25.28.85-ca-fx-jre25.0.0-win_x64").renameTo(file("dist/winjre64"))
+        copy { from file("build/libs/Quelea.jar") into file(project.distdir) }
+        copy { from file("README.TXT") into file(project.distdir) }
+        copy { from file("quelea.properties") into file(project.distdir) }
+        copy { from file("scheduleformat.xsl") into file(project.distdir) }
+        copy { from file("songformat.xsl") into file(project.distdir) }
+        copy { from file("fopcfg.xml") into file(project.distdir) }
+        copy { from file("Quelea.bat") into file(project.distdir) }
+        copy { from file("quelea.iss") into file(project.distdir) }
+        copy { from file("quelea64.iss") into file(project.distdir) }
+        copy { from file("build-install.bat") into file(project.distdir) }
+        copy { from file("build-install.sh") into file(project.distdir) }
+        copy { from file("licenses/gplv3.txt") into file(project.distdir) rename { String filename -> return "LICENSE.txt" } }
+        copy { from file("launch.sh") into file(project.distdir) }
+        copy { from file("licenses/copyright") into file(project.distdir + "/queleadoc") }
     }
 }
 
-task grabNative {
+tasks.register('grabNative') {
     doLast {
         copy {
             from file(project.file('osx/libAVPlayerJava.jnilib'))
@@ -164,7 +166,7 @@ izPackCreateInstaller {
     baseDir = file("dist")
 }
 
-task innosetup (type:Exec) {
+tasks.register('innosetup', Exec) {
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
@@ -175,37 +177,37 @@ task innosetup (type:Exec) {
     }
 
     doLast {
-        copy {from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName}}
-        copy {from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name}}
-        delete (file("Output"))
+        copy { from file("Output/setup.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstallerName } }
+        copy { from file("Output/setup64.exe") into file(project.distdir + "/standalone") rename { String filename -> return WindowsInstaller64Name } }
+        delete(file("Output"))
     }
 }
 
-task labelcheck(type:JavaExec) {
+tasks.register('labelcheck', JavaExec) {
     mainClass = 'org.quelea.services.languages.LabelChecker'
     classpath = sourceSets.main.runtimeClasspath
 }
 
-task runPackr(type: JavaExec) {
+tasks.register('runPackr', JavaExec) {
     classpath = files('packr.jar')
     mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
 }
 
-task zipMacPackr(type: Zip) {
+tasks.register('zipMacPackr', Zip) {
     archiveFileName = MacInstallerName
     destinationDirectory = file("dist/standalone")
 
     from "out-mac"
 
     doLast {
-        delete (file("out-mac"))
+        delete(file("out-mac"))
     }
 }
 
 runPackr.finalizedBy(zipMacPackr);
 
-task dist(type: GradleBuild) {
+tasks.register('dist', GradleBuild) {
     tasks = ['labelcheck', 'downloadJres', 'downloadGStreamer', 'createQueleaExe64', 'copyToDist', 'tar', 'runPackr', 'izpack', 'innosetup', 'releaseSummary']
 }
 
@@ -278,6 +280,10 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
 }
 
+test {
+    failOnNoDiscoveredTests = false
+}
+
 jar {
     manifest {
         attributes (
@@ -287,7 +293,7 @@ jar {
     }
 }
 
-task tar(type: Tar) {
+tasks.register('tar', Tar) {
     archiveFileName = JavaAppName
     destinationDirectory = file("dist/standalone/")
     compression = Compression.GZIP
@@ -311,7 +317,7 @@ task tar(type: Tar) {
             "Quelea.jar"
 }
 
-task releaseSummary(type:JavaExec) {
+tasks.register('releaseSummary', JavaExec) {
     mainClass = 'org.quelea.services.utils.ReleaseSummaryGenerator'
     classpath = sourceSets.main.runtimeClasspath
 }
