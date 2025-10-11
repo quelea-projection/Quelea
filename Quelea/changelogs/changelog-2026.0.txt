@@ -4,4 +4,5 @@ quelea (2024.1) stable
   * Default translations now used when adding song via server
   * Support for bible book names in chapters in Zefania XML import
   * Fix UTF-8 filename issue with snap build
+  * Fix issue with positions being wrong when dragging items in schedule
   * Various minor bugfixes
