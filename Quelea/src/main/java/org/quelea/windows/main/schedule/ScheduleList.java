@@ -363,19 +363,18 @@ public class ScheduleList extends StackPane {
                 if (!displayables.isEmpty()) {
                     for(Displayable d : displayables) {
                         if (listCell == null || listCell.getIndex() != localDragIndex) {
+                            boolean movedDown = listCell != null && listCell.getIndex() > localDragIndex;
+                            int newIndex = movedDown ? listCell.getIndex()-1 : listCell.getIndex();
                             if (localDragIndex > -1) {
                                 getItems().remove(localDragIndex);
                                 localDragIndex = -1;
                             }
-                            if (listCell == null || listCell.isEmpty()) {
-                                add(d);
-                                listView.getSelectionModel().clearSelection();
-                                listView.getSelectionModel().selectLast();
-                            } else {
-                                listView.itemsProperty().get().add(listCell.getIndex(), d);
-                                listView.getSelectionModel().clearSelection();
-                                listView.getSelectionModel().select(listCell.getIndex());
+                            if(newIndex > listView.getItems().size()) {
+                                newIndex = listView.getItems().size();
                             }
+                            listView.itemsProperty().get().add(newIndex, d);
+                            listView.getSelectionModel().clearSelection();
+                            listView.getSelectionModel().select(newIndex);
                             listView.requestFocus();
                             Platform.runLater(() -> {
                                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(d, 0);
