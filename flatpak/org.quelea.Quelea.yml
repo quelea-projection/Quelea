@@ -31,14 +31,14 @@ modules:
     sources:
       - type: archive
         url: https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
-        sha256: a65fe80a3ff4c352709bec1750e93d5680f73eb43b3bb7d6b7ab60c6fca5669f 
+        sha256: 1d00a4fd4815ce29b1d61863ae0905630242275afcbc7a4f0ba35bb0ba6da294
         strip-components: 1
         only-arches:
           - x86_64
 
       - type: archive
         url: https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_aarch64.tar.gz
-        sha256: 3b2097972e08da3acf84bf12fc59909a7c0b7a4037738f01f8f9ec3fd249b971
+        sha256: 24409f182876f368459488ee2e9ae6d3536a374de981c2817a19874d4420d605
         strip-components: 1
         only-arches:
           - aarch64
