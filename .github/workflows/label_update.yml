@@ -7,16 +7,20 @@ on:
 
 jobs:
   update-labels:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - name: Setup Java
-        run: |
-          curl -O https://cdn.azul.com/zulu/bin/zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
-          sudo apt-get -y install ./zulu21.38.21-ca-fx-jdk21.0.5-linux_amd64.deb
       - name: Checkout main source
         uses: actions/checkout@v4
         with:
           path: 'main'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          java-package: 'jdk'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
       - name: Checkout doc source
         env:
           QBOT_TOKEN: ${{ secrets.QBOT_TOKEN }}
@@ -25,7 +29,6 @@ jobs:
       - name: Find missing labels
         run: |
           cd main/Quelea
-          export JAVA_HOME=/usr/lib/jvm/zulu-fx-21-amd64/
           chmod +x gradlew
           chmod +x build-install.sh
           ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
