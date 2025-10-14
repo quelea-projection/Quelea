@@ -238,7 +238,7 @@ dependencies {
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.6'
     implementation group: 'com.github.albfernandez', name: 'juniversalchardet', version: '2.4.0'
     implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.6.15.Final'
     implementation group: 'com.google.zxing', name: 'core', version: '3.4.1'
