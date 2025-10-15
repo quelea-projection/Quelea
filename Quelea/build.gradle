@@ -212,7 +212,7 @@ tasks.register('dist', GradleBuild) {
 }
 
 dependencies {
-    izpack 'org.codehaus.izpack:izpack-ant:5.2.4'
+    izpack 'org.codehaus.izpack:izpack-ant:5.1.3'
 
     implementation 'com.googlecode.paradoxdriver:paradoxdriver:1.6.3'
     implementation 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
