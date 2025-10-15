@@ -5,6 +5,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -20,7 +21,7 @@ import javax.persistence.Table;
 public class Song {
 
     private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
-    private long id;
+    private Long id;
     private String title;
     private String author;
     private String lyrics;
@@ -41,6 +42,7 @@ public class Song {
     public Song(String title, String author, String lyrics, String ccli, String copyright,
                 String year, String publisher, String key, String capo, String info,
                 Theme theme, HashMap<String, String> translations, String sequence) {
+        this.id = null;
         this.title = title;
         this.author = author;
         this.lyrics = lyrics;
@@ -60,16 +62,16 @@ public class Song {
      * @return the id
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

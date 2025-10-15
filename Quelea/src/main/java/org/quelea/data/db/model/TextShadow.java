@@ -3,6 +3,7 @@ package org.quelea.data.db.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 @Table(name = "textShadow")
 public class TextShadow {
     private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
-    private long id;
+    private Long id;
     private String shadowColor;
     private Double offsetX;
     private Double offsetY;
@@ -23,7 +24,12 @@ public class TextShadow {
     private Double spread;
     private Boolean use;
 
+    public TextShadow(TextShadow textShadow) {
+        this(textShadow.getShadowColor(), textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
+    }
+
     public TextShadow(String shadowColor, Double offsetX, Double offsetY, Double radius, Double spread, Boolean use) {
+        this.id = null;
         this.shadowColor = shadowColor;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -40,16 +46,16 @@ public class TextShadow {
      * @return the id
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

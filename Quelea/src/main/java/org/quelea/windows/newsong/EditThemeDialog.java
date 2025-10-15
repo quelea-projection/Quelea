@@ -75,7 +75,7 @@ public class EditThemeDialog extends Stage {
         themeCombo = new ComboBox<>();
         themeCombo.setOnAction(event -> setTheme(themeCombo.getSelectionModel().getSelectedItem()));
         themeCombo.setItems(ThemeUtils.getThemes());
-        ThemeDTO newTheme = ThemeDTO.DEFAULT_THEME;
+        ThemeDTO newTheme = ThemeDTO.getDTO(ThemeDTO.DEFAULT_THEME.getTheme());
         newTheme.setThemeName("New...");
         themeCombo.getItems().add(newTheme);
         themeSelectPanel.getChildren().addAll(themeSelectLabel, themeCombo);

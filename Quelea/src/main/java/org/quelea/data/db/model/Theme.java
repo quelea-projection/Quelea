@@ -4,6 +4,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,7 +20,7 @@ import org.quelea.data.ThemeDTO;
 public class Theme {
 
     private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
-    private long id;
+    private Long id;
     private String name;
     private String fontname;
     private String fontcolour;
@@ -64,6 +65,7 @@ public class Theme {
     }
 
     public Theme(Theme theme) {
+        this.id = null;
         this.name = theme.name;
         this.fontname = theme.fontname;
         this.fontcolour = theme.fontcolour;
@@ -72,7 +74,7 @@ public class Theme {
         this.backgroundcolour = theme.backgroundcolour;
         this.backgroundvid = theme.backgroundvid;
         this.backgroundimage = theme.backgroundimage;
-        this.textShadow = theme.textShadow;
+        this.textShadow = new TextShadow(theme.textShadow);
         this.fontBold = theme.fontBold;
         this.fontItalic = theme.fontItalic;
         this.translateFontBold = theme.translateFontBold;
@@ -87,16 +89,16 @@ public class Theme {
      * @return the id
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
