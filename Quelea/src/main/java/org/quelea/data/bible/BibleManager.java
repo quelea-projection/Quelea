@@ -190,7 +190,9 @@ public final class BibleManager {
     public void buildIndex() {
         indexInit = false;
         final StatusPanel[] panel = new StatusPanel[1];
-        if(QueleaApp.get().getMainWindow() != null) {
+        if(QueleaApp.get().getMainWindow() != null
+                && QueleaApp.get().getMainWindow().getMainPanel() != null
+                && QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup() != null) {
             Utils.fxRunAndWait(() -> {
                 panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
                 panel[0].removeCancelButton();
