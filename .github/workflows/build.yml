@@ -72,6 +72,27 @@ jobs:
           flatpak-builder --force-clean --user --install-deps-from=flathub --repo=repo builddir org.quelea.Quelea.yml
           flatpak build-bundle repo/ ../Quelea/dist/standalone/quelea-CI-UNSTABLE.flatpak org.quelea.Quelea --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
+      - name: upload-unsigned-artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          path: Quelea/dist/standalone/quelea-CI-UNSTABLE-x64-windows-install.exe
+
+      - name: Remove unsigned artifact
+        run: |
+          rm -f Quelea/dist/standalone/quelea-CI-UNSTABLE-x64-windows-install.exe
+            
+      - name: Sign windows installer
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '47d2e61b-2716-4b94-b15a-91240cb1d14c'
+          project-slug: 'Quelea'
+          signing-policy-slug: 'test-signing'
+          github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'Quelea/dist/standalone/'
+
       - name: Upload binaries to release
         if: ${{ github.event_name == 'push' }}
         uses: softprops/action-gh-release@v2
