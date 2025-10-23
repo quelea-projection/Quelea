@@ -8,6 +8,8 @@ import org.freedesktop.gstreamer.Registry;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +20,6 @@ import static java.lang.System.getenv;
 public class GStreamerUtils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final String DEFAULT_WINDOWS_PATH = "C:\\gstreamer\\1.0\\msvc_x86_64";
 
     private GStreamerUtils() {
     }
@@ -102,8 +103,17 @@ public class GStreamerUtils {
      * @return location or empty string
      */
     private static String findWindowsLocation() {
+        List<String> options = new ArrayList<>();
+        options.add(getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64"));
+        options.add(getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64"));
+        options.add(getenv("GSTREAMER_1_0_ROOT_X86_64"));
+        options.add("C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64");
+        options.add("C:\\Program Files\\gstreamer\\1.0\\mingw_x86_64");
+        options.add("C:\\gstreamer\\1.0\\msvc_x86_64");
+        options.add("C:\\gstreamer\\1.0\\mingw_x86_64");
+
         if (Platform.is64Bit()) {
-            return Stream.of(getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64"), getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64"), getenv("GSTREAMER_1_0_ROOT_X86_64"), DEFAULT_WINDOWS_PATH).filter(Objects::nonNull).map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\").filter(p -> Files.exists(Path.of(p))).findFirst().orElse("");
+            return options.stream().filter(Objects::nonNull).map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\").filter(p -> Files.exists(Path.of(p))).findFirst().orElse("");
         } else {
             return "";
         }
