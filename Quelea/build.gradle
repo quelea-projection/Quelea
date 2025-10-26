@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
+//        classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
         classpath "com.github.ben-manes:gradle-versions-plugin:0.39.0"
     }
@@ -229,7 +229,7 @@ dependencies {
     implementation group: 'org.openoffice', name: 'jurt', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'juh', version: '4.1.2'
     implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
-    implementation group: 'org.quelea', name: 'planning-center', version: '0.3-SNAPSHOT', changing: true
+    implementation group: 'org.quelea', name: 'planning-center', version: '0.3', changing: true
 
     implementation group: 'org.openoffice', name: 'unoil', version: '4.1.2'
     implementation group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
