@@ -2,7 +2,7 @@
 
 **Are you here to download the latest version? Great! You want one of these:**
 
-[**2024.0 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2024.0/quelea-2024.0-x64-windows-install.exe)
+[**2024.0 - Windows x64**](https://github.com/quelea-projection/Quelea/releases/download/v2024.0/quelea-2024.0.1-x64-windows-install.exe)
 
 [**2024.0 - Cross platform (requires Java)**](https://github.com/quelea-projection/Quelea/releases/download/v2024.0/quelea-2024.0-crossplatform-install.jar)
 
