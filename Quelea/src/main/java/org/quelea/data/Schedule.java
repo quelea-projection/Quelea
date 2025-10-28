@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -301,6 +302,7 @@ public class Schedule implements Iterable<Displayable> {
         }
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"));
+            zos.setLevel(Deflater.NO_COMPRESSION);
             final int BUFFER = 2048;
             byte[] data = new byte[BUFFER];
             try {
