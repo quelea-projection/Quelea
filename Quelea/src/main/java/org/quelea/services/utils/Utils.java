@@ -108,6 +108,17 @@ public final class Utils {
 		throw new AssertionError();
 	}
 
+    public static Class<?> getOutermostEnclosingClass(Class<?> clazz) {
+        Class<?> enclosing = clazz;
+        for (int i = 0; i < 100; i++) {
+            if (enclosing.getEnclosingClass() == null) {
+                return enclosing;
+            }
+            enclosing = enclosing.getEnclosingClass();
+        }
+        throw new RuntimeException("Enclosing class limit reached");
+    }
+
 	public static File getChangedFile(org.w3c.dom.Node node, Map<String, String> fileChanges) {
 		return getChangedFile(node.getTextContent(), fileChanges);
 	}

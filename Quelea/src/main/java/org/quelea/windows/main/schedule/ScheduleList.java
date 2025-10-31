@@ -363,14 +363,24 @@ public class ScheduleList extends StackPane {
                 if (!displayables.isEmpty()) {
                     for(Displayable d : displayables) {
                         if (listCell == null || listCell.getIndex() != localDragIndex) {
-                            boolean movedDown = listCell != null && listCell.getIndex() > localDragIndex;
-                            int newIndex = movedDown ? listCell.getIndex()-1 : listCell.getIndex();
-                            if (localDragIndex > -1) {
-                                getItems().remove(localDragIndex);
-                                localDragIndex = -1;
+                            boolean draggedFromSchedule = Utils.getOutermostEnclosingClass(event.getGestureSource().getClass()) == ScheduleList.class;
+                            int newIndex;
+                            if(draggedFromSchedule) {
+                                boolean movedDown = listCell != null && listCell.getIndex() > localDragIndex;
+                                newIndex = listCell != null ? movedDown ? listCell.getIndex() - 1 : listCell.getIndex() : 0;
+                                if (localDragIndex > -1) {
+                                    getItems().remove(localDragIndex);
+                                    localDragIndex = -1;
+                                }
+                                if (newIndex > listView.getItems().size()) {
+                                    newIndex = listView.getItems().size();
+                                }
                             }
-                            if(newIndex > listView.getItems().size()) {
-                                newIndex = listView.getItems().size();
+                            else {
+                                newIndex = listCell == null ? 0 : listCell.getIndex();
+                                if(newIndex > listView.getItems().size()) {
+                                    newIndex = listView.getItems().size();
+                                }
                             }
                             listView.itemsProperty().get().add(newIndex, d);
                             listView.getSelectionModel().clearSelection();
