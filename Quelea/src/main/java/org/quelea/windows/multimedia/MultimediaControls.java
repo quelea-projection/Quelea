@@ -19,15 +19,9 @@
 package org.quelea.windows.multimedia;
 
 import java.io.File;
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -48,20 +42,9 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
-import org.freedesktop.gstreamer.Format;
-import org.freedesktop.gstreamer.elements.PlayBin;
-import org.freedesktop.gstreamer.event.SeekFlags;
-import org.freedesktop.gstreamer.fx.FXImageSink;
-import org.quelea.data.GlobalThemeStore;
-import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.TextDisplayable;
-import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePanel;
-import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.WordDrawer;
 import org.quelea.init.QueleaApp;
 
 /**

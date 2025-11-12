@@ -18,7 +18,6 @@
 package org.quelea.windows.main.widgets;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;

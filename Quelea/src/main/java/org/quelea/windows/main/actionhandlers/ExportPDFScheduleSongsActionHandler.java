@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
@@ -40,7 +39,6 @@ import static org.quelea.services.importexport.PDFExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 

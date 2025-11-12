@@ -18,12 +18,6 @@
 
 package org.quelea.windows.multimedia;
 
-import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import javafx.application.Platform;
 import javax.swing.JFrame;
 import org.quelea.services.languages.LabelGrabber;
