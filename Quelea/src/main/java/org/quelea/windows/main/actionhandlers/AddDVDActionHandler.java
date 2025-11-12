@@ -30,7 +30,7 @@ import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.DiskDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The action handler responsible for letting the user add a DVD to the

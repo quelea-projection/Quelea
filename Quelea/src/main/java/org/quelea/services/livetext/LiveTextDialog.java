@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * An input dialog for Live Text.

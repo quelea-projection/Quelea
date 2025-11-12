@@ -22,7 +22,7 @@ import java.io.File;
 import javafx.stage.FileChooser;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The open schedule action listener.

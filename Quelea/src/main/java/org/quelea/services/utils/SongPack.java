@@ -34,7 +34,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**

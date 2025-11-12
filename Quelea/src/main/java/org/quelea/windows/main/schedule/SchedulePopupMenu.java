@@ -29,7 +29,7 @@ import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerActionHandler;

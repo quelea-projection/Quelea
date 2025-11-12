@@ -47,7 +47,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The panel displayed on the library to select the list of images.

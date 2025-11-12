@@ -40,7 +40,7 @@ import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

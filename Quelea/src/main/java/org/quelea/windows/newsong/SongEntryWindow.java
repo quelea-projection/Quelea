@@ -45,7 +45,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslatePanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * A new song window that users use for inserting the text content of a new

@@ -39,7 +39,7 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.video.VidPreviewDisplay;
 
 import java.awt.*;

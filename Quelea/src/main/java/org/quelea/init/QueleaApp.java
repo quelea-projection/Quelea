@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.init;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +26,9 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.DisplayStage;
+import org.quelea.windows.main.MainWindow;
+import org.quelea.windows.main.StatusPanelGroup;
 
 /**
  * A singleton class for grabbing application wide objects with ease such as the main window.

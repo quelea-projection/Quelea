@@ -27,6 +27,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
+import org.quelea.init.QueleaApp;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;

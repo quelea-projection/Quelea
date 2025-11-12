@@ -32,7 +32,7 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPreview;
 import org.quelea.windows.stage.StageDrawer;

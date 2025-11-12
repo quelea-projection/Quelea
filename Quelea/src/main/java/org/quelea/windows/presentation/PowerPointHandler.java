@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * Class to send OS-native signals to control a PowerPoint presentation

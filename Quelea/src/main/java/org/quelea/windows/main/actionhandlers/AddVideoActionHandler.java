@@ -27,7 +27,7 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The action handler for adding a multimedia file.

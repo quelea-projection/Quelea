@@ -24,7 +24,7 @@ import javafx.scene.input.KeyEvent;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 import java.util.ArrayList;

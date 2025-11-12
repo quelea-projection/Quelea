@@ -21,7 +21,7 @@ package org.quelea.data.bible;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The popup menu that appears on a "searched" bible chapter.

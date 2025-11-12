@@ -27,7 +27,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 import java.util.List;
 

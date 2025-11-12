@@ -29,7 +29,7 @@ import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.IndexedDisplayable;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 
 /**

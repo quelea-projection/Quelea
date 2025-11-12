@@ -40,7 +40,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * A dialog showing the available test patterns that can be projected on the

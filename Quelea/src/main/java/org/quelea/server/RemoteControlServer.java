@@ -62,7 +62,7 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;

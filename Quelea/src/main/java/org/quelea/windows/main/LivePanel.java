@@ -56,6 +56,7 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.WebDisplayable;
+import org.quelea.init.QueleaApp;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;

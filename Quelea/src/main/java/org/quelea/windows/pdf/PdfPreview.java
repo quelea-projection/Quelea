@@ -33,7 +33,7 @@ import javafx.scene.layout.FlowPane;
 import org.quelea.data.pdf.PdfSlide;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * A JList for specifically displaying PDF slides.

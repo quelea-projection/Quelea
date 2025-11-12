@@ -56,7 +56,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.utils.SongDisplayableList;
 import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.lyrics.LyricDrawer;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;

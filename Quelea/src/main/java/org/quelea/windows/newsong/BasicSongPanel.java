@@ -56,7 +56,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.InputMethodRequestsObject;
 import org.quelea.windows.lyrics.LyricsTextArea;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,

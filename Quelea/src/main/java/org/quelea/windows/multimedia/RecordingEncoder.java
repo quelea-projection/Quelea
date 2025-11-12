@@ -27,7 +27,7 @@ import java.nio.file.Paths;
 import javafx.application.Platform;
 import javax.swing.JFrame;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**

@@ -35,7 +35,7 @@ import org.quelea.services.importexport.SelectExportedSongsDialog;
 import org.quelea.services.importexport.SongListExporter;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * Quelea's export menu.

@@ -50,7 +50,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableColor;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.widgets.NumberSpinner;
 import org.quelea.windows.newsong.FontSelectionDialog;
 

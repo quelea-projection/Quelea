@@ -25,7 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * A display preview - shows a display canvas but preserves the aspect ratio of

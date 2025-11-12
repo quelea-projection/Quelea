@@ -26,7 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.LivePanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The presentation controls containing a next and a previous button.

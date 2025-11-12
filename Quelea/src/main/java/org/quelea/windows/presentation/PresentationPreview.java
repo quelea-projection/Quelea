@@ -31,7 +31,7 @@ import javafx.scene.layout.FlowPane;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * A JList for specifically displaying presentation slides.

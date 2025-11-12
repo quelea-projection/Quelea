@@ -55,7 +55,7 @@ import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;

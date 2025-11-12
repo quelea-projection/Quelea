@@ -62,6 +62,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
+import org.quelea.init.QueleaApp;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a

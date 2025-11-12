@@ -19,7 +19,7 @@
 package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The new schedule action listener.

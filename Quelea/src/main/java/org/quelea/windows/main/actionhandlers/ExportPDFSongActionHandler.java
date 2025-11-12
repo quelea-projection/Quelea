@@ -35,7 +35,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.DesktopApi;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * An event handler that exports the currently selected song to a PDF file.

@@ -26,7 +26,7 @@ import javafx.scene.layout.FlowPane;
 import org.quelea.data.imagegroup.ImageGroupSlide;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -38,7 +38,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SceneInfo;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.presentation.PowerPointHandler;
 

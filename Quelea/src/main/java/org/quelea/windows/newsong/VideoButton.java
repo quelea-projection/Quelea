@@ -40,7 +40,7 @@ import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ModalCancellableStage;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The video button where the user selects a video.

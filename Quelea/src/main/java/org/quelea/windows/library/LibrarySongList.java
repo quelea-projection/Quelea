@@ -50,7 +50,7 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.SongDisplayableList;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.widgets.AddSongPromptOverlay;
 import org.quelea.windows.main.widgets.LoadingPane;

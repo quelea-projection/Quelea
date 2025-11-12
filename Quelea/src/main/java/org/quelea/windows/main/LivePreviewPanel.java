@@ -39,6 +39,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.data.displayable.WebDisplayable;
+import org.quelea.init.QueleaApp;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;

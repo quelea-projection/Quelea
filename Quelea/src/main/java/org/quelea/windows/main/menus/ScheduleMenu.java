@@ -31,7 +31,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddImageActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;

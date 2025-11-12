@@ -24,7 +24,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.schedule.SchedulePanel;
 
 import java.util.List;

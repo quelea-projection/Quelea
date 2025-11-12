@@ -29,6 +29,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.init.QueleaApp;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;

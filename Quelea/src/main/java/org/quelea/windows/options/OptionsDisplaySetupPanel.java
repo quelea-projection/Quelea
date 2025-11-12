@@ -23,7 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 import java.util.HashMap;
 

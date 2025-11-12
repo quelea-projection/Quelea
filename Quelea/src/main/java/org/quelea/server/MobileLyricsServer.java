@@ -48,7 +48,7 @@ import org.quelea.utils.Chord;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The mobile lyrics server, responsible for handling the mobile HTTP calls and

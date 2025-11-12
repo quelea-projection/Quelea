@@ -30,7 +30,7 @@ import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * Responsible for drawing an webpage onto the DisplayCanvas.

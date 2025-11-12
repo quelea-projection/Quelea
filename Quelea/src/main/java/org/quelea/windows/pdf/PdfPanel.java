@@ -39,7 +39,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.LivePreviewPanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The panel for displaying PDF slides in the live / preview panels.

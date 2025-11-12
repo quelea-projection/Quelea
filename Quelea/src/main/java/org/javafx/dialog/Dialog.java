@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.presentation.PowerPointHandler;
 
 /**

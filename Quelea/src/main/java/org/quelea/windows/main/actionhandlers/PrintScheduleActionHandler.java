@@ -21,7 +21,7 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.services.print.Printer;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The print action listener.

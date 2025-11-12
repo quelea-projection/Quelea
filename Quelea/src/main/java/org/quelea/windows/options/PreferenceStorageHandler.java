@@ -27,7 +27,7 @@ import org.quelea.services.languages.LanguageFile;
 import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.QueleaPropertyKeys;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

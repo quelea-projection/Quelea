@@ -21,7 +21,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**

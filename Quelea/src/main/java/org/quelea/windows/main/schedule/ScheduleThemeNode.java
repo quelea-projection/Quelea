@@ -46,7 +46,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.newsong.EditThemeDialog;
 

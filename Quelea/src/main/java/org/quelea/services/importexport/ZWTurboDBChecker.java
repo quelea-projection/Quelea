@@ -21,7 +21,7 @@ package org.quelea.services.importexport;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * Check if the TurboDB data exchange program is in place.

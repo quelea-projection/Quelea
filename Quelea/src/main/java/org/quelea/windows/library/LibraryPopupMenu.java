@@ -27,7 +27,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.Printer;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFSongActionHandler;

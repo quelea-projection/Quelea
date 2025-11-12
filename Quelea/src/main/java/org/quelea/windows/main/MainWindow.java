@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import org.quelea.data.GlobalThemeStore;
 import org.quelea.data.bible.BibleBrowseDialog;
 import org.quelea.data.bible.BibleSearchDialog;
+import org.quelea.init.QueleaApp;
 import org.quelea.services.notice.NoticeDialog;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;

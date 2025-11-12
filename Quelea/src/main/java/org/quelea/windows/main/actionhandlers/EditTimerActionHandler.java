@@ -22,7 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import org.quelea.data.displayable.TimerDisplayable;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.timer.CreateTimerPanel;
 
 /**

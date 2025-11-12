@@ -35,7 +35,7 @@ import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.stage.StageDrawer;
 

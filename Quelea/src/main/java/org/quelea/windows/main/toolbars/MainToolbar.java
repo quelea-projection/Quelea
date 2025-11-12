@@ -35,7 +35,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddImageActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;

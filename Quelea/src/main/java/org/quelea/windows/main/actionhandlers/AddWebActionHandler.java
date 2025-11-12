@@ -27,7 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 
 /**
  * The action handler responsible for letting the user add a websites to the

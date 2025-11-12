@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.utils.FXFontMetrics;
 
 /**

@@ -34,7 +34,7 @@ import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.init.QueleaApp;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
