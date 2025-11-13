@@ -110,17 +110,14 @@ public class ScheduleList extends StackPane {
             @Override
             public ListCell<IndexedDisplayable> call(ListView<IndexedDisplayable> p) {
 
-                final ListCell<IndexedDisplayable> listCell = new ListCell<>() {
+                return new ListCell<>() {
                     @Override
                     public void updateItem(IndexedDisplayable indexedDisplayable, boolean empty) {
-                        System.out.println("CALLED FOR: " + this);
                         super.updateItem(indexedDisplayable, empty);
                         if (empty || indexedDisplayable == null) {
                             setText(null);
                             setGraphic(null);
-                            setOnDragDetected(_->{
-                                System.out.println("EMPTY DRAGDETECTED: " + empty + " " + (indexedDisplayable==null));
-                            });
+                            setOnDragDetected(_->{});
                             setOnDragEntered(_->{});
                             setOnDragDone(Event::consume);
                             setOnDragDropped(event -> dragDropped(event, this));
@@ -140,9 +137,8 @@ public class ScheduleList extends StackPane {
                             recalculateDisplayableIndexes();
                             Dragboard db = startDragAndDrop(TransferMode.ANY);
                             ClipboardContent content = new ClipboardContent();
-                            if (item instanceof SongDisplayable sdItem) {
+                            if (item instanceof SongDisplayable) {
                                 content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(indexedDisplayable));
-                                System.out.println("DRAGGED: " + sdItem.getTitle());
                             } else {
                                 content.putString("tempdisp");
                                 tempDisp = indexedDisplayable;
@@ -195,7 +191,6 @@ public class ScheduleList extends StackPane {
                         setOnDragDropped(event -> dragDropped(event, this));
                     }
                 };
-                return listCell;
             }
         };
         listView.setCellFactory(DisplayableListCell.forListView(null, callback, d -> d.displayable() instanceof SongDisplayable || d.displayable() instanceof BiblePassage || d.displayable() instanceof TimerDisplayable));
