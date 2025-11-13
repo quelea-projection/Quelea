@@ -116,7 +116,7 @@ public class MultimediaPanel extends AbstractPanel {
      */
     public void advance() {
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
-        boolean lastItemTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
+        boolean lastItemTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1).displayable();
         if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastItemTest) {
             qmp.getPreviewPanel().goLive();
         }
@@ -128,11 +128,11 @@ public class MultimediaPanel extends AbstractPanel {
      */
     public void previous() {
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
-        boolean firstItemTest = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable();
+        boolean firstItemTest = qmp.getSchedulePanel().getScheduleList().getItems().get(0).displayable() == qmp.getLivePanel().getDisplayable();
         if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !firstItemTest) {
             //Assuming preview panel is one ahead, and should be one behind
             int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
-            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1).displayable()) {
                 index -= 1;
             } else {
                 index -= 2;

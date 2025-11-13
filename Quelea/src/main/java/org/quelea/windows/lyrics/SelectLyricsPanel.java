@@ -164,7 +164,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
-        boolean lastSongTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
+        boolean lastSongTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1).displayable();
         if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastSongTest) {
             qmp.getPreviewPanel().goLive();
         }
@@ -182,13 +182,13 @@ public class SelectLyricsPanel extends AbstractPanel {
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         //Check to see if first song first verse
-        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable()
+        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0).displayable() == qmp.getLivePanel().getDisplayable()
                 && (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
         if ((start == end || qmp.getLivePanel().getLyricsPanel().getLyricsList().getItems().size() == 1)
                 && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
             //Assuming preview panel is one ahead, and should be one behind
             int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
-            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1).displayable()) {
                 index -= 1;
             } else {
                 index -= 2;

@@ -489,7 +489,7 @@ public class MobileLyricsServer {
         StringBuilder ret = new StringBuilder();
         final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
         int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current).displayable());
         for (String b : d.getTranslations().keySet()) {
             ret.append(b).append("\n");
         }
@@ -508,7 +508,7 @@ public class MobileLyricsServer {
             language = uri.split("/gettranslation/", 2)[1];
             final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
             int currentSong = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(currentSong));
+            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(currentSong).displayable());
             for (String b : d.getTranslations().keySet()) {
                 if (b.equals(language)) {
                     lyrics.append(d.getTranslations().get(language));

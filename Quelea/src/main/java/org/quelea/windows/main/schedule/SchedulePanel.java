@@ -40,6 +40,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -77,9 +78,9 @@ public class SchedulePanel extends BorderPane {
         themeButton = new Button("", themeButtonIcon);
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("theme.button.tooltip")));
         scheduleList = new ScheduleList();
-        scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
+        scheduleList.itemsProperty().get().addListener(new ListChangeListener<IndexedDisplayable>() {
             @Override
-            public void onChanged(ListChangeListener.Change<? extends Displayable> change) {
+            public void onChanged(ListChangeListener.Change<? extends IndexedDisplayable> change) {
                 scheduleThemeNode.updateTheme();
             }
         });
@@ -231,7 +232,10 @@ public class SchedulePanel extends BorderPane {
             removeButton.setDisable(false);
             upButton.setDisable(false);
             downButton.setDisable(false);
-            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.getSelectionModel().getSelectedItem(), 0);
+            var selectedItem = scheduleList.getSelectionModel().getSelectedItem();
+            if(selectedItem!=null) {
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(selectedItem.displayable(), 0);
+            }
         }
     }
 

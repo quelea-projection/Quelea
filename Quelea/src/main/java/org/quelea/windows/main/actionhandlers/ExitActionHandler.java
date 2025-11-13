@@ -30,6 +30,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
@@ -107,11 +108,10 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         LOGGER.log(Level.INFO, "Hiding main window...");
         mainWindow.hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for (Object obj : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
-            Displayable d = (Displayable) obj;
+        for (IndexedDisplayable d : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             if (d != null) {
                 LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
-                d.dispose();
+                d.displayable().dispose();
             }
         }
 

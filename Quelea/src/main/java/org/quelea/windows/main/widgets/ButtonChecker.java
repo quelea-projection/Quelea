@@ -60,7 +60,7 @@ public class ButtonChecker {
             removeSongButton.setDisable(true);
         }
         else {
-            if(scheduleList.getSelectionModel().getSelectedItem() instanceof SongDisplayable) {
+            if(scheduleList.getSelectionModel().getSelectedItem().displayable() instanceof SongDisplayable) {
                 editSongButton.setDisable(false);
             }
             else {

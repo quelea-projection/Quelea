@@ -260,7 +260,7 @@ public class RCHandler {
 
         String display = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n</head>\n";
         for (int i = 0; i < QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size(); i++) {
-            Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i));
+            Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i).displayable());
             if (d.equals(preview)) {
                 display += "<i>";
             }
@@ -564,7 +564,7 @@ public class RCHandler {
         StringBuilder ret = new StringBuilder();
         final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
         int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current).displayable());
         for (String b : d.getTranslations().keySet()) {
             ret.append(b).append("\n");
         }
@@ -582,7 +582,7 @@ public class RCHandler {
             language = uri.split("/gettranslation/", 2)[1];
             final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
             int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current).displayable());
             for (String b : d.getTranslations().keySet()) {
                 if (b.equals(language)) {
                     ret.append(d.getTranslations().get(language));

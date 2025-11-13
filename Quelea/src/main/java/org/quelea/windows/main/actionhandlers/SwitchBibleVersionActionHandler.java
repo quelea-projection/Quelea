@@ -30,6 +30,7 @@ import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.SwitchBibleVersionDialog;
 import org.quelea.windows.main.schedule.ScheduleList;
@@ -47,9 +48,9 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
     public void handle(ActionEvent event) {
         ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
         Set<Bible> excludes = new HashSet<>();
-        for (Displayable d : sl.getSelectionModel().getSelectedItems()) {
-            if (d instanceof BiblePassage) {
-                excludes.add(((BiblePassage) d).getVerses()[0].getChapter().getBook().getBible());
+        for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
+            if (d.displayable() instanceof BiblePassage) {
+                excludes.add(((BiblePassage) d.displayable()).getVerses()[0].getChapter().getBook().getBible());
             }
         }
         Bible exclude = null;
@@ -61,9 +62,8 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
             return;
         }
         Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
-        for (Displayable d : sl.getSelectionModel().getSelectedItems()) {
-            if (d instanceof BiblePassage) {
-                BiblePassage passage = (BiblePassage) d;
+        for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
+            if (d.displayable() instanceof BiblePassage passage) {
                 ThemeDTO theme = passage.getTheme();
                 List<BibleVerse> newVerses = new ArrayList<>();
                 for (BibleVerse verse : passage.getVerses()) {
@@ -80,13 +80,13 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
         List<Integer> selected = new ArrayList<>(sl.getSelectionModel().getSelectedIndices());
         sl.getSelectionModel().clearSelection();
         for (BiblePassage key : replaceMap.keySet()) {
-            int index = sl.getItems().indexOf(key);
+            int index = sl.indexOf(key);
             if (index != -1) {
                 sl.getItems().remove(index);
-                sl.getItems().add(index, replaceMap.get(key));
+                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
             }
         }
-        if (selected.size() > 0) {
+        if (!selected.isEmpty()) {
             int[] selectRange = new int[selected.size() - 1];
             for (int i = 1; i < selected.size(); i++) {
                 selectRange[i - 1] = selected.get(i);

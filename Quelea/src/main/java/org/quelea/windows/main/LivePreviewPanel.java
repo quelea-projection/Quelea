@@ -30,6 +30,7 @@ import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
@@ -122,9 +123,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         });
         setOnDragDropped(event -> {
             if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList) {
-                final List<SongDisplayable> displayables = ((SongDisplayableList) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
+                final List<IndexedDisplayable> displayables = ((SongDisplayableList) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
                 if (!displayables.isEmpty()) {
-                    setDisplayable(displayables.get(0), 0);
+                    setDisplayable(displayables.get(0).displayable(), 0);
                 }
             }
             event.consume();

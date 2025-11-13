@@ -1,5 +1,6 @@
 package org.quelea.utils;
 
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 
 import java.io.Serializable;
@@ -11,17 +12,17 @@ import java.util.List;
  */
 public class SongDisplayableList implements Serializable {
 
-    private final List<SongDisplayable> songDisplayables;
+    private final List<IndexedDisplayable> songDisplayables;
 
-    public SongDisplayableList(List<SongDisplayable> songDisplayables) {
+    public SongDisplayableList(List<IndexedDisplayable> songDisplayables) {
         this.songDisplayables = new ArrayList<>(songDisplayables);
     }
 
-    public SongDisplayableList(SongDisplayable songDisplayable) {
+    public SongDisplayableList(IndexedDisplayable songDisplayable) {
         this(List.of(songDisplayable));
     }
 
-    public List<SongDisplayable> getSongDisplayables() {
+    public List<IndexedDisplayable> getSongDisplayables() {
         return songDisplayables;
     }
 }

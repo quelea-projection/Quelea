@@ -28,6 +28,7 @@ import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 
@@ -52,64 +53,62 @@ public class AddBibleVerseHandler {
             return;
         }
         Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
-        if (d instanceof BiblePassage) {
-            BiblePassage passage = (BiblePassage) d;
-            ThemeDTO theme = passage.getTheme();
-            List<BibleVerse> newVerses = new ArrayList<>();
-            int lastNumber = 0;
-            int chapter = 0;
-            int i = 0;
-            for (BibleVerse bv : passage.getVerses()) {
-                int verseNum = bv.getNum();
-                int chapterNum = bv.getChapter().getNum();
-                int bookNum = bv.getChapter().getBook().getBookNumber();
-                newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum));
-                if (i == passage.getVerses().length - 1) {
-                    newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum + 1));
-                }
-                if (newVerses.get(newVerses.size() - 1) != null) {
-                    lastNumber = verseNum + 1;
-                } else if (newVerses.get(newVerses.size() - 1) == null) {
-                    newVerses.remove(newVerses.size() - 1);
-                    newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum).getVerse(1));
-                    chapter = bv.getChapter().getNum() + 1;
-                    lastNumber = 1;
-                }
-                i++;
+        BiblePassage passage = (BiblePassage) d;
+        ThemeDTO theme = passage.getTheme();
+        List<BibleVerse> newVerses = new ArrayList<>();
+        int lastNumber = 0;
+        int chapter = 0;
+        int i = 0;
+        for (BibleVerse bv : passage.getVerses()) {
+            int verseNum = bv.getNum();
+            int chapterNum = bv.getChapter().getNum();
+            int bookNum = bv.getChapter().getBook().getBookNumber();
+            newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum));
+            if (i == passage.getVerses().length - 1) {
+                newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum + 1));
             }
-            BibleVerse firstVerse = newVerses.get(0);
-            String passageNumber = passage.getLocation().split(" (?=\\d)")[1];
-            if (chapter > 0) {
-                passageNumber = passageNumber + ";" + chapter + ":" + lastNumber;
-            } else if (passageNumber.contains(";") || (passageNumber.contains(","))) {
-                if (passageNumber.contains(";")) {
-                    if (passageNumber.substring(passageNumber.lastIndexOf(";")).contains("-")) {
-                        passageNumber = passageNumber.substring(0, passageNumber.lastIndexOf("-") + 1) + lastNumber;
-                    } else
-                        passageNumber = passageNumber + "-" + lastNumber;
-                } else {
-                    if (passageNumber.substring(passageNumber.lastIndexOf(",")).contains("-")) {
-                        passageNumber = passageNumber.substring(0, passageNumber.lastIndexOf("-") + 1) + lastNumber;
-                    } else
-                        passageNumber = passageNumber + "-" + lastNumber;
-                }
-            } else {
-                if (passageNumber.contains("-")) {
-                    passageNumber = passageNumber.substring(0, passageNumber.indexOf("-") + 1) + lastNumber;
-                } else if (passageNumber.contains(":")) {
-                    passageNumber = passageNumber + "-" + lastNumber;
-                }
+            if (newVerses.get(newVerses.size() - 1) != null) {
+                lastNumber = verseNum + 1;
+            } else if (newVerses.get(newVerses.size() - 1) == null) {
+                newVerses.remove(newVerses.size() - 1);
+                newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum).getVerse(1));
+                chapter = bv.getChapter().getNum() + 1;
+                lastNumber = 1;
             }
-            String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
-            replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[newVerses.size()]), theme, passage.getMulti()));
+            i++;
         }
+        BibleVerse firstVerse = newVerses.getFirst();
+        String passageNumber = passage.getLocation().split(" (?=\\d)")[1];
+        if (chapter > 0) {
+            passageNumber = passageNumber + ";" + chapter + ":" + lastNumber;
+        } else if (passageNumber.contains(";") || (passageNumber.contains(","))) {
+            if (passageNumber.contains(";")) {
+                if (passageNumber.substring(passageNumber.lastIndexOf(";")).contains("-")) {
+                    passageNumber = passageNumber.substring(0, passageNumber.lastIndexOf("-") + 1) + lastNumber;
+                } else
+                    passageNumber = passageNumber + "-" + lastNumber;
+            } else {
+                if (passageNumber.substring(passageNumber.lastIndexOf(",")).contains("-")) {
+                    passageNumber = passageNumber.substring(0, passageNumber.lastIndexOf("-") + 1) + lastNumber;
+                } else
+                    passageNumber = passageNumber + "-" + lastNumber;
+            }
+        } else {
+            if (passageNumber.contains("-")) {
+                passageNumber = passageNumber.substring(0, passageNumber.indexOf("-") + 1) + lastNumber;
+            } else if (passageNumber.contains(":")) {
+                passageNumber = passageNumber + "-" + lastNumber;
+            }
+        }
+        String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
+        replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti()));
         sl.getSelectionModel().clearSelection();
         int index = -1;
         for (BiblePassage key : replaceMap.keySet()) {
-            index = sl.getItems().indexOf(key);
+            index = sl.indexOf(key);
             if (index != -1) {
                 sl.getItems().remove(index);
-                sl.getItems().add(index, replaceMap.get(key));
+                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
             }
         }
         if (index != -1) {

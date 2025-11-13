@@ -34,7 +34,7 @@ public class SelectTranslationsActionHandler implements EventHandler<ActionEvent
     @Override
     public void handle(ActionEvent t) {
         TranslationChoiceDialog translationDialog = QueleaApp.get().getMainWindow().getTranslationChoiceDialog();
-        translationDialog.selectSong((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
+        translationDialog.selectSong((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem().displayable());
         translationDialog.show();
     }
 

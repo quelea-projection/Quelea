@@ -44,6 +44,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
@@ -156,7 +157,7 @@ public class LibrarySongList extends StackPane {
                 if (!toDrag.isEmpty()) {
                     Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
                     ClipboardContent content = new ClipboardContent();
-                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(toDrag));
+                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(toDrag.stream().map(x->new IndexedDisplayable(x, -1)).toList()));
                     db.setContent(content);
                 }
                 event.consume();

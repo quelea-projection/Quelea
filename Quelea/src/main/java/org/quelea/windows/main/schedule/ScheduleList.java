@@ -20,6 +20,7 @@ package org.quelea.windows.main.schedule;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -42,6 +43,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -77,13 +79,11 @@ import java.util.logging.Logger;
  */
 public class ScheduleList extends StackPane {
 
-    private final ListView<Displayable> listView;
+    private final ListView<IndexedDisplayable> listView;
     private Schedule schedule;
     private final Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
-    private int localDragIndex = -1;
-    private Displayable tempDisp = null;
+    private IndexedDisplayable tempDisp = null;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -106,107 +106,99 @@ public class ScheduleList extends StackPane {
         markerRect.setVisible(false);
         getChildren().add(markerRect);
         markerRect.toFront();
-        Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<>() {
+        Callback<ListView<IndexedDisplayable>, ListCell<IndexedDisplayable>> callback = new Callback<>() {
             @Override
-            public ListCell<Displayable> call(ListView<Displayable> p) {
+            public ListCell<IndexedDisplayable> call(ListView<IndexedDisplayable> p) {
 
-                final ListCell<Displayable> listCell = new ListCell<>() {
+                final ListCell<IndexedDisplayable> listCell = new ListCell<>() {
                     @Override
-                    public void updateItem(Displayable item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
+                    public void updateItem(IndexedDisplayable indexedDisplayable, boolean empty) {
+                        System.out.println("CALLED FOR: " + this);
+                        super.updateItem(indexedDisplayable, empty);
+                        if (empty || indexedDisplayable == null) {
                             setText(null);
                             setGraphic(null);
-                        } else {
-                            ScheduleListNode scheduleListNode = new ScheduleListNode(item);
-                            setGraphic(scheduleListNode);
-                            setText(null);
-                            scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
+                            setOnDragDetected(_->{
+                                System.out.println("EMPTY DRAGDETECTED: " + empty + " " + (indexedDisplayable==null));
+                            });
+                            setOnDragEntered(_->{});
+                            setOnDragDone(Event::consume);
+                            setOnDragDropped(event -> dragDropped(event, this));
+                            return;
                         }
+
+                        Displayable item = indexedDisplayable.displayable();
+                        ScheduleListNode scheduleListNode = new ScheduleListNode(item);
+                        setGraphic(scheduleListNode);
+                        setText(null);
+                        scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
                         if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
                             setContextMenu(new SchedulePopupMenu(item));
                         }
+
+                        setOnDragDetected(event -> {
+                            recalculateDisplayableIndexes();
+                            Dragboard db = startDragAndDrop(TransferMode.ANY);
+                            ClipboardContent content = new ClipboardContent();
+                            if (item instanceof SongDisplayable sdItem) {
+                                content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(indexedDisplayable));
+                                System.out.println("DRAGGED: " + sdItem.getTitle());
+                            } else {
+                                content.putString("tempdisp");
+                                tempDisp = indexedDisplayable;
+                            }
+
+                            db.setContent(content);
+                            event.consume();
+                            db.setDragView(snapshot(null, null));
+                        });
+                        setOnDragEntered(event -> {
+                            if (isEmpty()) {
+                                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null
+                                        || event.getDragboard().getString() != null) {
+                                    markerRect.setTranslateX(getLayoutX() + getTranslateX());
+                                    markerRect.setTranslateY(getLayoutY() + getTranslateY());
+                                    markerRect.setVisible(true);
+                                }
+                            } else {
+                                if (event.getDragboard().getString() != null) {
+                                    if (event.getDragboard().getString().equals("tempdisp")) {
+                                        markerRect.setTranslateX(getLayoutX() + getTranslateX());
+                                        markerRect.setTranslateY(getLayoutY() + getTranslateY());
+                                        markerRect.setVisible(true);
+                                    } else {
+                                        if (item instanceof SongDisplayable) {
+                                            setStyle("-fx-background-color: #99cccc;");
+                                        } else {
+                                            markerRect.setTranslateX(getLayoutX() + getTranslateX());
+                                            markerRect.setTranslateY(getLayoutY() + getTranslateY());
+                                            markerRect.setVisible(true);
+                                        }
+                                    }
+                                } else if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                                    markerRect.setTranslateX(getLayoutX() + getTranslateX());
+                                    markerRect.setTranslateY(getLayoutY() + getTranslateY());
+                                    markerRect.setVisible(true);
+                                }
+                            }
+                        });
+                        setOnDragExited(t -> {
+                            setStyle("");
+                            markerRect.setVisible(false);
+                        });
+                        setOnDragOver(event -> {
+                            if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                                event.acceptTransferModes(TransferMode.ANY);
+                            }
+                        });
+                        setOnDragDone(Event::consume);
+                        setOnDragDropped(event -> dragDropped(event, this));
                     }
                 };
-                cells.add(listCell);
-                listCell.setOnDragDetected(event -> {
-                    if (listCell.getItem() != null) {
-                        // Get the current index of the cell being dragged, regardless of selection state
-                        localDragIndex = listCell.getIndex();
-                        
-                        // Make sure the item is selected before starting the drag operation
-                        if (!listView.getSelectionModel().isSelected(localDragIndex)) {
-                            listView.getSelectionModel().clearAndSelect(localDragIndex);
-                        }
-                        
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        if (listCell.getItem() instanceof SongDisplayable) {
-                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList((SongDisplayable) listCell.getItem()));
-                        } else {
-                            content.putString("tempdisp");
-                            tempDisp = listCell.getItem();
-                        }
-                
-                        db.setContent(content);
-                        event.consume();
-                        db.setDragView(listCell.snapshot(null, null));
-                    }
-                });
-                listCell.setOnDragEntered(event -> {
-                    int size = listView.getItems().size();
-                    if (listCell.isEmpty()) {
-                        if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null
-                                || event.getDragboard().getString() != null) {
-                            for (ListCell<Displayable> cell : cells) {
-                                if (cell.isVisible() && cell.getIndex() == size) {
-                                    markerRect.setTranslateX(cell.getLayoutX() + cell.getTranslateX());
-                                    markerRect.setTranslateY(cell.getLayoutY() + cell.getTranslateY());
-                                    markerRect.setVisible(true);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        if (event.getDragboard().getString() != null) {
-                            if (event.getDragboard().getString().equals("tempdisp")) {
-                                markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
-                                markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
-                                markerRect.setVisible(true);
-                            } else {
-                                if (listCell.getItem() instanceof SongDisplayable) {
-                                    listCell.setStyle("-fx-background-color: #99cccc;");
-                                } else {
-                                    markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
-                                    markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
-                                    markerRect.setVisible(true);
-                                }
-                            }
-                        } else if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                            markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
-                            markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
-                            markerRect.setVisible(true);
-                        }
-                    }
-                });
-                listCell.setOnDragExited(t -> {
-                    listCell.setStyle("");
-                    markerRect.setVisible(false);
-                });
-                listCell.setOnDragOver(event -> {
-                    if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                        event.acceptTransferModes(TransferMode.ANY);
-                    }
-                });
-                listCell.setOnDragDone(event -> {
-                    localDragIndex = -1;
-                    event.consume();
-                });
-                listCell.setOnDragDropped(event -> dragDropped(event, listCell));
                 return listCell;
             }
         };
-        listView.setCellFactory(DisplayableListCell.forListView(null, callback, d -> d instanceof SongDisplayable || d instanceof BiblePassage || d instanceof TimerDisplayable));
+        listView.setCellFactory(DisplayableListCell.forListView(null, callback, d -> d.displayable() instanceof SongDisplayable || d.displayable() instanceof BiblePassage || d.displayable() instanceof TimerDisplayable));
         listView.setOnDragOver(event -> {
             if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                 event.acceptTransferModes(TransferMode.ANY);
@@ -233,14 +225,36 @@ public class ScheduleList extends StackPane {
         });
     }
 
+    /**
+     * Deprecated: This method is here for compatibility and should be removed. Displayables may be duplicated
+     * in a schedule list, in which case this method won't return a reliable value.
+     */
+    @Deprecated
+    public int indexOf(Displayable displayable) {
+        if (displayable == null) return -1;
+        for (IndexedDisplayable indexedDisplayable : getItems()) {
+            if (indexedDisplayable.displayable().equals(displayable)) {
+                return indexedDisplayable.index();
+            }
+        }
+        return -1;
+    }
+
     public void add(Displayable displayable) {
+        add(displayable, false);
+    }
+
+    public void add(Displayable displayable, boolean select) {
         if (!Platform.isFxApplicationThread()) {
             LOGGER.log(Level.WARNING, "Not on the platform thread!", new RuntimeException("DEBUG EX"));
         }
-        listView.itemsProperty().get().add(displayable);
+        IndexedDisplayable idxDisplayable = new IndexedDisplayable(displayable, listView.itemsProperty().getValue().size());
+        listView.itemsProperty().get().add(idxDisplayable);
+        getSelectionModel().select(idxDisplayable);
     }
 
-    private void dragDropped(DragEvent event, ListCell<Displayable> listCell) {
+    private void dragDropped(DragEvent event, ListCell<IndexedDisplayable> listCell) {
+
         if (listCell != null) {
             listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
         }
@@ -277,40 +291,37 @@ public class ScheduleList extends StackPane {
                 }
                 boolean isSong = !(listCell == null || listCell.isEmpty());
                 if (isSong) {
-                    if (!(listCell.getItem() instanceof TextDisplayable)) {
+                    if (!(listCell.getItem().displayable() instanceof TextDisplayable)) {
                         isSong = false;
                     }
                 }
                 if (!isSong && !useTempDisp) {
                     Displayable visualDisplayable;
-                    if(isVideo) {
+                    if (isVideo) {
                         visualDisplayable = new VideoDisplayable(dbLocation);
-                    }
-                    else {
+                    } else {
                         visualDisplayable = new ImageDisplayable(new File(dbLocation));
                     }
                     useTempDisp = true;
-                    tempDisp = visualDisplayable;
+                    tempDisp = new IndexedDisplayable(visualDisplayable, -1);
                 } else {
                     if (useTempDisp) {
 
                         //potentially check if the displayable is an image and then add it to theme of song.
-                        //Was not added due to the thought that it could get confusing if someone added image to 
+                        //Was not added due to the thought that it could get confusing if someone added image to
                         //schedule and then it all of a sudden disappeared if they were trying to rearrange the schedule.
                     } else {
-                        Displayable d = listCell.getItem();
-                        if (d instanceof TextDisplayable) {
-                            TextDisplayable textDisplayable = (TextDisplayable) d;
+                        IndexedDisplayable d = listCell.getItem();
+                        if (d.displayable() instanceof TextDisplayable textDisplayable) {
                             ThemeDTO theme = textDisplayable.getTheme();
                             SerializableDropShadow dropShadow = theme.getShadow();
                             if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                 dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
                             }
                             Background background;
-                            if(isVideo) {
+                            if (isVideo) {
                                 background = new VideoBackground(new File(dbLocation).getName(), 0, true);
-                            }
-                            else {
+                            } else {
                                 background = new ImageBackground(new File(dbLocation).getName());
                             }
 
@@ -319,11 +330,10 @@ public class ScheduleList extends StackPane {
                                 section.setTheme(newTheme);
                             }
                             textDisplayable.setTheme(newTheme);
-                            if (d instanceof SongDisplayable) {
-                                SongDisplayable sd = (SongDisplayable) d;
-                                if(QueleaProperties.get().getUseDefaultTranslation()) {
+                            if (d.displayable() instanceof SongDisplayable sd) {
+                                if (QueleaProperties.get().getUseDefaultTranslation()) {
                                     String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
-                                    if(defaultTranslation!=null && !defaultTranslation.trim().isEmpty()) {
+                                    if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
                                         sd.setCurrentTranslationLyrics(defaultTranslation);
                                     }
                                 }
@@ -340,11 +350,12 @@ public class ScheduleList extends StackPane {
                 }
             }
             if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList || useTempDisp) {
-                List<? extends Displayable> displayables;
+                List<IndexedDisplayable> displayables;
                 if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList) {
-                    List<SongDisplayable> songDisplayables = ((SongDisplayableList) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
+                    List<IndexedDisplayable> songDisplayables = ((SongDisplayableList) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
                     displayables = songDisplayables;
-                    for(SongDisplayable song : songDisplayables) {
+                    for (IndexedDisplayable indexedDisplayable : songDisplayables) {
+                        SongDisplayable song = (SongDisplayable) indexedDisplayable.displayable();
                         if (!QueleaProperties.get().getDefaultSongDBUpdate()) {
                             song.setID(-1);
                             song.setNoDBUpdate();
@@ -360,43 +371,27 @@ public class ScheduleList extends StackPane {
                     displayables = List.of(tempDisp);
                     tempDisp = null;
                 }
-                if (!displayables.isEmpty()) {
-                    for(Displayable d : displayables) {
-                        if (listCell == null || listCell.getIndex() != localDragIndex) {
-                            boolean draggedFromSchedule = Utils.getOutermostEnclosingClass(event.getGestureSource().getClass()) == ScheduleList.class;
-                            int newIndex;
-                            if(draggedFromSchedule) {
-                                boolean movedDown = listCell != null && listCell.getIndex() > localDragIndex;
-                                newIndex = listCell != null ? movedDown ? listCell.getIndex() - 1 : listCell.getIndex() : 0;
-                                if (localDragIndex > -1) {
-                                    getItems().remove(localDragIndex);
-                                    localDragIndex = -1;
-                                }
-                                if (newIndex > listView.getItems().size()) {
-                                    newIndex = listView.getItems().size();
-                                }
-                            }
-                            else {
-                                newIndex = listCell == null ? 0 : listCell.getIndex();
-                                if(newIndex > listView.getItems().size()) {
-                                    newIndex = listView.getItems().size();
-                                }
-                            }
-                            listView.itemsProperty().get().add(newIndex, d);
-                            listView.getSelectionModel().clearSelection();
-                            listView.getSelectionModel().select(newIndex);
-                            listView.requestFocus();
-                            Platform.runLater(() -> {
-                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(d, 0);
-                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                            });
-                        }
+                for (IndexedDisplayable d : displayables) {
+                    int newIndex;
+                    newIndex = listCell == null || listCell.getItem()==null ? listView.getItems().size() : listCell.getItem().index();
+                    if (newIndex > listView.getItems().size()) {
+                        newIndex = listView.getItems().size();
                     }
+                    IndexedDisplayable toAdd = new IndexedDisplayable(d.displayable(), newIndex);
+                    listView.itemsProperty().get().add(newIndex, toAdd);
+                    listView.itemsProperty().get().remove(d);
+                    listView.getSelectionModel().clearSelection();
+                    listView.getSelectionModel().select(toAdd);
+                    listView.requestFocus();
+                    Platform.runLater(() -> {
+                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(toAdd.displayable(), 0);
+                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    });
                 }
             }
         }
+        recalculateDisplayableIndexes();
         event.consume();
-        localDragIndex = -1;
     }
 
     /**
@@ -409,7 +404,7 @@ public class ScheduleList extends StackPane {
         boolean equal = true;
         if (listView.itemsProperty().get().size() == schedule.getSize()) {
             for (int i = 0; i < listView.itemsProperty().get().size(); i++) {
-                Displayable displayable = listView.itemsProperty().get().get(i);
+                Displayable displayable = listView.itemsProperty().get().get(i).displayable();
                 if (displayable != null && !displayable.equals(schedule.getDisplayable(i))) {
                     equal = false;
                 }
@@ -422,7 +417,7 @@ public class ScheduleList extends StackPane {
         }
         schedule.clear();
         for (int i = 0; i < listView.itemsProperty().get().size(); i++) {
-            schedule.add(listView.itemsProperty().get().get(i));
+            schedule.add(listView.itemsProperty().get().get(i).displayable());
         }
         return schedule;
     }
@@ -432,7 +427,7 @@ public class ScheduleList extends StackPane {
      *
      * @return the list view on this schedule list.
      */
-    public ListView<Displayable> getListView() {
+    public ListView<IndexedDisplayable> getListView() {
         return listView;
     }
 
@@ -445,11 +440,12 @@ public class ScheduleList extends StackPane {
      */
     public void setSchedule(Schedule schedule) {
         clearSchedule();
-        for (Displayable displayable : schedule) {
+        for (int i = 0; i < schedule.getSize(); i++) {
+            Displayable displayable = schedule.getDisplayable(i);
             if (displayable instanceof SongDisplayable) {
                 ((SongDisplayable) displayable).matchID();
             }
-            listView.itemsProperty().get().add(displayable);
+            listView.itemsProperty().get().add(new IndexedDisplayable(displayable, i));
         }
         this.schedule = schedule;
     }
@@ -461,12 +457,20 @@ public class ScheduleList extends StackPane {
      *             listview.
      */
     public void refreshSong(SongDisplayable song) {
-        ObservableList<Displayable> itemp = listView.itemsProperty().get();
+        ObservableList<IndexedDisplayable> itemp = listView.itemsProperty().get();
         int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
-        int index = itemp.indexOf(song);
-        if (index != -1) {
-            itemp.set(index, new SongDisplayable("", ""));
-            itemp.set(index, song);
+
+        IndexedDisplayable idxDisplayable = null;
+        for (IndexedDisplayable displayable : itemp) {
+            if (displayable.displayable().equals(song)) {
+                idxDisplayable = displayable;
+                break;
+            }
+        }
+
+        if (idxDisplayable != null) {
+            itemp.set(idxDisplayable.index(), new IndexedDisplayable(new SongDisplayable("", ""), idxDisplayable.index()));
+            itemp.set(idxDisplayable.index(), idxDisplayable);
         }
         listView.getSelectionModel().clearSelection();
         listView.selectionModelProperty().get().select(selectedIndex);
@@ -486,7 +490,7 @@ public class ScheduleList extends StackPane {
      *
      * @return the selection model of the listview.
      */
-    public MultipleSelectionModel<Displayable> getSelectionModel() {
+    public MultipleSelectionModel<IndexedDisplayable> getSelectionModel() {
         return listView.getSelectionModel();
     }
 
@@ -496,7 +500,7 @@ public class ScheduleList extends StackPane {
      *
      * @return the items property of the underlying list.
      */
-    public ObjectProperty<ObservableList<Displayable>> itemsProperty() {
+    public ObjectProperty<ObservableList<IndexedDisplayable>> itemsProperty() {
         return listView.itemsProperty();
     }
 
@@ -506,7 +510,7 @@ public class ScheduleList extends StackPane {
      *
      * @return the items of the underlying list.
      */
-    public ObservableList<Displayable> getItems() {
+    public ObservableList<IndexedDisplayable> getItems() {
         return listView.getItems();
     }
 
@@ -527,7 +531,7 @@ public class ScheduleList extends StackPane {
     public void removeCurrentItem() {
         int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
         if (selectedIndex != -1) {
-            Displayable d = listView.selectionModelProperty().get().getSelectedItem();
+            Displayable d = listView.selectionModelProperty().get().getSelectedItem().displayable();
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if ((d == live || listView.getItems().size() == 1) && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
@@ -550,6 +554,7 @@ public class ScheduleList extends StackPane {
                 d.dispose();
             }
             listView.itemsProperty().get().remove(selectedIndex);
+            recalculateDisplayableIndexes();
         }
     }
 
@@ -575,5 +580,13 @@ public class ScheduleList extends StackPane {
             listView.selectionModelProperty().get().select(selectedIndex + 1);
         }
         requestFocus();
+        recalculateDisplayableIndexes();
+    }
+
+    public void recalculateDisplayableIndexes() {
+        for (int i = 0; i < getItems().size(); i++) {
+            IndexedDisplayable item = getItems().get(i);
+            item.setIndex(i);
+        }
     }
 }

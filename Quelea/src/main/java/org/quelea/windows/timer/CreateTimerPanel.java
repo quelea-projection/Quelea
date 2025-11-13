@@ -44,6 +44,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
@@ -230,9 +231,11 @@ public class CreateTimerPanel extends Stage {
                     }
                 }
                 ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-                if (td != null) {
-                    sl.getItems().set(sl.getItems().indexOf(td), displayable);
-                    sl.getSelectionModel().select(displayable);
+                int idx = sl.indexOf(td);
+                if (td != null && idx > -1) {
+                    IndexedDisplayable indexedDisplayable = new IndexedDisplayable(displayable, idx);
+                    sl.getItems().set(idx, indexedDisplayable);
+                    sl.getSelectionModel().select(indexedDisplayable);
                 } else {
                     sl.add(displayable);
                 }

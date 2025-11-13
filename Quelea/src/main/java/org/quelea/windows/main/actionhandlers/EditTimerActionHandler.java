@@ -34,7 +34,7 @@ public class EditTimerActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        Stage s = new CreateTimerPanel((TimerDisplayable)QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
+        Stage s = new CreateTimerPanel((TimerDisplayable)QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem().displayable());
         s.showAndWait();
     }
 }

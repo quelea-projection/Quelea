@@ -63,7 +63,7 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         if(selectedDisplayable == null) {
-            selectedDisplayable = (TimerDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+            selectedDisplayable = (TimerDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem().displayable();
         }
         int seconds = selectedDisplayable.getSeconds();
         if (seconds < 0) {

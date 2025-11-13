@@ -25,6 +25,7 @@ import javafx.stage.WindowEvent;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
@@ -58,11 +59,11 @@ public class SchedulePopupMenu extends ContextMenu {
             boolean singleSelect = sl.getSelectionModel().getSelectedItems().size() == 1;
             boolean allSongs = true;
             boolean allBibles = true;
-            for (Displayable d : sl.getSelectionModel().getSelectedItems()) {
-                if (!(d instanceof SongDisplayable)) {
+            for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
+                if (!(d.displayable() instanceof SongDisplayable)) {
                     allSongs = false;
                 }
-                if (!(d instanceof BiblePassage)) {
+                if (!(d.displayable() instanceof BiblePassage)) {
                     allBibles = false;
                 }
             }

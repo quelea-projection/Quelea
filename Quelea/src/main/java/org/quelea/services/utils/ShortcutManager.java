@@ -85,9 +85,8 @@ public class ShortcutManager {
                 mainPanel.getLibraryPanel().getBiblePanel().getBookSelector().requestFocus();
             } else if (checkCombination(QueleaProperties.get().getAddAndGoLiveKeys())) {
                 if (mainPanel.getLibraryPanel().getTabPane().getSelectionModel().isSelected(0) && mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().size() == 1) {
-                    SongDisplayable displayable = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().get(0);
-                    mainPanel.getSchedulePanel().getScheduleList().add(displayable);
-                    mainPanel.getSchedulePanel().getScheduleList().getSelectionModel().select(displayable);
+                    SongDisplayable displayable = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().getFirst();
+                    mainPanel.getSchedulePanel().getScheduleList().add(displayable, true);
                     mainPanel.getPreviewPanel().goLive();
                 }
             }

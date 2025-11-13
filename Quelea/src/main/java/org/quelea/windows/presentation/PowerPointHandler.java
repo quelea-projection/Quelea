@@ -358,7 +358,7 @@ public class PowerPointHandler {
         try {
             String scr = "cscript " + string;
             LOGGER.log(Level.FINE, "Running VBS: {0}", scr);
-            Process p = Runtime.getRuntime().exec(scr);
+            Process p = Runtime.getRuntime().exec(scr.split(" "));
             try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
                 String line;
                 while ((line = input.readLine()) != null) {
@@ -409,7 +409,7 @@ public class PowerPointHandler {
             pptViewClose();
             Thread.sleep(500);
             Runtime rt = Runtime.getRuntime();
-            rt.exec("\"" + ppPath + "\" /F" + path);
+            rt.exec(("\"" + ppPath + "\" /F" + path).split(" "));
             Thread.sleep(500);
             for (int i = 0; i < QueleaProperties.get().getProjectorScreen(); i++) {
                 movePPTViewToSecondScreen();
@@ -430,7 +430,7 @@ public class PowerPointHandler {
     private static void pptViewClose() {
         Runtime rt = Runtime.getRuntime();
         try {
-            rt.exec("taskkill /F /IM PPTVIEW.exe");
+            rt.exec(("taskkill /F /IM PPTVIEW.exe").split(" "));
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Could not close PowerPoint Viewer ", ex);
         }
