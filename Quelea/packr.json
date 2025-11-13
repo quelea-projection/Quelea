@@ -5,7 +5,7 @@
     "classpath": [
         "dist/Quelea.jar"
     ],
-    "mainclass": "org.quelea.windows.main.Main",
+    "mainclass": "org.quelea.init.Main",
     "vmargs": [
         "Xmx2G",
         "XX:+UseParallelGC",

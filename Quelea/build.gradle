@@ -74,10 +74,10 @@ clean.finalizedBy(removeDist)
 compileJava.finalizedBy(dependencyUpdates)
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-ext.mainClass = 'org.quelea.windows.main.MainStub'
+ext.mainClass = 'org.quelea.init.MainStub'
 
 tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
-    mainClassName = 'org.quelea.windows.main.MainStub'
+    mainClassName = 'org.quelea.init.MainStub'
     mutexName = "queleamutex"
     supportUrl = "https://quelea.discourse.group/"
     icon = "../../icons/logo.ico"
@@ -288,7 +288,7 @@ test {
 jar {
     manifest {
         attributes (
-                'Main-Class': 'org.quelea.windows.main.MainStub',
+                'Main-Class': 'org.quelea.init.MainStub',
                 "Class-Path": configurations.runtimeClasspath.collect { "lib/" + it.getName() }.join(' ')
         )
     }
