@@ -1,4 +1,4 @@
-package org.quelea.windows.main;
+package org.quelea.init;
 
 /**
  * For various reasons, with Java/OpenJFX 11+, we

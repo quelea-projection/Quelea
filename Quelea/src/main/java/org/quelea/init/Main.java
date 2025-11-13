@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.init;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +27,6 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
-import org.quelea.init.QueleaApp;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
@@ -42,6 +41,8 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.utils.DesktopApi;
+import org.quelea.windows.main.DisplayStage;
+import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.splash.SplashStage;
 
 import javax.imageio.ImageIO;
