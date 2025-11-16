@@ -12,7 +12,7 @@
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
 
-[![Get it from Flathub](https://flathub.org/api/badge?svg&locale=en)](https://flathub.org/pt-BR/apps/org.quelea.Quelea)
+[![Get it from Flathub](https://flathub.org/api/badge?svg&locale=en)](https://flathub.org/en/apps/org.quelea.Quelea)
 
 **Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**
 
