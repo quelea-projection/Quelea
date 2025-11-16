@@ -9,7 +9,10 @@
 [**2024.0 - Mac**](https://github.com/quelea-projection/Quelea/releases/download/v2024.0/quelea-2024.0-mac.zip)
 
 [**2024.0 - Linux**](https://snapcraft.io/quelea)<br>
+
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/quelea)
+
+[![Get it from Flathub](https://flathub.org/api/badge?svg&locale=en)](https://flathub.org/en/apps/org.quelea.Quelea)
 
 **Problems or suggestions? [Head over to our forum and feel free to ask away](https://quelea.discourse.group/). We don't bite!**
 
