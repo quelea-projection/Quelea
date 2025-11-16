@@ -20,7 +20,6 @@ package org.quelea.windows.main.schedule;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -79,11 +78,15 @@ import java.util.logging.Logger;
  */
 public class ScheduleList extends StackPane {
 
+    //Fudge to get markerRect to line up properly in the face of JavaFX listview bugs
+    public static final double STATIC_FULL_HEIGHT = 36.0;
+
     private final ListView<IndexedDisplayable> listView;
     private Schedule schedule;
     private final Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private IndexedDisplayable tempDisp = null;
+    private IndexedDisplayable displayableThatSeesMouse = null;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -114,49 +117,55 @@ public class ScheduleList extends StackPane {
                     @Override
                     public void updateItem(IndexedDisplayable indexedDisplayable, boolean empty) {
                         super.updateItem(indexedDisplayable, empty);
+
+                        setOnMouseEntered(_ -> {
+                            displayableThatSeesMouse = this.getItem();
+                        });
+                        setOnDragDetected(event -> {
+                            recalculateDisplayableIndexes();
+                            if (displayableThatSeesMouse != null) {
+                                Dragboard db = startDragAndDrop(TransferMode.ANY);
+                                ClipboardContent content = new ClipboardContent();
+                                if (displayableThatSeesMouse.displayable() instanceof SongDisplayable) {
+                                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(displayableThatSeesMouse));
+                                } else {
+                                    content.putString("tempdisp");
+                                    tempDisp = displayableThatSeesMouse;
+                                }
+
+                                db.setContent(content);
+                                event.consume();
+                                db.setDragView(snapshot(null, null));
+                            }
+                        });
+                        setOnDragDropped(event -> dragDropped(event, this));
+                        setOnDragDone(e -> {
+                            markerRect.setVisible(false);
+                            e.consume();
+                        });
+
                         if (empty || indexedDisplayable == null) {
                             setText(null);
                             setGraphic(null);
-                            setOnDragDetected(_->{});
-                            setOnDragEntered(_->{});
-                            setOnDragDone(Event::consume);
-                            setOnDragDropped(event -> dragDropped(event, this));
-                            return;
-                        }
-
-                        Displayable item = indexedDisplayable.displayable();
-                        ScheduleListNode scheduleListNode = new ScheduleListNode(item);
-                        setGraphic(scheduleListNode);
-                        setText(null);
-                        scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
-                        if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
-                            setContextMenu(new SchedulePopupMenu(item));
-                        }
-
-                        setOnDragDetected(event -> {
-                            recalculateDisplayableIndexes();
-                            Dragboard db = startDragAndDrop(TransferMode.ANY);
-                            ClipboardContent content = new ClipboardContent();
-                            if (item instanceof SongDisplayable) {
-                                content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(indexedDisplayable));
-                            } else {
-                                content.putString("tempdisp");
-                                tempDisp = indexedDisplayable;
-                            }
-
-                            db.setContent(content);
-                            event.consume();
-                            db.setDragView(snapshot(null, null));
-                        });
-                        setOnDragEntered(event -> {
-                            if (isEmpty()) {
+                            setOnDragEntered(event -> {
                                 if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null
                                         || event.getDragboard().getString() != null) {
-                                    markerRect.setTranslateX(getLayoutX() + getTranslateX());
-                                    markerRect.setTranslateY(getLayoutY() + getTranslateY());
+                                    markerRect.setTranslateX(0);
+                                    markerRect.setTranslateY(listView.getItems().size()*STATIC_FULL_HEIGHT);
                                     markerRect.setVisible(true);
                                 }
-                            } else {
+                            });
+                        } else {
+                            Displayable item = indexedDisplayable.displayable();
+                            ScheduleListNode scheduleListNode = new ScheduleListNode(item);
+                            setGraphic(scheduleListNode);
+                            setText(null);
+                            scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
+                            if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
+                                setContextMenu(new SchedulePopupMenu(item));
+                            }
+
+                            setOnDragEntered(event -> {
                                 if (event.getDragboard().getString() != null) {
                                     if (event.getDragboard().getString().equals("tempdisp")) {
                                         markerRect.setTranslateX(getLayoutX() + getTranslateX());
@@ -176,19 +185,17 @@ public class ScheduleList extends StackPane {
                                     markerRect.setTranslateY(getLayoutY() + getTranslateY());
                                     markerRect.setVisible(true);
                                 }
-                            }
-                        });
-                        setOnDragExited(t -> {
-                            setStyle("");
-                            markerRect.setVisible(false);
-                        });
-                        setOnDragOver(event -> {
-                            if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                                event.acceptTransferModes(TransferMode.ANY);
-                            }
-                        });
-                        setOnDragDone(Event::consume);
-                        setOnDragDropped(event -> dragDropped(event, this));
+                            });
+                            setOnDragExited(t -> {
+                                setStyle("");
+                                markerRect.setVisible(false);
+                            });
+                            setOnDragOver(event -> {
+                                if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                                    event.acceptTransferModes(TransferMode.ANY);
+                                }
+                            });
+                        }
                     }
                 };
             }
@@ -253,6 +260,7 @@ public class ScheduleList extends StackPane {
         if (listCell != null) {
             listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
         }
+        markerRect.setVisible(false);
 
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
@@ -368,7 +376,7 @@ public class ScheduleList extends StackPane {
                 }
                 for (IndexedDisplayable d : displayables) {
                     int newIndex;
-                    newIndex = listCell == null || listCell.getItem()==null ? listView.getItems().size() : listCell.getItem().index();
+                    newIndex = listCell == null || listCell.getItem() == null ? listView.getItems().size() : listCell.getItem().index();
                     if (newIndex > listView.getItems().size()) {
                         newIndex = listView.getItems().size();
                     }
