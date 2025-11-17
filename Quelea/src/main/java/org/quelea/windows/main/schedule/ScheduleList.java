@@ -21,10 +21,15 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -33,6 +38,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
@@ -135,7 +141,11 @@ public class ScheduleList extends StackPane {
 
                                 db.setContent(content);
                                 event.consume();
-                                db.setDragView(snapshot(null, null));
+                                ScheduleListNode preview = new ScheduleListNode(displayableThatSeesMouse.displayable());
+
+                                new Scene(new Group(preview));
+                                WritableImage dragImage = preview.snapshot(new SnapshotParameters(), null);
+                                db.setDragView(dragImage);
                             }
                         });
                         setOnDragDropped(event -> dragDropped(event, this));
