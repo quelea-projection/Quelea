@@ -24,7 +24,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
@@ -38,7 +37,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
@@ -73,6 +71,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -392,7 +391,8 @@ public class ScheduleList extends StackPane {
                     }
                     IndexedDisplayable toAdd = new IndexedDisplayable(d.displayable(), newIndex);
                     listView.itemsProperty().get().add(newIndex, toAdd);
-                    listView.itemsProperty().get().remove(d);
+                    Optional<IndexedDisplayable> toRemove = listView.itemsProperty().get().stream().filter(x->x.index()==d.index()).findFirst();
+                    toRemove.ifPresent(old -> listView.itemsProperty().get().remove(old));
                     listView.getSelectionModel().clearSelection();
                     listView.getSelectionModel().select(toAdd);
                     listView.requestFocus();
