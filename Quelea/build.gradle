@@ -132,8 +132,11 @@ tasks.register('copyToDist') {
         copy { from "img" into project.distdir + "/img" }
         copy { from "timer" into project.distdir + "/timer" }
         copy { from "src" into project.distdir + "/src" }
-        copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
-        file("dist/zulu25.28.85-ca-fx-jre25.0.0-win_x64").renameTo(file("dist/winjre64"))
+        def wf = new File('bundlejre/winjre64.zip')
+        if (wf.exists()) {
+            copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
+            file("dist/zulu25.28.85-ca-fx-jre25.0.0-win_x64").renameTo(file("dist/winjre64"))
+        }
         copy { from file("build/libs/Quelea.jar") into file(project.distdir) }
         copy { from file("README.TXT") into file(project.distdir) }
         copy { from file("quelea.properties") into file(project.distdir) }

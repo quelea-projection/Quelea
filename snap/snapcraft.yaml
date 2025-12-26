@@ -10,15 +10,15 @@ issues: https://github.com/quelea-projection/Quelea/issues
 license: GPL-3.0
 
 environment:
-    JAVA_HOME: $SNAP/jar/jvm
-    PATH: $SNAP/jar/jvm/bin:$PATH
+    JAVA_HOME: $SNAP/app/jvm
+    PATH: $SNAP/app/jvm/bin:$PATH
     
 architectures:
   - build-on: [amd64]
 
 apps:
   quelea:
-    command: jar/launch.sh
+    command: app/launch.sh
     command-chain: [bin/desktop-launch]
     plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
 
@@ -55,25 +55,27 @@ parts:
     build-packages: [unzip, wget]
     stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
     override-build: |
-      wget -O jvm.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
-      mkdir jvm
-      tar -xf jvm.tar.gz -C jvm --strip-components 1
+      wget -O jdk.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jdk25.0.0-linux_x64.tar.gz
+      mkdir jdk
+      tar -xf jdk.tar.gz -C jdk --strip-components 1
       wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.1.0-bin.zip
       unzip gradle.zip
-      PATH=$PATH:$(pwd)/jvm/bin:$(pwd)/gradle-8.6/bin
-      JAVA_HOME=$(pwd)/jvm
-      gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck downloadJres downloadGStreamer createQueleaExe64 copyToDist
+      PATH=$PATH:$(pwd)/jdk/bin:$(pwd)/gradle-9.1.0/bin
+      JAVA_HOME=$(pwd)/jdk
+      gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
     override-stage: |
       snapcraftctl stage
-      mkdir -p $SNAPCRAFT_STAGE/jar/jvm
-      cp -a /build/quelea/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/jar
-      cp -a /build/quelea/parts/quelea/build/jvm/. $SNAPCRAFT_STAGE/jar/jvm
+
+      wget -O jre.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
+      mkdir jre 
+      tar -xf jre.tar.gz -C jre --strip-components 1
+
+      mkdir -p app/jvm
+      cp -a /root/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/app
+      cp -a jre/. app/jvm
     override-prime: |
       snapcraftctl prime
-      mkdir $SNAPCRAFT_PRIME/jar
-      cp -a $SNAPCRAFT_STAGE/jar/. $SNAPCRAFT_PRIME/jar/.
-      chmod +x $SNAPCRAFT_PRIME/jar/launch.sh
-      rm -rf $SNAPCRAFT_PRIME/jar/winjre64
-      glib-compile-schemas $SNAPCRAFT_PRIME/usr/share/glib-2.0/schemas/
-      
-      
+      mkdir app
+      cp -a $SNAPCRAFT_STAGE/app/. app/.
+      chmod +x $SNAPCRAFT_PRIME/app/launch.sh
+      glib-compile-schemas usr/share/glib-2.0/schemas/
