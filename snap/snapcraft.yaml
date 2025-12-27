@@ -58,21 +58,22 @@ parts:
       wget -O jdk.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jdk25.0.0-linux_x64.tar.gz
       mkdir jdk
       tar -xf jdk.tar.gz -C jdk --strip-components 1
+
       wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.1.0-bin.zip
       unzip gradle.zip
+
       PATH=$PATH:$(pwd)/jdk/bin:$(pwd)/gradle-9.1.0/bin
       JAVA_HOME=$(pwd)/jdk
+
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
-    override-stage: |
-      snapcraftctl stage
 
       wget -O jre.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
       mkdir jre 
       tar -xf jre.tar.gz -C jre --strip-components 1
 
-      mkdir -p app/jvm
-      cp -a /root/parts/quelea/build/dist/. $SNAPCRAFT_STAGE/app
-      cp -a jre/. app/jvm
+      mkdir -p $SNAPCRAFT_STAGE/app/jvm
+      cp -a dist/. $SNAPCRAFT_STAGE/app
+      cp -a jre/. $SNAPCRAFT_STAGE/app/jvm
     override-prime: |
       snapcraftctl prime
       mkdir app
