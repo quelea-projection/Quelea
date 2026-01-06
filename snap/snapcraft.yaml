@@ -59,10 +59,10 @@ parts:
       mkdir jdk
       tar -xf jdk.tar.gz -C jdk --strip-components 1
 
-      wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.1.0-bin.zip
+      wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.2.1-bin.zip
       unzip gradle.zip
 
-      PATH=$PATH:$(pwd)/jdk/bin:$(pwd)/gradle-9.1.0/bin
+      PATH=$PATH:$(pwd)/jdk/bin:$(pwd)/gradle-9.2.1/bin
       JAVA_HOME=$(pwd)/jdk
 
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
