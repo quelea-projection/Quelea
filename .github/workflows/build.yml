@@ -53,7 +53,7 @@ jobs:
           WINEARCH: win64
         run: |
           Xvfb $DISPLAY &
-          curl -SL "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe" -o is.exe
+          curl -SL "https://github.com/jrsoftware/issrc/releases/download/is-6_2_1/innosetup-6.2.1.exe" -o is.exe
           wine is.exe /SP- /VERYSILENT /ALLUSERS /SUPPRESSMSGBOXES
 
       - name: Build
