@@ -107,7 +107,9 @@ public class LivePanel extends LivePreviewPanel {
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
         loop.setOnMouseClicked(e -> {
             if (isLoopSelected()) {
-                PowerPointHandler.loopPresentation();
+                if (getDisplayable() instanceof PresentationDisplayable) {
+                    PowerPointHandler.loopPresentation();
+                }
             } else {
                 PowerPointHandler.stopLoop();
             }
