@@ -102,7 +102,7 @@ public class PlanningCenterOnlineImportDialog extends Stage {
         }
 
         centerOnScreen();
-        Utils.addIconsToStage(this);
+        getIcons().add(new Image("file:icons/planningcenteronline.png"));
     }
 
     public PlanningCenterOnlineParser getParser() {

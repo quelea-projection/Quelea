@@ -64,7 +64,7 @@ public class LyricsTextArea extends StackPane {
             Platform.runLater(this::refreshStyle);
         });
 
-        textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 10pt;");
+        // Font: see .lyrics-editor in base.css
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
         textArea.getStyleClass().addAll("text-area", "lyrics-editor");

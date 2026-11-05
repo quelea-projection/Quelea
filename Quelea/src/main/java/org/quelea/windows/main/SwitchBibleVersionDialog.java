@@ -73,13 +73,13 @@ public class SwitchBibleVersionDialog extends Stage {
         cancelButton.setOnAction(t -> {
             hide();
         });
-        HBox buttonPanel = new HBox(5);
-        buttonPanel.setAlignment(Pos.CENTER);
+        HBox buttonPanel = new HBox(8);
         buttonPanel.getChildren().addAll(okButton, cancelButton);
-        root.getChildren().add(buttonPanel);
-        StackPane containerPane = new StackPane();
-        StackPane.setMargin(root, new Insets(10));
-        containerPane.getChildren().add(root);
+        root.setSpacing(8);
+        root.setPadding(new Insets(16, 18, 16, 18));
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        javafx.scene.layout.BorderPane containerPane = new javafx.scene.layout.BorderPane(root);
+        containerPane.setBottom(buttonPanel);
         Scene scene = new Scene(containerPane);
         StyleManager.apply(scene);
         setScene(scene);

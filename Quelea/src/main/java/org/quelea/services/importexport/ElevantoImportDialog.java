@@ -92,7 +92,7 @@ public class ElevantoImportDialog extends Stage {
         }
 
         centerOnScreen();
-        Utils.addIconsToStage(this);
+        getIcons().add(new Image("file:icons/elevanto.png"));
     }
     
     public ElevantoParser getParser() {

@@ -57,6 +57,7 @@ import org.quelea.windows.newsong.ThemePanel;
 
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
 
 /**
  * Creates the creation panel for a timer displayable
@@ -154,6 +155,8 @@ public class CreateTimerPanel extends Stage {
             tp.setTheme(td.getTheme());
         }
         Stage tpStage = new Stage();
+        tpStage.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
+        Utils.addIconsToStage(tpStage);
         BorderPane bp = new BorderPane();
         bp.setCenter(tp);
         bp.setBottom(tpConfirm);

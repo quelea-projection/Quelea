@@ -37,6 +37,8 @@ import javafx.scene.control.ButtonBase;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import org.quelea.services.utils.LoggerUtils;
@@ -115,6 +117,15 @@ public final class StyleManager {
             }
         }
         polishGrids(root);
+        // Let a footer that sits directly in a padded VBox root reach the window edges
+        if (root instanceof VBox box) {
+            Insets p = box.getPadding();
+            for (Node child : box.getChildren()) {
+                if (child.getStyleClass().contains("dialog-button-bar")) {
+                    VBox.setMargin(child, new Insets(8, -p.getRight(), -p.getBottom(), -p.getLeft()));
+                }
+            }
+        }
     }
 
     private static void polishGrids(Parent parent) {
@@ -178,6 +189,14 @@ public final class StyleManager {
                     resizeIfShowing(pane);
                 }
             });
+            return;
+        }
+        if (parent instanceof StackPane stack && !stack.getStyleClass().contains("dialog-button-bar")
+                && stack.getChildren().stream().allMatch(node -> node instanceof ButtonBase)) {
+            // A button centred in its own StackPane: turn that pane into the footer
+            stack.getStyleClass().add("dialog-button-bar");
+            stack.setAlignment(Pos.CENTER_RIGHT);
+            resizeIfShowing(stack);
             return;
         }
         if (!(parent instanceof HBox box) || box.getStyleClass().contains("dialog-button-bar")) {

@@ -18,6 +18,11 @@
 
 .root {
     -fx-background-color: -q-window;
+    /* Inter (SIL Open Font License, see licenses/inter-ofl.txt) ships with
+       Quelea in icons/bundledfonts, so the UI looks the same on every
+       platform. Headings use the "Inter SemiBold" family. A user stylesheet
+       can change both. */
+    -fx-font-family: "Inter";
 }
 
 .split-pane {
@@ -120,7 +125,8 @@
 
 /* Header strip at the top of the schedule / preview / live panels */
 .panel-header-label {
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
     -fx-text-fill: -q-text;
     -fx-padding: 0 4 0 2;
 }
@@ -189,6 +195,7 @@
     -fx-background-insets: 0;
     -fx-background-radius: 6;
     -fx-text-fill: -q-on-accent;
+    -fx-font-family: "Inter SemiBold";
 }
 
 .button:default:hover {
@@ -225,7 +232,8 @@
     -fx-background-insets: 0;
     -fx-background-radius: 6;
     -fx-text-fill: -q-on-accent;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
     -fx-padding: 4 12 4 8;
     -fx-graphic-text-gap: 4;
 }
@@ -625,6 +633,8 @@
 /* Lyrics editor (RichTextFX) */
 .lyrics-editor {
     -fx-padding: 4 8 4 8;
+    -fx-font-family: "Roboto Mono";
+    -fx-font-size: 10pt;
 }
 
 /* Lyrics editor syntax highlighting */
@@ -658,6 +668,7 @@
     -fx-background-insets: 0;
     -fx-background-radius: 6;
     -fx-text-fill: -q-on-accent;
+    -fx-font-family: "Inter SemiBold";
 }
 
 .primary-button:hover,
@@ -736,7 +747,8 @@
 }
 
 .section-letter {
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
     -fx-text-fill: -q-accent;
     -fx-background-color: -q-accent-soft;
     -fx-background-radius: 5;
@@ -782,7 +794,8 @@
 
 .dialog-pane > .header-panel .label {
     -fx-font-size: 1.15em;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
 }
 
 .dialog-pane > .content {
@@ -994,7 +1007,8 @@
 
 .table-view .column-header .label {
     -fx-text-fill: -q-text-muted;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
     -fx-alignment: center-left;
     -fx-padding: 0 8 0 8;
 }
@@ -1110,7 +1124,8 @@
  * ==================================================================== */
 
 .lyric-section-header {
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
     -fx-font-size: 0.85em;
 }
 
@@ -1122,12 +1137,14 @@
 .overlay-title {
     -fx-fill: #ffffff;
     -fx-font-size: 1.6em;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
 }
 
 .about-heading {
     -fx-font-size: 1.5em;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
 }
 
 .search-match {
@@ -1207,7 +1224,8 @@
 
 .strip-title {
     -fx-fill: -q-text;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
 }
 
 .error-text {
@@ -1223,4 +1241,39 @@
 .list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .label,
 .tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .label {
     -fx-text-fill: -q-on-accent;
+}
+
+/* A scrollable list area shown as a card (e.g. song selection dialogs) */
+.scroll-pane.content-card {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 1;
+}
+
+.scroll-pane.content-card > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* 3x3 text position picker shown over theme previews on hover */
+.position-cell,
+.position-cell:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-insets: 3;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.55);
+    -fx-border-insets: 3;
+    -fx-border-radius: 8;
+    -fx-border-style: segments(5, 4);
+}
+
+.position-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.28);
+}
+
+.position-cell:selected,
+.position-cell:selected:hover {
+    -fx-background-color: rgba(37, 99, 235, 0.55);
+    -fx-border-color: #ffffff;
+    -fx-border-style: solid;
 }

@@ -148,9 +148,10 @@ public class LivePanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ToggleGroup group = new ToggleGroup();
+        // Logo, black, clear and hide are independent toggles: several can be on at
+        // once. (A ToggleGroup here un-selected the previous button without running
+        // its action, so its effect stayed on the screen.)
         logo = new ToggleButton("", QueleaIcon.LOGO.create());
-        logo.setToggleGroup(group);
         Utils.setToolbarButtonStyle(logo);
         logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip") + " (F5)"));
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
@@ -185,7 +186,6 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.getItems().add(logo);
         black = new ToggleButton("", QueleaIcon.BLACK.create());
-        black.setToggleGroup(group);
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
         black.setOnAction(t -> {
@@ -206,7 +206,6 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.getItems().add(black);
         clear = new ToggleButton("", QueleaIcon.CLEAR_TEXT.create());
-        clear.setToggleGroup(group);
         Utils.setToolbarButtonStyle(clear);
         clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F7)"));
         clear.setOnAction((javafx.event.ActionEvent t) -> {
@@ -224,7 +223,6 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(clear);
         hide = new ToggleButton("", QueleaIcon.HIDE_OUTPUT.create());
         Utils.setToolbarButtonStyle(hide);
-        hide.setToggleGroup(group);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));
         hide.setOnAction(t -> {
             int projectorScreen = QueleaProperties.get().getProjectorScreen();

@@ -56,7 +56,7 @@ public class ExportMenu extends Menu {
     public ExportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("export.heading"), QueleaIcon.EXPORT.create());
 
-        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), QueleaIcon.SONG_PACK.create());
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(evt -> {
 			final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
 			//TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.

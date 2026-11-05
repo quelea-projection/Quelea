@@ -48,6 +48,7 @@ import org.quelea.services.utils.QueleaProperties;
 
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.BorderPane;
 
 /**
  * A dialog where given songs can be selected.
@@ -99,6 +100,8 @@ public class SelectSongsDialog extends Stage {
         gridPane.setVgap(5);
         gridScroll = new ScrollPane();
         VBox.setVgrow(gridScroll, Priority.ALWAYS);
+        gridScroll.getStyleClass().add("content-card");
+        VBox.setMargin(gridScroll, new Insets(0, 16, 12, 16));
         VBox scrollContent = new VBox(10);
         HBox topBox = new HBox(5);
         Label checkAllLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
@@ -116,12 +119,12 @@ public class SelectSongsDialog extends Stage {
         mainPanel.getChildren().add(gridScroll);
         addButton = new Button(acceptText, QueleaIcon.CHECK.create());
         StyleManager.markPrimaryButton(addButton);
-        StackPane stackAdd = new StackPane();
-        stackAdd.getChildren().add(addButton);
-        VBox.setMargin(stackAdd, new Insets(10));
-        mainPanel.getChildren().add(stackAdd);
+        // Footer with the accept button (styled by StyleManager.markPrimaryButton)
+        HBox footer = new HBox(addButton);
+        BorderPane root = new BorderPane(mainPanel);
+        root.setBottom(footer);
 
-        Scene scene = new Scene(mainPanel, 800, 600);
+        Scene scene = new Scene(root, 800, 600);
         StyleManager.apply(scene);
         setScene(scene);
     }

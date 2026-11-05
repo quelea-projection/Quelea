@@ -60,7 +60,7 @@ public class HelpMenu extends Menu {
         });
 
         if (Desktop.isDesktopSupported()) {
-            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), QueleaIcon.WEBSITE_LINK.create());
+            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getFacebookPageLocation());
             });

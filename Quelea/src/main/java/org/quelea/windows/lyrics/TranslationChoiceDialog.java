@@ -61,7 +61,7 @@ public class TranslationChoiceDialog extends Stage {
         Utils.addIconsToStage(this);
         BorderPane root = new BorderPane();
         content = new VBox(5);
-        BorderPane.setMargin(content, new Insets(10));
+        BorderPane.setMargin(content, new Insets(16));
         root.setCenter(content);
 
         Label selectTranslationLabel = new Label(LabelGrabber.INSTANCE.getLabel("select.translation.label"));
@@ -77,7 +77,7 @@ public class TranslationChoiceDialog extends Stage {
             }
         });
         okButton.setDefaultButton(true);
-        StackPane.setMargin(okButton, new Insets(5));
+        StyleManager.markPrimaryButton(okButton);
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
         buttonPane.getChildren().add(okButton);

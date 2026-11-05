@@ -69,9 +69,11 @@ public class EditThemeDialog extends Stage {
         BorderPane mainPane = new BorderPane();
         mainPane.getStyleClass().add("preview-backdrop");
 
-        VBox northBox = new VBox();
-        HBox themeSelectPanel = new HBox();
-        themeSelectPanel.setPadding(new Insets(5));
+        // Theme selection and name in a toolbar along the top
+        VBox northBox = new VBox(8);
+        northBox.getStyleClass().add("dialog-toolbar");
+        HBox themeSelectPanel = new HBox(8);
+        themeSelectPanel.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.label") + ": ");
         themeCombo = new ComboBox<>();
         themeCombo.setOnAction(event -> setTheme(themeCombo.getSelectionModel().getSelectedItem()));
@@ -84,11 +86,11 @@ public class EditThemeDialog extends Stage {
         HBox themeNamePanel = new HBox(5);
         northBox.getChildren().addAll(themeSelectPanel, themeNamePanel);
 
-        themeNamePanel.setPadding(new Insets(5));
         mainPane.setTop(northBox);
         nameField = new TextField();
         nameField.setPromptText(LabelGrabber.INSTANCE.getLabel("theme.name.label"));
         themeNamePanel.getChildren().add(nameField);
+        HBox.setHgrow(nameField, javafx.scene.layout.Priority.ALWAYS);
         panel = new ThemePanel();
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);

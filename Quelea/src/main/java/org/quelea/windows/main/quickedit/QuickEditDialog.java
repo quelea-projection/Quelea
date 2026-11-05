@@ -68,6 +68,8 @@ public class QuickEditDialog extends Stage {
         statusLabel = new Label();
         HBox statusPanel = new HBox();
         statusPanel.getChildren().add(statusLabel);
+        statusLabel.getStyleClass().add("muted-label");
+        BorderPane.setMargin(statusPanel, new Insets(14, 16, 6, 16));
         mainPane.setTop(statusPanel);
         sectionArea = new TextArea();
         
@@ -83,10 +85,10 @@ public class QuickEditDialog extends Stage {
                 }
             }
         });
+        BorderPane.setMargin(sectionArea, new Insets(0, 16, 14, 16));
         mainPane.setCenter(sectionArea);
         HBox buttonPanel = new HBox();
         buttonPanel.setAlignment(Pos.CENTER);
-        BorderPane.setMargin(buttonPanel, new Insets(5,0,5,0));
         buttonPanel.setSpacing(5);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
         StyleManager.markPrimaryButton(okButton);

@@ -116,6 +116,7 @@ public class SpellingDialog {
             }
         });
         correctButton.disableProperty().bind(suggestions.getSelectionModel().selectedItemProperty().isNull());
+        correctButton.getStyleClass().add("primary-button");
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -131,7 +132,10 @@ public class SpellingDialog {
         BorderPane mainPane = new BorderPane();
         VBox rightPanel = new VBox(5);
         rightPanel.setAlignment(Pos.CENTER);
-        BorderPane.setMargin(rightPanel, new Insets(10));
+        BorderPane.setMargin(rightPanel, new Insets(16, 16, 16, 8));
+        ignoreButton.setMaxWidth(Double.MAX_VALUE);
+        addButton.setMaxWidth(Double.MAX_VALUE);
+        correctButton.setMaxWidth(Double.MAX_VALUE);
         rightPanel.getChildren().add(ignoreButton);
         rightPanel.getChildren().add(addButton);
         rightPanel.getChildren().add(correctButton);
@@ -139,15 +143,15 @@ public class SpellingDialog {
         mainPane.setCenter(rightPanel);
         HBox southPanel = new HBox();
         southPanel.setAlignment(Pos.CENTER_RIGHT);
-        BorderPane.setMargin(southPanel, new Insets(5));
+        southPanel.getStyleClass().add("dialog-button-bar");
         southPanel.getChildren().add(cancelButton);
         mainPane.setBottom(southPanel);
         VBox centrePanel = new VBox(10);
         centrePanel.getChildren().add(textPane);
         centrePanel.getChildren().add(suggestions);
         mainPane.setLeft(centrePanel);
-        mainPane.setPadding(new Insets(5));
-        Scene scene = new Scene(mainPane, 300, 200);
+        BorderPane.setMargin(centrePanel, new Insets(16, 8, 16, 16));
+        Scene scene = new Scene(mainPane, 360, 260);
         StyleManager.apply(scene);
         dialogStage.setScene(scene);
     }
@@ -176,26 +180,9 @@ public class SpellingDialog {
         if(wordsToCorrect.isEmpty()) {
             dialogStage.hide();
             area.updateSpelling(true);
-            Button ok = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"));
-            VBox.setMargin(ok, new Insets(10));
-            final Stage doneSpellingStage = new Stage();
-            doneSpellingStage.setTitle(LabelGrabber.INSTANCE.getLabel("complete.title"));
-            ok.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    doneSpellingStage.hide();
-                }
-            });
-            doneSpellingStage.initModality(Modality.WINDOW_MODAL);
-            VBox spellingBox = new VBox();
-            spellingBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")));
-            spellingBox.getChildren().add(ok);
-            spellingBox.setAlignment(Pos.CENTER);
-            spellingBox.setPadding(new Insets(15));
-            Scene scene = new Scene(spellingBox);
-            StyleManager.apply(scene);
-            doneSpellingStage.setScene(scene);
-            doneSpellingStage.show();
+            // Standard Quelea information dialog (icon, footer, theme)
+            org.javafx.dialog.Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("complete.title"),
+                    LabelGrabber.INSTANCE.getLabel("spelling.complete.text"), area.getScene().getWindow());
             return;
         }
         List<String> origPieces = Arrays.asList(Pattern.compile(Speller.SPELLING_REGEX, Pattern.UNICODE_CHARACTER_CLASS).split(origText));

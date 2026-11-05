@@ -30,6 +30,8 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
 import org.quelea.windows.style.StyleManager;
+import javafx.geometry.Insets;
+import javafx.scene.layout.BorderPane;
 
 /**
  * The dialog shown to the user when choosing how to transpose the chords of 
@@ -49,7 +51,8 @@ public class TransposeDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("transpose.label"));
         
         VBox contentPane = new VBox();
-        contentPane.setSpacing(5);
+        contentPane.setSpacing(8);
+        contentPane.setPadding(new Insets(16, 18, 16, 18));
         
         keySelection = new ComboBox<>();
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("select.key.label"));
@@ -70,10 +73,12 @@ public class TransposeDialog extends Stage {
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
         cancelButton.setOnAction(t -> hide());
         buttonPanel.getChildren().add(cancelButton);
-        buttonPanel.setAlignment(Pos.BASELINE_LEFT);
-        contentPane.getChildren().add(buttonPanel);
+        StyleManager.markPrimaryButton(okButton);
+        keySelection.setMaxWidth(Double.MAX_VALUE);
 
-        Scene scene = new Scene(contentPane);
+        BorderPane root = new BorderPane(contentPane);
+        root.setBottom(buttonPanel);
+        Scene scene = new Scene(root);
         StyleManager.apply(scene);
         setScene(scene);
     }

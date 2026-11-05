@@ -28,6 +28,13 @@ Theme files only define *named colours* on `.root`, for example:
 `-q-surface`, `-q-text`, …). Changing a theme therefore means changing a
 handful of values in one file.
 
+## Typography
+
+The UI uses **Inter** (SIL Open Font License, `licenses/inter-ofl.txt`), which
+is bundled in `icons/bundledfonts` and loaded at start-up. Body text uses the
+`Inter` family; headings, panel titles and primary buttons use the separate
+`Inter SemiBold` family. The lyrics editor uses the bundled Roboto Mono.
+
 ## Making your own tweaks without rebuilding Quelea
 
 Create a file called `ui-style.css` in the Quelea user directory (the folder
@@ -42,9 +49,10 @@ override anything. Some examples:
     -q-accent-soft: #dcfce7;
 }
 
-/* Larger text everywhere */
+/* Larger text everywhere, or a different UI font */
 .root {
     -fx-font-size: 14px;
+    -fx-font-family: "Noto Sans";
 }
 
 /* Swap an icon for a different SVG path. The two tiny squares at the end
