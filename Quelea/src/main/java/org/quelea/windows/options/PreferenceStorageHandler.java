@@ -33,6 +33,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import static com.dlsc.preferencesfx.util.Constants.*;
+import org.quelea.windows.style.UiTheme;
 
 /**
  * Handles everything related to storing values of {@link Setting} using {@link Preferences}.
@@ -175,12 +176,12 @@ public class PreferenceStorageHandler implements StorageHandler {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
                 }
                 break;
-            case QueleaPropertyKeys.darkThemeKey:
-                if ((QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("default.theme.label"))) ||
-                        (!QueleaProperties.get().getUseDarkTheme() && object.toString().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")))) {
+            case QueleaPropertyKeys.uiThemeKey:
+                UiTheme chosen = UiTheme.fromLabel(object.toString());
+                if (chosen != null && !chosen.getId().equals(QueleaProperties.get().getUiTheme())) {
+                    QueleaProperties.get().setUiTheme(chosen.getId());
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("theme.changed"), LabelGrabber.INSTANCE.getLabel("theme.changed.message"), QueleaApp.get().getMainWindow());
                 }
-                QueleaProperties.get().setUseDarkTheme(object.toString().equals(LabelGrabber.INSTANCE.getLabel("dark.theme.label")));
                 break;
             case QueleaPropertyKeys.projectorModeKey:
                 if (Boolean.parseBoolean(object.toString())) {
@@ -326,8 +327,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
                     return property;
-                case QueleaPropertyKeys.darkThemeKey:
-                    return LabelGrabber.INSTANCE.getLabel(QueleaProperties.get().getUseDarkTheme() ? "dark.theme.label" : "default.theme.label");
+                case QueleaPropertyKeys.uiThemeKey:
+                    return UiTheme.current().getLabel();
                 case QueleaPropertyKeys.projectorModeKey:
                 case QueleaPropertyKeys.stageModeKey:
                     return property.equals("coords");

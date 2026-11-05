@@ -55,7 +55,9 @@ import org.quelea.services.utils.QueleaProperties;
  * <ol>
  * <li>{@code base.css} - component styling shared by all themes</li>
  * <li>{@code icons.css} - vector icon shapes (see {@link QueleaIcon})</li>
- * <li>{@code theme-light.css} or {@code theme-dark.css} - colour palette</li>
+ * <li>{@code dark-common.css} - only for dark themes</li>
+ * <li>{@code theme-<id>.css} - the colour palette of the chosen
+ * {@link UiTheme}</li>
  * <li>an optional {@code ui-style.css} in the Quelea user directory, so that
  * users and churches can tweak colours, fonts or icons without rebuilding
  * Quelea</li>
@@ -72,6 +74,10 @@ public final class StyleManager {
     public static final String ICONS_STYLESHEET = STYLE_ROOT + "icons.css";
     public static final String LIGHT_THEME_STYLESHEET = STYLE_ROOT + "theme-light.css";
     public static final String DARK_THEME_STYLESHEET = STYLE_ROOT + "theme-dark.css";
+    /**
+     * Rules shared by all dark themes (loaded before the palette).
+     */
+    public static final String DARK_COMMON_STYLESHEET = STYLE_ROOT + "dark-common.css";
 
     /**
      * File name of the optional user stylesheet in the Quelea user directory.
@@ -236,7 +242,12 @@ public final class StyleManager {
             List<String> list = new ArrayList<>();
             list.add(BASE_STYLESHEET);
             list.add(ICONS_STYLESHEET);
-            list.add(isDark() ? DARK_THEME_STYLESHEET : LIGHT_THEME_STYLESHEET);
+            UiTheme theme = UiTheme.current();
+            LOGGER.log(Level.INFO, "Using interface theme {0}", theme.getId());
+            if (theme.isDark()) {
+                list.add(DARK_COMMON_STYLESHEET);
+            }
+            list.add(theme.getStylesheet());
             File userSheet = new File(QueleaProperties.get().getQueleaUserHome(), USER_STYLESHEET_NAME);
             if (userSheet.isFile()) {
                 LOGGER.log(Level.INFO, "Using user stylesheet {0}", userSheet.getAbsolutePath());

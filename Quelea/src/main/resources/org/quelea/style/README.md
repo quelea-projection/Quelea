@@ -7,11 +7,29 @@ All styling of the operator-facing user interface lives in this folder.
 |--------------------|-----------------------------------------------------------------|
 | `base.css`         | Component styling shared by every theme (buttons, lists, tabs…) |
 | `icons.css`        | Vector icons, one `-fx-shape` per `.icon-<name>` class          |
-| `theme-light.css`  | Colour palette for the default (light) theme                    |
-| `theme-dark.css`   | Colour palette for the dark theme                               |
+| `theme-*.css`      | Colour palettes: light, dark, midnight, warm, high-contrast     |
+| `dark-common.css`  | A few rules shared by all dark themes                           |
 
 `org.quelea.windows.style.StyleManager` adds these stylesheets to every
 window's scene, in the order above, followed by an optional user stylesheet.
+
+## Themes
+
+The theme is chosen under Options → General → Application theme and stored as
+`ui.theme` in quelea.properties (older installations with only
+`use.dark.theme` keep working). Built-in themes:
+
+| Id              | Name                         | Type  |
+|-----------------|------------------------------|-------|
+| `light`         | Light (default)              | light |
+| `dark`          | Dark                         | dark  |
+| `system`        | Follow the operating system  | light or dark, decided at start-up |
+| `midnight`      | Midnight: navy, sky-blue     | dark  |
+| `warm`          | Warm: sand, terracotta       | light |
+| `high-contrast` | High contrast: black, yellow | dark  |
+
+To add one: copy a `theme-*.css` palette, add a constant to `UiTheme` and a
+label to the language files.
 
 ## How the theming works
 

@@ -1273,7 +1273,39 @@
 
 .position-cell:selected,
 .position-cell:selected:hover {
-    -fx-background-color: rgba(37, 99, 235, 0.55);
+    -fx-background-color: -q-accent;
     -fx-border-color: #ffffff;
     -fx-border-style: solid;
+}
+
+/* ======================================================================
+ * Label text colours
+ * Dark themes colour every plain .text node (dark-common.css). These more
+ * specific rules keep the intended colour on labels and buttons whose text
+ * is not the normal text colour.
+ * ==================================================================== */
+
+.go-live-button > .text,
+.primary-button > .text,
+.button:default > .text,
+.menu-item:focused .text {
+    -fx-fill: -q-on-accent;
+}
+
+.section-letter > .text {
+    -fx-fill: -q-accent;
+}
+
+.muted-label > .text,
+.media-time-label > .text,
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label > .text {
+    -fx-fill: -q-text-muted;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label > .text {
+    -fx-fill: -q-text;
+}
+
+.tooltip > .text {
+    -fx-fill: #ffffff;
 }

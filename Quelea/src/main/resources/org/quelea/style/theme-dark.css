@@ -66,12 +66,3 @@
     -fx-light-text-color:               -q-text;
     -fx-text-fill:                      -q-text;
 }
-
-/* Plain Text nodes created in code default to black; make them readable. */
-.text {
-    -fx-fill: -q-text;
-}
-
-.text-area {
-    -fx-control-inner-background: -q-surface;
-}
