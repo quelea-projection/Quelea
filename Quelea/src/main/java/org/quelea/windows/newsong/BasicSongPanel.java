@@ -85,13 +85,11 @@ public class BasicSongPanel extends BorderPane {
     private String saveHash = "";
     private final TextField sequenceField;
     private final Button sequenceButton;
-    private boolean darkTheme = false;
 
     /**
      * Create and initialise the song panel.
      */
     public BasicSongPanel() {
-        darkTheme = QueleaProperties.get().getUseDarkTheme();
         final VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
         GridPane topPanel = new GridPane();

@@ -55,6 +55,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * The panel used to get bible verses.
@@ -97,6 +98,14 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         preview = new WebView();
         webEngine = preview.getEngine();
         clearWebView();
+        // Redraw the HTML preview in the new colours when the theme changes
+        StyleManager.themeProperty().addListener((obs, oldTheme, newTheme) -> {
+            if (getPassageSelector().getText().isEmpty()) {
+                clearWebView();
+            } else {
+                update();
+            }
+        });
         if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
         } else {

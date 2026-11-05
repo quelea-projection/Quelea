@@ -17,19 +17,24 @@ window's scene, in the order above, followed by an optional user stylesheet.
 
 The theme is chosen under Options → General → Application theme and stored as
 `ui.theme` in quelea.properties (older installations with only
-`use.dark.theme` keep working). Built-in themes:
+`use.dark.theme` keep working). A new theme is applied straight away to every
+open window, without restarting Quelea (`StyleManager.applyTheme`). Built-in
+themes:
 
 | Id              | Name                         | Type  |
 |-----------------|------------------------------|-------|
 | `light`         | Light (default)              | light |
 | `dark`          | Dark                         | dark  |
-| `system`        | Follow the operating system  | light or dark, decided at start-up |
+| `system`        | Follow the operating system  | light or dark, follows the system setting live |
 | `midnight`      | Midnight: navy, sky-blue     | dark  |
 | `warm`          | Warm: sand, terracotta       | light |
 | `high-contrast` | High contrast: black, yellow | dark  |
 
 To add one: copy a `theme-*.css` palette, add a constant to `UiTheme` and a
 label to the language files.
+
+Code that draws its own colours (e.g. the HTML bible preview) can listen to
+`StyleManager.themeProperty()` to redraw when the theme changes.
 
 ## How the theming works
 

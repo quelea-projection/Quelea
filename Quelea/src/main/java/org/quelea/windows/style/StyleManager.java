@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +29,8 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.Parent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.WindowEvent;
@@ -86,6 +90,17 @@ public final class StyleManager {
 
     private static List<String> stylesheets;
 
+    /**
+     * Every scene and node styled through this class, so a new theme can be
+     * applied to them while Quelea is running. Weak, so closed windows can
+     * still be garbage collected.
+     */
+    private static final Map<Scene, Boolean> STYLED_SCENES = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Parent, Boolean> STYLED_PARENTS = Collections.synchronizedMap(new WeakHashMap<>());
+
+    private static final ReadOnlyObjectWrapper<UiTheme> THEME = new ReadOnlyObjectWrapper<>();
+    private static boolean followingSystem;
+
     private StyleManager() {
         throw new AssertionError();
     }
@@ -98,6 +113,7 @@ public final class StyleManager {
      */
     public static Scene apply(Scene scene) {
         scene.getStylesheets().addAll(getStylesheets());
+        STYLED_SCENES.put(scene, Boolean.TRUE);
         scene.windowProperty().addListener((obs, oldWindow, window) -> {
             if (window != null && !(window instanceof MainWindow) && !(window instanceof SplashStage)) {
                 window.addEventHandler(WindowEvent.WINDOW_SHOWING, e -> polishDialog(scene.getRoot()));
@@ -165,6 +181,7 @@ public final class StyleManager {
      */
     public static <T extends Parent> T apply(T parent) {
         parent.getStylesheets().addAll(getStylesheets());
+        STYLED_PARENTS.put(parent, Boolean.TRUE);
         return parent;
     }
 
@@ -228,12 +245,90 @@ public final class StyleManager {
      * @return true if the dark colour palette is in use.
      */
     public static boolean isDark() {
-        return QueleaProperties.get().getUseDarkTheme();
+        return getTheme().isDark();
     }
 
     /**
-     * Get the stylesheets, in load order, for the configured theme. The theme
-     * only changes after a restart, so the list is computed once.
+     * @return the interface theme currently shown.
+     */
+    public static UiTheme getTheme() {
+        if (THEME.get() == null) {
+            THEME.set(UiTheme.current());
+        }
+        return THEME.get();
+    }
+
+    /**
+     * The interface theme currently shown. Code that draws its own colours
+     * (for example HTML previews) can listen to this to redraw when the theme
+     * changes.
+     *
+     * @return the read-only theme property.
+     */
+    public static ReadOnlyObjectProperty<UiTheme> themeProperty() {
+        getTheme();
+        return THEME.getReadOnlyProperty();
+    }
+
+    /**
+     * Switch every open (and every already created) Quelea window to another
+     * theme straight away, without a restart. Must be called on the JavaFX
+     * application thread.
+     *
+     * @param theme the theme to show.
+     */
+    public static void applyTheme(UiTheme theme) {
+        List<String> oldSheets = getStylesheets();
+        synchronized (StyleManager.class) {
+            stylesheets = null;
+            THEME.set(theme);
+        }
+        List<String> newSheets = getStylesheets();
+        LOGGER.log(Level.INFO, "Switched interface theme to {0}", theme.getId());
+        synchronized (STYLED_SCENES) {
+            for (Scene scene : STYLED_SCENES.keySet()) {
+                replace(scene.getStylesheets(), oldSheets, newSheets);
+            }
+        }
+        synchronized (STYLED_PARENTS) {
+            for (Parent parent : STYLED_PARENTS.keySet()) {
+                replace(parent.getStylesheets(), oldSheets, newSheets);
+            }
+        }
+    }
+
+    /**
+     * Swap the Quelea stylesheets in a list, keeping any others where they are.
+     */
+    private static void replace(List<String> sheets, List<String> oldSheets, List<String> newSheets) {
+        int index = sheets.indexOf(BASE_STYLESHEET);
+        sheets.removeAll(oldSheets);
+        sheets.addAll(index < 0 ? sheets.size() : Math.min(index, sheets.size()), newSheets);
+    }
+
+    /**
+     * With the "follow system" theme, switch between light and dark as soon
+     * as the operating system does.
+     */
+    private static void followSystemColourScheme() {
+        if (followingSystem) {
+            return;
+        }
+        followingSystem = true;
+        try {
+            Platform.getPreferences().colorSchemeProperty().addListener((obs, oldScheme, newScheme) -> {
+                if (getTheme() == UiTheme.SYSTEM) {
+                    UiTheme.refreshSystemColourScheme();
+                    applyTheme(UiTheme.SYSTEM);
+                }
+            });
+        } catch (RuntimeException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't follow the system colour scheme", ex);
+        }
+    }
+
+    /**
+     * Get the stylesheets, in load order, for the current theme.
      *
      * @return an unmodifiable list of stylesheet URLs.
      */
@@ -242,8 +337,11 @@ public final class StyleManager {
             List<String> list = new ArrayList<>();
             list.add(BASE_STYLESHEET);
             list.add(ICONS_STYLESHEET);
-            UiTheme theme = UiTheme.current();
+            UiTheme theme = getTheme();
             LOGGER.log(Level.INFO, "Using interface theme {0}", theme.getId());
+            if (theme == UiTheme.SYSTEM && Platform.isFxApplicationThread()) {
+                followSystemColourScheme();
+            }
             if (theme.isDark()) {
                 list.add(DARK_COMMON_STYLESHEET);
             }

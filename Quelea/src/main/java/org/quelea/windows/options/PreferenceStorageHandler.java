@@ -34,6 +34,8 @@ import java.util.prefs.Preferences;
 
 import static com.dlsc.preferencesfx.util.Constants.*;
 import org.quelea.windows.style.UiTheme;
+import javafx.application.Platform;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * Handles everything related to storing values of {@link Setting} using {@link Preferences}.
@@ -180,7 +182,8 @@ public class PreferenceStorageHandler implements StorageHandler {
                 UiTheme chosen = UiTheme.fromLabel(object.toString());
                 if (chosen != null && !chosen.getId().equals(QueleaProperties.get().getUiTheme())) {
                     QueleaProperties.get().setUiTheme(chosen.getId());
-                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("theme.changed"), LabelGrabber.INSTANCE.getLabel("theme.changed.message"), QueleaApp.get().getMainWindow());
+                    // Applied straight away to every Quelea window - no restart needed
+                    Platform.runLater(() -> StyleManager.applyTheme(chosen));
                 }
                 break;
             case QueleaPropertyKeys.projectorModeKey:

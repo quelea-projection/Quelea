@@ -38,7 +38,8 @@ import org.quelea.services.utils.QueleaProperties;
 public enum UiTheme {
 
     /**
-     * Follows the operating system's light / dark setting at start-up.
+     * Follows the operating system's light / dark setting (also when it changes
+     * while Quelea is running).
      */
     SYSTEM("system", "theme.system.label", null, false),
     LIGHT("light", "default.theme.label", "theme-light.css", false),
@@ -130,8 +131,16 @@ public enum UiTheme {
     }
 
     /**
-     * Work out light or dark from the operating system, once: the theme only
-     * changes after a restart.
+     * Forget the cached system light / dark setting, so it is read again
+     * (called when the operating system switches).
+     */
+    static synchronized void refreshSystemColourScheme() {
+        resolvedSystemTheme = null;
+    }
+
+    /**
+     * Work out light or dark from the operating system. Cached until
+     * {@link #refreshSystemColourScheme()} is called.
      */
     private static synchronized UiTheme resolveSystem() {
         if (resolvedSystemTheme == null) {
