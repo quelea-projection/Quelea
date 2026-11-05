@@ -20,7 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.css.PseudoClass;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -34,6 +34,11 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class LyricListCell extends ListCell<TextSection> {
 
+    private static final PseudoClass LYRIC_ACTIVE = PseudoClass.getPseudoClass("lyric-active");
+    private static final PseudoClass LYRIC_INACTIVE = PseudoClass.getPseudoClass("lyric-inactive");
+    private static final String SECTION_VERSE = "section-verse";
+    private static final String SECTION_CHORUS = "section-chorus";
+
     private final VBox layout;
     private final Text header;
     private final Text lyrics;
@@ -43,8 +48,9 @@ public class LyricListCell extends ListCell<TextSection> {
     public LyricListCell(SelectLyricsList sll) {
         selectLyricsList = sll;
         layout = new VBox(3);
+        getStyleClass().add("lyric-cell");
         header = new Text();
-        header.setFont(Font.font("Verdana", FontWeight.BOLD, 11.5));
+        header.getStyleClass().add("lyric-section-header");
         lyrics = new Text();
         lyrics.getStyleClass().add("text");
         layout.getChildren().addAll(header, lyrics);
@@ -104,12 +110,13 @@ public class LyricListCell extends ListCell<TextSection> {
                 layout.getChildren().add(0, header);
             }
             header.setText(section.getTitle());
-            if (section.getTitle().toLowerCase().startsWith("chorus")) {
-                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.RED : Color.DARKRED);
-            } else if (section.getTitle().toLowerCase().startsWith("verse")) {
-                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTBLUE : Color.DARKBLUE);
-            } else {
-                header.setFill(QueleaProperties.get().getUseDarkTheme() ? Color.LIGHTGREEN : Color.DARKGREEN);
+            // Colours come from -q-section-* in the theme stylesheets.
+            header.getStyleClass().removeAll(SECTION_VERSE, SECTION_CHORUS);
+            String lowerTitle = section.getTitle().toLowerCase();
+            if (lowerTitle.startsWith("chorus")) {
+                header.getStyleClass().add(SECTION_CHORUS);
+            } else if (lowerTitle.startsWith("verse")) {
+                header.getStyleClass().add(SECTION_VERSE);
             }
         }
         lyrics.getStyleClass().add("cell-text");
@@ -117,17 +124,8 @@ public class LyricListCell extends ListCell<TextSection> {
     }
 
     private void updateState() {
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            if (selected && focused) {
-                lyrics.setFill(Color.WHITE);
-                setStyle("-fx-background-color:#0093ff;");
-            } else if (selected) {
-                lyrics.setFill(Color.BLACK);
-                setStyle("-fx-background-color:#D3D3D3;");
-            } else {
-                lyrics.setFill(Color.BLACK);
-                setStyle("-fx-background-color:none;");
-            }
-        }
+        // Background and text colours are set by the .lyric-cell rules in base.css.
+        pseudoClassStateChanged(LYRIC_ACTIVE, selected && focused);
+        pseudoClassStateChanged(LYRIC_INACTIVE, selected && !focused);
     }
 }

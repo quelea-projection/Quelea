@@ -53,6 +53,7 @@ import org.quelea.services.importexport.WorshipHimImportDialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's import menu.
  * <p>
@@ -115,7 +116,7 @@ public class ImportMenu extends Menu {
      * Create the import menu.
      */
     public ImportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("import.heading"), new ImageView(new Image("file:icons/left.png", 16, 16, false, true)));
+        super(LabelGrabber.INSTANCE.getLabel("import.heading"), QueleaIcon.IMPORT.create());
 
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
@@ -143,36 +144,36 @@ public class ImportMenu extends Menu {
         planningCenterOnlineImportDialog = new PlanningCenterOnlineImportDialog();
         elevantoImportDialog = new ElevantoImportDialog();
 
-        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), QueleaIcon.SONG_PACK.create());
         qspItem.setOnAction((ActionEvent t) -> {
             qspImportDialog.show();
         });
 
-        osItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("os.button"), new ImageView(new Image("file:icons/opensong.png", 16, 16, false, true)));
+        osItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("os.button"), QueleaIcon.FILE.create());
         osItem.setOnAction((ActionEvent t) -> {
             openSongImportDialog.show();
         });
 
-        mpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mp.button"), new ImageView(new Image("file:icons/missionpraise.png", 16, 16, false, true)));
+        mpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mp.button"), QueleaIcon.FILE.create());
         mpItem.setOnAction((ActionEvent t) -> {
             missionPraiseImportDialog.show();
         });
         
         // planning center online
-        pcoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pco.button"), new ImageView(new Image("file:icons/planningcenteronline.png", 16, 16, false, true)));
+        pcoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pco.button"), QueleaIcon.CLOUD_IMPORT.create());
         pcoItem.setOnAction((ActionEvent t) -> {
             planningCenterOnlineImportDialog.start();
         });
 //        pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
         
         // elevanto
-        elevantoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("elevanto.button"), new ImageView(new Image("file:icons/elevanto.png", 16, 16, false, true)));
+        elevantoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("elevanto.button"), QueleaIcon.CLOUD_IMPORT.create());
         elevantoItem.setOnAction((ActionEvent t) -> {
             elevantoImportDialog.start();
         });
 //        elevantoItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
 
-        olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
+        olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), QueleaIcon.FILE.create());
         olpItem.setOnAction((ActionEvent t) -> {
             openLPImportDialog.show();
         });
@@ -182,7 +183,7 @@ public class ImportMenu extends Menu {
             openLyricsImportDialog.show();
         });
 
-        zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), new ImageView(new Image("file:icons/zionworx.png", 16, 16, false, true)));
+        zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), QueleaIcon.FILE.create());
         zwItem.setOnAction((ActionEvent t) -> {
             boolean ok = new ZWTurboDBChecker().runChecks();
             if (ok) {
@@ -190,57 +191,57 @@ public class ImportMenu extends Menu {
             }
         });
 
-        spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), new ImageView(new Image("file:icons/sundayplus.png", 16, 16, false, true)));
+        spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), QueleaIcon.FILE.create());
         spItem.setOnAction((ActionEvent t) -> {
             sundayPlusImportDialog.show();
         });
 
-        ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
+        ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), QueleaIcon.FILE.create());
         ssItem.setOnAction((ActionEvent t) -> {
             sImportDialog.show();
         });
 
-        mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
+        mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), QueleaIcon.FILE.create());
         mediaShoutItem.setOnAction((ActionEvent t) -> {
             mediaShoutImportDialog.show();
         });
 
-        worshipHimItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("worshiphim.button"), new ImageView(new Image("file:icons/worshiphim.png", 16, 16, false, true)));
+        worshipHimItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("worshiphim.button"), QueleaIcon.FILE.create());
         worshipHimItem.setOnAction((ActionEvent t) -> {
             worshipHimImportDialog.show();
         });
 
-        sbItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songbeamer.button"), new ImageView(new Image("file:icons/songbeamer.png", 16, 16, false, true)));
+        sbItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songbeamer.button"), QueleaIcon.FILE.create());
         sbItem.setOnAction((ActionEvent t) -> {
             songBeamerImportDialog.show();
         });
 
-        sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
+        sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), QueleaIcon.FILE.create());
         sourceItem.setOnAction((ActionEvent t) -> {
             sourceImportDialog.show();
         });
 
-        easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), new ImageView(new Image("file:icons/easyslides.png", 16, 16, false, true)));
+        easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), QueleaIcon.FILE.create());
         easySlidesItem.setOnAction((ActionEvent t) -> {
             easySlidesImportDialog.show();
         });
 
-        proPresenterItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("propresenter.button"), new ImageView(new Image("file:icons/propresenter.png", 16, 16, false, true)));
+        proPresenterItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("propresenter.button"), QueleaIcon.FILE.create());
         proPresenterItem.setOnAction((ActionEvent t) -> {
             proPresenterImportDialog.show();
         });
 
-        freeWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("freeworship.button"), new ImageView(new Image("file:icons/freeworship.png", 16, 16, false, true)));
+        freeWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("freeworship.button"), QueleaIcon.FILE.create());
         freeWorshipItem.setOnAction((ActionEvent t) -> {
             freeWorshipImportDialog.show();
         });
 
-        easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
+        easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), QueleaIcon.FILE.create());
         easyWorshipItem.setOnAction((ActionEvent t) -> {
             easyWorshipImportDialog.show();
         });
 
-        songproItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songpro.button"), new ImageView(new Image("file:icons/songpro.png", 16, 16, false, true)));
+        songproItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songpro.button"), QueleaIcon.FILE.create());
         songproItem.setOnAction((ActionEvent t) -> {
             songproImportDialog.show();
         });
@@ -250,27 +251,27 @@ public class ImportMenu extends Menu {
             videoPsalmImportDialog.show();
         });
 
-        epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), new ImageView(new Image("file:icons/epicworship.png", 16, 16, false, true)));
+        epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), QueleaIcon.FILE.create());
         epicWorshipItem.setOnAction((ActionEvent t) -> {
             epicWorshipImportDialog.show();
         });
 
-        pmItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pm.button"), new ImageView(new Image("file:icons/pm.png", 16, 16, false, true)));
+        pmItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pm.button"), QueleaIcon.FILE.create());
         pmItem.setOnAction((ActionEvent t) -> {
             presentationManagerImportDialog.show();
         });
 
-        smItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sm.button"), new ImageView(new Image("file:icons/sm.png", 16, 16, false, true)));
+        smItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sm.button"), QueleaIcon.FILE.create());
         smItem.setOnAction((ActionEvent t) -> {
             screenMonkeyImportDialog.show();
         });
 
-        sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), new ImageView(new Image("file:icons/sof.png", 16, 16, false, true)));
+        sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), QueleaIcon.FILE.create());
         sofItem.setOnAction((ActionEvent t) -> {
             sofImportDialog.show();
         });
 
-        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
+        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), QueleaIcon.TEXT_FILE.create());
         plainTextItem.setOnAction((ActionEvent t) -> {
             plainTextImportDialog.show();
         });

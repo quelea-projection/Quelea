@@ -34,6 +34,7 @@ import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
  * displaying the actual lyrics on the projector.
@@ -48,17 +49,13 @@ public class PreviewPanel extends LivePreviewPanel {
     public PreviewPanel() {
         ToolBar header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.heading"));
-        headerLabel.setStyle("-fx-font-weight: bold;");
+        headerLabel.getStyleClass().add("panel-header-label");
         header.getItems().add(headerLabel);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView goLiveIV = new ImageView(
-                new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/golivearrow-light.png"
-                        : "file:icons/golivearrow.png"));
-        goLiveIV.setFitHeight(16);
-        goLiveIV.setFitWidth(16);
-        liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), goLiveIV);
+        liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), QueleaIcon.GO_LIVE.create());
+        liveButton.getStyleClass().add("go-live-button");
         liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text") + " ("
                 + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
         liveButton.setOnAction(t -> {

@@ -58,6 +58,9 @@ import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * A dialog for configuring further font options that aren't directly shown on
  * the theme toolbar.
@@ -102,7 +105,8 @@ public class FontOptionsDialog extends Stage {
         Collections.sort(fontSelection.getItems());
         HBox.setHgrow(fontSelection, Priority.ALWAYS);
 
-        fontExpandButton = new Button("...");
+        fontExpandButton = new Button("", QueleaIcon.ADD.create());
+        Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
         Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setOnAction(t -> {
@@ -129,9 +133,9 @@ public class FontOptionsDialog extends Stage {
         shadowSpreadSlider = new Slider(0, 1, 0);
         shadowSpreadSlider.setShowTickMarks(false);
 
-        boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png", 15, 15, false, true)));
+        boldButton = new ToggleButton("", QueleaIcon.BOLD.create());
         Utils.setToolbarButtonStyle(boldButton);
-        italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 15, 15, false, true)));
+        italicButton = new ToggleButton("", QueleaIcon.ITALIC.create());
         Utils.setToolbarButtonStyle(italicButton);
 
         BorderPane root = new BorderPane();
@@ -219,7 +223,8 @@ public class FontOptionsDialog extends Stage {
         BorderPane.setMargin(controlRoot, new Insets(10));
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setOnAction((ActionEvent t) -> hide());
         okButton.setAlignment(Pos.CENTER);
         StackPane.setMargin(okButton, new Insets(10));
@@ -227,9 +232,7 @@ public class FontOptionsDialog extends Stage {
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
         Scene scene = new Scene(root, 330, 350);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

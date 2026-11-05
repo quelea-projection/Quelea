@@ -34,6 +34,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A displayable that's a presentation.
@@ -130,8 +131,8 @@ public class PresentationDisplayable implements Displayable {
      * @return the powerpoint preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/powerpoint.png", 30, 30, false, true));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.PRESENTATION.createTile();
     }
 
     /**

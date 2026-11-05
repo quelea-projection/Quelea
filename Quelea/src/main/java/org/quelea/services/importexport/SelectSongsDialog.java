@@ -46,6 +46,9 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * A dialog where given songs can be selected.
  * <p/>
@@ -99,7 +102,7 @@ public class SelectSongsDialog extends Stage {
         VBox scrollContent = new VBox(10);
         HBox topBox = new HBox(5);
         Label checkAllLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
-        checkAllLabel.setStyle("-fx-font-weight: bold;");
+        checkAllLabel.getStyleClass().add("panel-header-label");
         topBox.getChildren().add(selectAllCheckBox);
         topBox.getChildren().add(checkAllLabel);
         scrollContent.getChildren().add(topBox);
@@ -111,16 +114,15 @@ public class SelectSongsDialog extends Stage {
         gridScroll.setFitToWidth(true);
         gridScroll.setFitToHeight(true);
         mainPanel.getChildren().add(gridScroll);
-        addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
+        addButton = new Button(acceptText, QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(addButton);
         StackPane stackAdd = new StackPane();
         stackAdd.getChildren().add(addButton);
         VBox.setMargin(stackAdd, new Insets(10));
         mainPanel.getChildren().add(stackAdd);
 
         Scene scene = new Scene(mainPanel, 800, 600);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 
@@ -181,12 +183,12 @@ public class SelectSongsDialog extends Stage {
             if(n instanceof Control) {
                 Control control = (Control) n;
                 control.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                control.setStyle("-fx-alignment: center;-fx-font-weight: bold;");
+                control.setStyle("-fx-alignment: center;");
             }
             if(n instanceof Pane) {
                 Pane pane = (Pane) n;
                 pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                pane.setStyle("-fx-alignment: center;-fx-font-weight: bold;");
+                pane.setStyle("-fx-alignment: center;");
             }
         }
         gridScroll.setVvalue(0);

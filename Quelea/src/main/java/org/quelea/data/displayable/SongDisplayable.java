@@ -64,6 +64,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
@@ -1385,35 +1386,27 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public javafx.scene.Node getPreviewIcon() {
-        ImageView iv;
+        QueleaIcon icon;
         if (getID() < 0) {
-            iv = new ImageView(new Image("file:icons/lyricscopy.png"));
+            icon = QueleaIcon.LYRICS_COPY;
         } else if (hasChords()) {
-            iv = new ImageView(new Image("file:icons/lyricsandchords.png"));
+            icon = QueleaIcon.LYRICS_CHORDS;
         } else {
-            iv = new ImageView(new Image("file:icons/lyrics.png"));
+            icon = QueleaIcon.LYRICS;
         }
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(iv);
+        StackPane stackPane = icon.createTile();
         if (!getTranslations().isEmpty()) {
             stackPane.getChildren().add(getTranslationPart());
-            stackPane.setAlignment(Pos.BOTTOM_LEFT);
+            stackPane.setAlignment(Pos.BOTTOM_RIGHT);
         }
         return stackPane;
     }
 
     private StackPane getTranslationPart() {
-        StackPane ret = new StackPane();
-        ImageView iv = new ImageView("file:icons/translate small.png");
-        iv.setFitWidth(13);
-        iv.setPreserveRatio(true);
-        ret.setPadding(new Insets(0,3,0,3));
-        ret.getChildren().add(iv);
-        ret.setMaxWidth(5);
-        ret.setMaxHeight(5);
-        ret.setAlignment(Pos.CENTER);
-        ret.setStyle("-fx-background-color: #333333;");
-        ret.setOpacity(0.9);
+        // Small badge in the corner of the type tile; see .icon-tile-badge in base.css
+        StackPane ret = new StackPane(QueleaIcon.TRANSLATE.create(10));
+        ret.getStyleClass().add("icon-tile-badge");
+        ret.setMaxSize(14, 14);
         return ret;
     }
 

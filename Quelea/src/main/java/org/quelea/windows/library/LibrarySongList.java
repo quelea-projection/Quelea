@@ -128,7 +128,7 @@ public class LibrarySongList extends StackPane {
                                 textBox.getChildren().add(initText);
                                 String boldTextStr = item.getTitle().substring(startIndex, startIndex + item.getLastSearch().length());
                                 Text boldText = new Text(boldTextStr);
-                                boldText.setStyle("-fx-font-weight:bold;");
+                                boldText.getStyleClass().add("search-match");
                                 boldText.getStyleClass().add("text");
                                 textBox.getChildren().add(boldText);
                                 Text plainText = new Text(item.getTitle().substring(startIndex + item.getLastSearch().length()));

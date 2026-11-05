@@ -40,6 +40,9 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * A frame used for quickly editing a song.
  *
@@ -85,7 +88,8 @@ public class QuickEditDialog extends Stage {
         buttonPanel.setAlignment(Pos.CENTER);
         BorderPane.setMargin(buttonPanel, new Insets(5,0,5,0));
         buttonPanel.setSpacing(5);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
@@ -109,7 +113,7 @@ public class QuickEditDialog extends Stage {
                 Utils.updateSongInBackground(currentSong, false, true);
             }
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
@@ -122,9 +126,7 @@ public class QuickEditDialog extends Stage {
         mainPane.setBottom(buttonPanel);
 
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

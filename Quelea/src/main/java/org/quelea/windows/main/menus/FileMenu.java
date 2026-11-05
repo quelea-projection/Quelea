@@ -36,6 +36,7 @@ import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's file menu.
  *
@@ -56,11 +57,10 @@ public class FileMenu extends Menu {
      */
     public FileMenu() {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
         newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"));
         if (!Utils.isMac()) {
-            newItem.setGraphic(getImage("file:icons/filenew.png"));
+            newItem.setGraphic(QueleaIcon.NEW_SCHEDULE.create());
         }
         newItem.setOnAction(new NewScheduleActionHandler());
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
@@ -68,7 +68,7 @@ public class FileMenu extends Menu {
 
         openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"));
         if (!Utils.isMac()) {
-            openItem.setGraphic(getImage("file:icons/fileopen.png"));
+            openItem.setGraphic(QueleaIcon.OPEN.create());
         }
         openItem.setOnAction(new OpenScheduleActionHandler());
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
@@ -76,7 +76,7 @@ public class FileMenu extends Menu {
 
         saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"));
         if (!Utils.isMac()) {
-            saveItem.setGraphic(getImage("file:icons/filesave.png"));
+            saveItem.setGraphic(QueleaIcon.SAVE.create());
         }
         saveItem.setOnAction(new SaveScheduleActionHandler(false));
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
@@ -84,21 +84,21 @@ public class FileMenu extends Menu {
 
         saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"));
         if (!Utils.isMac()) {
-            saveAsItem.setGraphic(getImage("file:icons/filesaveas.png"));
+            saveAsItem.setGraphic(QueleaIcon.SAVE_AS.create());
         }
         saveAsItem.setOnAction(new SaveScheduleActionHandler(true));
         getItems().add(saveAsItem);
 
         exportToPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.pdf.button"));
         if(!Utils.isMac()) {
-            exportToPDFItem.setGraphic(new ImageView(new Image("file:icons/fileexport.png", 20, 20, true, false)));
+            exportToPDFItem.setGraphic(QueleaIcon.PDF.create());
         }
         exportToPDFItem.setOnAction(new ExportPDFScheduleActionHandler());
         getItems().add(exportToPDFItem);
 
         printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"));
         if (!Utils.isMac()) {
-            printItem.setGraphic(getImage("file:icons/fileprint.png"));
+            printItem.setGraphic(QueleaIcon.PRINT.create());
         }
         printItem.setOnAction(new PrintScheduleActionHandler());
         printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
@@ -106,16 +106,11 @@ public class FileMenu extends Menu {
 
         exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"));
         if(!Utils.isMac()) {
-            exitItem.setGraphic(new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));
+            exitItem.setGraphic(QueleaIcon.EXIT.create());
         }
         exitItem.setOnAction(new ExitActionHandler());
         getItems().add(exitItem);
     }
 
-    private ImageView getImage(String path) {
-        if (QueleaProperties.get().getUseDarkTheme())
-            path = path.replace(".png", "-light.png");
-        return new ImageView(new Image(path, 20, 20, true, false));
-    }
 
 }

@@ -39,6 +39,9 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.utils.ThemeUtils;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * A modal dialog where a theme can be edited.
  *
@@ -64,9 +67,7 @@ public class EditThemeDialog extends Stage {
         setResizable(false);
 
         BorderPane mainPane = new BorderPane();
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            mainPane.setStyle("-fx-background-color:#dddddd;");
-        }
+        mainPane.getStyleClass().add("preview-backdrop");
 
         VBox northBox = new VBox();
         HBox themeSelectPanel = new HBox();
@@ -91,7 +92,8 @@ public class EditThemeDialog extends Stage {
         panel = new ThemePanel();
         panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(confirmButton);
         confirmButton.setOnAction(t -> {
             String themeName;
             if (nameField.getText().trim().isEmpty()) {
@@ -104,7 +106,7 @@ public class EditThemeDialog extends Stage {
             theme.setThemeName(themeName);
             hide();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(t -> {
             theme = null;
             hide();
@@ -118,9 +120,7 @@ public class EditThemeDialog extends Stage {
         mainPane.setBottom(southPanel);
 
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

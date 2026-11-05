@@ -37,6 +37,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's export menu.
  * <p>
@@ -53,9 +54,9 @@ public class ExportMenu extends Menu {
      * Create the export menu.
      */
     public ExportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("export.heading"), new ImageView(new Image("file:icons/right.png", 16, 16, false, true)));
+        super(LabelGrabber.INSTANCE.getLabel("export.heading"), QueleaIcon.EXPORT.create());
 
-        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), QueleaIcon.SONG_PACK.create());
         qspItem.setOnAction(evt -> {
 			final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
 			//TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
@@ -73,7 +74,7 @@ public class ExportMenu extends Menu {
 		});
         getItems().add(openLyricsItem);
 
-        pdfItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
+        pdfItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pdf.button"), QueleaIcon.PDF.create());
         pdfItem.setOnAction(evt -> {
 			final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
 			//TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
@@ -82,7 +83,7 @@ public class ExportMenu extends Menu {
 		});
         getItems().add(pdfItem);
 
-        listItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("song.list"), new ImageView(new Image("file:icons/list.png", 16, 16, false, true)));
+        listItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("song.list"), QueleaIcon.LIST.create());
         listItem.setOnAction(evt -> {
 			FileChooser fc = new FileChooser();
 			fc.getExtensionFilters().add(FileFilters.CSV);

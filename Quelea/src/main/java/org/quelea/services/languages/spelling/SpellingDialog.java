@@ -44,6 +44,8 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * The spelling dialog used for correcting misspelt words.
  * <p/>
@@ -146,9 +148,7 @@ public class SpellingDialog {
         mainPane.setLeft(centrePanel);
         mainPane.setPadding(new Insets(5));
         Scene scene = new Scene(mainPane, 300, 200);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         dialogStage.setScene(scene);
     }
 
@@ -193,9 +193,7 @@ public class SpellingDialog {
             spellingBox.setAlignment(Pos.CENTER);
             spellingBox.setPadding(new Insets(15));
             Scene scene = new Scene(spellingBox);
-            if (QueleaProperties.get().getUseDarkTheme()) {
-                scene.getStylesheets().add("org/modena_dark.css");
-            }
+            StyleManager.apply(scene);
             doneSpellingStage.setScene(scene);
             doneSpellingStage.show();
             return;
@@ -217,7 +215,7 @@ public class SpellingDialog {
             Text text = new Text(str + " ");
             text.getStyleClass().add("text");
             if(str.equals(replaceWord)) {
-                text.setFill(Color.RED);
+                text.getStyleClass().add("error-text");
             }
             textPane.getChildren().add(text);
         }

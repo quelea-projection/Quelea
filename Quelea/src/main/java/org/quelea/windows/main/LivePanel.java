@@ -64,6 +64,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
 import org.quelea.windows.presentation.PowerPointHandler;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
  * are reflected on the live projection.
@@ -98,11 +99,10 @@ public class LivePanel extends LivePreviewPanel {
         getImageGroupPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
-        headerLabel.setStyle("-fx-font-weight: bold;");
+        headerLabel.getStyleClass().add("panel-header-label");
         header.getItems().add(headerLabel);
-        ImageView liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
-        liveIcon.setFitHeight(10);
-        liveIcon.setFitWidth(10);
+        Region liveIcon = new Region();
+        liveIcon.getStyleClass().add("live-indicator");
         header.getItems().add(liveIcon);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
         loop.setOnMouseClicked(e -> {
@@ -148,16 +148,8 @@ public class LivePanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView logoIV;
-        if (Utils.isMac()) {
-            logoIV = new ImageView(new Image("file:icons/logo48.png"));
-        } else {
-            logoIV = new ImageView(new Image("file:icons/logo16.png"));
-        }
-        logoIV.setFitHeight(16);
-        logoIV.setFitWidth(16);
         ToggleGroup group = new ToggleGroup();
-        logo = new ToggleButton("", logoIV);
+        logo = new ToggleButton("", QueleaIcon.LOGO.create());
         logo.setToggleGroup(group);
         Utils.setToolbarButtonStyle(logo);
         logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip") + " (F5)"));
@@ -192,7 +184,7 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.getItems().add(logo);
-        black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
+        black = new ToggleButton("", QueleaIcon.BLACK.create());
         black.setToggleGroup(group);
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
@@ -213,10 +205,7 @@ public class LivePanel extends LivePreviewPanel {
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(black);
-        ImageView clearIV = new ImageView(new Image("file:icons/clear.png"));
-        clearIV.setFitWidth(16);
-        clearIV.setFitHeight(16);
-        clear = new ToggleButton("", clearIV);
+        clear = new ToggleButton("", QueleaIcon.CLEAR_TEXT.create());
         clear.setToggleGroup(group);
         Utils.setToolbarButtonStyle(clear);
         clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F7)"));
@@ -233,10 +222,7 @@ public class LivePanel extends LivePreviewPanel {
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
         });
         header.getItems().add(clear);
-        ImageView hideIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/cross-light.png" : "file:icons/cross.png"));
-        hideIV.setFitWidth(16);
-        hideIV.setFitHeight(16);
-        hide = new ToggleButton("", hideIV);
+        hide = new ToggleButton("", QueleaIcon.HIDE_OUTPUT.create());
         Utils.setToolbarButtonStyle(hide);
         hide.setToggleGroup(group);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));

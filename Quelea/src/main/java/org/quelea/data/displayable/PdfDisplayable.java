@@ -32,6 +32,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A displayable that's a PDF.
@@ -107,8 +108,8 @@ public class PdfDisplayable implements Displayable {
      * @return the PDF preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/add_pdf-light.png" : "file:icons/add_pdf.png", 30, 30, false, true));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.PDF.createTile();
     }
 
     /**

@@ -35,6 +35,9 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * Dialog used for switching between bible translations.
  *
@@ -59,13 +62,14 @@ public class SwitchBibleVersionDialog extends Stage {
         Label switchToLabel = new Label(LabelGrabber.INSTANCE.getLabel("switch.to.text") + "...");
         root.getChildren().add(switchToLabel);
         root.getChildren().add(comboBox);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setDefaultButton(true);
         okButton.setOnAction(t -> {
             selectedVersion = comboBox.getValue();
             hide();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(t -> {
             hide();
         });
@@ -77,9 +81,7 @@ public class SwitchBibleVersionDialog extends Stage {
         StackPane.setMargin(root, new Insets(10));
         containerPane.getChildren().add(root);
         Scene scene = new Scene(containerPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
         setResizable(false);
     }

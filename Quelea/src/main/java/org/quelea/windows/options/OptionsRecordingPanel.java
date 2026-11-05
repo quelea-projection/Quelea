@@ -36,6 +36,7 @@ import org.quelea.windows.options.customprefs.DirectorySelectorPreference;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.convertMp3Key;
 import static org.quelea.services.utils.QueleaPropertyKeys.recPathKey;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the recording options
@@ -71,7 +72,7 @@ public class OptionsRecordingPanel {
     public Category getRecordingsTab() {
         bindings.put((Field) useConvertSetting.getElement(), new SimpleBooleanProperty(!hasVLC));
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), new ImageView(new Image("file:icons/recordingssettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), QueleaIcon.RECORD.create(),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("recordings.path"), recordingsDirectoryField, recordingsDirectoryChooserProperty).customKey(recPathKey),
                 useConvertSetting
         );

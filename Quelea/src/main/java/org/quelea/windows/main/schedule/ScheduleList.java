@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main.schedule;
 
+import javafx.css.PseudoClass;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -90,6 +91,7 @@ public class ScheduleList extends StackPane {
     private Schedule schedule;
     private final Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final PseudoClass DROP_TARGET = PseudoClass.getPseudoClass("drop-target");
     private IndexedDisplayable tempDisp = null;
     private IndexedDisplayable displayableThatSeesMouse = null;
 
@@ -182,7 +184,7 @@ public class ScheduleList extends StackPane {
                                         markerRect.setVisible(true);
                                     } else {
                                         if (item instanceof SongDisplayable) {
-                                            setStyle("-fx-background-color: #99cccc;");
+                                            pseudoClassStateChanged(DROP_TARGET, true);
                                         } else {
                                             markerRect.setTranslateX(getLayoutX() + getTranslateX());
                                             markerRect.setTranslateY(getLayoutY() + getTranslateY());
@@ -196,7 +198,7 @@ public class ScheduleList extends StackPane {
                                 }
                             });
                             setOnDragExited(t -> {
-                                setStyle("");
+                                pseudoClassStateChanged(DROP_TARGET, false);
                                 markerRect.setVisible(false);
                             });
                             setOnDragOver(event -> {
@@ -267,7 +269,7 @@ public class ScheduleList extends StackPane {
     private void dragDropped(DragEvent event, ListCell<IndexedDisplayable> listCell) {
 
         if (listCell != null) {
-            listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
+            listCell.pseudoClassStateChanged(DROP_TARGET, false);
         }
         markerRect.setVisible(false);
 

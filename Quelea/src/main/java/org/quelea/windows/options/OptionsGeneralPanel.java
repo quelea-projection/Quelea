@@ -42,6 +42,7 @@ import java.util.HashMap;
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import static org.quelea.windows.options.PreferencesDialog.getPositionSelector;
 import static org.quelea.windows.options.PreferencesDialog.getShowOnSlidesSelector;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A panel where the general options in the program are set.
@@ -120,7 +121,7 @@ public class OptionsGeneralPanel {
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
         bindings.put(defaultTranslationNameField, useDefaultTranslationProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")))
+        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), QueleaIcon.GENERAL.create())
                 .subCategories(
                         Category.of(LabelGrabber.INSTANCE.getLabel("interface.options.options"),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.interface.options"),

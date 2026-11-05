@@ -33,6 +33,9 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+
+import org.quelea.windows.style.QueleaIcon;
 /**
  * A JavaFX simple input dialog - since one isn't provided for us.
  *
@@ -58,16 +61,15 @@ public class InputDialog extends Stage {
         textField = new TextField();
         BorderPane.setMargin(textField, new Insets(5));
         mainPane.setCenter(textField);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setDefaultButton(true);
         okButton.setOnAction(t -> hide());
         BorderPane.setMargin(okButton, new Insets(5));
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

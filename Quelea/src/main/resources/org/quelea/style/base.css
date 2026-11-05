@@ -1,0 +1,1226 @@
+/*
+ * Quelea base stylesheet.
+ *
+ * Shared component styling for every theme. Uses only the named colours
+ * (-q-*) defined in the theme files, never literal colours, so that a theme
+ * can restyle the whole application by changing its palette.
+ *
+ * Load order (see StyleManager):
+ *   1. base.css          - this file
+ *   2. icons.css         - vector icon shapes
+ *   3. theme-*.css       - colour palette (light / dark)
+ *   4. user stylesheet   - optional <quelea user dir>/ui-style.css
+ */
+
+/* ======================================================================
+ * Window & panels
+ * ==================================================================== */
+
+.root {
+    -fx-background-color: -q-window;
+}
+
+.split-pane {
+    -fx-background-color: -q-window;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: -q-border;
+    -fx-padding: 0 1 0 0;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-padding: 0 1 0 0;
+}
+
+.split-pane:vertical > .split-pane-divider {
+    -fx-padding: 1 0 0 0;
+}
+
+/* ======================================================================
+ * Menu bar, menus, context menus, tooltips
+ * ==================================================================== */
+
+.menu-bar {
+    -fx-background-color: -q-header;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 2 4 2 4;
+}
+
+.menu-bar > .container > .menu-button {
+    -fx-background-radius: 6;
+    -fx-padding: 4 10 4 10;
+}
+
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:showing {
+    -fx-background-color: -q-hover;
+}
+
+.menu-bar > .container > .menu-button > .label {
+    -fx-text-fill: -q-text;
+}
+
+.context-menu {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 14, 0, 0, 4);
+}
+
+.menu-item {
+    -fx-background-radius: 5;
+    -fx-padding: 5 12 5 8;
+}
+
+.menu-item:focused {
+    -fx-background-color: -q-accent;
+}
+
+.menu-item:focused > .label {
+    -fx-text-fill: -q-on-accent;
+}
+
+.tooltip {
+    -fx-background-color: rgba(20, 22, 26, 0.94);
+    -fx-background-radius: 6;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 5 9 5 9;
+    -fx-font-size: 0.92em;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0, 0, 2);
+}
+
+/* ======================================================================
+ * Toolbars
+ * ==================================================================== */
+
+.tool-bar {
+    -fx-background-color: -q-header;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 4 6 4 6;
+    -fx-spacing: 2;
+}
+
+.tool-bar:vertical {
+    -fx-border-color: transparent -q-border transparent transparent;
+    -fx-padding: 6 3 6 3;
+}
+
+.tool-bar .separator:vertical .line {
+    -fx-border-color: -q-border;
+    -fx-border-width: 0 1 0 0;
+}
+
+.tool-bar .separator:horizontal .line {
+    -fx-border-color: -q-border;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* Header strip at the top of the schedule / preview / live panels */
+.panel-header-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -q-text;
+    -fx-padding: 0 4 0 2;
+}
+
+/* The red "live" dot next to the Live heading */
+.live-indicator {
+    -fx-background-color: -q-live;
+    -fx-background-radius: 5;
+    -fx-min-width: 9;
+    -fx-min-height: 9;
+    -fx-max-width: 9;
+    -fx-max-height: 9;
+    -fx-effect: dropshadow(gaussian, rgba(229, 72, 77, 0.65), 6, 0.2, 0, 0);
+}
+
+/* ======================================================================
+ * Buttons
+ * ==================================================================== */
+
+.button,
+.toggle-button,
+.menu-button,
+.split-menu-button,
+.choice-box,
+.combo-box-base {
+    -fx-background-color: -q-border-strong, -q-control;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+    -fx-text-fill: -q-text;
+    -fx-padding: 4 10 4 10;
+}
+
+.button:hover,
+.toggle-button:hover,
+.menu-button:hover,
+.split-menu-button:hover,
+.choice-box:hover,
+.combo-box-base:hover {
+    -fx-background-color: -q-border-strong, -q-control-hover;
+}
+
+.button:armed,
+.toggle-button:armed,
+.menu-button:armed,
+.menu-button:showing,
+.choice-box:showing,
+.combo-box-base:showing {
+    -fx-background-color: -q-border-strong, -q-control-pressed;
+}
+
+.button:focused,
+.toggle-button:focused,
+.menu-button:focused,
+.choice-box:focused,
+.combo-box-base:focused {
+    -fx-background-color: -q-accent, -q-control;
+    -fx-background-insets: 0, 1.5;
+}
+
+.toggle-button:selected {
+    -fx-background-color: -q-accent, -q-accent-soft;
+}
+
+.button:default {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-text-fill: -q-on-accent;
+}
+
+.button:default:hover {
+    -fx-background-color: -q-accent-hover;
+}
+
+/* Split menu buttons: the two halves carry their own padding */
+.split-menu-button {
+    -fx-padding: 0;
+}
+
+.split-menu-button > .label,
+.split-menu-button > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.split-menu-button > .label {
+    -fx-padding: 4 8 4 8;
+}
+
+.split-menu-button > .arrow-button {
+    -fx-border-color: transparent transparent transparent -q-border-strong;
+    -fx-padding: 4 6 4 6;
+}
+
+.split-menu-button > .arrow-button > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+/* Primary call-to-action, e.g. "Go Live" */
+.go-live-button {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-text-fill: -q-on-accent;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 8;
+    -fx-graphic-text-gap: 4;
+}
+
+.go-live-button:hover,
+.go-live-button:focused {
+    -fx-background-color: -q-accent-hover;
+    -fx-background-insets: 0;
+}
+
+/* Flat, borderless icon buttons used on toolbars (Utils.setToolbarButtonStyle) */
+.toolbar-button,
+.toolbar-button:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+    -fx-text-fill: -q-text-muted;
+}
+
+.toolbar-button:hover {
+    -fx-background-color: -q-hover;
+}
+
+.toolbar-button:armed,
+.toolbar-button:showing {
+    -fx-background-color: -q-pressed;
+}
+
+.toolbar-button:selected {
+    -fx-background-color: -q-accent-soft;
+    -fx-text-fill: -q-text;
+}
+
+.toolbar-button > .arrow-button {
+    -fx-padding: 0 0 0 4;
+}
+
+.toolbar-button > .arrow-button > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+/* ======================================================================
+ * Text input
+ * ==================================================================== */
+
+.text-field,
+.text-area,
+.password-field {
+    -fx-background-color: -q-border-strong, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+    -fx-text-fill: -q-text;
+    -fx-prompt-text-fill: -q-text-muted;
+}
+
+.text-field {
+    -fx-padding: 4 8 4 8;
+}
+
+.text-field:focused,
+.text-area:focused,
+.password-field:focused {
+    -fx-background-color: -q-accent, -q-surface;
+    -fx-background-insets: 0, 1.5;
+}
+
+.text-area .content {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 5;
+}
+
+/* ======================================================================
+ * Lists, tables, trees
+ * ==================================================================== */
+
+.list-view,
+.table-view,
+.tree-view {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
+.list-view:focused,
+.table-view:focused,
+.tree-view:focused {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+}
+
+.list-cell {
+    -fx-padding: 5 8 5 8;
+}
+
+/* Lyrics list in the preview / live panels */
+.lyric-cell {
+    -fx-padding: 6 10 6 10;
+    -fx-background-color: transparent;
+}
+
+.lyric-cell:hover {
+    -fx-background-color: -q-hover;
+}
+
+.lyric-cell:lyric-inactive {
+    -fx-background-color: -q-accent-soft;
+}
+
+.lyric-cell:lyric-active {
+    -fx-background-color: -q-accent;
+}
+
+.lyric-cell:lyric-active .text {
+    -fx-fill: -q-on-accent;
+}
+
+.lyric-cell .text {
+    -fx-fill: -q-text;
+}
+
+.lyric-section-header {
+    -fx-fill: -q-section-other;
+}
+
+.lyric-section-header.section-verse {
+    -fx-fill: -q-section-verse;
+}
+
+.lyric-section-header.section-chorus {
+    -fx-fill: -q-section-chorus;
+}
+
+.lyric-cell:lyric-active .lyric-section-header {
+    -fx-fill: -q-on-accent;
+    -fx-opacity: 0.85;
+}
+
+/* Schedule list: a song is being dragged over this item */
+.list-cell:filled:drop-target,
+.list-cell:filled:selected:drop-target {
+    -fx-background-color: -q-drop-target;
+}
+
+/* ======================================================================
+ * Tabs
+ * ==================================================================== */
+
+.tab-pane > .tab-header-area {
+    -fx-padding: 4 4 0 4;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -q-border, -q-header;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6 6 0 0;
+    -fx-padding: 4 12 5 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: -q-hover;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -q-accent, -q-surface;
+    -fx-background-insets: 0, 0 0 2 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-text-fill: -q-text-muted;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
+    -fx-text-fill: -q-text;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+/* ======================================================================
+ * Scroll bars - slim, rounded, without arrow buttons
+ * ==================================================================== */
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 11;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 11;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .track,
+.scroll-bar > .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar > .thumb {
+    -fx-background-color: -q-border-strong;
+    -fx-background-insets: 2;
+    -fx-background-radius: 6;
+}
+
+.scroll-bar > .thumb:hover,
+.scroll-bar > .thumb:pressed {
+    -fx-background-color: -q-text-muted;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+/* ======================================================================
+ * Misc. components
+ * ==================================================================== */
+
+.check-box > .box,
+.radio-button > .radio {
+    -fx-background-color: -q-border-strong, -q-surface;
+    -fx-background-insets: 0, 1;
+}
+
+.check-box > .box {
+    -fx-background-radius: 4, 3;
+}
+
+.check-box:selected > .box {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+}
+
+.check-box:selected > .box > .mark {
+    -fx-background-color: -q-on-accent;
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: -q-accent;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+.progress-bar > .track {
+    -fx-background-color: -q-border;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+.slider > .track {
+    -fx-background-color: -q-border;
+    -fx-background-radius: 3;
+}
+
+.slider > .thumb {
+    -fx-background-color: -q-border-strong, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 10;
+}
+
+.slider:focused > .thumb {
+    -fx-background-color: -q-accent, -q-surface;
+}
+
+.titled-pane > .title {
+    -fx-background-color: -q-border, -q-header;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6 6 0 0, 5 5 0 0;
+}
+
+/* Secondary / hint text */
+.muted-label {
+    -fx-text-fill: -q-text-muted;
+}
+
+/* Clickable text that opens a link */
+.link-label {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+/* Grey area behind slide, image and theme previews */
+.preview-backdrop {
+    -fx-background-color: -q-backdrop;
+}
+
+/* The small projector previews under the preview / live lists */
+.display-preview-canvas {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 18, 0, 0, 4);
+}
+
+/* Thumbnail strip for presentations, PDFs and image groups */
+.slide-preview-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: -q-backdrop;
+}
+
+.slide-thumbnail {
+    -fx-padding: 3;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+}
+
+.slide-thumbnail:hover {
+    -fx-border-color: -q-border-strong;
+}
+
+.slide-thumbnail:selected {
+    -fx-border-color: -q-text-muted;
+}
+
+.slide-thumbnail:selected:active {
+    -fx-border-color: -q-accent;
+}
+
+/* Image / video thumbnails in the library */
+.library-thumbnail {
+    -fx-padding: 3;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+}
+
+.library-thumbnail:hover {
+    -fx-border-color: -q-accent;
+}
+
+/* Media / web / timer panels in the preview & live areas */
+.media-panel {
+    -fx-background-color: -q-backdrop;
+}
+
+/* Semi-transparent overlay messages ("loading", "add a song") */
+.overlay-pane {
+    -fx-background-color: #2a2d33;
+}
+
+.overlay-pane .text,
+.overlay-text {
+    -fx-fill: #ffffff;
+}
+
+/* Grouped option boxes in the theme editor */
+.theme-option-box {
+    -fx-border-color: -q-border;
+    -fx-border-radius: 6;
+}
+
+/* A strip that lines up with a tab pane header */
+.tab-header-strip {
+    -fx-background-color: -q-border, -q-header;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+/* The schedule theme pop-up */
+.schedule-theme-popup {
+    -fx-background-color: -q-surface;
+    -fx-border-color: -q-border-strong;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Lyrics editor (RichTextFX) */
+.lyrics-editor {
+    -fx-padding: 4 8 4 8;
+}
+
+/* Lyrics editor syntax highlighting */
+.lyrics-editor .text {
+    -fx-fill: -q-text;
+}
+
+.lyrics-editor .lyrics-title {
+    -fx-fill: -q-lyrics-title;
+    -fx-font-weight: bold;
+}
+
+.lyrics-editor .lyrics-chords {
+    -fx-fill: -q-lyrics-chords;
+    -fx-font-style: italic;
+}
+
+.lyrics-editor .lyrics-error {
+    -fx-fill: -q-lyrics-error;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================================
+ * Primary buttons and media controls
+ * ==================================================================== */
+
+/* The main action of a dialog (first button in Quelea's own dialogs) */
+.primary-button,
+.primary-button:focused {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-text-fill: -q-on-accent;
+}
+
+.primary-button:hover,
+.primary-button:armed {
+    -fx-background-color: -q-accent-hover;
+}
+
+/* Card behind the play / pause / stop controls of videos and timers */
+.media-controls-card {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 20, 0, 0, 6);
+}
+
+/* Round icon buttons (MediaButton) */
+.media-button,
+.media-button:focused {
+    -fx-background-color: -q-border-strong, -q-control;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 100;
+    -fx-padding: 0;
+}
+
+.media-button:hover {
+    -fx-background-color: -q-border-strong, -q-control-hover;
+}
+
+.media-button:armed {
+    -fx-background-color: -q-border-strong, -q-control-pressed;
+}
+
+.media-button:active {
+    -fx-background-color: -q-accent, -q-accent-soft;
+}
+
+.media-button-primary,
+.media-button-primary:focused {
+    -fx-background-color: -q-accent;
+    -fx-background-insets: 0;
+}
+
+.media-button-primary:hover,
+.media-button-primary:armed {
+    -fx-background-color: -q-accent-hover;
+}
+
+.media-time-label {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.9em;
+}
+
+/* Address bar of the web panel */
+.url-field {
+    -fx-font-size: 1.05em;
+}
+
+/* ======================================================================
+ * Item type tiles (schedule) and song section letters (song editor)
+ * ==================================================================== */
+
+.icon-tile {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 8;
+}
+
+.icon-tile-badge {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 7;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 7;
+    -fx-padding: 1;
+    -fx-translate-x: 4;
+    -fx-translate-y: 4;
+}
+
+.section-letter {
+    -fx-font-weight: bold;
+    -fx-text-fill: -q-accent;
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 5;
+    -fx-padding: 1 6 1 6;
+    -fx-min-width: 22;
+    -fx-alignment: center;
+}
+
+.section-split-button > .label {
+    -fx-padding: 4 6 4 6;
+}
+
+/* ======================================================================
+ * Dialogs
+ * ==================================================================== */
+
+.quelea-dialog {
+    -fx-background-color: -q-surface;
+}
+
+.dialog-button-bar {
+    -fx-background-color: -q-header;
+    -fx-border-color: -q-border transparent transparent transparent;
+    -fx-padding: 10 16 10 16;
+    -fx-spacing: 8;
+}
+
+.dialog-button-bar > .button {
+    -fx-min-width: 72;
+}
+
+/* JavaFX's own Alert / Dialog pane, used by a few windows */
+.dialog-pane {
+    -fx-background-color: -q-surface;
+    -fx-padding: 0;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -q-header;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 14 16 14 16;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-font-size: 1.15em;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane > .content {
+    -fx-padding: 16;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-background-color: -q-header;
+    -fx-border-color: -q-border transparent transparent transparent;
+    -fx-padding: 10 16 10 16;
+}
+
+/* ======================================================================
+ * Menus: sub-menus, check items, separators
+ * ==================================================================== */
+
+.menu > .right-container > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+.menu:focused > .right-container > .arrow,
+.menu:showing > .right-container > .arrow {
+    -fx-background-color: -q-on-accent;
+}
+
+.menu-item:disabled > .label {
+    -fx-opacity: 0.45;
+}
+
+.menu-item > .left-container {
+    -fx-padding: 0 6 0 0;
+}
+
+.check-menu-item:checked > .left-container > .check,
+.radio-menu-item:checked > .left-container > .radio {
+    -fx-background-color: -q-accent;
+}
+
+.check-menu-item:checked:focused > .left-container > .check,
+.radio-menu-item:checked:focused > .left-container > .radio {
+    -fx-background-color: -q-on-accent;
+}
+
+.separator-menu-item > .line {
+    -fx-border-color: -q-border transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 3 0 3 0;
+}
+
+.menu-bar > .container > .menu-button:showing > .label {
+    -fx-text-fill: -q-text;
+}
+
+/* ======================================================================
+ * Combo boxes, choice boxes, spinners, colour pickers
+ * ==================================================================== */
+
+.combo-box-base > .arrow-button,
+.choice-box > .open-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 4 0 6;
+}
+
+.combo-box-base > .arrow-button > .arrow,
+.choice-box > .open-button > .arrow,
+.menu-button > .arrow-button > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -q-text;
+    -fx-padding: 0 4 0 2;
+}
+
+.combo-box-base:editable > .text-field {
+    -fx-background-color: transparent;
+    -fx-padding: 0 4 0 4;
+}
+
+/* The drop-down list of a combo box */
+.combo-box-popup > .list-view {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 14, 0, 0, 4);
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-text-fill: -q-text;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background-color: -q-hover;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected {
+    -fx-background-color: -q-accent;
+    -fx-text-fill: -q-on-accent;
+}
+
+.choice-box > .context-menu {
+    -fx-padding: 4;
+}
+
+.spinner {
+    -fx-background-color: -q-border-strong, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+}
+
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-background-color: -q-accent, -q-surface;
+    -fx-background-insets: 0, 1.5;
+}
+
+.spinner > .text-field,
+.spinner > .text-field:focused {
+    -fx-background-color: transparent;
+}
+
+.spinner > .increment-arrow-button,
+.spinner > .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 3 6 3 6;
+}
+
+.spinner > .increment-arrow-button:hover,
+.spinner > .decrement-arrow-button:hover {
+    -fx-background-color: -q-hover;
+}
+
+.spinner > .increment-arrow-button > .increment-arrow,
+.spinner > .decrement-arrow-button > .decrement-arrow {
+    -fx-background-color: -q-icon;
+}
+
+.color-picker > .color-picker-label {
+    -fx-padding: 0 2 0 2;
+}
+
+.color-picker > .color-picker-label > .picker-color > .picker-color-rect {
+    -fx-stroke: -q-border-strong;
+    -fx-arc-width: 6;
+    -fx-arc-height: 6;
+}
+
+.color-palette {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 14, 0, 0, 4);
+}
+
+/* ======================================================================
+ * Lists, tables and trees: hover and a subtle focus state
+ * ==================================================================== */
+
+.list-cell:filled:hover,
+.tree-cell:filled:hover,
+.table-row-cell:filled:hover {
+    -fx-background-color: -q-hover;
+}
+
+.list-cell:filled:selected,
+.tree-cell:filled:selected,
+.table-row-cell:filled:selected {
+    -fx-background-color: -q-accent-soft;
+    -fx-text-fill: -q-text;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected {
+    -fx-background-color: -q-accent;
+    -fx-text-fill: -q-on-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused {
+    -fx-background-insets: 0;
+}
+
+.tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+.tree-cell:selected > .tree-disclosure-node > .arrow {
+    -fx-background-color: -q-text;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -q-header;
+    -fx-border-color: transparent transparent -q-border transparent;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent -q-border transparent transparent;
+    -fx-size: 30;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 0 8 0 8;
+}
+
+.table-row-cell {
+    -fx-cell-size: 30;
+}
+
+.table-cell {
+    -fx-padding: 0 8 0 8;
+    -fx-border-color: transparent;
+}
+
+/* ======================================================================
+ * Toggle switches (ControlsFX, used in the options window)
+ * ==================================================================== */
+
+.toggle-switch .thumb-area {
+    -fx-background-color: -q-border-strong;
+    -fx-background-insets: 0;
+    -fx-background-radius: 100;
+}
+
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: -q-accent;
+}
+
+.toggle-switch .thumb {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 2;
+    -fx-background-radius: 100;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 3, 0, 0, 1);
+}
+
+/* ======================================================================
+ * Miscellaneous
+ * ==================================================================== */
+
+.hyperlink {
+    -fx-text-fill: -q-accent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: -q-accent;
+}
+
+.separator:horizontal .line {
+    -fx-border-color: -q-border transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.separator:vertical .line {
+    -fx-border-color: transparent transparent transparent -q-border;
+    -fx-border-width: 0 0 0 1;
+}
+
+.progress-indicator {
+    -fx-progress-color: -q-accent;
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: -q-icon;
+}
+
+.titled-pane > .content {
+    -fx-background-color: -q-surface;
+    -fx-border-color: -q-border;
+    -fx-border-width: 0 1 1 1;
+}
+
+.label:disabled,
+.check-box:disabled,
+.radio-button:disabled {
+    -fx-opacity: 0.5;
+}
+
+.text-area .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Text selection */
+.text-field,
+.text-area,
+.text-input {
+    -fx-highlight-fill: -q-accent-soft;
+    -fx-highlight-text-fill: -q-text;
+}
+
+/* ======================================================================
+ * Soft transitions (JavaFX 23+ CSS transitions; ignored by older runtimes)
+ * ==================================================================== */
+
+.button,
+.toggle-button,
+.menu-button,
+.split-menu-button,
+.combo-box-base,
+.choice-box,
+.media-button {
+    transition: -fx-background-color 0.12s ease-out;
+}
+
+.text-field,
+.text-area,
+.spinner {
+    transition: -fx-background-color 0.15s ease-out;
+}
+
+/* ======================================================================
+ * Text styles that used to be hard-coded fonts
+ * ==================================================================== */
+
+.lyric-section-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 0.85em;
+}
+
+.media-title {
+    -fx-fill: -q-text;
+    -fx-font-size: 1.4em;
+}
+
+.overlay-title {
+    -fx-fill: #ffffff;
+    -fx-font-size: 1.6em;
+    -fx-font-weight: bold;
+}
+
+.about-heading {
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+}
+
+.search-match {
+    -fx-font-weight: bold;
+}
+
+/* Plain Text nodes inside list cells follow the cell's text colour,
+   which Modena switches to white on the selected (accent) row. */
+.list-view .list-cell .text,
+.tree-view .tree-cell .text {
+    -fx-fill: -fx-text-background-color;
+}
+
+/* Search field with a leading icon (library) */
+.search-icon-label {
+    -fx-padding: 0 2 0 4;
+}
+
+/* Tab panes in dialogs get breathing room around their content */
+.padded-tabs > .tab-content-area {
+    -fx-padding: 12 14 12 14;
+    -fx-background-color: -q-surface;
+}
+
+/* Quelea's own number spinner (NumberSpinner) */
+.number-spinner {
+    -fx-spacing: 2;
+}
+
+.spinner-arrow-button,
+.spinner-arrow-button:focused,
+.spinner-arrow-button:armed {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+    -fx-padding: 0 6 0 6;
+}
+
+.spinner-arrow-button:hover {
+    -fx-background-color: -q-hover;
+}
+
+.spinner-arrow {
+    -fx-fill: -q-icon;
+    -fx-stroke: transparent;
+}
+
+.color-picker {
+    -fx-padding: 0;
+}
+
+.color-picker > .color-picker-label {
+    -fx-padding: 5 4 5 8;
+}
+
+.color-picker > .arrow-button {
+    -fx-padding: 0 8 0 4;
+}
+
+/* A row of controls along the top of a dialog (search bars etc.) */
+.dialog-toolbar {
+    -fx-background-color: -q-header;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 8 12 8 12;
+    -fx-spacing: 8;
+}
+
+.muted-text {
+    -fx-fill: -q-text-muted;
+}
+
+/* A clickable Text node (e.g. the log file location in About) */
+.link-text {
+    -fx-fill: -q-accent;
+    -fx-underline: true;
+}
+
+.strip-title {
+    -fx-fill: -q-text;
+    -fx-font-weight: bold;
+}
+
+.error-text {
+    -fx-fill: -q-error;
+}
+
+/* Always white text on the accent-coloured (focused, selected) row */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .text,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .text {
+    -fx-fill: -q-on-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .label,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .label {
+    -fx-text-fill: -q-on-accent;
+}

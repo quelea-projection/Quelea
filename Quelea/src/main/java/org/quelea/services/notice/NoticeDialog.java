@@ -42,6 +42,10 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
+
 /**
  * The dialog used to manage the notices.
  * <p/>
@@ -64,7 +68,7 @@ public class NoticeDialog extends Stage {
      */
     public NoticeDialog() {
         BorderPane mainPane = new BorderPane();
-        getIcons().add(new Image("file:icons/info.png"));
+        Utils.addIconsToStage(this);
         noticeDrawers = new ArrayList<>();
         setTitle(LabelGrabber.INSTANCE.getLabel("notices.heading"));
         newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
@@ -168,7 +172,8 @@ public class NoticeDialog extends Stage {
             }
         });
 
-        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(doneButton);
         doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -179,9 +184,7 @@ public class NoticeDialog extends Stage {
         BorderPane.setMargin(doneButton, new Insets(5));
         mainPane.setBottom(doneButton);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

@@ -40,6 +40,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * Dialog where users can select the translations to be displayed.
  *
@@ -82,9 +84,7 @@ public class TranslationChoiceDialog extends Stage {
         root.setBottom(buttonPane);
 
         Scene scene = new Scene(root);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

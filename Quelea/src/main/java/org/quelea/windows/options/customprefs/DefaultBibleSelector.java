@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.windows.style.QueleaIcon;
 
 public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<String>, StackPane> {
 
@@ -128,7 +129,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
 
     private Button createAddBibleButton() {
         final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"),
-                new ImageView(new Image("file:icons/add.png")));
+                QueleaIcon.ADD.create());
         addBibleButton.setOnAction(t -> {
 
             FileChooser chooser = new FileChooser();
@@ -162,7 +163,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
 
     private Button createDeleteBibleButton() {
         final Button deleteBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.bible.label"),
-                new ImageView(new Image("file:icons/cross.png")));
+                QueleaIcon.CLOSE.create());
         deleteBibleButton.setOnAction(t -> {
 
             Bible bible = BibleManager.get().getBibleFromName(comboBox.getSelectionModel().getSelectedItem());

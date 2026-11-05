@@ -46,7 +46,7 @@ public class LoadingPane extends StackPane {
         VBox content = new VBox();
         content.setAlignment(Pos.CENTER);
         Text text = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        text.setStyle(" -fx-font: bold italic 20pt \"Arial\";");
+        text.getStyleClass().add("overlay-title");
         FadeTransition textTransition = new FadeTransition(Duration.seconds(1.5), text);
         textTransition.setAutoReverse(true);
         textTransition.setFromValue(0);
@@ -58,7 +58,7 @@ public class LoadingPane extends StackPane {
         content.getChildren().add(bar);
         getChildren().add(content);
         setOpacity(0);
-        setStyle("-fx-background-color: #555555;");
+        getStyleClass().add("overlay-pane");
         setVisible(false);
     }
     

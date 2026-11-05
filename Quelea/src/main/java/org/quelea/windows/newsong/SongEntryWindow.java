@@ -47,6 +47,12 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslatePanel;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.UiEffects;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
+
 /**
  * A new song window that users use for inserting the text content of a new
  * song.
@@ -78,10 +84,13 @@ public class SongEntryWindow extends Stage {
         updateDBOnHide = true;
         Utils.addIconsToStage(this);
 
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(confirmButton);
 
         BorderPane mainPane = new BorderPane();
         tabPane = new TabPane();
+        tabPane.getStyleClass().add("padded-tabs");
+        UiEffects.installTabFade(tabPane);
 
         setupBasicSongPanel();
         Tab basicTab = new Tab(LabelGrabber.INSTANCE.getLabel("basic.information.heading"));
@@ -128,24 +137,17 @@ public class SongEntryWindow extends Stage {
             cancel = false;
             saveSong();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(t -> {
             checkSave();
         });
         addToSchedCBox = new CheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
-        HBox checkBoxPanel = new HBox();
-        HBox.setMargin(addToSchedCBox, new Insets(0, 0, 0, 10));
-        checkBoxPanel.getChildren().add(addToSchedCBox);
-        VBox bottomPanel = new VBox();
-        bottomPanel.setSpacing(5);
-        HBox buttonPanel = new HBox();
-        buttonPanel.setSpacing(10);
-        buttonPanel.setAlignment(Pos.CENTER);
-        buttonPanel.getChildren().add(confirmButton);
-        buttonPanel.getChildren().add(cancelButton);
-        bottomPanel.getChildren().add(checkBoxPanel);
-        bottomPanel.getChildren().add(buttonPanel);
-        BorderPane.setMargin(bottomPanel, new Insets(10, 0, 5, 0));
+        // Footer: "add to schedule" on the left, the buttons on the right
+        Region footerSpacer = new Region();
+        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
+        HBox bottomPanel = new HBox(8, addToSchedCBox, footerSpacer, confirmButton, cancelButton);
+        bottomPanel.setAlignment(Pos.CENTER_LEFT);
+        bottomPanel.getStyleClass().add("dialog-button-bar");
         mainPane.setBottom(bottomPanel);
 
         setOnShowing(t -> {
@@ -156,9 +158,7 @@ public class SongEntryWindow extends Stage {
         });
 
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

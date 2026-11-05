@@ -49,6 +49,7 @@ import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.newsong.EditThemeDialog;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  *
@@ -127,7 +128,7 @@ public class ScheduleThemeNode extends BorderPane {
         contentPanel.getChildren().clear();
         final HBox northPanel = new HBox();
         Label selectThemeLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.select.text"));
-        selectThemeLabel.setStyle("-fx-font-weight: bold;");
+        selectThemeLabel.getStyleClass().add("panel-header-label");
         northPanel.getChildren().add(selectThemeLabel);
         contentPanel.getChildren().add(northPanel);
 
@@ -217,7 +218,7 @@ public class ScheduleThemeNode extends BorderPane {
             }
         }
         HBox buttonPanel = new HBox();
-        Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/add.png")));
+        Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), QueleaIcon.ADD.create());
         newThemeButton.setOnAction(t -> {
             themeDialog.setTheme(null);
             themeDialog.showAndWait();

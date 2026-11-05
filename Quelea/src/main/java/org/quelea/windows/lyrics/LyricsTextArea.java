@@ -37,6 +37,11 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class LyricsTextArea extends StackPane {
 
+    // The colours are looked up from the active theme (-q-lyrics-* in theme-*.css).
+    private static final String TITLE_STYLE = "-fx-fill: -q-lyrics-title; -fx-font-weight: bold;";
+    private static final String CHORDS_STYLE = "-fx-fill: -q-lyrics-chords; -fx-font-style: italic;";
+    private static final String ERROR_STYLE = "-fx-fill: -q-lyrics-error; -fx-font-weight: bold;";
+
     private InlineCssTextArea textArea;
 
     public LyricsTextArea() {
@@ -62,7 +67,7 @@ public class LyricsTextArea extends StackPane {
         textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 10pt;");
         textArea.setUndoManager(UndoManagerFactory.zeroHistorySingleChangeUM(textArea.richChanges()));
         getChildren().add(new VirtualizedScrollPane<>(textArea));
-        textArea.getStyleClass().add("text-area");
+        textArea.getStyleClass().addAll("text-area", "lyrics-editor");
     }
 
     public InlineCssTextArea getTextArea() {
@@ -86,21 +91,13 @@ public class LyricsTextArea extends StackPane {
             }
             if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
                 textArea.clearStyle(charPos, charPos + line.length());
-                if (QueleaProperties.get().getUseDarkTheme()) {
-                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: rgb(50,160,255); -fx-font-weight: bold;");
-                } else {
-                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: blue; -fx-font-weight: bold;");
-                }
+                textArea.setStyle(charPos, charPos + line.length(), TITLE_STYLE);
             } else if (new LineTypeChecker(line).getLineType() == Type.CHORDS) {
                 textArea.clearStyle(charPos, charPos + line.length());
-                if (QueleaProperties.get().getUseDarkTheme()) {
-                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: rgb(200,200,200); -fx-font-style: italic;");
-                } else {
-                    textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: grey; -fx-font-style: italic;");
-                }
+                textArea.setStyle(charPos, charPos + line.length(), CHORDS_STYLE);
             } else if (new LineTypeChecker(line).getLineType() == Type.NONBREAK) {
                 textArea.clearStyle(charPos, charPos + line.length());
-                textArea.setStyle(charPos, charPos + line.length(), "-fx-fill: red; -fx-font-weight: bold;");
+                textArea.setStyle(charPos, charPos + line.length(), ERROR_STYLE);
             } else if (new LineTypeChecker(line).getLineType() != new LineTypeChecker(oldLine).getLineType()) {
                 textArea.clearStyle(charPos, charPos + line.length());
                 textArea.setStyle(charPos, charPos + line.length(), "");

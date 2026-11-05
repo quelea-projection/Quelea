@@ -29,6 +29,8 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * The dialog shown to the user when choosing how to transpose the chords of 
  * a song.
@@ -72,9 +74,7 @@ public class TransposeDialog extends Stage {
         contentPane.getChildren().add(buttonPanel);
 
         Scene scene = new Scene(contentPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

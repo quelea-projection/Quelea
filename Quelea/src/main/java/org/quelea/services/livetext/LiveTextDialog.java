@@ -36,6 +36,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * An input dialog for Live Text.
  *
@@ -112,9 +114,7 @@ public class LiveTextDialog extends Stage {
         BorderPane.setAlignment(okPane, Pos.CENTER);
         mainPane.setBottom(okPane);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 
@@ -132,7 +132,7 @@ public class LiveTextDialog extends Stage {
             dialog.textField.clear();
             dialog.messageLabel.setText(message);
             dialog.messageLabel.setWrapText(true);
-            dialog.getIcons().add(new Image("file:icons/live_text.png"));
+            Utils.addIconsToStage(dialog);
             dialog.showAndWait();
         });
         while (dialog.isShowing()) {

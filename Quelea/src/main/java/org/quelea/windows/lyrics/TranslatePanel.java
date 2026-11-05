@@ -51,6 +51,8 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.ModalCancellableStage;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.UiEffects;
 
 /**
  * The translation dialog that manages all the translations - translations can
@@ -77,8 +79,9 @@ public class TranslatePanel extends BorderPane implements Cancellable {
         defaultLyricsArea = new LyricsTextArea();
         StackPane translationPane = new StackPane();
         tabPane = new TabPane();
+        UiEffects.installTabFade(tabPane);
         translationPane.getChildren().add(tabPane);
-        addTranslationButton = new Button("", new ImageView(new Image("file:icons/newstar.png", 16, 16, false, true)));
+        addTranslationButton = new Button("", QueleaIcon.ADD.create());
         Utils.setToolbarButtonStyle(addTranslationButton);
         addTranslationButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -126,12 +129,12 @@ public class TranslatePanel extends BorderPane implements Cancellable {
         BorderPane leftArea = new BorderPane();
         StackPane topRegion = new StackPane();
         Text defaultTranslationLabel = new Text(LabelGrabber.INSTANCE.getLabel("default.translation.label"));
-        defaultTranslationLabel.setFill(Color.WHITE);
+        defaultTranslationLabel.getStyleClass().addAll("text", "strip-title");
         StackPane.setAlignment(defaultTranslationLabel, Pos.CENTER_LEFT);
         StackPane.setMargin(defaultTranslationLabel, new Insets(5));
         topRegion.getChildren().add(defaultTranslationLabel);
         topRegion.setPrefHeight(31);
-        topRegion.setStyle("-fx-background-color:rgb(166,166,166);"); //Match the tabpane header background.
+        topRegion.getStyleClass().add("tab-header-strip"); // matches the tab pane header, see base.css
         topRegion.setMaxWidth(Double.MAX_VALUE);
         leftArea.setTop(topRegion);
         leftArea.setCenter(defaultLyricsArea);
