@@ -19,6 +19,8 @@
 package org.quelea.services.lucene;
 
 import java.io.IOException;
+import java.text.Normalizer;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -37,6 +39,7 @@ import org.quelea.services.utils.LoggerUtils;
 public class SearchIndexUtils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final Pattern ACCENTS = Pattern.compile("\\p{M}");
 
     /**
      * Don't make me...
@@ -58,6 +61,17 @@ public class SearchIndexUtils {
         catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't clear the index", ex);
         }
+    }
+
+    /**
+     * Prepare text for a forgiving comparison, ignoring case and accents, so
+     * that "Hoga visan" matches "Höga Visan".
+     * <p/>
+     * @param text the text to prepare.
+     * @return the text in lower case and without accents.
+     */
+    public static String fold(String text) {
+        return ACCENTS.matcher(Normalizer.normalize(text, Normalizer.Form.NFD)).replaceAll("").toLowerCase(Locale.ROOT);
     }
 
     /**

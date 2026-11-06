@@ -1172,6 +1172,94 @@
     -fx-padding: 0 2 0 4;
 }
 
+/* Universal search: a floating box in a transparent window. The padding of
+   the root leaves room for the shadow (SHADOW_MARGIN in UniversalSearchWindow) */
+.universal-search-root {
+    -fx-background-color: transparent;
+    -fx-padding: 32;
+}
+
+.universal-search {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 12;
+    -fx-padding: 6 8 8 12;
+    -fx-spacing: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 28, 0, 0, 8);
+}
+
+.universal-search-field > .text-field,
+.universal-search-field > .text-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: null;
+    -fx-font-size: 18px;
+}
+
+.universal-search .list-view {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.universal-search .list-cell,
+.universal-search .list-cell:odd {
+    -fx-padding: 0 10 0 10;
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+}
+
+.universal-search .list-cell:filled:hover {
+    -fx-background-color: -q-hover;
+}
+
+.universal-search .list-cell:filled:selected {
+    -fx-background-color: -q-accent-soft;
+}
+
+.universal-search-filter {
+    -fx-background-color: transparent;
+    -fx-background-radius: 12;
+    -fx-border-width: 0;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 12px;
+    -fx-text-fill: -q-text-muted;
+}
+
+.universal-search-filter:hover {
+    -fx-background-color: -q-hover;
+}
+
+.universal-search-filter:selected {
+    -fx-background-color: -q-accent-soft;
+    -fx-text-fill: -q-text;
+}
+
+.universal-search-filter-key {
+    -fx-font-size: 10px;
+    -fx-text-fill: -q-text-muted;
+    -fx-opacity: 0.8;
+}
+
+.universal-search-preview {
+    -fx-background-color: -q-surface-alt;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}
+
+.universal-search-preview .scroll-pane,
+.universal-search-preview .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.universal-search-detail {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 12px;
+}
+
 /* Tab panes in dialogs get breathing room around their content */
 .padded-tabs > .tab-content-area {
     -fx-padding: 12 14 12 14;

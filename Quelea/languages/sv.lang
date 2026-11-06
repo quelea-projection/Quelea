@@ -780,3 +780,6 @@ remote.start.verse=Startvers
 remote.end.verse=Slutvers
 bible.version=Bibelversion
 click.to.add=Klicka för att lägga till
+universal.search.menu=Sök i allt...
+universal.search.prompt=Sök sånger, bibelställen, bilder, videor och timers
+universal.search.no.results=Inga träffar
