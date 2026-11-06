@@ -77,6 +77,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                 BibleVerse selected = (BibleVerse) ti.getValue();
 
                 int x = selected.getNum() - 1;
+                double wrapMargin = 20 + textPane.getInsets().getLeft() + textPane.getInsets().getRight(); //20 to account for scroll bar width
                 for (int i = 0; i < verses.length; i++) {
                     Text text = new Text(verses[i].toString() + " ");
                     text.getStyleClass().add("text");
@@ -86,7 +87,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                         text.setFont(Font.font("Sans", 14));
                     }
                     textPane.getChildren().add(text);
-                    text.wrappingWidthProperty().bind(sp.widthProperty().subtract(20)); //-20 to account for scroll bar width
+                    text.wrappingWidthProperty().bind(sp.widthProperty().subtract(wrapMargin));
                 }
             } else {
                 ti.setExpanded(!ti.isExpanded());

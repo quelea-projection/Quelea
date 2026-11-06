@@ -1212,6 +1212,11 @@
     -fx-spacing: 8;
 }
 
+/* The chapter shown next to the results in the bible search window */
+.bible-chapter-text {
+    -fx-padding: 12 16 12 16;
+}
+
 .muted-text {
     -fx-fill: -q-text-muted;
 }

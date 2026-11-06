@@ -79,6 +79,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         bibles = new ComboBox<>();
         bibles.setEditable(false);
         chapterPane = new FlowPane();
+        chapterPane.getStyleClass().add("bible-chapter-text");
         scrollPane = new ScrollPane();
         scrollPane.setContent(chapterPane);
         searchResults = new BibleSearchTreeView(scrollPane, bibles);
