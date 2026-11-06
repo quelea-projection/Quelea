@@ -372,10 +372,19 @@
     -fx-opacity: 0.85;
 }
 
-/* Schedule list: a song is being dragged over this item */
+/* Schedule list: an image or video is being dragged over this item */
 .list-cell:filled:drop-target,
 .list-cell:filled:selected:drop-target {
     -fx-background-color: -q-drop-target;
+}
+
+/* Schedule list: the space that opens where a dragged item will land */
+.schedule-drop-slot {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 6;
+    -fx-border-color: -q-accent;
+    -fx-border-style: dashed;
+    -fx-border-radius: 6;
 }
 
 /* ======================================================================
