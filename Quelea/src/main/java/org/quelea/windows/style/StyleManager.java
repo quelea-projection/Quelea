@@ -74,6 +74,9 @@ public final class StyleManager {
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     private static final String STYLE_ROOT = "org/quelea/style/";
+    private static final String POLISHED_KEY = "quelea.dialog.polished";
+    /** Package prefix of PreferencesFX and FormsFX (the options window). */
+    private static final String PREFERENCESFX_PACKAGE = "com.dlsc.";
     public static final String BASE_STYLESHEET = STYLE_ROOT + "base.css";
     public static final String ICONS_STYLESHEET = STYLE_ROOT + "icons.css";
     public static final String LIGHT_THEME_STYLESHEET = STYLE_ROOT + "theme-light.css";
@@ -128,7 +131,9 @@ public final class StyleManager {
      * the window content gets a little breathing room.
      */
     private static void polishDialog(Parent root) {
-        if (root == null) {
+        // Only once per layout: windows that are hidden and shown again (e.g.
+        // the options window) must look the same every time.
+        if (root == null || root.getProperties().putIfAbsent(POLISHED_KEY, Boolean.TRUE) != null) {
             return;
         }
         if (root instanceof Region region && region.getPadding().getTop() < 8) {
@@ -152,6 +157,9 @@ public final class StyleManager {
 
     private static void polishGrids(Parent parent) {
         for (Node child : parent.getChildrenUnmodifiable()) {
+            if (child.getClass().getName().startsWith(PREFERENCESFX_PACKAGE)) {
+                continue; // PreferencesFX / FormsFX lay out their own forms
+            }
             if (child instanceof GridPane grid) {
                 if (grid.getHgap() < 8) {
                     grid.setHgap(10);
