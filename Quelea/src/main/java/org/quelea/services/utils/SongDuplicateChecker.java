@@ -17,6 +17,7 @@
  */
 package org.quelea.services.utils;
 
+import java.util.regex.Pattern;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
@@ -28,6 +29,9 @@ import org.quelea.data.displayable.SongDisplayable;
  * @author Michael
  */
 public class SongDuplicateChecker {
+
+    private static final Pattern NON_LETTERS = Pattern.compile("[^\\p{L}]");
+    private String[] databaseLyrics;
 
     public static void main(String[] args) {
         new SongDuplicateChecker().checkSongs(null);
@@ -57,27 +61,54 @@ public class SongDuplicateChecker {
 
     /**
      * Checks whether the given new song is the same or similar to a song
-     * already existing in the database.
+     * already existing in the database. The database is only read the first
+     * time this is called, so use one checker for all the songs of an import.
+     * This method can be called from several threads at once.
      *
      * @param newSong the new song to check.
      * @return true if the song is the same or similar to an existing song,
      * false otherwise.
      */
     public boolean checkSong(SongDisplayable newSong) {
-        for(SongDisplayable databaseSong : SongManager.get().getSongs()) {
-            String databaseLyrics = databaseSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
-            String newLyrics = newSong.getLyrics(false, false, false).replaceAll("[^\\p{L}]", "");
-            int maxDistance;
-            if(newLyrics.length() < databaseLyrics.length()) {
-                maxDistance = newLyrics.length() / 10;
-            }
-            else {
-                maxDistance = databaseLyrics.length() / 10;
-            }
-            if(new LevenshteinDistance().apply(databaseLyrics, newLyrics) <= maxDistance) {
+        String newLyrics = comparableLyrics(newSong);
+        for(String lyrics : getDatabaseLyrics()) {
+            if(isSimilar(lyrics, newLyrics)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private synchronized String[] getDatabaseLyrics() {
+        if(databaseLyrics == null) {
+            SongDisplayable[] songs = SongManager.get().getSongs();
+            databaseLyrics = new String[songs.length];
+            for(int i = 0; i < songs.length; i++) {
+                databaseLyrics[i] = comparableLyrics(songs[i]);
+            }
+        }
+        return databaseLyrics;
+    }
+
+    private static String comparableLyrics(SongDisplayable song) {
+        return NON_LETTERS.matcher(song.getLyrics(false, false, false)).replaceAll("");
+    }
+
+    /**
+     * Determine whether two lyrics are similar, meaning that the edit distance
+     * between them is at most a tenth of the length of the shorter one. The edit
+     * distance is at least the difference in length, and calculating it stops as
+     * soon as it passes the limit, so most pairs are ruled out cheaply.
+     *
+     * @param lyrics1 the first lyrics.
+     * @param lyrics2 the second lyrics.
+     * @return true if they're similar, false otherwise.
+     */
+    static boolean isSimilar(String lyrics1, String lyrics2) {
+        int maxDistance = Math.min(lyrics1.length(), lyrics2.length()) / 10;
+        if(Math.abs(lyrics1.length() - lyrics2.length()) > maxDistance) {
+            return false;
+        }
+        return new LevenshteinDistance(maxDistance).apply(lyrics1, lyrics2) != -1;
     }
 }

@@ -61,6 +61,7 @@ import org.quelea.services.utils.LoggerUtils;
 public class SongSearchIndex implements SearchIndex<SongDisplayable> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final Pattern PUNCTUATION = Pattern.compile("[^\\w\\s]", Pattern.UNICODE_CHARACTER_CLASS);
     private final Analyzer analyzer;
     private final Directory index;
     private final Map<Long, SongDisplayable> songs;
@@ -110,21 +111,9 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     @Override
     public synchronized void addAll(Collection<? extends SongDisplayable> songList) {
-        Pattern p = Pattern.compile("[^\\w\\s]", Pattern.UNICODE_CHARACTER_CLASS);
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
             for (SongDisplayable song : songList) {
-                Document doc = new Document();
-                if (song.getTitle() != null) {
-                    doc.add(new TextField("title", p.matcher(song.getTitle()).replaceAll(""), Field.Store.NO));
-                }
-                if (song.getAuthor() != null) {
-                    doc.add(new TextField("author", p.matcher(song.getAuthor()).replaceAll(""), Field.Store.NO));
-                }
-                if (song.getLyrics(false, false, false) != null) {
-                    doc.add(new TextField("lyrics", p.matcher(song.getLyrics(false, false, false)).replaceAll(""), Field.Store.NO));
-                }
-                doc.add(new TextField("number", p.matcher(Long.toString(song.getID())).replaceAll(""), Field.Store.YES));
-                writer.addDocument(doc);
+                writer.addDocument(createDocument(song));
                 songs.put(song.getID(), song);
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
             }
@@ -133,15 +122,47 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         }
     }
 
+    private Document createDocument(SongDisplayable song) {
+        Document doc = new Document();
+        if (song.getTitle() != null) {
+            doc.add(new TextField("title", PUNCTUATION.matcher(song.getTitle()).replaceAll(""), Field.Store.NO));
+        }
+        if (song.getAuthor() != null) {
+            doc.add(new TextField("author", PUNCTUATION.matcher(song.getAuthor()).replaceAll(""), Field.Store.NO));
+        }
+        String lyrics = song.getLyrics(false, false, false);
+        if (lyrics != null) {
+            doc.add(new TextField("lyrics", PUNCTUATION.matcher(lyrics).replaceAll(""), Field.Store.NO));
+        }
+        doc.add(new TextField("number", Long.toString(song.getID()), Field.Store.YES));
+        return doc;
+    }
+
+    private static Term idTerm(SongDisplayable song) {
+        return new Term("number", Long.toString(song.getID()));
+    }
+
     /**
      * Remove the given song from the index.
      *
      * @param song the song to remove.
      */
     @Override
-    public synchronized void remove(SongDisplayable song) {
+    public void remove(SongDisplayable song) {
+        removeAll(List.of(song));
+    }
+
+    /**
+     * Remove a number of songs from the index, using just one writer.
+     *
+     * @param songList the songs to remove.
+     */
+    public synchronized void removeAll(Collection<? extends SongDisplayable> songList) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
-            writer.deleteDocuments(new Term("number", Long.toString(song.getID())));
+            for (SongDisplayable song : songList) {
+                writer.deleteDocuments(idTerm(song));
+                songs.remove(song.getID());
+            }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
         }
@@ -153,9 +174,13 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * @param song the song to update.
      */
     @Override
-    public void update(SongDisplayable song) {
-        remove(song);
-        add(song);
+    public synchronized void update(SongDisplayable song) {
+        try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
+            writer.updateDocument(idTerm(song), createDocument(song));
+            songs.put(song.getID(), song);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't update value in index", ex);
+        }
     }
 
     /**
@@ -231,5 +256,6 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     @Override
     public synchronized void clear() {
         SearchIndexUtils.clearIndex(index);
+        songs.clear();
     }
 }

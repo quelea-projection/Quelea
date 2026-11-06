@@ -17,13 +17,16 @@
  */
 package org.quelea.data.db;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -52,8 +55,13 @@ public final class SongManager {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static volatile SongManager INSTANCE;
     private final SongSearchIndex index;
-    private boolean indexIsClear;
-    private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
+    /**
+     * All the songs in sorted order, or null until they've first been loaded.
+     * After that it's kept up to date on every change, so the database never
+     * needs reading again. The search index keeps hold of the same songs.
+     */
+    private List<SongDisplayable> cacheSongs;
+    private volatile CountDownLatch indexBuilt = new CountDownLatch(0);
     private final Set<DatabaseListener> listeners;
 
     /**
@@ -61,7 +69,6 @@ public final class SongManager {
      */
     private SongManager() {
         listeners = new HashSet<>();
-        indexIsClear = true;
         index = new SongSearchIndex();
     }
 
@@ -84,13 +91,27 @@ public final class SongManager {
     }
 
     /**
-     * Get the underlying search index used by this database.
+     * Get the underlying search index used by this database. The index is built
+     * in the background after the songs are loaded, so this waits for that to
+     * finish; don't call it on the JavaFX thread.
      * <p/>
      *
      * @return the search index.
      */
     public SongSearchIndex getIndex() {
+        awaitIndex();
         return index;
+    }
+
+    /**
+     * Wait until the search index has been built, if that's in progress.
+     */
+    private void awaitIndex() {
+        try {
+            indexBuilt.await();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -123,15 +144,35 @@ public final class SongManager {
      * @return an array of all the songs in the database.
      */
     public synchronized SongDisplayable[] getSongs(LoadingPane loadingPane) {
-        if (cacheSongs.get() != null) {
-            return cacheSongs.get();
+        if (cacheSongs == null) {
+            cacheSongs = loadSongs(loadingPane);
+            buildIndex(new ArrayList<>(cacheSongs));
         }
+        return cacheSongs.toArray(new SongDisplayable[0]);
+    }
+
+    /**
+     * Read all the songs from the database. One bad row makes the fast query
+     * fail as a whole, so if that happens fall back to reading them one by one,
+     * which can skip over the bad rows.
+     */
+    private List<SongDisplayable> loadSongs(LoadingPane loadingPane) {
+        try {
+            return readSongs(loadingPane, SongDao::getSongs);
+        } catch (IllegalStateException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't load all the songs at once, loading them one by one", ex);
+            return readSongs(loadingPane, SongDao::getSongsOneByOne);
+        }
+    }
+
+    private List<SongDisplayable> readSongs(LoadingPane loadingPane, Function<SongDao, List<Song>> query) {
         final Set<SongDisplayable> songs = new TreeSet<>();
         HibernateUtil.execute((Session session) -> {
-            List<Song> songsList = new SongDao(session).getSongs();
+            List<Song> songsList = query.apply(new SongDao(session));
+            final int progressStep = Math.max(1, songsList.size() / 100);
             for (int si = 0; si < songsList.size(); si++) {
                 final int finalSi = si;
-                if (loadingPane != null) {
+                if (loadingPane != null && si % progressStep == 0) {
                     Platform.runLater(() -> {
                         loadingPane.setProgress((double) finalSi / songsList.size());
                     });
@@ -148,26 +189,7 @@ public final class SongManager {
                     LOGGER.log(Level.WARNING, "Song with id " + song.getId() + " is corrupt, skipping...", ex);
                     continue;
                 }
-                final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
-                        song.getAuthor())
-                        .ccli(song.getCcli())
-                        .year(song.getYear())
-                        .publisher(song.getPublisher())
-                        .copyright(song.getCopyright())
-                        .key(song.getKey())
-                        .info(song.getInfo())
-                        .capo(song.getCapo())
-                        .translations(song.getTranslations())
-                        .sequence(song.getSequence())
-                        .lyrics(song.getLyrics())
-                        .id(song.getId()).get();
-                final Theme theme = song.getTheme();
-                final ThemeDTO themedto = ThemeDTO.getDTO(theme);
-                for (TextSection section : songDisplayable.getSections()) {
-                    section.setTheme(themedto);
-                }
-                songDisplayable.setTheme(themedto);
-                songs.add(songDisplayable);
+                songs.add(toDisplayable(song));
             }
             if (loadingPane != null) {
                 Platform.runLater(() -> {
@@ -175,15 +197,76 @@ public final class SongManager {
                 });
             }
         });
+        return new ArrayList<>(songs);
+    }
 
-        if (indexIsClear) {
-            indexIsClear = false;
-            LOGGER.log(Level.INFO, "Adding {0} songs to index", songs.size());
-            index.addAll(songs);
+    /**
+     * Build the search index in the background, so the song list doesn't have
+     * to wait for it. Anything that needs the index waits for this to finish.
+     */
+    private void buildIndex(List<SongDisplayable> songs) {
+        final CountDownLatch built = new CountDownLatch(1);
+        indexBuilt = built;
+        Thread thread = new Thread(() -> {
+            try {
+                LOGGER.log(Level.INFO, "Adding {0} songs to index", songs.size());
+                index.addAll(songs);
+            } finally {
+                built.countDown();
+            }
+        }, "song-index-builder");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    /**
+     * Create the displayable for a song in the database. This must be called
+     * with an open session.
+     */
+    private static SongDisplayable toDisplayable(Song song) {
+        final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
+                song.getAuthor())
+                .ccli(song.getCcli())
+                .year(song.getYear())
+                .publisher(song.getPublisher())
+                .copyright(song.getCopyright())
+                .key(song.getKey())
+                .info(song.getInfo())
+                .capo(song.getCapo())
+                .translations(song.getTranslations())
+                .sequence(song.getSequence())
+                .lyrics(song.getLyrics())
+                .id(song.getId()).get();
+        final Theme theme = song.getTheme();
+        final ThemeDTO themedto = ThemeDTO.getDTO(theme);
+        for (TextSection section : songDisplayable.getSections()) {
+            section.setTheme(themedto);
         }
-        SongDisplayable[] songArr = songs.toArray(new SongDisplayable[songs.size()]);
-        cacheSongs = new SoftReference<>(songArr);
-        return songArr;
+        songDisplayable.setTheme(themedto);
+        return songDisplayable;
+    }
+
+    /**
+     * Copy the translations of a song, so the song in the cache doesn't share
+     * them with the song that was passed in. The translations can be null.
+     */
+    private static HashMap<String, String> copyOf(HashMap<String, String> translations) {
+        return translations == null ? null : new HashMap<>(translations);
+    }
+
+    /**
+     * Add a song to the sorted cache.
+     *
+     * @return true if it was added, false if an identical song is already there
+     * (the list only ever shows one of those.)
+     */
+    private boolean insertIntoCache(SongDisplayable song) {
+        int position = Collections.binarySearch(cacheSongs, song);
+        if (position >= 0) {
+            return false;
+        }
+        cacheSongs.add(-position - 1, song);
+        return true;
     }
 
     public boolean addSong(final SongDisplayable song, final boolean fireUpdate) {
@@ -195,7 +278,8 @@ public final class SongManager {
     }
 
     /**
-     * Add a song to the database.
+     * Add a song to the database. The given songs get the id they've been
+     * stored with.
      * <p/>
      *
      * @param songs      the songs to add.
@@ -204,8 +288,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean addSong(final SongDisplayable[] songs, final boolean fireUpdate) {
-        cacheSongs.clear();
-        clearIndex();
+        awaitIndex();
         final List<SongDisplayable> adjustedSongs = new ArrayList<>();
         for (SongDisplayable song : songs) {
             if (song.getSectionsWithoutSequence().length > 0) {
@@ -215,6 +298,7 @@ public final class SongManager {
         if (adjustedSongs.isEmpty()) {
             return false;
         }
+        final List<SongDisplayable> storedSongs = new ArrayList<>();
         try {
             HibernateUtil.execute((Session session) -> {
                 for (SongDisplayable song : adjustedSongs) {
@@ -230,15 +314,22 @@ public final class SongManager {
                             song.getCapo(),
                             song.getInfo(),
                             nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
-                            song.getTranslations(),
+                            copyOf(song.getTranslations()),
                             song.getSequence());
                     session.save(newSong);
+                    storedSongs.add(toDisplayable(newSong));
                 }
             });
         } catch (IllegalStateException ex) {
             LOGGER.log(Level.WARNING, "Couldn't add song", ex);
+            return false;
         }
-        getSongs();
+        for (int i = 0; i < adjustedSongs.size(); i++) {
+            adjustedSongs.get(i).setID(storedSongs.get(i).getID());
+        }
+        if (cacheSongs != null) {
+            index.addAll(storedSongs.stream().filter(this::insertIntoCache).collect(Collectors.toList()));
+        }
         if (fireUpdate) {
             fireUpdate();
         }
@@ -266,46 +357,61 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean updateSong(final SongDisplayable song, boolean addIfNotFound) {
-        index.remove(song);
-        try {
-            HibernateUtil.execute((Session session) -> {
-                Song updatedSong;
-                final boolean nullTheme = song.getSections()[0].getTheme() == null;
-                try {
-                    updatedSong = new SongDao(session).getSongById(song.getID());
-                    updatedSong.setAuthor(song.getAuthor());
-                    updatedSong.setYear(song.getYear());
-                    updatedSong.setCapo(song.getCapo());
-                    updatedSong.setCcli(song.getCcli());
-                    updatedSong.setCopyright(song.getCopyright());
-                    updatedSong.setInfo(song.getInfo());
-                    updatedSong.setSequence(song.getSequence());
-                    updatedSong.setLyrics(song.getLyrics(true, true, false));
-                    updatedSong.setKey(song.getKey());
-                    updatedSong.setPublisher(song.getPublisher());
-                    updatedSong.setTitle(song.getTitle());
-                    updatedSong.setTranslations(song.getTranslations());
-                    updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
-                    session.update(updatedSong);
-                    index.add(song);
-                } catch (ObjectNotFoundException e) {
-                    LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
-                    addSong(song, true);
-                }
-            });
-        } catch (IllegalStateException ex) {
-            LOGGER.log(Level.WARNING, "Error with database update, try to remove and add...", ex);
+        awaitIndex();
+        final SongDisplayable[] storedSong = new SongDisplayable[1];
+        if (song.getID() > 0) {
             try {
-                removeSong(song);
-                LOGGER.log(Level.WARNING, "Try to add...", ex);
-                addSong(song, false);
-                return true;
-            } catch (IllegalStateException ex2) {
-                LOGGER.log(Level.WARNING, "Remove / add trick not working.", ex2);
-                return false;
+                HibernateUtil.execute((Session session) -> {
+                    Song updatedSong;
+                    final boolean nullTheme = song.getSections()[0].getTheme() == null;
+                    try {
+                        updatedSong = new SongDao(session).getSongById(song.getID());
+                        updatedSong.setAuthor(song.getAuthor());
+                        updatedSong.setYear(song.getYear());
+                        updatedSong.setCapo(song.getCapo());
+                        updatedSong.setCcli(song.getCcli());
+                        updatedSong.setCopyright(song.getCopyright());
+                        updatedSong.setInfo(song.getInfo());
+                        updatedSong.setSequence(song.getSequence());
+                        updatedSong.setLyrics(song.getLyrics(true, true, false));
+                        updatedSong.setKey(song.getKey());
+                        updatedSong.setPublisher(song.getPublisher());
+                        updatedSong.setTitle(song.getTitle());
+                        updatedSong.setTranslations(copyOf(song.getTranslations()));
+                        updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
+                        session.update(updatedSong);
+                        storedSong[0] = toDisplayable(updatedSong);
+                    } catch (ObjectNotFoundException e) {
+                        LOGGER.log(Level.INFO, "Updating song that doesn't exist");
+                    }
+                });
+            } catch (IllegalStateException ex) {
+                LOGGER.log(Level.WARNING, "Error with database update, try to remove and add...", ex);
+                try {
+                    removeSong(song);
+                    LOGGER.log(Level.WARNING, "Try to add...", ex);
+                    addSong(song, true);
+                    return true;
+                } catch (IllegalStateException ex2) {
+                    LOGGER.log(Level.WARNING, "Remove / add trick not working.", ex2);
+                    return false;
+                }
             }
         }
-
+        if (storedSong[0] == null) {
+            if (addIfNotFound) {
+                addSong(song, true);
+            }
+            return addIfNotFound;
+        }
+        if (cacheSongs != null) {
+            cacheSongs.removeIf(cached -> cached.getID() == song.getID());
+            if (insertIntoCache(storedSong[0])) {
+                index.update(storedSong[0]);
+            } else {
+                index.remove(storedSong[0]);
+            }
+        }
         return true;
     }
 
@@ -328,9 +434,9 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean removeSongs(final List<SongDisplayable> songs) {
+        awaitIndex();
         List<Long> ids = songs.stream().map(SongDisplayable::getID).collect(Collectors.toList());
         LOGGER.log(Level.INFO, "Removing songs {0}", ids);
-        cacheSongs.clear();
         try {
             HibernateUtil.execute((Session session) -> {
                 for (SongDisplayable song : songs) {
@@ -342,16 +448,13 @@ public final class SongManager {
             LOGGER.log(Level.WARNING, "Couldn't remove songs " + ids, ex);
             return false;
         }
-        for (SongDisplayable song : songs) {
-            index.remove(song);
+        if (cacheSongs != null) {
+            final Set<Long> removedIds = new HashSet<>(ids);
+            cacheSongs.removeIf(cached -> removedIds.contains(cached.getID()));
+            index.removeAll(songs);
         }
         fireUpdate();
         LOGGER.log(Level.INFO, "Removed song {0}", ids);
         return true;
-    }
-
-    private void clearIndex() {
-        index.clear();
-        indexIsClear = true;
     }
 }

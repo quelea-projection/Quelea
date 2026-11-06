@@ -216,13 +216,11 @@ public class LibrarySongList extends StackPane {
 
             // empty or null search strings do not need to be filtered - lest they get added twice
             if (search == null || search.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(search).replaceAll("").isEmpty()) {
-                TreeSet<SongDisplayable> m = new TreeSet<>();
                 LOGGER.log(Level.INFO, "Empty song search performed");
                 for (SongDisplayable song : SongManager.get().getSongs()) {
                     song.setLastSearch(null);
-                    m.add(song);
+                    songs.add(song);
                 }
-                songs.addAll(m);
                 LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
             } else {
                 TreeSet<SongDisplayable> m = new TreeSet<>();

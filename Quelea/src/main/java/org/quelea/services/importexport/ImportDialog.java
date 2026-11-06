@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -196,7 +196,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 				public void run() {
 					try {
 						localSongs = new ArrayList<>();
-						localSongsDuplicate = new HashMap<>();
+						localSongsDuplicate = new ConcurrentHashMap<>();
 						for (File file : files) {
 							localSongs.addAll(parser.getSongs(file, statusPanel));
 						}
@@ -206,12 +206,13 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 						Collections.sort(localSongs);
 						statusPanel.setProgress(0);
 						if (checkDuplicates.isSelected()) {
+							final SongDuplicateChecker duplicateChecker = new SongDuplicateChecker();
 							for (int i = 0; i < (localSongs == null ? 0 : localSongs.size()); i++) {
 								final int finali = i;
 								checkerService.submit(() -> {
 									try {
 										if (!halt) {
-											final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
+											final boolean result = duplicateChecker.checkSong(localSongs.get(finali));
 											localSongsDuplicate.put(localSongs.get(finali), result);
 											final double progress = ((double) finali / localSongs.size());
 											if (statusPanel.getProgress() < progress) {
