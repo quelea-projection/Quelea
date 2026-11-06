@@ -45,6 +45,7 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.quelea.services.ndi.NdiOutput;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -112,6 +113,7 @@ public class PreferencesDialog extends Stage {
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
+            NdiOutput.INSTANCE.applySettings();
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
 

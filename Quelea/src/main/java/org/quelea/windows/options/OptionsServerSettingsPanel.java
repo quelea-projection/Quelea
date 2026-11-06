@@ -21,7 +21,9 @@ package org.quelea.windows.options;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
+import com.dlsc.formsfx.model.validators.StringLengthValidator;
 import com.dlsc.formsfx.model.validators.ValidationResult;
+import com.dlsc.preferencesfx.formsfx.view.controls.SimpleTextControl;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -29,7 +31,9 @@ import com.dlsc.preferencesfx.model.Setting;
 import java.util.HashMap;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
@@ -59,6 +63,10 @@ public class OptionsServerSettingsPanel {
     private StringProperty remotePortNumberProperty;
     private StringField remoteField;
     private StringProperty passwordProperty;
+    private BooleanProperty useNdiProperty;
+    private StringProperty ndiNameProperty;
+    private StringField ndiNameField;
+    private DoubleProperty ndiFrameRateProperty;
 
     /**
      * Create the server settings panel.
@@ -83,6 +91,13 @@ public class OptionsServerSettingsPanel {
         bindings.put(remoteField, useMobileRemoteProperty.not());
 
         passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
+
+        useNdiProperty = new SimpleBooleanProperty(QueleaProperties.get().getNdiOutputEnabled());
+        ndiNameProperty = new SimpleStringProperty(QueleaProperties.get().getNdiSourceName());
+        ndiNameField = Field.ofStringType(ndiNameProperty).render(new SimpleTextControl());
+        ndiNameField.validate(StringLengthValidator.atLeast(1, LabelGrabber.INSTANCE.getLabel("ndi.source.name.required")));
+        bindings.put(ndiNameField, useNdiProperty.not());
+        ndiFrameRateProperty = new SimpleDoubleProperty(QueleaProperties.get().getNdiFrameRate());
     }
 
     private ValidationResult validatePortNumber(String s) {
@@ -109,6 +124,14 @@ public class OptionsServerSettingsPanel {
                                 .customKey(remoteControlPortKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("remote.control.password"), passwordProperty)
                                 .customKey(remoteControlPasswordKey)
+                ),
+                Group.of(LabelGrabber.INSTANCE.getLabel("ndi.output.heading"),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.ndi.output.label"), useNdiProperty)
+                                .customKey(ndiOutputEnabledKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("ndi.source.name.label"), ndiNameField, ndiNameProperty)
+                                .customKey(ndiSourceNameKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("ndi.frame.rate.label"), ndiFrameRateProperty, 5, 60, 5)
+                                .customKey(ndiFrameRateKey)
                 )
         );
     }

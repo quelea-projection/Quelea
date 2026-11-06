@@ -90,6 +90,9 @@ import static org.quelea.services.utils.QueleaPropertyKeys.maxCharsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.maxFontSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.minLinesKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.mobLyricsPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.ndiFrameRateKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.ndiOutputEnabledKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.ndiSourceNameKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBackgroundColourKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxHeightKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxSpeedKey;
@@ -2155,6 +2158,36 @@ public final class QueleaProperties extends SortedProperties {
      */
     public int getMobLyricsPort() {
         return Integer.parseInt(getProperty(mobLyricsPortKey, "1111"));
+    }
+
+    /**
+     * Determine if the projector output should be sent over NDI.
+     * <p>
+     *
+     * @return true if it should, false otherwise.
+     */
+    public boolean getNdiOutputEnabled() {
+        return Boolean.parseBoolean(getProperty(ndiOutputEnabledKey, "false"));
+    }
+
+    /**
+     * Get the name of the NDI source on the network.
+     * <p>
+     *
+     * @return the name of the NDI source.
+     */
+    public String getNdiSourceName() {
+        return getProperty(ndiSourceNameKey, "Quelea");
+    }
+
+    /**
+     * Get how many frames per second to send over NDI.
+     * <p>
+     *
+     * @return the frame rate.
+     */
+    public int getNdiFrameRate() {
+        return (int) Double.parseDouble(getProperty(ndiFrameRateKey, "30"));
     }
 
     /**

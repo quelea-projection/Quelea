@@ -33,6 +33,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
+import org.quelea.services.ndi.NdiOutput;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -117,6 +118,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
 
         LOGGER.log(Level.INFO, "Try to close OOfice if opened");
         OOUtils.closeOOApp();
+        NdiOutput.INSTANCE.stop();
         if (QueleaApp.get().getMobileLyricsServer() != null) {
             LOGGER.log(Level.INFO, "Stopping mobile lyrics server");
             QueleaApp.get().getMobileLyricsServer().stop();
