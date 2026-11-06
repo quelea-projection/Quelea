@@ -286,10 +286,14 @@ dependencies {
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '6.0.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '6.0.0'
+    testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: '6.0.0'
 }
 
 test {
+    useJUnitPlatform()
     failOnNoDiscoveredTests = false
+    // Keep the tests away from the developer's own ~/.quelea
+    systemProperty 'user.home', temporaryDir.absolutePath
 }
 
 jar {
