@@ -325,6 +325,7 @@ public class PreferenceStorageHandler implements StorageHandler {
             switch (breadcrumb) {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
+                case QueleaPropertyKeys.multiBibleVersionsKey:
                     return property;
                 case QueleaPropertyKeys.darkThemeKey:
                     return LabelGrabber.INSTANCE.getLabel(QueleaProperties.get().getUseDarkTheme() ? "dark.theme.label" : "default.theme.label");

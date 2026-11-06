@@ -18,63 +18,53 @@
 package org.quelea.windows.main.actionhandlers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.data.ThemeDTO;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.Bible;
-import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.BiblePassage;
-import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.IndexedDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.SwitchBibleVersionDialog;
+import org.quelea.windows.main.SelectBibleVersionDialog;
 import org.quelea.windows.main.schedule.ScheduleList;
 
 /**
- * The action handler used when switching bible versions.
+ * The action handler used when choosing the bible versions of a passage.
  *
  * @author Michael
  */
-public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent> {
-
-    private final SwitchBibleVersionDialog dialog = new SwitchBibleVersionDialog();
+public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
         ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-        Set<Bible> excludes = new HashSet<>();
+        List<BiblePassage> passages = new ArrayList<>();
         for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
-            if (d.displayable() instanceof BiblePassage) {
-                excludes.add(((BiblePassage) d.displayable()).getVerses()[0].getChapter().getBook().getBible());
+            if (d.displayable() instanceof BiblePassage passage) {
+                passages.add(passage);
             }
         }
-        Bible exclude = null;
-        if (excludes.size() == 1) {
-            exclude = excludes.iterator().next();
+        if (passages.isEmpty()) {
+            return;
         }
-        Bible b = dialog.getSwitchVersion(exclude);
-        if (b == null) {
+        List<Bible> bibles = new SelectBibleVersionDialog().getVersions(passages.get(0).getBibleVersions());
+        if (bibles == null) {
             return;
         }
         Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
-        for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
-            if (d.displayable() instanceof BiblePassage passage) {
-                ThemeDTO theme = passage.getTheme();
-                List<BibleVerse> newVerses = new ArrayList<>();
-                for (BibleVerse verse : passage.getVerses()) {
-                    int verseNum = verse.getNum();
-                    int chapterNum = verse.getChapter().getNum();
-                    int bookNum = verse.getChapter().getBook().getBookNumber();
-                    newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum));
-                }
-                BibleVerse firstVerse = newVerses.get(0);
-                String summary = firstVerse.getChapter().getBook() + " " + passage.getLocation().split(" (?=\\d)")[1] + "\n" + b.getBibleName();
-                replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[newVerses.size()]), theme, passage.getMulti()));
+        List<String> missing = new ArrayList<>();
+        for (BiblePassage passage : passages) {
+            BiblePassage newPassage = passage.withVersions(bibles);
+            if (newPassage == null) {
+                missing.add(passage.getLocation());
+            } else {
+                replaceMap.put(passage, newPassage);
+                missing.addAll(newPassage.getMissingVerses());
             }
         }
         List<Integer> selected = new ArrayList<>(sl.getSelectionModel().getSelectedIndices());
@@ -92,6 +82,35 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
                 selectRange[i - 1] = selected.get(i);
             }
             sl.getSelectionModel().selectIndices(selected.get(0), selectRange);
+        }
+        showMissingVerses(missing);
+    }
+
+    /**
+     * Show a passage in the versions set in the options, if there are any.
+     *
+     * @param passage the passage to show.
+     * @param bible   the bible the passage was picked from.
+     * @return the passage to add to the schedule.
+     */
+    public static BiblePassage applyDefaultVersions(BiblePassage passage, Bible bible) {
+        List<Bible> bibles = BibleManager.get().getDefaultVersions(bible);
+        if (bibles.size() < 2) {
+            return passage;
+        }
+        BiblePassage newPassage = passage.withVersions(bibles);
+        if (newPassage == null) {
+            return passage;
+        }
+        showMissingVerses(newPassage.getMissingVerses());
+        return newPassage;
+    }
+
+    private static void showMissingVerses(List<String> missing) {
+        if (!missing.isEmpty()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.verse.title"),
+                    LabelGrabber.INSTANCE.getLabel("no.verse.message") + "\n\n" + String.join("\n", missing),
+                    QueleaApp.get().getMainWindow());
         }
     }
 

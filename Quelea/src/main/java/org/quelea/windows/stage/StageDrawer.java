@@ -105,7 +105,7 @@ public class StageDrawer extends WordDrawer {
             if (text.length == 0) {
                 newText = new ArrayList<>();
             } else {
-                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                WrapTextResult result = normalWrapText(font, null, text, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
                 newText = result.getNewText();
             }
         } else {
@@ -378,7 +378,7 @@ public class StageDrawer extends WordDrawer {
             double newSize;
             List<LyricLine> newText;
             if (displayable instanceof BiblePassage) {
-                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
+                WrapTextResult result = normalWrapText(font, null, textArr, width, height);
                 newSize = result.getFontSize();
             } else {
                 newText = sanctifyText(textArr);

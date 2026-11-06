@@ -31,12 +31,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.activeSelectionColorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.additionalLineSpacingKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.advanceOnLiveKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.alwaysUseMultiBibleKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoDetectPortKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoTranslateKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoplayVidKey;
@@ -90,6 +92,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.maxCharsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.maxFontSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.minLinesKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.mobLyricsPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.multiBibleVersionsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBackgroundColourKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxHeightKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxSpeedKey;
@@ -2499,6 +2502,27 @@ public final class QueleaProperties extends SortedProperties {
     public void setUse24HourClock(boolean s24h) {
         setProperty(use24hClockKey, Boolean.toString(s24h));
         write();
+    }
+
+    /**
+     * Determine whether new passages should be shown in the versions from
+     * {@link #getMultiBibleVersions()} as well.
+     *
+     * @return true if they should, false otherwise.
+     */
+    public boolean getAlwaysUseMultiBible() {
+        return Boolean.parseBoolean(getProperty(alwaysUseMultiBibleKey, "false"));
+    }
+
+    /**
+     * Get the names of the bibles to show new passages in. Stored one per line,
+     * as a bible name can contain anything else.
+     *
+     * @return the names, in display order.
+     */
+    public List<String> getMultiBibleVersions() {
+        String versions = getProperty(multiBibleVersionsKey, "");
+        return versions.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(versions.split("\n")));
     }
 
     public boolean getBibleSplitVerses() {

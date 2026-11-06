@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
+import org.quelea.data.bible.BibleBook;
+import org.quelea.data.bible.BibleChapter;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
@@ -63,15 +65,20 @@ public class AddBibleVerseHandler {
             int verseNum = bv.getNum();
             int chapterNum = bv.getChapter().getNum();
             int bookNum = bv.getChapter().getBook().getBookNumber();
-            newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum));
+            BibleBook book = b.getBookByNumber(bookNum);
+            newVerses.add(book.getChapter(chapterNum - 1).getVerse(verseNum));
             if (i == passage.getVerses().length - 1) {
-                newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum + 1));
+                newVerses.add(book.getChapter(chapterNum - 1).getVerse(verseNum + 1));
             }
             if (newVerses.get(newVerses.size() - 1) != null) {
                 lastNumber = verseNum + 1;
             } else if (newVerses.get(newVerses.size() - 1) == null) {
                 newVerses.remove(newVerses.size() - 1);
-                newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum).getVerse(1));
+                BibleChapter nextChapter = book.getChapter(chapterNum);
+                if (nextChapter == null) { //Already at the end of the book
+                    return;
+                }
+                newVerses.add(nextChapter.getVerse(1));
                 chapter = bv.getChapter().getNum() + 1;
                 lastNumber = 1;
             }
@@ -101,7 +108,11 @@ public class AddBibleVerseHandler {
             }
         }
         String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
-        replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti()));
+        BiblePassage newPassage = new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti());
+        if (passage.isParallel()) {
+            newPassage = newPassage.withVersions(passage.getBibleVersions());
+        }
+        replaceMap.put(passage, newPassage);
         sl.getSelectionModel().clearSelection();
         int index = -1;
         for (BiblePassage key : replaceMap.keySet()) {

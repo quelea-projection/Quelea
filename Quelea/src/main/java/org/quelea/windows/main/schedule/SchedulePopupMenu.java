@@ -34,8 +34,8 @@ import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
-import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
 
 /**
  * The popup menu that displays when an item in the schedule is right-clicked.
@@ -111,7 +111,7 @@ public class SchedulePopupMenu extends ContextMenu {
         translationChoice.setOnAction(new SelectTranslationsActionHandler());
         editTimer.setOnAction(new EditTimerActionHandler());
         editTimerTheme.setOnAction(new EditTimerThemeActionHandler());
-        changeBibleVersion.setOnAction(new SwitchBibleVersionActionHandler());
+        changeBibleVersion.setOnAction(new SelectBibleVersionActionHandler());
     }
 
 }

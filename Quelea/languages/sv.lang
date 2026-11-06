@@ -776,3 +776,7 @@ remote.start.verse=Startvers
 remote.end.verse=Slutvers
 bible.version=Bibelversion
 click.to.add=Klicka för att lägga till
+always.use.multi.bible=Visa alltid nya bibelställen i flera översättningar
+select.multi.bible.label=Översättningar att visa
+select.bible.versions.hint=Bocka för de översättningar som ska visas. De visas i den ordning du bockar för dem.
+select.bible.versions.button=Välj...

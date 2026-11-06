@@ -68,8 +68,25 @@ public abstract class WordDrawer extends DisplayableDrawer {
         lastClearedState.put(getCanvas(), val);
     }
     
-    private WrapTextResult getWrapTextProps(Font font, String lineToWrap, double width) {
-        FXFontMetrics metrics = new FXFontMetrics(font);
+    private WrapTextResult getWrapTextProps(Font font, Font translateFont, String[] paragraphs, double width) {
+        List<LyricLine> lines = new ArrayList<>();
+        double height = 0;
+        for (int i = 0; i < paragraphs.length; i++) {
+            boolean translation = i > 0 && translateFont != null;
+            FXFontMetrics metrics = new FXFontMetrics(translation ? translateFont : font);
+            if (i > 0) {
+                lines.add(new LyricLine(""));
+                height += metrics.getLineHeight();
+            }
+            List<LyricLine> paragraphLines = wrapParagraph(metrics, paragraphs[i], width, translation);
+            lines.addAll(paragraphLines);
+            height += metrics.getLineHeight() * paragraphLines.size();
+        }
+        //We're using the "fontsize" part of wraptextresult here as the height instead to reuse the same class, bit of a fudge...
+        return new WrapTextResult(lines, height);
+    }
+
+    private List<LyricLine> wrapParagraph(FXFontMetrics metrics, String lineToWrap, double width, boolean translation) {
         String[] words = lineToWrap.split(" ");
         StringBuilder lineBuilder = new StringBuilder();
         List<LyricLine> lines = new ArrayList<>();
@@ -77,26 +94,36 @@ public abstract class WordDrawer extends DisplayableDrawer {
             String word = words[i];
             String potentialStr = lineBuilder.toString() + word;
             if (metrics.computeStringWidth(potentialStr.replace("<sup>", "").replace("</sup>", "")) > width) {
-                lines.add(new LyricLine(lineBuilder.toString()));
+                lines.add(new LyricLine(translation, lineBuilder.toString()));
                 lineBuilder = new StringBuilder(word + " ");
             }
             else {
                 lineBuilder.append(word).append(" ");
             }
         }
-        lines.add(new LyricLine(lineBuilder.toString()));
-        //We're using the "fontsize" part of wraptextresult here as the height instead to reuse the same class, bit of a fudge...
-        return new WrapTextResult(lines, metrics.getLineHeight() * lines.size());
+        lines.add(new LyricLine(translation, lineBuilder.toString()));
+        return lines;
     }
     
-    protected WrapTextResult normalWrapText(Font font, String lineToWrap, double width, double height) {
+    /**
+     * Wrap paragraphs of text and pick the font size that makes them fit.
+     * <p>
+     * @param font          the font of the first paragraph.
+     * @param translateFont the font of the other paragraphs, or null to draw
+     *                      them the same as the first.
+     * @param paragraphs    the paragraphs, separated by a blank line when drawn.
+     * @param width         the fit width.
+     * @param height        the fit height.
+     * @return the wrapped lines and the font size.
+     */
+    protected WrapTextResult normalWrapText(Font font, Font translateFont, String[] paragraphs, double width, double height) {
         double min = 1;
         double max = font.getSize();
         
         double cur = (max-min)/2;
         
         font = new Font(font.getName(), cur);
-        WrapTextResult result = getWrapTextProps(font, lineToWrap, width);
+        WrapTextResult result = getWrapTextProps(font, sizedTranslateFont(translateFont, cur), paragraphs, width);
         
         int i=0;
         while(result.getFontSize()>height || result.getFontSize()<height-50) {
@@ -113,9 +140,16 @@ public abstract class WordDrawer extends DisplayableDrawer {
             }
             cur = ((max-min)/2)+min;
             font = new Font(font.getName(), cur);
-            result = getWrapTextProps(font, lineToWrap, width);
+            result = getWrapTextProps(font, sizedTranslateFont(translateFont, cur), paragraphs, width);
         }
         return new WrapTextResult(result.getNewText(), cur);
+    }
+
+    private Font sizedTranslateFont(Font translateFont, double fontSize) {
+        if (translateFont == null) {
+            return null;
+        }
+        return new Font(translateFont.getName(), Math.max(1, fontSize - QueleaProperties.get().getTranslationFontSizeOffset()));
     }
 
     /**

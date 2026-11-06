@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.image.Image;
@@ -37,6 +38,7 @@ import org.quelea.data.bible.BibleBook;
 import org.quelea.data.bible.BibleBookNameUtil;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.BibleVersionText;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -51,6 +53,8 @@ import org.w3c.dom.NodeList;
  */
 public class BiblePassage implements TextDisplayable, Serializable {
 
+    private static final String VERSION_SEPARATOR = " + ";
+
     private String summary;
     private String[] smallText;
     private List<TextSection> textSections;
@@ -58,6 +62,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private ThemeDTO theme;
     private final boolean multi;
     private Map<Dimension,Double> fontSizeCache;
+    private final List<BibleVersionText> versions;
+    private final List<String> missingVerses;
 
     /**
      * Create a new bible passage.
@@ -80,6 +86,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param theme the theme of the passage.
      */
     public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi) {
+        this(summary, verses, theme, multi, Collections.emptyList(), Collections.emptyList());
+    }
+
+    private BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi,
+                         List<BibleVersionText> versions, List<String> missingVerses) {
+        this.versions = new ArrayList<>(versions);
+        this.missingVerses = new ArrayList<>(missingVerses);
         fontSizeCache = new HashMap<>();
         this.summary = summary;
         this.multi = multi;
@@ -114,6 +127,11 @@ public class BiblePassage implements TextDisplayable, Serializable {
         final int MAX_VERSES = QueleaProperties.get().getMaxBibleVerses();
         final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSplitVerses();
         final boolean USE_CHARS = !QueleaProperties.get().getBibleUsingMaxChars();
+
+        if (isParallel()) {
+            fillParallelTextSections(MAX_CHARS, MAX_VERSES, SPLIT_VERSES, USE_CHARS);
+            return;
+        }
 
         StringBuilder section = new StringBuilder();
         StringBuilder line = new StringBuilder();
@@ -197,6 +215,238 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     /**
+     * Fill the text sections of a passage shown in several versions. Each
+     * section holds one line per version, so the versions can be drawn apart.
+     * The slide limits are shared between the versions, which keeps a slide
+     * about as full as it would be with a single version.
+     *
+     * @param maxChars   the maximum characters in a line.
+     * @param maxVerses  the maximum verses on a slide.
+     * @param keepWhole  true if a verse may not be split across slides.
+     * @param useChars   true to limit slides by size rather than by verses.
+     */
+    private void fillParallelTextSections(int maxChars, int maxVerses, boolean keepWhole, boolean useChars) {
+        final int charsPerSlide = useChars ? Math.max(maxChars, (maxChars / 4) * maxChars) : Integer.MAX_VALUE;
+        final int versesPerSlide = useChars ? Integer.MAX_VALUE : Math.max(1, maxVerses / versions.size());
+        String[] slide = new String[versions.size()];
+        Arrays.fill(slide, "");
+        int slideVerses = 0;
+        int slideChars = 0;
+        for (int i = 0; i < verses.length; i++) {
+            String[] verseTexts = new String[versions.size()];
+            int verseChars = 0;
+            for (int v = 0; v < verseTexts.length; v++) {
+                String text = versions.get(v).getVerseText(i);
+                verseTexts[v] = text == null ? "" : getVerseLabel(verses[i]) + text;
+                verseChars += verseTexts[v].length();
+            }
+            boolean full = slideVerses >= versesPerSlide || slideChars + verseChars > charsPerSlide;
+            if (slideVerses > 0 && full) {
+                addParallelSection(slide);
+                slide = new String[versions.size()];
+                Arrays.fill(slide, "");
+                slideVerses = 0;
+                slideChars = 0;
+            }
+            if (!keepWhole && verseChars > charsPerSlide) {
+                int parts = (int) Math.ceil(verseChars / (double) charsPerSlide);
+                String[][] split = new String[verseTexts.length][];
+                for (int v = 0; v < verseTexts.length; v++) {
+                    split[v] = splitWords(verseTexts[v], parts);
+                }
+                for (int part = 0; part < parts; part++) {
+                    String[] partSlide = new String[verseTexts.length];
+                    for (int v = 0; v < verseTexts.length; v++) {
+                        partSlide[v] = split[v][part];
+                    }
+                    addParallelSection(partSlide);
+                }
+                continue;
+            }
+            for (int v = 0; v < slide.length; v++) {
+                slide[v] = (slide[v] + " " + verseTexts[v]).trim();
+            }
+            slideVerses++;
+            slideChars += verseChars;
+        }
+        if (slideVerses > 0) {
+            addParallelSection(slide);
+        }
+    }
+
+    private void addParallelSection(String[] slide) {
+        List<String> lines = new ArrayList<>();
+        for (String text : slide) {
+            if (!text.isEmpty()) {
+                lines.add(text);
+            }
+        }
+        if (!lines.isEmpty()) {
+            textSections.add(new TextSection("", lines.toArray(new String[0]), smallText, false));
+        }
+    }
+
+    private String getVerseLabel(BibleVerse verse) {
+        if (!QueleaProperties.get().getShowVerseNumbers()) {
+            return "";
+        }
+        return "<sup>" + (multi ? verse.getChapterNum() + ":" : "") + verse.getNum() + "</sup>";
+    }
+
+    /**
+     * Split a text at word boundaries into a number of roughly equal parts.
+     *
+     * @param text  the text to split.
+     * @param parts the number of parts.
+     * @return exactly that many parts, the last ones empty if the text runs out.
+     */
+    private static String[] splitWords(String text, int parts) {
+        String[] words = text.split(" ");
+        int wordsPerPart = (int) Math.ceil(words.length / (double) parts);
+        String[] ret = new String[parts];
+        for (int part = 0; part < parts; part++) {
+            int from = Math.min(words.length, part * wordsPerPart);
+            int to = Math.min(words.length, from + wordsPerPart);
+            ret[part] = String.join(" ", Arrays.copyOfRange(words, from, to));
+        }
+        return ret;
+    }
+
+    /**
+     * Determine whether this passage is shown in several bible versions.
+     *
+     * @return true if several versions are shown.
+     */
+    public boolean isParallel() {
+        return !versions.isEmpty();
+    }
+
+    /**
+     * Get the installed bibles this passage is shown in, in display order.
+     *
+     * @return the bibles. Versions that aren't installed here are left out.
+     */
+    public List<Bible> getBibleVersions() {
+        List<Bible> ret = new ArrayList<>();
+        for (BibleVersionText version : versions) {
+            Bible bible = BibleManager.get().getBibleFromName(version.getBibleName());
+            if (bible != null) {
+                ret.add(bible);
+            }
+        }
+        if (!isParallel() && verses.length > 0 && verses[0] != null && verses[0].getChapter().getBook().getBible() != null) {
+            ret.add(verses[0].getChapter().getBook().getBible());
+        }
+        return ret;
+    }
+
+    /**
+     * Get the name of the bible shown first in this passage.
+     *
+     * @return the bible name.
+     */
+    public String getPrimaryBibleName() {
+        if (isParallel()) {
+            return versions.get(0).getBibleName();
+        }
+        return summary.substring(summary.indexOf("\n") + 1);
+    }
+
+    /**
+     * Get the verses that couldn't be found when this passage was created by
+     * {@link #withVersions(List)}.
+     *
+     * @return a description of each missing verse, empty if none are missing.
+     */
+    public List<String> getMissingVerses() {
+        return new ArrayList<>(missingVerses);
+    }
+
+    /**
+     * Create a copy of this passage shown in the given bibles.
+     *
+     * @param bibles the bibles to use, in display order.
+     * @return the new passage, or null if none of the bibles contains any of
+     * the verses.
+     */
+    public BiblePassage withVersions(List<Bible> bibles) {
+        if (bibles == null || bibles.isEmpty()) {
+            return null;
+        }
+        List<BibleVerse> newVerses = new ArrayList<>();
+        List<String[]> rows = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
+        for (BibleVerse verse : verses) {
+            if (verse == null) {
+                continue;
+            }
+            String[] row = new String[bibles.size()];
+            BibleVerse reference = null;
+            for (int i = 0; i < row.length; i++) {
+                BibleVerse found = findVerse(bibles.get(i), verse);
+                if (found == null) {
+                    missing.add(bibles.get(i).getBibleName() + ": " + verse.getChapterNum() + ":" + verse.getNum());
+                } else {
+                    row[i] = found.getText().replaceAll("\\s+", " ").trim();
+                    if (reference == null) {
+                        reference = found;
+                    }
+                }
+            }
+            if (reference != null) {
+                newVerses.add(reference);
+                rows.add(row);
+            }
+        }
+        if (newVerses.isEmpty()) {
+            return null;
+        }
+        List<BibleVersionText> newVersions = new ArrayList<>();
+        if (bibles.size() > 1) {
+            for (int i = 0; i < bibles.size(); i++) {
+                String[] texts = new String[rows.size()];
+                for (int row = 0; row < texts.length; row++) {
+                    texts[row] = rows.get(row)[i];
+                }
+                newVersions.add(new BibleVersionText(bibles.get(i).getBibleName(), texts));
+            }
+        }
+        BibleBook book = newVerses.get(0).getChapter().getBook();
+        BibleBook primaryBook = bibles.get(0).getBookByNumber(book.getBookNumber());
+        List<String> names = new ArrayList<>();
+        for (Bible bible : bibles) {
+            names.add(bible.getBibleName());
+        }
+        String newSummary = (primaryBook == null ? book : primaryBook) + " " + getPassageNumbers() + "\n" + String.join(VERSION_SEPARATOR, names);
+        return new BiblePassage(newSummary, newVerses.toArray(new BibleVerse[0]), theme, multi, newVersions, missing);
+    }
+
+    /**
+     * Find the same verse in another bible.
+     *
+     * @param bible the bible to look in.
+     * @param verse the verse to find.
+     * @return the verse, or null if that bible doesn't have it or it's empty.
+     */
+    private static BibleVerse findVerse(Bible bible, BibleVerse verse) {
+        BibleBook book = bible.getBookByNumber(verse.getChapter().getBook().getBookNumber());
+        if (book == null || book.getChapter(verse.getChapter().getNum() - 1) == null) {
+            return null;
+        }
+        BibleVerse found = book.getChapter(verse.getChapter().getNum() - 1).getVerse(verse.getNum());
+        return found == null || found.getText().isBlank() ? null : found;
+    }
+
+    /**
+     * Get the location of this passage without the name of the book.
+     *
+     * @return the chapter and verse part of the location.
+     */
+    private String getPassageNumbers() {
+        return getLocation().replaceFirst("^.*? (?=\\d)", "");
+    }
+
+    /**
      * Get (a copy of) the verses shown in this passage.
      *
      * @return A copy of the verses shown in this passage.
@@ -227,10 +477,26 @@ public class BiblePassage implements TextDisplayable, Serializable {
         ret.append(Utils.escapeXML(summaryText));
         ret.append("\" multi=\"").append(multi);
         ret.append("\" bible=\"");
-        ret.append(Utils.escapeXML(bible));
+        //Older versions of Quelea read a single bible from here and skip the version elements
+        ret.append(Utils.escapeXML(isParallel() ? getPrimaryBibleName() : bible));
+        if (isParallel()) {
+            ret.append("\" booknumber=\"").append(verses[0].getChapter().getBook().getBookNumber());
+        }
         ret.append("\">");
         for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
+        }
+        for (BibleVersionText version : versions) {
+            ret.append("<version name=\"").append(Utils.escapeXML(version.getBibleName())).append("\">");
+            for (int i = 0; i < verses.length; i++) {
+                if (version.getVerseText(i) != null) {
+                    ret.append("<vers cnumber=\"").append(verses[i].getChapterNum());
+                    ret.append("\" vnumber=\"").append(verses[i].getNum()).append("\">");
+                    ret.append(Utils.escapeXML(version.getVerseText(i)));
+                    ret.append("</vers>");
+                }
+            }
+            ret.append("</version>");
         }
         ret.append("<theme>");
         ret.append(theme.asString());
@@ -294,7 +560,16 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (passage.getAttributes().getNamedItem("multi") != null) {
             multi = Boolean.parseBoolean(passage.getAttributes().getNamedItem("multi").getTextContent());
         }
-        String summary = passageSummary + "\n" + bibleSummary;
+        int bookNumber = 0;
+        if (passage.getAttributes().getNamedItem("booknumber") != null) {
+            bookNumber = Integer.parseInt(passage.getAttributes().getNamedItem("booknumber").getTextContent());
+        }
+        Map<String, Map<String, String>> versionTexts = parseVersions(list);
+        List<String> bibleNames = new ArrayList<>(versionTexts.keySet());
+        if (bibleNames.isEmpty()) {
+            bibleNames.add(bibleSummary);
+        }
+        String summary = passageSummary + "\n" + String.join(VERSION_SEPARATOR, bibleNames);
         ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
@@ -302,18 +577,10 @@ public class BiblePassage implements TextDisplayable, Serializable {
             if (node.getNodeName().equals("vers")) {
                 BibleVerse bv = BibleVerse.parseXML(node);
                 if (bv != null) {
-                    for (Bible b : BibleManager.get().getBibles()) {
-                        if (b.getBibleName().equals(bibleSummary)) {
-                            int ii = 1;
-                            for (BibleBook bb : b.getBooks()) {
-                                String p = passageSummary.split(" \\d")[0];
-                                if (bb.getBookName().equals(p)) {
-                                    bv.getChapter().setBook(BibleBook.parseXML(node, ii, BibleBookNameUtil.getBookNameForIndex(ii-1, b.getBooks().length)));
-                                    bv.getChapter().getBook().setBible(b);
-                                    verses.add(bv);
-                                }
-                                ii++;
-                            }
+                    for (String bibleName : bibleNames) {
+                        if (addToBible(bv, node, bibleName, passageSummary.split(" \\d")[0], bookNumber)) {
+                            verses.add(bv);
+                            break;
                         }
                     }
                 }
@@ -321,7 +588,72 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 tempTheme = ThemeDTO.fromString(node.getTextContent(), Collections.emptyMap());
             }
         }
-        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme, multi);
+        BibleVerse[] verseArray = verses.toArray(new BibleVerse[verses.size()]);
+        if (versionTexts.isEmpty() || verseArray.length == 0) {
+            return new BiblePassage(summary, verseArray, tempTheme, multi);
+        }
+        List<BibleVersionText> versions = new ArrayList<>();
+        for (Map.Entry<String, Map<String, String>> version : versionTexts.entrySet()) {
+            String[] texts = new String[verseArray.length];
+            for (int i = 0; i < texts.length; i++) {
+                texts[i] = version.getValue().get(verseArray[i].getChapterNum() + ":" + verseArray[i].getNum());
+            }
+            versions.add(new BibleVersionText(version.getKey(), texts));
+        }
+        return new BiblePassage(summary, verseArray, tempTheme, multi, versions, Collections.emptyList());
+    }
+
+    /**
+     * Read the version elements of a passage.
+     *
+     * @param list the child nodes of the passage.
+     * @return the text of each verse, by "chapter:verse", for each bible name
+     * in display order.
+     */
+    private static Map<String, Map<String, String>> parseVersions(NodeList list) {
+        Map<String, Map<String, String>> ret = new LinkedHashMap<>();
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equals("version")) {
+                Map<String, String> texts = new HashMap<>();
+                NodeList verseNodes = list.item(i).getChildNodes();
+                for (int j = 0; j < verseNodes.getLength(); j++) {
+                    Node verse = verseNodes.item(j);
+                    if (verse.getNodeName().equals("vers")) {
+                        texts.put(verse.getAttributes().getNamedItem("cnumber").getTextContent() + ":"
+                                + verse.getAttributes().getNamedItem("vnumber").getTextContent(), verse.getTextContent());
+                    }
+                }
+                ret.put(list.item(i).getAttributes().getNamedItem("name").getTextContent(), texts);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Connect a verse read from a schedule to its book in an installed bible.
+     *
+     * @param verse      the verse.
+     * @param node       the node the verse was read from.
+     * @param bibleName  the name of the bible.
+     * @param bookName   the name of the book in that bible.
+     * @param bookNumber the number of the book, or 0 to find it by name.
+     * @return true if the bible is installed and contains the book.
+     */
+    private static boolean addToBible(BibleVerse verse, Node node, String bibleName, String bookName, int bookNumber) {
+        for (Bible b : BibleManager.get().getBibles()) {
+            if (b.getBibleName().equals(bibleName)) {
+                int ii = 1;
+                for (BibleBook bb : b.getBooks()) {
+                    if (bookNumber > 0 ? bb.getBookNumber() == bookNumber : bb.getBookName().equals(bookName)) {
+                        verse.getChapter().setBook(BibleBook.parseXML(node, bb.getBookNumber(), BibleBookNameUtil.getBookNameForIndex(ii-1, b.getBooks().length)));
+                        verse.getChapter().getBook().setBible(b);
+                        return true;
+                    }
+                    ii++;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -857,3 +857,7 @@ bible.book.2john=2 John
 bible.book.3john=3 John
 bible.book.jude=Jude
 bible.book.revelation=Revelation
+always.use.multi.bible=Always show new passages in several versions
+select.multi.bible.label=Versions to show
+select.bible.versions.hint=Tick the versions to show. They appear in the order you tick them.
+select.bible.versions.button=Select...
