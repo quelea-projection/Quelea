@@ -95,6 +95,7 @@ public class FXImageSink {
      */
     private final AtomicReference<Sample> pendingSample = new AtomicReference<>();
     private volatile boolean disposed;
+    private Runnable onFrame;
 
     /**
      * Create an FXImageSink. A new AppSink element will be created that can be
@@ -260,6 +261,9 @@ public class FXImageSink {
         while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
             oldSamples.remove().dispose();
         }
+        if (onFrame != null) {
+            onFrame.run();
+        }
 
 //        long dur = System.nanoTime() - val;
 //        System.out.println("REFRESH TIME: " + dur / 1000);
@@ -277,6 +281,15 @@ public class FXImageSink {
         } else {
             Platform.runLater(this::clearImage);
         }
+    }
+
+    /**
+     * Set a callback run on the FX thread each time a new frame has been
+     * written to the image. The image is only valid during the callback and
+     * until the next frame arrives.
+     */
+    void setOnFrame(Runnable onFrame) {
+        this.onFrame = onFrame;
     }
 
     /**

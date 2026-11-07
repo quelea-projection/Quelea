@@ -18,6 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 import org.quelea.windows.video.VidDisplay;
+import org.quelea.windows.video.VideoStills;
 
 /**
  * Responsible for drawing lyrics and their background.
@@ -419,6 +421,17 @@ public class LyricDrawer extends WordDrawer {
                     vidDisplay.play();
                 }
                 newImageView.imageProperty().bind(vidDisplay.imageProperty());
+            } else {
+                // Not on screen: show a still frame instead of decoding the video.
+                File videoFile = ((VideoBackground) theme.getBackground()).getVideoFile();
+                image = VideoStills.getCached(videoFile);
+                if (image == null) {
+                    VideoStills.load(videoFile).thenAccept(still -> still.ifPresent(img -> {
+                        if (!newImageView.imageProperty().isBound()) {
+                            newImageView.setImage(img);
+                        }
+                    }));
+                }
             }
 
         } else {
@@ -455,9 +468,10 @@ public class LyricDrawer extends WordDrawer {
 
     /**
      * Set whether video backgrounds should be played. Preview drawers turn this
-     * off while they aren't visible, so no video is decoded for them; the
-     * background is then left black. Turning it off releases any current
-     * player; after turning it back on, set the theme again to restart it.
+     * off while they aren't visible, so no video is decoded for them; a still
+     * frame of the video is shown instead (see {@link VideoStills}). Turning it
+     * off releases any current player; after changing it, set the theme again
+     * to update the background.
      *
      * @param playVideo true to play video backgrounds (the default).
      */

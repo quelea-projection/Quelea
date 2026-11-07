@@ -12,11 +12,13 @@ import javafx.util.Duration;
 import org.freedesktop.gstreamer.Bus;
 import org.freedesktop.gstreamer.Format;
 import org.freedesktop.gstreamer.elements.PlayBin;
+import org.freedesktop.gstreamer.elements.PlayFlags;
 import org.freedesktop.gstreamer.event.SeekFlags;
 import org.quelea.services.utils.GStreamerInitState;
 
 import java.net.URI;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,6 +55,14 @@ public class VidDisplay {
     }
 
     public VidDisplay() {
+        this(true);
+    }
+
+    /**
+     * @param withAudio false to decode video only - no audio decoder or audio
+     * device is set up at all.
+     */
+    VidDisplay(boolean withAudio) {
         id = idCounter++;
         posChanged = d -> {
         };
@@ -62,6 +72,13 @@ public class VidDisplay {
             fxImageSink = new FXImageSink();
             playBin = new PlayBin("playbin " + id);
             playBin.setVideoSink(fxImageSink.getSinkElement());
+            if (!withAudio) {
+                Set<PlayFlags> flags = EnumSet.noneOf(PlayFlags.class);
+                flags.addAll(playBin.getFlags());
+                flags.remove(PlayFlags.AUDIO);
+                flags.remove(PlayFlags.TEXT);
+                playBin.setFlags(flags);
+            }
             playBin.getBus().connect((Bus.EOS) source -> {
                 PlayBin pb = playBin;
                 if (pb == null) {
@@ -178,6 +195,20 @@ public class VidDisplay {
 
     public void setOnFinished(Runnable onFinished) {
         this.onFinished = onFinished;
+    }
+
+    /**
+     * @return the duration in nanoseconds, or a value <= 0 if not yet known.
+     */
+    long getDuration() {
+        PlayBin pb = playBin;
+        return pb == null ? -1 : pb.queryDuration(Format.TIME);
+    }
+
+    void setOnFrame(Runnable onFrame) {
+        if (fxImageSink != null) {
+            fxImageSink.setOnFrame(onFrame);
+        }
     }
 
     public void seek(double seekPos) {

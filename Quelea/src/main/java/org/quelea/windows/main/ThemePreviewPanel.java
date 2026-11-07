@@ -17,26 +17,22 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -78,7 +74,6 @@ public class ThemePreviewPanel extends VBox {
     private EditThemeDialog themeDialog;
     private Window popup;
     private ScheduleThemeNode parent;
-    private WritableImage previewImage;
 
     /**
      * Create a new theme preview panel.
@@ -236,15 +231,6 @@ public class ThemePreviewPanel extends VBox {
         if (drawer instanceof LyricDrawer) {
             ((LyricDrawer) drawer).setPlayVideo(play);
         }
-    }
-
-    public Image getThemePreviewImage() {
-        previewImage = new WritableImage(200, 150);
-        canvas.snapshot(new SnapshotParameters(), previewImage);
-        BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
-        SwingFXUtils.toFXImage(bi, previewImage);
-
-        return previewImage;
     }
 
 }
