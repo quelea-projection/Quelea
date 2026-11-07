@@ -48,6 +48,8 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 
 /**
  * The timer panel in the library.
@@ -76,11 +78,11 @@ public class LibraryTimerPanel extends BorderPane {
             checkRemoveButton();
         });
 
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", QueleaIcon.ADD.create());
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timers.panel")));
         addButton.setOnAction(new AddTimerActionHandler());
         
-        Button importButton = new Button("", new ImageView(new Image("file:icons/importbw.png")));
+        Button importButton = new Button("", QueleaIcon.IMPORT.create());
         importButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("import.heading")));
         importButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();
@@ -124,7 +126,7 @@ public class LibraryTimerPanel extends BorderPane {
                 }
             }
         });
-        ImageView removeIV = new ImageView(new Image("file:icons/removedb.png"));
+        Region removeIV = QueleaIcon.DELETE.create();
         removeButton = new Button("", removeIV);
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.timer.text")));

@@ -51,6 +51,7 @@ import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.QuickInsertActionHandler;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * Quelea's main toolbar.
@@ -68,7 +69,7 @@ public class MainToolbar extends ToolBar {
     private final Button quickInsertButton;
     private final Button manageNoticesButton;
     private final MenuButton add;
-    private final ImageView loadingView;
+    private final ProgressIndicator loadingView;
     private final StackPane dvdImageStack;
     private final ToggleButton recordAudioButton;
     private final ProgressBar pb = new ProgressBar(0);
@@ -84,79 +85,36 @@ public class MainToolbar extends ToolBar {
      * Create the toolbar and any associated shortcuts.
      */
     public MainToolbar() {
-        if (Utils.isMac()) {
-            newScheduleButton = getButtonFromImage("file:icons/filenewbig.png");
-        } else {
-            newScheduleButton = getButtonFromImage("file:icons/filenew.png");
-        }
-        Utils.setToolbarButtonStyle(newScheduleButton);
-        newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
+        newScheduleButton = getButton(QueleaIcon.NEW_SCHEDULE, "new.schedule.tooltip");
         newScheduleButton.setOnAction(new NewScheduleActionHandler());
         getItems().add(newScheduleButton);
 
-        if (Utils.isMac()) {
-            openScheduleButton = getButtonFromImage("file:icons/fileopenbig.png");
-        } else {
-            openScheduleButton = getButtonFromImage("file:icons/fileopen.png");
-        }
-        Utils.setToolbarButtonStyle(openScheduleButton);
-        openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
+        openScheduleButton = getButton(QueleaIcon.OPEN, "open.schedule.tooltip");
         openScheduleButton.setOnAction(new OpenScheduleActionHandler());
         getItems().add(openScheduleButton);
 
-        if (Utils.isMac()) {
-            saveScheduleButton = getButtonFromImage("file:icons/filesavebig.png");
-        } else {
-            saveScheduleButton = getButtonFromImage("file:icons/filesave.png");
-        }
-        Utils.setToolbarButtonStyle(saveScheduleButton);
-        saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
+        saveScheduleButton = getButton(QueleaIcon.SAVE, "save.schedule.tooltip");
         saveScheduleButton.setOnAction(new SaveScheduleActionHandler(false));
         getItems().add(saveScheduleButton);
 
-        if (Utils.isMac()) {
-            printScheduleButton = getButtonFromImage("file:icons/fileprintbig.png");
-        } else {
-            printScheduleButton = getButtonFromImage("file:icons/fileprint.png");
-        }
-        Utils.setToolbarButtonStyle(printScheduleButton);
-        printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
+        printScheduleButton = getButton(QueleaIcon.PRINT, "print.schedule.tooltip");
         printScheduleButton.setOnAction(new PrintScheduleActionHandler());
         getItems().add(printScheduleButton);
 
         getItems().add(new Separator());
 
-        if (Utils.isMac()) {
-            newSongButton = getButtonFromImage("file:icons/newsongbig.png");
-        } else {
-            newSongButton = getButtonFromImage("file:icons/newsong.png");
-        }
-        Utils.setToolbarButtonStyle(newSongButton);
-        newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
+        newSongButton = getButton(QueleaIcon.NEW_SONG, "new.song.tooltip");
         newSongButton.setOnAction(new NewSongActionHandler());
         getItems().add(newSongButton);
 
         getItems().add(new Separator());
 
-        if (Utils.isMac()) {
-            quickInsertButton = getButtonFromImage("file:icons/lightningbig.png");
-        } else {
-            quickInsertButton = getButtonFromImage("file:icons/lightning.png");
-        }
-        Utils.setToolbarButtonStyle(quickInsertButton);
-        quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
+        quickInsertButton = getButton(QueleaIcon.QUICK_INSERT, "quick.insert.text");
         quickInsertButton.setOnAction(new QuickInsertActionHandler());
         getItems().add(quickInsertButton);
 
-        add = new MenuButton("");
-
-        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/add_item-light.png" : "file:icons/add_item.png"));
-        iv.setSmooth(true);
-        iv.setFitWidth(20);
-        iv.setFitHeight(20);
-        add.setGraphic(iv);
-
-        add.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+        add = new MenuButton("", QueleaIcon.ADD_ITEM.create(QueleaIcon.TOOLBAR_SIZE));
+        Utils.setToolbarButtonStyle(add);
         getItems().add(add);
         add.setOnMouseEntered(evt -> {
             QueleaApp.get().getMainWindow().requestFocus();
@@ -171,53 +129,22 @@ public class MainToolbar extends ToolBar {
             }
         });
 
-        MenuItem addPresentationButton;
-        if (Utils.isMac()) {
-            addPresentationButton = getMenuItemFromImage("file:icons/powerpointbig.png");
-        } else {
-            addPresentationButton = getMenuItemFromImage("file:icons/powerpoint.png");
-        }
-        addPresentationButton.setText(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip"));
+        MenuItem addPresentationButton = getMenuItem(QueleaIcon.PRESENTATION, "add.presentation.tooltip");
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
         add.getItems().add(addPresentationButton);
 
-        MenuItem addMultimediaButton;
-        if (Utils.isMac()) {
-            addMultimediaButton = getMenuItemFromImage("file:icons/multimedia.png");
-        } else {
-            addMultimediaButton = getMenuItemFromImage("file:icons/multimedia.png");
-        }
-        addMultimediaButton.setText(LabelGrabber.INSTANCE.getLabel("add.multimedia.tooltip"));
+        MenuItem addMultimediaButton = getMenuItem(QueleaIcon.VIDEO, "add.multimedia.tooltip");
         addMultimediaButton.setOnAction(new AddVideoActionHandler());
         add.getItems().add(addMultimediaButton);
 
-        MenuItem addTimerButton;
-        if (Utils.isMac()) {
-            addTimerButton = getMenuItemFromImage("file:icons/timer-dark.png");
-        } else {
-            addTimerButton = getMenuItemFromImage("file:icons/timer-dark.png", 24, 24, false, true);
-        }
-        addTimerButton.setText(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"));
+        MenuItem addTimerButton = getMenuItem(QueleaIcon.TIMER, "add.timer.tooltip");
         addTimerButton.setOnAction(new AddTimerActionHandler());
         add.getItems().add(addTimerButton);
 
-        if (Utils.isMac()) {
-            loadingView = new ImageView(new Image("file:icons/loading.gif"));
-        } else {
-            loadingView = new ImageView(new Image("file:icons/loading.gif", 24, 24, false, true));
-        }
-        loadingView.setFitHeight(24);
-        loadingView.setFitWidth(24);
+        loadingView = new ProgressIndicator();
+        loadingView.setMaxSize(20, 20);
         dvdImageStack = new StackPane();
-        ImageView dvdIV;
-        if (Utils.isMac()) {
-            dvdIV = new ImageView(new Image("file:icons/dvd.png"));
-        } else {
-            dvdIV = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/dvd-light.png" : "file:icons/dvd.png", 24, 24, false, true));
-        }
-        dvdIV.setFitWidth(24);
-        dvdIV.setFitHeight(24);
-        dvdImageStack.getChildren().add(dvdIV);
+        dvdImageStack.getChildren().add(QueleaIcon.DVD.create(QueleaIcon.TOOLBAR_SIZE));
 
         MenuItem addDVDButton = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDButton.setOnAction(new AddDVDActionHandler());
@@ -225,45 +152,21 @@ public class MainToolbar extends ToolBar {
             add.getItems().add(addDVDButton);
         }
 
-        MenuItem addPdfButton;
-        if (Utils.isMac()) {
-            addPdfButton = getMenuItemFromImage("file:icons/add_pdfbig.png");
-        } else {
-            addPdfButton = getMenuItemFromImage("file:icons/add_pdf.png");
-        }
-        addPdfButton.setText(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"));
+        MenuItem addPdfButton = getMenuItem(QueleaIcon.PDF, "add.pdf.tooltip");
         addPdfButton.setOnAction(new AddPdfActionHandler());
         add.getItems().add(addPdfButton);
 
-        MenuItem addWebButton;
-        if (Utils.isMac()) {
-            addWebButton = getMenuItemFromImage("file:icons/web.png");
-        } else {
-            addWebButton = getMenuItemFromImage("file:icons/web-small.png");
-        }
-        addWebButton.setText(LabelGrabber.INSTANCE.getLabel("add.website"));
+        MenuItem addWebButton = getMenuItem(QueleaIcon.WEB, "add.website");
         addWebButton.setOnAction(new AddWebActionHandler());
         add.getItems().add(addWebButton);
 
-        MenuItem addImageGroupButton;
-        if (Utils.isMac()) {
-            addImageGroupButton = getMenuItemFromImage("file:icons/image.png");
-        } else {
-            addImageGroupButton = getMenuItemFromImage("file:icons/image.png", 24, 24, false, true);
-        }
-        addImageGroupButton.setText(LabelGrabber.INSTANCE.getLabel("add.images.panel"));
+        MenuItem addImageGroupButton = getMenuItem(QueleaIcon.IMAGES, "add.images.panel");
         addImageGroupButton.setOnAction(new AddImageActionHandler());
         add.getItems().add(addImageGroupButton);
 
         getItems().add(new Separator());
 
-        if (Utils.isMac()) {
-            manageNoticesButton = getButtonFromImage("file:icons/infobig.png");
-        } else {
-            manageNoticesButton = getButtonFromImage("file:icons/info.png");
-        }
-        Utils.setToolbarButtonStyle(manageNoticesButton);
-        manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
+        manageNoticesButton = getButton(QueleaIcon.NOTICES, "manage.notices.tooltip");
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
 
@@ -301,7 +204,8 @@ public class MainToolbar extends ToolBar {
             });
         });
 
-        recordAudioButton = getToggleButtonFromImage("file:icons/record.png");
+        recordAudioButton = new ToggleButton("", QueleaIcon.RECORD.create(QueleaIcon.TOOLBAR_SIZE));
+        recordAudioButton.getStyleClass().add("record-button");
         Utils.setToolbarButtonStyle(recordAudioButton);
         recording = false;
         recordAudioButton.setOnMouseClicked(e -> {
@@ -334,40 +238,18 @@ public class MainToolbar extends ToolBar {
         recordAudioButton.setText(text);
     }
 
-    private Button getButtonFromImage(String uri) {
-        return new Button("", getImageViewForButton(uri));
+    /**
+     * Create a flat toolbar button showing an icon and a tooltip.
+     */
+    private Button getButton(QueleaIcon icon, String tooltipLabel) {
+        Button button = new Button("", icon.create(QueleaIcon.TOOLBAR_SIZE));
+        Utils.setToolbarButtonStyle(button);
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(tooltipLabel)));
+        return button;
     }
 
-    private ToggleButton getToggleButtonFromImage(String uri) {
-        return new ToggleButton("", getImageViewForButton(uri));
-    }
-
-    private Button getButtonFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
-        ImageView iv = new ImageView(new Image(uri, width, height, preserveRatio, smooth));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return new Button("", iv);
-    }
-
-    private MenuItem getMenuItemFromImage(String uri) {
-        return new MenuItem("", getImageViewForButton(uri));
-    }
-
-    private MenuItem getMenuItemFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
-        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? uri.replace(".png", "-light.png") : uri, width, height, preserveRatio, smooth));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return new MenuItem("", iv);
-    }
-
-    private ImageView getImageViewForButton(String uri) {
-        ImageView iv = new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? uri.replace(".png", "-light.png") : uri));
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        return iv;
+    private MenuItem getMenuItem(QueleaIcon icon, String label) {
+        return new MenuItem(LabelGrabber.INSTANCE.getLabel(label), icon.create(QueleaIcon.TOOLBAR_SIZE));
     }
 
     /**

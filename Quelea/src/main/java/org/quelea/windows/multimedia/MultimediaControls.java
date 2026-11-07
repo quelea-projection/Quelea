@@ -62,6 +62,9 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
+import org.quelea.windows.style.MediaButton;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -73,19 +76,11 @@ import org.quelea.windows.main.WordDrawer;
 public class MultimediaControls extends StackPane {
 
     private static final int SLIDER_UPDATE_RATE = 100;
-    private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
-    private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
-    private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
-    private static final Image LOOP_IMAGE_ON = new Image("file:icons/loop_on.png");
-    private static final Image LOOP_IMAGE_OFF = new Image("file:icons/loop_off.png");
-    private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
-    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
-    private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
-    private static final Image VOLUME = new Image("file:icons/volume.png");
+    private static final double CARD_WIDTH = 230;
     private boolean playpause;
-    private ImageView playButton;
-    private ImageView stopButton;
-    private ImageView loopButton;
+    private MediaButton playButton;
+    private MediaButton stopButton;
+    private MediaButton loopButton;
     private Slider posSlider;
     private boolean disablePosSliderListener;
     private boolean disableControls;
@@ -93,7 +88,7 @@ public class MultimediaControls extends StackPane {
     private Label totalTime;
     private Slider volSlider;
     private int vol = 100;
-    private final ImageView muteButton;
+    private final MediaButton muteButton;
     private boolean looping;
 
     private Runnable onPlay;
@@ -105,30 +100,23 @@ public class MultimediaControls extends StackPane {
     private Consumer<Double> onVolumeChanged;
 
     public MultimediaControls() {
-        Rectangle rect = new Rectangle(230, 100);
-        Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(1, Color.GREY)};
-        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-        rect.setOpacity(0.8);
-        rect.setFill(lg1);
-        rect.setArcHeight(20);
-        rect.setArcWidth(20);
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(5.0);
-        ds.setOffsetX(5.0);
-        ds.setColor(Color.GRAY);
-        ds.setInput(new Reflection(5, 0.4, 0.3, 0));
-        rect.setEffect(ds);
+        // Rounded card behind the controls; see .media-controls-card in base.css
+        Region rect = new Region();
+        rect.getStyleClass().add("media-controls-card");
+        rect.setMinSize(CARD_WIDTH, 100);
+        rect.setPrefSize(CARD_WIDTH, 100);
+        rect.setMaxSize(CARD_WIDTH, 100);
         getChildren().add(rect);
 
         onPlay = () -> {
         };
         onVolumeChanged = v -> {
         };
-        playButton = new ImageView(PLAY_IMAGE);
+        playButton = new MediaButton(QueleaIcon.PLAY, 46, true);
         setButtonParams(playButton);
         playButton.setTranslateX(-30);
         getChildren().add(playButton);
-        playButton.setOnMouseClicked(t -> {
+        playButton.setOnAction(t -> {
             if (!disableControls) {
                 play();
             }
@@ -139,8 +127,8 @@ public class MultimediaControls extends StackPane {
         };
         onStop = () -> {
         };
-        stopButton = new ImageView(STOP_IMAGE);
-        stopButton.setOnMouseClicked(t -> {
+        stopButton = new MediaButton(QueleaIcon.STOP, 46, false);
+        stopButton.setOnAction(t -> {
             if (!disableControls) {
                 reset();
             }
@@ -163,32 +151,26 @@ public class MultimediaControls extends StackPane {
             }
         });
         posSlider.setTranslateY(30);
-        posSlider.setPrefWidth(rect.getWidth() - 20);
-        posSlider.setMaxWidth(rect.getWidth() - 20);
+        posSlider.setPrefWidth(CARD_WIDTH - 20);
+        posSlider.setMaxWidth(CARD_WIDTH - 20);
         getChildren().add(posSlider);
 
-        loopButton = new ImageView(LOOP_IMAGE_OFF);
-        Tooltip.install(loopButton, new Tooltip(LabelGrabber.INSTANCE.getLabel("video.loop.tooltip")));
-        loopButton.setOnMouseClicked(e -> {
+        loopButton = new MediaButton(QueleaIcon.LOOP, 28, false);
+        loopButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("video.loop.tooltip")));
+        loopButton.setOnAction(e -> {
             if (!disableControls) {
-                if (loopButton.getImage().equals(LOOP_IMAGE_OFF)) {
-                    loopButton.setImage(LOOP_IMAGE_ON);
-                    onLoopChanged.accept(true);
-                } else {
-                    loopButton.setImage(LOOP_IMAGE_OFF);
-                    onLoopChanged.accept(false);
-                }
+                boolean loopOn = loopButton.getIcon() == QueleaIcon.LOOP;
+                loopButton.setIcon(loopOn ? QueleaIcon.LOOP_ON : QueleaIcon.LOOP);
+                loopButton.setActive(loopOn);
+                onLoopChanged.accept(loopOn);
             }
         });
         setButtonParams(loopButton);
-        loopButton.setTranslateY(-35);
+        loopButton.setTranslateY(-30);
         loopButton.setTranslateX(posSlider.getMaxWidth() - 110);
-        loopButton.setFitWidth(20);
         getChildren().add(loopButton);
 
-        muteButton = new ImageView(VOLUME);
-        muteButton.setFitWidth(20);
-        muteButton.setPreserveRatio(true);
+        muteButton = new MediaButton(QueleaIcon.VOLUME_UP, 28, false);
 
         volSlider = new Slider(0, 1, 1);
         volSlider.setMaxHeight(70);
@@ -202,7 +184,7 @@ public class MultimediaControls extends StackPane {
         muteButton.setTranslateY(30);
         muteButton.setTranslateX(posSlider.getMaxWidth() - 80);
         getChildren().add(muteButton);
-        muteButton.setOnMouseClicked((MouseEvent t) -> {
+        muteButton.setOnAction(t -> {
             if (!disableControls) {
                 Platform.runLater(() -> {
                     volSlider.setVisible(!volSlider.isVisible());
@@ -223,20 +205,20 @@ public class MultimediaControls extends StackPane {
         });
 
         elapsedTime = new Label();
-        elapsedTime.setPrefWidth(rect.getWidth() - 20);
-        elapsedTime.setMaxWidth(rect.getWidth() - 20);
+        elapsedTime.setPrefWidth(CARD_WIDTH - 20);
+        elapsedTime.setMaxWidth(CARD_WIDTH - 20);
         elapsedTime.setBackground(Background.EMPTY);
         elapsedTime.setTranslateY(40);
-        elapsedTime.setTextFill(Color.WHITE);
+        elapsedTime.getStyleClass().add("media-time-label");
         getChildren().add(elapsedTime);
 
         totalTime = new Label();
-        totalTime.setPrefWidth(rect.getWidth() - 20);
-        totalTime.setMaxWidth(rect.getWidth() - 20);
+        totalTime.setPrefWidth(CARD_WIDTH - 20);
+        totalTime.setMaxWidth(CARD_WIDTH - 20);
         totalTime.setBackground(Background.EMPTY);
         totalTime.setTranslateY(40);
         totalTime.setAlignment(Pos.BASELINE_RIGHT);
-        totalTime.setTextFill(Color.WHITE);
+        totalTime.getStyleClass().add("media-time-label");
         getChildren().add(totalTime);
 
 //        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
@@ -292,21 +274,9 @@ public class MultimediaControls extends StackPane {
 
     public void setDisableControls(boolean disable) {
         this.disableControls = disable;
-        if (disable) {
-            if (!playpause) {
-                playButton.setImage(PLAY_IMAGE_DISABLE);
-            } else {
-                playButton.setImage(PAUSE_IMAGE_DISABLE);
-            }
-            stopButton.setImage(STOP_IMAGE_DISABLE);
-        } else {
-            if (!playpause) {
-                playButton.setImage(PLAY_IMAGE);
-            } else {
-                playButton.setImage(PAUSE_IMAGE);
-            }
-            stopButton.setImage(STOP_IMAGE);
-        }
+        playButton.setIcon(playpause ? QueleaIcon.PAUSE : QueleaIcon.PLAY);
+        playButton.setDisable(disable);
+        stopButton.setDisable(disable);
     }
 
     public void setOnPlay(Runnable onPlay) {
@@ -342,7 +312,7 @@ public class MultimediaControls extends StackPane {
     public void play() {
         playpause = !playpause;
         if (playpause) {
-            playButton.setImage(PAUSE_IMAGE);
+            playButton.setIcon(QueleaIcon.PAUSE);
 
 //            VLCWindow.INSTANCE.setRepeat(looping);
 //            VLCWindow.INSTANCE.play();
@@ -358,17 +328,13 @@ public class MultimediaControls extends StackPane {
             }
             onPlay.run();
         } else {
-            playButton.setImage(PLAY_IMAGE);
+            playButton.setIcon(QueleaIcon.PLAY);
             onPause.run();
         }
     }
 
     public void reset() {
-        if (disableControls) {
-            playButton.setImage(PLAY_IMAGE_DISABLE);
-        } else {
-            playButton.setImage(PLAY_IMAGE);
-        }
+        playButton.setIcon(QueleaIcon.PLAY);
         playpause = false;
         disablePosSliderListener = true;
         posSlider.setValue(0);
@@ -382,20 +348,7 @@ public class MultimediaControls extends StackPane {
         onStop.run();
     }
 
-    private void setButtonParams(final ImageView button) {
-        button.setOnMouseEntered(t -> {
-            if (!disableControls) {
-                button.setEffect(new Glow(0.5));
-            }
-        });
-        button.setOnMouseExited(new EventHandler<>() {
-            @Override
-            public void handle(MouseEvent t) {
-                button.setEffect(null);
-            }
-        });
-        button.setFitWidth(50);
-        button.setPreserveRatio(true);
+    private void setButtonParams(final MediaButton button) {
         button.setTranslateY(-10);
     }
 

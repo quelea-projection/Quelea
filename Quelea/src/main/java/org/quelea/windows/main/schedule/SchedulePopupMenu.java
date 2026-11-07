@@ -36,6 +36,7 @@ import org.quelea.windows.main.actionhandlers.EditTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The popup menu that displays when an item in the schedule is right-clicked.
@@ -44,12 +45,12 @@ import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
  */
 public class SchedulePopupMenu extends ContextMenu {
 
-    private final MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-    private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-    private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/bible.png", 16, 16, false, true)));
+    private final MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), QueleaIcon.EDIT.create());
+    private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), QueleaIcon.EDIT.create());
+    private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), QueleaIcon.BIBLE.create());
     private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
-    private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.timer.text"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
-    private final MenuItem editTimerTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
+    private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.timer.text"), QueleaIcon.TIMER.create());
+    private final MenuItem editTimerTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), QueleaIcon.THEME.create());
     
 
     public SchedulePopupMenu(Displayable item) {

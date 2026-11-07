@@ -34,6 +34,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeFontSizeKey;
 import static org.quelea.windows.options.PreferencesDialog.getColorPicker;
 import static org.quelea.windows.options.PreferencesDialog.getPositionSelector;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the notice options
@@ -58,7 +59,7 @@ public class OptionsNoticePanel {
     }
 
     public Category getNoticesTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), new ImageView(new Image("file:icons/noticessettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("notice.options.heading"), QueleaIcon.NOTICES.create(),
                 getPositionSelector(LabelGrabber.INSTANCE.getLabel("notice.position.text"), false, QueleaProperties.get().getNoticePosition().getText(), null, bindings).customKey(noticePositionKey),
                 getColorPicker(LabelGrabber.INSTANCE.getLabel("notice.background.colour.text"), QueleaProperties.get().getNoticeBackgroundColour()).customKey(noticeBackgroundColourKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("notice.speed.text"), noticeSpeed, 2, 20, 1).customKey(noticeSpeedKey),

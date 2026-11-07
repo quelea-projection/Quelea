@@ -33,6 +33,7 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.utils.DesktopApi;
 import org.quelea.windows.help.AboutDialog;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's help menu.
  * <p/>
@@ -64,12 +65,12 @@ public class HelpMenu extends Menu {
                 launchPage(QueleaProperties.get().getFacebookPageLocation());
             });
             getItems().add(queleaFacebook);
-            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
+            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), QueleaIcon.FORUM.create());
             queleaDiscuss.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getDiscussLocation());
             });
             getItems().add(queleaDiscuss);
-            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
+            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), QueleaIcon.HELP.create());
             queleaWiki.setOnAction(t -> {
                 launchPage(QueleaProperties.get().getWikiPageLocation());
             });
@@ -79,12 +80,12 @@ public class HelpMenu extends Menu {
             queleaFacebook = null;
             queleaWiki = null;
         }
-        updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
+        updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), QueleaIcon.UPDATE.create());
         updateCheck.setOnAction(t -> {
             new UpdateChecker().checkUpdate(true, true, true);
         });
         getItems().add(updateCheck);
-        about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
+        about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), QueleaIcon.INFO.create());
         about.setOnAction(t -> {
             aboutDialog.show();
         });

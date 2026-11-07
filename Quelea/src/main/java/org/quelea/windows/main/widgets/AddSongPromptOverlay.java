@@ -33,6 +33,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 
 /**
  * An overlay that should be put on the song database when no songs are present.
@@ -55,7 +57,8 @@ public class AddSongPromptOverlay extends StackPane {
         VBox content = new VBox();
         content.setAlignment(Pos.TOP_LEFT);
         StackPane.setMargin(content, new Insets(10,0,0,15));
-        ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
+        Region iv = QueleaIcon.BACK.create(28);
+        iv.getStyleClass().add("overlay-icon");
         content.getChildren().add(iv);
         text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
         Platform.runLater(() -> QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(new ChangeListener<String>() {
@@ -71,12 +74,11 @@ public class AddSongPromptOverlay extends StackPane {
             }
         }));
         text.setWrapText(true);
-        text.setTextFill(Color.WHITESMOKE);
-        text.setStyle("-fx-font-size:16pt; -fx-font-family:Calibri;");
+        text.getStyleClass().add("overlay-text");
         content.getChildren().add(text);
         getChildren().add(content);
         setOpacity(0);
-        setStyle("-fx-background-color: #555555;");
+        getStyleClass().add("overlay-pane");
         setVisible(false);
     }
 

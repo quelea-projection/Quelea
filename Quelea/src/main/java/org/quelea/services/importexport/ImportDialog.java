@@ -41,6 +41,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -58,6 +59,9 @@ import org.quelea.services.utils.SongDuplicateChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
+
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * An import dialog used for importing songs.
@@ -94,7 +98,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 		files = new ArrayList<>();
 		halt = false;
 		importedDialog = new SelectImportedSongsDialog();
-		importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image("file:icons/import.png", 16, 16, true, false)));
+		importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), QueleaIcon.IMPORT.create());
 
 		VBox mainPane = new VBox();
 		final FileChooser locationChooser = new FileChooser();
@@ -166,7 +170,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 			mainPane.getChildren().add(locationField);
 		}
 
-		closeButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+		closeButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
 		closeButton.setOnAction(evt -> {
 			hide();
 		});
@@ -174,12 +178,9 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 			importButton.setDisable(true);
 		}
 		HBox buttonPane = new HBox(10);
-		buttonPane.setAlignment(Pos.CENTER);
-		StackPane.setMargin(importButton, new Insets(10));
 		buttonPane.getChildren().add(importButton);
 		buttonPane.getChildren().add(closeButton);
-		VBox.setMargin(buttonPane, new Insets(10));
-		mainPane.getChildren().add(buttonPane);
+		StyleManager.markPrimaryButton(importButton);
 		importButton.setOnAction(evt -> {
 			statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
 			statusPanel.getCancelButton().setOnAction(evt2 -> {
@@ -251,10 +252,12 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 		});
 		setResizable(false);
 
-		Scene scene = new Scene(mainPane);
-		if (QueleaProperties.get().getUseDarkTheme()) {
-			scene.getStylesheets().add("org/modena_dark.css");
-		}
+		mainPane.setSpacing(8);
+		BorderPane root = new BorderPane(mainPane);
+		BorderPane.setMargin(mainPane, new Insets(16, 18, 16, 18));
+		root.setBottom(buttonPane);
+		Scene scene = new Scene(root);
+		StyleManager.apply(scene);
 		setScene(scene);
 	}
 

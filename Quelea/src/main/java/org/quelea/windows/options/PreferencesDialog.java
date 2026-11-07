@@ -54,6 +54,9 @@ import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 public class PreferencesDialog extends Stage {
     private PreferencesFx preferencesFx;
     private final BorderPane mainPane;
@@ -79,7 +82,7 @@ public class PreferencesDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
         initOwner(QueleaApp.get().getMainWindow());
-        getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
+        Utils.addIconsToStage(this);
         mainPane = new BorderPane();
 
         generalPanel = new OptionsGeneralPanel(bindings);
@@ -105,7 +108,8 @@ public class PreferencesDialog extends Stage {
                         importExportPanel.getImportExportTab()
                 );
 
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
             preferencesFx.saveSettings();
@@ -145,9 +149,7 @@ public class PreferencesDialog extends Stage {
         mainPane.setCenter(preferencesFx.getView().getCenter());
 
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
 
         getScene().getWindow().addEventFilter(WindowEvent.WINDOW_SHOWN, e -> callBeforeShowing());

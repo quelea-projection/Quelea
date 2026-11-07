@@ -28,6 +28,9 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * The dialog that allows the user to select a subset of fonts to display in the
  * theme panel.
@@ -52,9 +55,7 @@ public class FontSelectionDialog extends Stage {
         setOnHiding(t -> QueleaProperties.get().setChosenFonts(chosenFontSelection.getItems()));
         BorderPane mainPane = new BorderPane();
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
 
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("chosen.fonts.explanation"));
@@ -87,7 +88,8 @@ public class FontSelectionDialog extends Stage {
         chosenFontBox.getChildren().add(chosenFontSelection);
         centrePane.getChildren().add(chosenFontBox);
 
-        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(doneButton);
         doneButton.setOnAction(t -> FontSelectionDialog.this.hide());
         StackPane donePane = new StackPane();
         donePane.setPadding(new Insets(0, 0, 10, 0));

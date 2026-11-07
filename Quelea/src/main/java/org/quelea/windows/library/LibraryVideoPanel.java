@@ -44,6 +44,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The video panel in the library.
@@ -62,7 +63,7 @@ public class LibraryVideoPanel extends BorderPane {
         videoPanel = new VideoListPanel(QueleaProperties.get().getVidDir().getAbsolutePath());
         setCenter(videoPanel);
         ToolBar toolbar = new ToolBar();
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", QueleaIcon.ADD.create());
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.videos.panel")));
         addButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();

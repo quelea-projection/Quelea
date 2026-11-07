@@ -44,6 +44,8 @@ import org.quelea.windows.options.PreferencesDialog;
 
 import javafx.scene.Parent;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * The main window used to control the projection.
  * <p/>
@@ -144,17 +146,13 @@ public class MainWindow extends Stage {
 
     private Scene getScene(Parent root, double width, double height) {
         Scene scene = new Scene(root, width, height);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         return scene;
     }
 
     private Scene getScene(Parent root) {
         Scene scene = new Scene(root);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         return scene;
     }
 

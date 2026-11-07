@@ -24,15 +24,15 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.imagegroup.ImageGroupSlide;
 import org.quelea.services.utils.QueleaProperties;
 
+import javafx.css.PseudoClass;
 /**
  *
  * @author Arvid, based on presentation.SlideThumbnail
  */
 public class SlideThumbnail extends BorderPane {
 
-    private static final String BORDER_STYLE_SELECTED_ACTIVE = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
-    private static final String BORDER_STYLE_SELECTED_INACTIVE = "-fx-padding: 0.2em;-fx-border-color: #999999;-fx-border-radius: 5;-fx-border-width: 0.1em;";
-    private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
+    private static final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
+    private static final PseudoClass ACTIVE = PseudoClass.getPseudoClass("active");
     private int num;
     private ImageGroupSlide slide;
     private ImageView image;
@@ -40,6 +40,7 @@ public class SlideThumbnail extends BorderPane {
     private boolean active;
     
     public SlideThumbnail(ImageGroupSlide slide, int num) {
+        getStyleClass().add("slide-thumbnail");
         this.num = num;
         this.slide = slide;
         image = new ImageView(slide.getImage());
@@ -63,17 +64,9 @@ public class SlideThumbnail extends BorderPane {
     }
     
     private void recalcBorder() {
-        if(selected) {
-            if(active) {
-                setStyle(BORDER_STYLE_SELECTED_ACTIVE);
-            }
-            else {
-                setStyle(BORDER_STYLE_SELECTED_INACTIVE);
-            }
-        }
-        else {
-            setStyle(BORDER_STYLE_DESELECTED);
-        }
+        // Border colours come from the .slide-thumbnail rules in base.css.
+        pseudoClassStateChanged(SELECTED, selected);
+        pseudoClassStateChanged(ACTIVE, selected && active);
     }
 
     public int getNum() {

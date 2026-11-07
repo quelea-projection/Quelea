@@ -38,6 +38,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.stage.StageDrawer;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The image button where the user selects a image.
@@ -58,7 +59,8 @@ public class ImageButton extends Button {
      * @param canvas the preview canvas to update.
      */
     public ImageButton(final TextField imageLocationField, final DisplayCanvas canvas) {
-        super("..");
+        super("", QueleaIcon.OPEN.create());
+        getStyleClass().add("toolbar-button");
 //        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         final File imageDir = QueleaProperties.get().getImageDir();
         fileChooser = new FileChooser();

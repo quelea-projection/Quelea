@@ -35,6 +35,9 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * Dialog used for switching between bible translations.
  *
@@ -59,27 +62,26 @@ public class SwitchBibleVersionDialog extends Stage {
         Label switchToLabel = new Label(LabelGrabber.INSTANCE.getLabel("switch.to.text") + "...");
         root.getChildren().add(switchToLabel);
         root.getChildren().add(comboBox);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setDefaultButton(true);
         okButton.setOnAction(t -> {
             selectedVersion = comboBox.getValue();
             hide();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(t -> {
             hide();
         });
-        HBox buttonPanel = new HBox(5);
-        buttonPanel.setAlignment(Pos.CENTER);
+        HBox buttonPanel = new HBox(8);
         buttonPanel.getChildren().addAll(okButton, cancelButton);
-        root.getChildren().add(buttonPanel);
-        StackPane containerPane = new StackPane();
-        StackPane.setMargin(root, new Insets(10));
-        containerPane.getChildren().add(root);
+        root.setSpacing(8);
+        root.setPadding(new Insets(16, 18, 16, 18));
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        javafx.scene.layout.BorderPane containerPane = new javafx.scene.layout.BorderPane(root);
+        containerPane.setBottom(buttonPanel);
         Scene scene = new Scene(containerPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
         setResizable(false);
     }

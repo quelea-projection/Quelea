@@ -32,6 +32,8 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Cancellable;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * A stage displayed when a lengthy, cancellable operation is taking place.
  * @author Michael
@@ -76,9 +78,7 @@ public class ModalCancellableStage extends Stage {
         StackPane.setMargin(items, new Insets(10));
         root.getChildren().add(items);
         Scene scene = new Scene(root);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

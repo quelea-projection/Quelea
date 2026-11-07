@@ -41,6 +41,7 @@ import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ModalCancellableStage;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The video button where the user selects a video.
@@ -63,7 +64,8 @@ public class VideoButton extends Button implements Cancellable {
      * @param canvas the preview canvas to update.
      */
     public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
-        super("..");
+        super("", QueleaIcon.OPEN.create());
+        getStyleClass().add("toolbar-button");
         fileChooser = new FileChooser();
         if (QueleaProperties.get().getLastDirectory() != null) {
             fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());

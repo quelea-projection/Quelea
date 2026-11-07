@@ -27,6 +27,8 @@ import javafx.scene.layout.StackPane;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.MediaButton;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The presentation controls containing a next and a previous button.
@@ -37,10 +39,7 @@ import org.quelea.windows.main.QueleaApp;
 public class PresentationControls extends StackPane {
 
     public PresentationControls() {
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
-        final Image PREVIOUS_IMAGE = new Image(darkTheme ? "file:icons/previous-light.png" : "file:icons/previous.png");
-        final Image NEXT_IMAGE = new Image(darkTheme ? "file:icons/next-light.png" : "file:icons/next.png");
-        Button previousButton = new Button("", setImageView(PREVIOUS_IMAGE));
+        Button previousButton = new MediaButton(QueleaIcon.PREVIOUS, 46, false);
         setButtonParams(previousButton);
         previousButton.setTranslateX(-120);
         getChildren().add(previousButton);
@@ -57,7 +56,7 @@ public class PresentationControls extends StackPane {
             }
         });
 
-        Button nextButton = new Button("", setImageView(NEXT_IMAGE));
+        Button nextButton = new MediaButton(QueleaIcon.NEXT, 46, false);
         nextButton.setOnMouseClicked((MouseEvent t) -> {
             PowerPointHandler.gotoNext();
             String result = PowerPointHandler.getCurrentSlide();
@@ -77,21 +76,6 @@ public class PresentationControls extends StackPane {
     }
 
     private void setButtonParams(final Button button) {
-        button.setOnMouseEntered((MouseEvent t) -> {
-            button.setEffect(new Glow(0.5));
-        });
-        button.setOnMouseExited((MouseEvent t) -> {
-            button.setEffect(null);
-        });
-        button.setPrefWidth(200);
-    }
-
-    private ImageView setImageView(Image image) {
-        ImageView iv2 = new ImageView();
-        iv2.setImage(image);
-        iv2.setPreserveRatio(true);
-        iv2.setSmooth(true);
-        iv2.setCache(true);
-        return iv2;
+        // Look and hover state: see .media-button in base.css
     }
 }

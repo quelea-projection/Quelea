@@ -34,6 +34,8 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * The splash screen to display when the program starts.
  * <p/>
@@ -61,9 +63,7 @@ public class SplashStage extends Stage {
         mainPane.getChildren().add(imageView);
         mainPane.getChildren().add(version);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
 
         ObservableList<Screen> monitors = Screen.getScreens();
