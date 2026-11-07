@@ -39,7 +39,6 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A wrapper connecting a GStreamer AppSink and a JavaFX Image, making use of
@@ -89,12 +88,12 @@ public class FXImageSink {
     private Buffer activeBuffer;
     private final Queue<Sample> oldSamples;
     /**
-     * The newest decoded sample that hasn't been shown yet. Only the latest
-     * frame is kept: if the FX thread falls behind, superseded frames are
-     * dropped instead of piling up (each one is a full native video frame).
+     * Passes decoded samples to the FX thread. Only the latest frame is kept:
+     * if the FX thread falls behind, superseded frames are dropped instead of
+     * piling up (each one is a full native video frame).
      */
-    private final AtomicReference<Sample> pendingSample = new AtomicReference<>();
-    private volatile boolean disposed;
+    private final LatestFrameHandoff<Sample> handoff =
+            new LatestFrameHandoff<>(Platform::runLater, this::updateImage, Sample::dispose);
     private Runnable onFrame;
 
     /**
@@ -117,13 +116,13 @@ public class FXImageSink {
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
             if (s == null) throw new IllegalStateException();
-            offerSample(s);
+            handoff.offer(s);
             return FlowReturn.OK;
         });
         sink.connect((AppSink.NEW_PREROLL) appsink -> {
             Sample s = appsink.pullPreroll();
             if (s == null) throw new IllegalStateException();
-            offerSample(s);
+            handoff.offer(s);
             return FlowReturn.OK;
         });
         sink.setCaps(Caps.fromString(DEFAULT_CAPS));
@@ -152,37 +151,6 @@ public class FXImageSink {
      */
     public AppSink getSinkElement() {
         return sink;
-    }
-
-    /**
-     * Hand a newly decoded sample over to the FX thread. If a previous sample
-     * is still waiting to be shown it is replaced (and released), so at most
-     * one frame per sink is ever queued.
-     */
-    private void offerSample(Sample s) {
-        if (disposed) {
-            s.dispose();
-            return;
-        }
-        Sample previous = pendingSample.getAndSet(s);
-        if (previous != null) {
-            // An update is already scheduled and will pick up the new sample.
-            previous.dispose();
-        } else {
-            Platform.runLater(this::showPendingSample);
-        }
-    }
-
-    private void showPendingSample() {
-        Sample s = pendingSample.getAndSet(null);
-        if (s == null) {
-            return;
-        }
-        if (disposed) {
-            s.dispose();
-            return;
-        }
-        updateImage(s);
     }
 
     long lastTs = 0;
@@ -297,7 +265,7 @@ public class FXImageSink {
      * afterwards are released immediately.
      */
     public void dispose() {
-        disposed = true;
+        handoff.dispose();
         clear();
     }
 
@@ -305,10 +273,7 @@ public class FXImageSink {
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("Not on FX application thread");
         }
-        Sample pending = pendingSample.getAndSet(null);
-        if (pending != null) {
-            pending.dispose();
-        }
+        handoff.clear();
         image.set(new WritableImage(1, 1));
         if (activeBuffer != null) {
             activeBuffer.unmap();

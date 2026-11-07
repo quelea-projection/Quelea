@@ -59,6 +59,7 @@ import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
@@ -119,7 +120,7 @@ public class LyricDrawer extends WordDrawer {
             }
         }
 
-        if (getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+        if (isProjectionCanvas()) {
             newItem = oldText != null && !Arrays.deepEquals(getText(), oldText) && textGroup != null;
             oldText = getText();
         } else {
@@ -347,7 +348,7 @@ public class LyricDrawer extends WordDrawer {
         } else if (QueleaProperties.get().getUseSlideTransition()
                 && !getCanvas().isBlacked() && !getCanvas().isCleared()
                 && !getCanvas().isShowingLogo()
-                && getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+                && isProjectionCanvas()) {
             if (oldTextGroup != null) {
                 FadeTransition fadeOut = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionOutDuration()), oldTextGroup);
                 fadeOut.setFromValue(1.0);
@@ -464,6 +465,17 @@ public class LyricDrawer extends WordDrawer {
         getCanvas().getChildren().remove(oldBackground);
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
+    }
+
+    /**
+     * @return true if this drawer draws on the main projection window. False
+     * for previews and off-screen canvases, and while the projection window
+     * hasn't been created yet.
+     */
+    private boolean isProjectionCanvas() {
+        QueleaApp app = QueleaApp.get();
+        DisplayStage projectionWindow = app == null ? null : app.getProjectionWindow();
+        return projectionWindow != null && getCanvas().equals(projectionWindow.getCanvas());
     }
 
     /**

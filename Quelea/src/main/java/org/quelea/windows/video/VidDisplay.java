@@ -22,11 +22,14 @@ import java.util.Set;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class VidDisplay {
 
     private static int idCounter = 0;
+    /** Number of displays holding a native pipeline that hasn't been disposed. */
+    private static final AtomicInteger ACTIVE_PIPELINES = new AtomicInteger();
     /**
      * Pipelines are shut down off the FX thread: setting a pipeline to NULL can
      * block (on macOS the FX thread is also the AppKit main thread, which some
@@ -71,6 +74,7 @@ public class VidDisplay {
         if(GStreamerInitState.INIT_SUCCESS) {
             fxImageSink = new FXImageSink();
             playBin = new PlayBin("playbin " + id);
+            ACTIVE_PIPELINES.incrementAndGet();
             playBin.setVideoSink(fxImageSink.getSinkElement());
             if (!withAudio) {
                 Set<PlayFlags> flags = EnumSet.noneOf(PlayFlags.class);
@@ -106,6 +110,18 @@ public class VidDisplay {
             }));
             posTimer.setCycleCount(Animation.INDEFINITE);
         }
+    }
+
+    /**
+     * Get the number of video displays that currently hold a native GStreamer
+     * pipeline, i.e. that have been created and not yet disposed. Useful for
+     * diagnostics and tests: every display that is no longer needed should be
+     * disposed, otherwise its pipeline keeps decoding in the background.
+     *
+     * @return the number of live pipelines.
+     */
+    public static int getActivePipelineCount() {
+        return ACTIVE_PIPELINES.get();
     }
 
     public ReadOnlyObjectProperty<? extends Image> imageProperty() {
@@ -148,6 +164,7 @@ public class VidDisplay {
         if (playBin != null) {
             final PlayBin pb = playBin;
             playBin = null;
+            ACTIVE_PIPELINES.decrementAndGet();
             posTimer.stop();
             fxImageSink.dispose();
             CLEANUP_EXECUTOR.execute(() -> {
