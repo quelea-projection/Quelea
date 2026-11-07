@@ -1,4 +1,4 @@
-quelea (2024.1) stable
+quelea (2027.0) stable
 
   * Upgrade to Java25 and OpenJFX 25
   * Default translations now used when adding song via server
