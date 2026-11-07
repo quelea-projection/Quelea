@@ -416,7 +416,6 @@ public class LyricDrawer extends WordDrawer {
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
         }
 
-        Node newBackground;
         newImageView.setFitHeight(getCanvas().getHeight());
         newImageView.setFitWidth(getCanvas().getWidth());
         if (image != null) {
@@ -426,11 +425,25 @@ public class LyricDrawer extends WordDrawer {
 //        if (colourAdjust != null) {
 //            newImageView.setEffect(colourAdjust);
 //        }
+        newImageView.setOpacity(0);
         getCanvas().getChildren().add(newImageView);
-        newBackground = newImageView;
-        getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
-        getCanvas().setOpacity(1);
-        getCanvas().setCanvasBackground(newBackground);
+
+        if(QueleaProperties.get().getUseSlideTransition()) {
+            FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionInDuration()), newImageView);
+            ft.setToValue(1);
+            ft.play();
+
+            ft.setOnFinished(actionEvent -> {
+                getCanvas().setOpacity(1);
+                getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
+                getCanvas().setCanvasBackground(newImageView);
+            });
+        } else {
+            newImageView.setOpacity(1);
+            getCanvas().setOpacity(1);
+            getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
+            getCanvas().setCanvasBackground(newImageView);
+        }
     }
 
     /**
