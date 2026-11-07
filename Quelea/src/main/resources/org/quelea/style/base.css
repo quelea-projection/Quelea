@@ -77,6 +77,9 @@
     -fx-border-insets: 0;
     -fx-padding: 5 14 5 14;
     -fx-translate-y: 1; /* covers the bar's bottom line under the open tab */
+    /* Light up at once, like a native menu. (A fade from "transparent",
+       which is transparent black, passes through grey.) */
+    transition: -fx-background-color 0s;
 }
 
 .menu-bar > .container > .menu-button.first-menu,
@@ -84,13 +87,14 @@
     -fx-background-color: transparent, transparent;
 }
 
-.menu-bar > .container > .menu-button:hover {
+/* ".menu" (on every title) makes these outrank the .first-menu rule above */
+.menu-bar > .container > .menu-button.menu:hover {
     -fx-background-color: -q-accent-soft, transparent;
 }
 
-.menu-bar > .container > .menu-button:showing,
-.menu-bar > .container > .menu-button:showing:hover,
-.menu-bar:menu-open > .container > .menu-button:showing {
+.menu-bar > .container > .menu-button.menu:showing,
+.menu-bar > .container > .menu-button.menu:showing:hover,
+.menu-bar:menu-open > .container > .menu-button.menu:showing {
     -fx-background-color: -q-surface, transparent;
     -fx-border-color: -q-border;
 }
