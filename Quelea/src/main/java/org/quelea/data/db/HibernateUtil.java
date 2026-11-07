@@ -1,6 +1,7 @@
 package org.quelea.data.db;
 
 import java.io.File;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Session;
@@ -52,10 +53,28 @@ public class HibernateUtil {
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);
             LOGGER.info("Initialised hibernate session factory");
             init = true;
+            writeCommitsImmediately();
             return true;
         } catch (Throwable ex) {
             LOGGER.log(Level.INFO, "Initial SessionFactory creation failed. Quelea is probably already running.", ex);
             return false;
+        }
+    }
+
+    /**
+     * By default the database writes commits to disk up to half a second later.
+     * Quelea doesn't shut the database down on exit, so anything saved just
+     * before exiting (or a crash) would be lost.
+     */
+    private static void writeCommitsImmediately() {
+        try {
+            execute(session -> session.doWork(connection -> {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET FILES WRITE DELAY FALSE");
+                }
+            }));
+        } catch (IllegalStateException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't turn off the database write delay", ex);
         }
     }
 

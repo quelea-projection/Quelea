@@ -24,15 +24,27 @@ public class SongDao {
         return (Song) session.load(Song.class, id);
     }
 
+    /**
+     * Get all the songs, along with their themes, in a single query. This fails
+     * as a whole if any song in the database is corrupt.
+     *
+     * @return all the songs.
+     */
     @SuppressWarnings("unchecked")
     public List<Song> getSongs() {
+        return session.createQuery("from Song s left join fetch s.theme t left join fetch t.textShadow").list();
+    }
+
+    /**
+     * Get all the songs, loading each one separately when it's first accessed.
+     * This is much slower than getSongs(), but a corrupt song only fails when
+     * it's accessed, so the caller can skip it.
+     *
+     * @return all the songs.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Song> getSongsOneByOne() {
         Query getAllSongQuery = session.createQuery("from Song");
-        /*
-         * We use an iterator here (rather then just doing getAllSongQuery.list()
-         * because the latter will fall over if there are any corrupt songs in 
-         * the database. This will force it to go through, and we can remove
-         * the corrupt individual songs manually later.
-         */
         Iterator<Song> iter = getAllSongQuery.iterate();
         List<Song> ret = new ArrayList<>();
         while (iter.hasNext()) {

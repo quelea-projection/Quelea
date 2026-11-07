@@ -327,6 +327,9 @@ public class RCHandler {
             songIDString = he.getRequestURI().toString().split("/add/", 2)[1];
             songID = Long.parseLong(songIDString);
             SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
+            if (sd == null) {
+                return LabelGrabber.INSTANCE.getLabel("rcs.add.failed");
+            }
 
             if (QueleaProperties.get().getUseDefaultTranslation()) {
                 String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
