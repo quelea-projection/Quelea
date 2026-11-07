@@ -286,10 +286,18 @@ dependencies {
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '6.0.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '6.0.0'
+    testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: '6.0.0'
 }
 
 test {
+    useJUnitPlatform()
     failOnNoDiscoveredTests = false
+    // Same JVM options as the application, so video code under test behaves as it does at runtime.
+    jvmArgs application.applicationDefaultJvmArgs
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'full'
+    }
 }
 
 jar {

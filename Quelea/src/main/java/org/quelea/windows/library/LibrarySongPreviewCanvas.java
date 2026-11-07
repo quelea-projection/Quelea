@@ -28,7 +28,6 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.WordDrawer;
 
 /**
  * A pane that can be overlaid on a component when it's loading something.
@@ -40,6 +39,7 @@ public class LibrarySongPreviewCanvas extends StackPane {
     private FadeTransition trans;
     private DisplayCanvas canvas;
     private SongDisplayable displayable;
+    private final LyricDrawer drawer = new LyricDrawer();
 
     /**
      * Create the loading pane.
@@ -48,6 +48,9 @@ public class LibrarySongPreviewCanvas extends StackPane {
         setMaxSize(250, 167);
         canvas = new DisplayCanvas(false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         canvas.setMaxSize(250, 167);
+        drawer.setCanvas(canvas);
+        // Hidden until show() is called - don't play video backgrounds until then.
+        drawer.setPlayVideo(false);
         getChildren().add(canvas);
         setOpacity(0);
         setVisible(false);
@@ -55,8 +58,6 @@ public class LibrarySongPreviewCanvas extends StackPane {
     }
 
     public void updateCanvas() {
-        WordDrawer drawer = new LyricDrawer();
-        drawer.setCanvas(canvas);
         if (displayable == null || displayable.getSections().length == 0) {
             drawer.eraseText();
         } else {
@@ -77,6 +78,11 @@ public class LibrarySongPreviewCanvas extends StackPane {
      * Show (fade in) the loading pane.
      */
     public synchronized void show() {
+        if (!isVisible()) {
+            // Video backgrounds aren't played while hidden - redraw to start it.
+            drawer.setPlayVideo(true);
+            updateCanvas();
+        }
         setVisible(true);
         if (trans != null) {
             trans.stop();
@@ -91,6 +97,8 @@ public class LibrarySongPreviewCanvas extends StackPane {
      * Hide (fade out) the loading pane.
      */
     public synchronized void hide() {
+        // Don't keep decoding a video background nobody can see.
+        drawer.setPlayVideo(false);
         setVisible(false);
         if (trans != null) {
             trans.stop();
