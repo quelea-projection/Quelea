@@ -31,6 +31,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The image button where the user selects a image.
@@ -50,7 +51,8 @@ public class ImageButton extends Button {
      * button.
      */
     public ImageButton(final TextField imageLocationField) {
-        super("..");
+        super("", QueleaIcon.OPEN.create());
+        getStyleClass().add("toolbar-button");
 //        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         final File imageDir = QueleaProperties.get().getImageDir();
         fileChooser = new FileChooser();

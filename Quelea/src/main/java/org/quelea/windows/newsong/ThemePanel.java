@@ -98,10 +98,8 @@ public class ThemePanel extends BorderPane {
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            label.setStyle("-fx-text-fill:#666666;");
-            centrePane.setStyle("-fx-background-color:#dddddd;");
-        }
+        label.getStyleClass().add("muted-label");
+        centrePane.getStyleClass().add("preview-backdrop");
         centrePane.getChildren().add(label);
         StackPane themePreviewPane = new StackPane();
         themePreviewPane.getStyleClass().add("text-area");

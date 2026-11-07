@@ -68,13 +68,16 @@ public final class VideoTestSupport {
             CompletableFuture<Void> started = new CompletableFuture<>();
             Platform.startup(() -> started.complete(null));
             started.get(30, TimeUnit.SECONDS);
-            Platform.setImplicitExit(false);
         } catch (IllegalStateException alreadyStarted) {
             // Fine: another test started the toolkit already.
         } catch (Throwable ex) {
             unavailableReason = "JavaFX couldn't be started (no display?): " + ex;
             return false;
         }
+        // Tests open and close windows; closing the last one mustn't shut the
+        // toolkit down for the tests that run after it. Set this even if
+        // another test started the toolkit.
+        Platform.setImplicitExit(false);
         try {
             GStreamerUtils.configurePaths();
             Gst.init(Version.BASELINE, "QueleaTest");

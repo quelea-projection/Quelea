@@ -70,6 +70,7 @@ public class NumberSpinner extends HBox {
     public NumberSpinner(Integer value, Integer stepWidth, NumberFormat nf) {
         super();
         this.setId(NUMBER_SPINNER);
+        getStyleClass().add("number-spinner");
         this.stepWitdhProperty.set(stepWidth);
 
         // TextField
@@ -94,6 +95,7 @@ public class NumberSpinner extends HBox {
         // Painting the up and down arrows
         Path arrowUp = new Path();
         arrowUp.setId(ARROW);
+        arrowUp.getStyleClass().add("spinner-arrow");
         arrowUp.getElements().addAll(new MoveTo(-ARROW_SIZE, 0), new LineTo(ARROW_SIZE, 0),
                 new LineTo(0, -ARROW_SIZE), new LineTo(-ARROW_SIZE, 0));
         // mouse clicks should be forwarded to the underlying button
@@ -101,6 +103,7 @@ public class NumberSpinner extends HBox {
 
         Path arrowDown = new Path();
         arrowDown.setId(ARROW);
+        arrowDown.getStyleClass().add("spinner-arrow");
         arrowDown.getElements().addAll(new MoveTo(-ARROW_SIZE, 0), new LineTo(ARROW_SIZE, 0),
                 new LineTo(0, ARROW_SIZE), new LineTo(-ARROW_SIZE, 0));
         arrowDown.setMouseTransparent(true);
@@ -117,6 +120,7 @@ public class NumberSpinner extends HBox {
         buttons.setId(BUTTONS_BOX);
         incrementButton = new Button();
         incrementButton.setId(SPINNER_BUTTON_UP);
+        incrementButton.getStyleClass().add("spinner-arrow-button");
 //        incrementButton.prefWidthProperty().bind(numberField.heightProperty());
 //        incrementButton.minWidthProperty().bind(numberField.heightProperty());
         incrementButton.maxHeightProperty().bind(buttonHeight.add(spacing));
@@ -138,6 +142,7 @@ public class NumberSpinner extends HBox {
 
         decrementButton = new Button();
         decrementButton.setId(SPINNER_BUTTON_DOWN);
+        decrementButton.getStyleClass().add("spinner-arrow-button");
 //        decrementButton.prefWidthProperty().bind(numberField.heightProperty());
 //        decrementButton.minWidthProperty().bind(numberField.heightProperty());
         decrementButton.maxHeightProperty().bind(buttonHeight);

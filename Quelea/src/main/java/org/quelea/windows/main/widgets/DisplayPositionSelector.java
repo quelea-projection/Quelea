@@ -51,6 +51,7 @@ public class DisplayPositionSelector extends BorderPane {
             but.prefWidthProperty().bind(widthProperty().divide(3));
             but.prefHeightProperty().bind(heightProperty().divide(3));
             but.setToggleGroup(group);
+            but.getStyleClass().add("position-cell"); // see base.css
             but.setOnAction(t -> {
                 if (panel != null) {
                     panel.updateTheme(true);

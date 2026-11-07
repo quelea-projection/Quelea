@@ -36,6 +36,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.ModalCancellableStage;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The video button where the user selects a video.
@@ -57,7 +58,8 @@ public class VideoButton extends Button implements Cancellable {
      * button.
      */
     public VideoButton(final TextField videoLocationField) {
-        super("..");
+        super("", QueleaIcon.OPEN.create());
+        getStyleClass().add("toolbar-button");
         fileChooser = new FileChooser();
         if (QueleaProperties.get().getLastDirectory() != null) {
             fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());

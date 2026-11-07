@@ -42,6 +42,12 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+
 /**
  * The dialog used to manage the notices.
  * <p/>
@@ -64,10 +70,10 @@ public class NoticeDialog extends Stage {
      */
     public NoticeDialog() {
         BorderPane mainPane = new BorderPane();
-        getIcons().add(new Image("file:icons/info.png"));
+        Utils.addIconsToStage(this);
         noticeDrawers = new ArrayList<>();
         setTitle(LabelGrabber.INSTANCE.getLabel("notices.heading"));
-        newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
+        newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"), QueleaIcon.ADD.create());
         newNoticeButton.setAlignment(Pos.CENTER);
         newNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -81,7 +87,7 @@ public class NoticeDialog extends Stage {
                 }
             }
         });
-        editNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("edit.notice.text"));
+        editNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("edit.notice.text"), QueleaIcon.EDIT.create());
         editNoticeButton.setAlignment(Pos.CENTER);
         editNoticeButton.setDisable(true);
         editNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -96,7 +102,7 @@ public class NoticeDialog extends Stage {
                 }
             }
         });
-        removeNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("remove.notice.text"));
+        removeNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("remove.notice.text"), QueleaIcon.DELETE.create());
         removeNoticeButton.setAlignment(Pos.CENTER);
         removeNoticeButton.setDisable(true);
         removeNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -110,22 +116,20 @@ public class NoticeDialog extends Stage {
             }
         });
         getNoticesFromFile();
-        VBox leftPanel = new VBox(5);
-        newNoticeButton.setMaxWidth(Double.MAX_VALUE);
-        editNoticeButton.setMaxWidth(Double.MAX_VALUE);
-        removeNoticeButton.setMaxWidth(Double.MAX_VALUE);
-        noticeTemplates.setMaxWidth(Double.MAX_VALUE);
+        // Toolbar with the actions for the current notices
+        HBox toolbar = new HBox(newNoticeButton, editNoticeButton, removeNoticeButton);
+        toolbar.getStyleClass().add("dialog-toolbar");
+        toolbar.setAlignment(Pos.CENTER_LEFT);
+        mainPane.setTop(toolbar);
+
+        // Saved notices (templates) in a column on the left
         savedNoticesLabel = new Text(LabelGrabber.INSTANCE.getLabel("saved.notices"));
-        leftPanel.getChildren().add(newNoticeButton);
-        leftPanel.getChildren().add(editNoticeButton);
-        leftPanel.getChildren().add(removeNoticeButton);
-        leftPanel.getChildren().add(savedNoticesLabel);
-        leftPanel.getChildren().add(noticeTemplates);
-        BorderPane leftPanelBorder = new BorderPane();
-        BorderPane.setMargin(leftPanelBorder, new Insets(5));
-        leftPanelBorder.setTop(leftPanel);
-        mainPane.setLeft(leftPanelBorder);
-        savedNoticesLabel.getStyleClass().add("text");
+        savedNoticesLabel.getStyleClass().addAll("text", "strip-title");
+        VBox leftPanel = new VBox(6, savedNoticesLabel, noticeTemplates);
+        VBox.setVgrow(noticeTemplates, Priority.ALWAYS);
+        leftPanel.setPrefWidth(220);
+        BorderPane.setMargin(leftPanel, new Insets(12, 0, 12, 12));
+        mainPane.setLeft(leftPanel);
 
         noticeList = new ListView<>();
         noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
@@ -151,7 +155,12 @@ public class NoticeDialog extends Stage {
             }
         });
 
-        mainPane.setCenter(noticeList);
+        Text currentNoticesLabel = new Text(LabelGrabber.INSTANCE.getLabel("notices.heading"));
+        currentNoticesLabel.getStyleClass().addAll("text", "strip-title");
+        VBox centerPanel = new VBox(6, currentNoticesLabel, noticeList);
+        VBox.setVgrow(noticeList, Priority.ALWAYS);
+        BorderPane.setMargin(centerPanel, new Insets(12));
+        mainPane.setCenter(centerPanel);
 
         noticeTemplates.setOnMouseClicked(e -> {
             if (noticeTemplates.getSelectionModel().getSelectedItem() != null) {
@@ -168,7 +177,8 @@ public class NoticeDialog extends Stage {
             }
         });
 
-        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(doneButton);
         doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -179,9 +189,7 @@ public class NoticeDialog extends Stage {
         BorderPane.setMargin(doneButton, new Insets(5));
         mainPane.setBottom(doneButton);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

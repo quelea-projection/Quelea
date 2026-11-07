@@ -52,7 +52,7 @@ public class ImageGroupDrawer extends DisplayableDrawer {
         imageBox.getChildren().add(imageView);
         if(getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
                 && getCanvas() != QueleaApp.get().getStageWindow().getCanvas()) {
-            imageBox.setStyle("-fx-background-color:#dddddd;");
+            imageBox.getStyleClass().add("preview-backdrop");
         }
         imageBox.setVisible(false);
         getCanvas().getChildren().add(imageBox);

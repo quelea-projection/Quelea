@@ -63,6 +63,7 @@ import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.CardPane;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * The toolbar that sits atop of the theme dialog, and gives the user control
  * over the theme currently in use.
@@ -103,12 +104,9 @@ public class ThemeToolbar extends HBox {
         this.themePanel = themePanel;
         moreFontOptionsDialog = new FontOptionsDialog(themePanel);
         setPadding(new Insets(5));
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
-        if (!darkTheme) {
-            setStyle("-fx-background-color:#dddddd;");
-        }
+        getStyleClass().add("preview-backdrop");
         VBox topLevelFontBox = new VBox(10);
-        topLevelFontBox.setStyle("-fx-border-color: bbbbbb;");
+        topLevelFontBox.getStyleClass().add("theme-option-box");
         topLevelFontBox.setPadding(new Insets(10));
         getChildren().add(topLevelFontBox);
 
@@ -127,7 +125,8 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        fontExpandButton = new Button("...");
+        fontExpandButton = new Button("", QueleaIcon.ADD.create());
+        Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
         Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -147,7 +146,7 @@ public class ThemeToolbar extends HBox {
         topLevelFontBox.getChildren().add(fontTop);
 
         HBox fontMid = new HBox();
-        boldButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/bold-light.png" : "file:icons/bold.png", 15, 15, false, true)));
+        boldButton = new ToggleButton("", QueleaIcon.BOLD.create());
         Utils.setToolbarButtonStyle(boldButton);
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -155,7 +154,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        italicButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/italic-light.png" : "file:icons/italic.png", 15, 15, false, true)));
+        italicButton = new ToggleButton("", QueleaIcon.ITALIC.create());
         Utils.setToolbarButtonStyle(italicButton);
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -164,7 +163,7 @@ public class ThemeToolbar extends HBox {
             }
         });
         ToggleGroup alignGroup = new ToggleGroup();
-        leftAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/leftalign-light.png" : "file:icons/leftalign.png", 15, 15, false, true)));
+        leftAlignButton = new ToggleButton("", QueleaIcon.ALIGN_LEFT.create());
         Utils.setToolbarButtonStyle(leftAlignButton);
         leftAlignButton.setToggleGroup(alignGroup);
         leftAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -173,7 +172,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        centreAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/centrealign-light.png" : "file:icons/centrealign.png", 15, 15, false, true)));
+        centreAlignButton = new ToggleButton("", QueleaIcon.ALIGN_CENTER.create());
         Utils.setToolbarButtonStyle(centreAlignButton);
         centreAlignButton.setToggleGroup(alignGroup);
         centreAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -182,7 +181,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false);
             }
         });
-        rightAlignButton = new ToggleButton("", new ImageView(new Image(darkTheme ? "file:icons/rightalign-light.png" : "file:icons/rightalign.png", 15, 15, false, true)));
+        rightAlignButton = new ToggleButton("", QueleaIcon.ALIGN_RIGHT.create());
         Utils.setToolbarButtonStyle(rightAlignButton);
         rightAlignButton.setToggleGroup(alignGroup);
         rightAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -210,9 +209,10 @@ public class ThemeToolbar extends HBox {
 
         StackPane fontBottom = new StackPane();
         Text fontText = new Text(LabelGrabber.INSTANCE.getLabel("font.theme.label"));
-        fontText.setFill(Color.GRAY);
+        fontText.getStyleClass().add("muted-text");
         fontBottom.getChildren().add(fontText);
-        moreOptionsButton = new Button("...");
+        moreOptionsButton = new Button("", QueleaIcon.GENERAL.create());
+        Utils.setToolbarButtonStyle(moreOptionsButton);
         Utils.setToolbarButtonStyle(moreOptionsButton);
         moreOptionsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.font.options.label") + "..."));
         moreOptionsButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -235,7 +235,7 @@ public class ThemeToolbar extends HBox {
         //-------
 
         VBox topLevelBackBox = new VBox(10);
-        topLevelBackBox.setStyle("-fx-border-color: bbbbbb;");
+        topLevelBackBox.getStyleClass().add("theme-option-box");
         topLevelBackBox.setPadding(new Insets(10));
         getChildren().add(topLevelBackBox);
 
@@ -254,7 +254,7 @@ public class ThemeToolbar extends HBox {
         backTop.getChildren().add(backTypeSelection);
 
         vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
-        vidStretchCheckbox.setStyle("-fx-text-fill:#666666");
+        vidStretchCheckbox.getStyleClass().add("muted-label");
         HBox.setMargin(vidStretchCheckbox, new Insets(2, 0, 0, 0));
         vidStretchCheckbox.setAlignment(Pos.CENTER_RIGHT);
         vidStretchCheckbox.setVisible(false);
@@ -310,7 +310,7 @@ public class ThemeToolbar extends HBox {
         spacer2.setPrefWidth(5);
         vidLocationPanel.getChildren().add(spacer2);
         Label vidHueLabel = new Label(LabelGrabber.INSTANCE.getLabel("video.hue.label"));
-        vidHueLabel.setStyle("-fx-text-fill:#666666");
+        vidHueLabel.getStyleClass().add("muted-label");
         vidHueLabel.setMaxHeight(Double.MAX_VALUE);
         vidHueLabel.setAlignment(Pos.CENTER);
         vidLocationPanel.getChildren().add(vidHueLabel);
@@ -353,7 +353,7 @@ public class ThemeToolbar extends HBox {
 
         StackPane backBottom = new StackPane();
         Text backText = new Text(LabelGrabber.INSTANCE.getLabel("background.text"));
-        backText.setFill(Color.GRAY);
+        backText.getStyleClass().add("muted-text");
         backBottom.getChildren().add(backText);
         topLevelBackBox.getChildren().add(backBottom);
     }

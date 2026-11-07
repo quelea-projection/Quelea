@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.quelea.windows.style.MediaButton;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 
 /**
  * The timer controls containing a play / pause button, stop button
@@ -45,48 +48,36 @@ import java.util.Set;
  */
 public class TimerControls extends StackPane {
 
-    private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
-    private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
-    private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
-    private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
-    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
-    private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
+    private static final double CARD_WIDTH = 230;
     private boolean playpause;
-    private final ImageView playButton;
-    private final ImageView stopButton;
+    private final MediaButton playButton;
+    private final MediaButton stopButton;
     private boolean disableControls;
     private Set<Timer> timers;
     private boolean sync = false;
 
     public TimerControls() {
         timers = new HashSet<>();
-        Rectangle rect = new Rectangle(230, 80);
-        Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(1, Color.GREY)};
-        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-        rect.setOpacity(0.8);
-        rect.setFill(lg1);
-        rect.setArcHeight(20);
-        rect.setArcWidth(20);
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(5.0);
-        ds.setOffsetX(5.0);
-        ds.setColor(Color.GRAY);
-        ds.setInput(new Reflection(5, 0.4, 0.3, 0));
-        rect.setEffect(ds);
+        // Rounded card behind the controls; see .media-controls-card in base.css
+        Region rect = new Region();
+        rect.getStyleClass().add("media-controls-card");
+        rect.setMinSize(CARD_WIDTH, 80);
+        rect.setPrefSize(CARD_WIDTH, 80);
+        rect.setMaxSize(CARD_WIDTH, 80);
         getChildren().add(rect);
 
-        playButton = new ImageView(PLAY_IMAGE);
+        playButton = new MediaButton(QueleaIcon.PLAY, 46, true);
         setButtonParams(playButton);
         playButton.setTranslateX(-30);
         getChildren().add(playButton);
-        playButton.setOnMouseClicked((MouseEvent t) -> {
+        playButton.setOnAction(t -> {
             if (!disableControls) {
-                play(playButton.getImage().equals(PAUSE_IMAGE));
+                play(playButton.getIcon() == QueleaIcon.PAUSE);
             }
         });
 
-        stopButton = new ImageView(STOP_IMAGE);
-        stopButton.setOnMouseClicked((MouseEvent t) -> {
+        stopButton = new MediaButton(QueleaIcon.STOP, 46, false);
+        stopButton.setOnAction(t -> {
             if (!disableControls) {
                 reset();
             }
@@ -102,66 +93,34 @@ public class TimerControls extends StackPane {
 
     public void setDisableControls(boolean disable) {
         this.disableControls = disable;
-        if (disable) {
-            if (!playpause) {
-                playButton.setImage(PLAY_IMAGE_DISABLE);
-            } else {
-                playButton.setImage(PAUSE_IMAGE_DISABLE);
-            }
-            stopButton.setImage(STOP_IMAGE_DISABLE);
-        } else {
-            if (!playpause) {
-                playButton.setImage(PLAY_IMAGE);
-            } else {
-                playButton.setImage(PAUSE_IMAGE);
-            }
-            stopButton.setImage(STOP_IMAGE);
-        }
+        playButton.setIcon(playpause ? QueleaIcon.PAUSE : QueleaIcon.PLAY);
+        playButton.setDisable(disable);
+        stopButton.setDisable(disable);
     }
 
     public void play(boolean pause) {
         playpause = !playpause;
         if (pause) {
-            if (!disableControls) {
-                playButton.setImage(PLAY_IMAGE);
-            } else {
-                playButton.setImage(PLAY_IMAGE_DISABLE);
-            }
+            playButton.setIcon(QueleaIcon.PLAY);
             timers.forEach(Timer::pause);
         } else {
-            if (!disableControls) {
-                playButton.setImage(PAUSE_IMAGE);
-            } else {
-                playButton.setImage(PAUSE_IMAGE_DISABLE);
-            }
+            playButton.setIcon(QueleaIcon.PAUSE);
             timers.forEach(Timer::play);
         }
     }
 
     public void reset() {
 
-        if (disableControls) {
-            playButton.setImage(PLAY_IMAGE_DISABLE);
-        } else {
-            playButton.setImage(PLAY_IMAGE);
+        playButton.setIcon(QueleaIcon.PLAY);
+        if (!disableControls) {
             timers.forEach(Timer::stop);
-
         }
         playpause = false;
     }
 
-    private void setButtonParams(final ImageView button) {
-        button.setOnMouseEntered((MouseEvent t) -> {
-            if (!disableControls) {
-                button.setEffect(new Glow(0.5));
-            }
-        });
-        button.setOnMouseExited((MouseEvent t) -> {
-            button.setEffect(null);
-        });
-        button.setFitWidth(50);
-        button.setPreserveRatio(true);
-        button.setTranslateY(-10);
+    private void setButtonParams(final MediaButton button) {
+        // Timers have no position slider, so the buttons sit in the middle of the card
+        button.setTranslateY(0);
     }
 
     public void addTimer(Timer timer) {
@@ -169,11 +128,11 @@ public class TimerControls extends StackPane {
     }
 
     public void togglePause() {
-        play(playButton.getImage().equals(PAUSE_IMAGE));
+        play(playButton.getIcon() == QueleaIcon.PAUSE);
     }
 
     public boolean status() {
-        return playButton.getImage().equals(PAUSE_IMAGE);
+        return playButton.getIcon() == QueleaIcon.PAUSE && !disableControls;
     }
 
 }

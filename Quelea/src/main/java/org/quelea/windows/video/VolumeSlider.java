@@ -25,6 +25,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A volume slider. Consists of a slider and up / down icons.
@@ -47,9 +48,9 @@ public class VolumeSlider extends BorderPane {
             }
         });
         
-        setLeft(new Label("",new ImageView(new Image("file:icons/volumedown.png", 16, 16, false, true))));
+        setLeft(new Label("",QueleaIcon.VOLUME_DOWN.create()));
         setCenter(volumeSlider);
-        setRight(new Label("",new ImageView(new Image("file:icons/volumeup.png", 16, 16, false, true))));
+        setRight(new Label("",QueleaIcon.VOLUME_UP.create()));
     }
     
     /**

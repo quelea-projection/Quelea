@@ -61,8 +61,7 @@ public class MultimediaPanel extends AbstractPanel {
         VBox centerBit = new VBox(5);
         centerBit.setAlignment(Pos.CENTER);
         previewText = new Text();
-        previewText.setFont(Font.font("Verdana", 20));
-        previewText.setFill(Color.WHITE);
+        previewText.getStyleClass().add("media-title");
         BorderPane.setMargin(centerBit, new Insets(10));
         centerBit.getChildren().add(previewText);
         vidPreview.prefHeightProperty().bind(heightProperty().subtract(200));
@@ -71,7 +70,7 @@ public class MultimediaPanel extends AbstractPanel {
         setBottom(centerBit);
         setMinWidth(50);
         setMinHeight(50);
-        setStyle("-fx-background-color:grey;");
+        getStyleClass().add("media-panel");
         
         addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
             if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {

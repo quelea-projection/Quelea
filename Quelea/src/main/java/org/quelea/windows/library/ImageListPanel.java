@@ -56,8 +56,6 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class ImageListPanel extends BorderPane {
 
-    private static final String BORDER_STYLE_SELECTED = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
-    private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane imageList;
     private String dir;
     private Thread updateThread;
@@ -173,9 +171,7 @@ public class ImageListPanel extends BorderPane {
     }
 
     private void setupHover(final Node view) {
-        view.setStyle(BORDER_STYLE_DESELECTED);
-        view.setOnMouseEntered(mouseEvent -> view.setStyle(BORDER_STYLE_SELECTED));
-        view.setOnMouseExited(mouseEvent -> view.setStyle(BORDER_STYLE_DESELECTED));
+        view.getStyleClass().add("library-thumbnail"); // hover border: see base.css
     }
 
     public void changeDir(File absoluteFile) {

@@ -35,6 +35,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.options.customprefs.DefaultBibleSelector;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the bible options
@@ -92,7 +93,7 @@ public class OptionsBiblePanel {
     public Category getBiblesTab() {
         bindings.put((Field) maxVersesSetting.getElement(), useMaxVersesProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), new ImageView(new Image("file:icons/biblesettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), QueleaIcon.BIBLE.create(),
                 defaultBibleSetting,
                 showVerseNumSetting,
                 splitVersesSetting,

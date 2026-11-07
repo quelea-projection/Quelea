@@ -48,6 +48,9 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.Node;
+import javafx.scene.control.ProgressIndicator;
 
 /**
  * A panel used in the live / preview panels for displaying webpages.
@@ -63,7 +66,7 @@ public class WebPanel extends AbstractPanel {
     private WebDrawer drawer;
     private WebDisplayable wd;
     private final ImageView imagePreview;
-    private final ImageView loading;
+    private final ProgressIndicator loading;
     private final StackPane imagePane;
     private Button back;
     private Button forward;
@@ -81,13 +84,12 @@ public class WebPanel extends AbstractPanel {
     public WebPanel() {
         imagePane = new StackPane();
         imagePreview = new ImageView();
-        loading = new ImageView(new Image("file:icons/loading.gif"));
+        loading = new ProgressIndicator();
         drawer = new WebDrawer();
         VBox centerBit = new VBox(5);
         centerBit.setAlignment(Pos.CENTER);
         BorderPane.setMargin(centerBit, new Insets(10));
-        loading.setPreserveRatio(true);
-        loading.setFitHeight(50);
+        loading.setMaxSize(40, 40);
         imagePane.getChildren().add(loading);
         imagePreview.fitHeightProperty().bind(heightProperty().subtract(200));
         imagePreview.fitWidthProperty().bind(widthProperty().subtract(20));
@@ -95,7 +97,7 @@ public class WebPanel extends AbstractPanel {
         centerBit.getChildren().add(imagePane);
         setCenter(centerBit);
         setMinWidth(200);
-        setStyle("-fx-background-color:grey;");
+        getStyleClass().add("media-panel");
         HBox navigationBar = new HBox(5);
         navigationBar.setAlignment(Pos.CENTER);
         setupNavigationBarContent();
@@ -294,19 +296,19 @@ public class WebPanel extends AbstractPanel {
     }
 
     private void setupNavigationBarContent() {
-        back = new Button("", getButtonImageView("file:icons/arrow-back.png"));
+        back = new Button("", getButtonIcon(QueleaIcon.BACK));
         back.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.back();
             }
         });
-        forward = new Button("", getButtonImageView("file:icons/arrow-forward.png"));
+        forward = new Button("", getButtonIcon(QueleaIcon.FORWARD));
         forward.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.forward();
             }
         });
-        reload = new Button("", getButtonImageView("file:icons/reload.png"));
+        reload = new Button("", getButtonIcon(QueleaIcon.REFRESH));
         reload.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.reload();
@@ -315,10 +317,7 @@ public class WebPanel extends AbstractPanel {
         url = new TextField();
         url.setPrefHeight(32);
         url.setMaxHeight(32);
-        url.setStyle(""
-                + "-fx-font-size: 14px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-font-family: fantasy;");
+        url.getStyleClass().add("url-field");
         url.setTooltip(new Tooltip("Change URL"));
         url.setOnKeyReleased(e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
@@ -327,19 +326,19 @@ public class WebPanel extends AbstractPanel {
                 }
             }
         });
-        go = new Button("", getButtonImageView("file:icons/send.png"));
+        go = new Button("", getButtonIcon(QueleaIcon.SEND));
         go.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.setUrl(url.getText());
             }
         });
-        plus = new Button("", getButtonImageView("file:icons/zoom-in.png"));
+        plus = new Button("", getButtonIcon(QueleaIcon.ZOOM_IN));
         plus.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.zoom(true);
             }
         });
-        minus = new Button("", getButtonImageView("file:icons/zoom-out.png"));
+        minus = new Button("", getButtonIcon(QueleaIcon.ZOOM_OUT));
         minus.setOnMouseClicked(e -> {
             if (wd != null) {
                 wd.zoom(false);
@@ -347,8 +346,8 @@ public class WebPanel extends AbstractPanel {
         });
     }
 
-    private ImageView getButtonImageView(String path) {
-        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? path.replace(".png", "-light.png") : path));
+    private Node getButtonIcon(QueleaIcon icon) {
+        return icon.create(18);
     }
 
 }

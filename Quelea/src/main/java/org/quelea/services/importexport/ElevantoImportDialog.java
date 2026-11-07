@@ -48,6 +48,9 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.services.utils.Utils;
+
 /**
  *
  * @author Fabian Mathews
@@ -78,9 +81,7 @@ public class ElevantoImportDialog extends Stage {
             loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
             Scene scene = new Scene(root);
-            if (QueleaProperties.get().getUseDarkTheme()) {
-                scene.getStylesheets().add("org/modena_dark.css");
-            }
+            StyleManager.apply(scene);
             setScene(scene);
 
             serviceView.getSelectionModel().selectedItemProperty()
@@ -91,7 +92,7 @@ public class ElevantoImportDialog extends Stage {
         }
 
         centerOnScreen();
-        getIcons().add(new Image("file:icons/elevanto.png"));        
+        getIcons().add(new Image("file:icons/elevanto.png"));
     }
     
     public ElevantoParser getParser() {

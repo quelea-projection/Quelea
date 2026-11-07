@@ -43,6 +43,7 @@ import org.quelea.windows.main.actionhandlers.ExportPDFScheduleSongsActionHandle
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's schedule menu.
  * <p/>
@@ -71,54 +72,53 @@ public class ScheduleMenu extends Menu {
 
         final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
         addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"));
         if (!Utils.isMac()) {
-            addPowerpointItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/powerpoint-light.png" : "file:icons/powerpoint.png", 20, 20, true, false)));
+            addPowerpointItem.setGraphic(QueleaIcon.PRESENTATION.create());
         }
         addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPowerpointItem);
 
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"));
         if (!Utils.isMac()) {
-            addVideoItem.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/video file-light.png" : "file:icons/video file.png", 20, 20, true, false)));
+            addVideoItem.setGraphic(QueleaIcon.VIDEO.create());
         }
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
 
-        addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/timer-dark-light.png" : "file:icons/timer-dark.png", 16, 16, false, true)));
+        addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), QueleaIcon.TIMER.create());
         addTimerItem.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerItem);
 
-        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image(darkTheme ? "file:icons/add_pdf-light.png" : "file:icons/add_pdf.png", 16, 16, false, true)));
+        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), QueleaIcon.PDF.create());
         addPDFItem.setOnAction(new AddPdfActionHandler());
         getItems().add(addPDFItem);
 
         dvdImageStack = new StackPane();
-        dvdImageStack.getChildren().add(new ImageView(new Image(darkTheme ? "file:icons/dvd-light.png" : "file:icons/dvd.png", 16, 16, false, true)));
+        dvdImageStack.getChildren().add(QueleaIcon.DVD.create());
         addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDItem.setOnAction(new AddDVDActionHandler());
         if (!Utils.isMac()) {
             getItems().add(addDVDItem);
         }
 
-        addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image(darkTheme ? "file:icons/web-small-light.png" : "file:icons/web-small.png", 16, 16, false, true)));
+        addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), QueleaIcon.WEB.create());
         addWebItem.setOnAction(new AddWebActionHandler());
         getItems().add(addWebItem);
 
-        addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image(darkTheme ? "file:icons/image-light.png" : "file:icons/image.png", 16, 16, false, true)));
+        addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), QueleaIcon.IMAGES.create());
         addImageItem.setOnAction(new AddImageActionHandler());
         getItems().add(addImageItem);
 
         getItems().add(new SeparatorMenuItem());
 
-        manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image(darkTheme ? "file:icons/info-light.png" : "file:icons/info.png", 16, 16, false, true)));
+        manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), QueleaIcon.NOTICES.create());
         manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
         manageNoticesItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getNoticesKeys()));
         getItems().add(manageNoticesItem);
 
-        exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image(darkTheme ? "file:icons/pdf-light.png" : "file:icons/pdf.png", 16, 16, false, true)));
+        exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), QueleaIcon.PDF.create());
         exportScheduleItem.setOnAction(new ExportPDFScheduleSongsActionHandler());
         getItems().add(exportScheduleItem);
 

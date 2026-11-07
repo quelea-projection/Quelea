@@ -1,0 +1,83 @@
+/*
+ * Quelea high contrast theme - colour palette.
+ *
+ * Maximum legibility: black surfaces, white text and outlines, yellow accent.
+ * Same colour names as theme-light.css; only the values differ.
+ */
+.root {
+    /* ---- Surfaces ---------------------------------------------------- */
+    -q-window:          #000000;
+    -q-surface:         #000000;
+    -q-surface-alt:     #0d0d0d;
+    -q-header:          #000000;
+    -q-border:          #8a8a8a;
+    -q-border-strong:   #ffffff;
+    -q-backdrop:        #141414;
+
+    /* ---- Controls ---------------------------------------------------- */
+    -q-control:         #000000;
+    -q-control-hover:   #262626;
+    -q-control-pressed: #3a3a3a;
+    -q-hover:           rgba(255, 255, 255, 0.16);
+    -q-pressed:         rgba(255, 255, 255, 0.26);
+
+    /* ---- Text -------------------------------------------------------- */
+    -q-text:            #ffffff;
+    -q-text-muted:      #e0e0e0;
+    -q-on-accent:       #000000;
+
+    /* ---- Accent & status --------------------------------------------- */
+    -q-accent:          #ffd60a;
+    -q-accent-hover:    #ffe55c;
+    -q-accent-soft:     #4d4100;
+    -q-live:            #ff4d4d;
+    -q-drop-target:     #004d40;
+    -q-warning:         #ffd60a;
+    -q-error:           #ff6b6b;
+    -q-success:         #5cff8a;
+
+    /* ---- Icons ------------------------------------------------------- */
+    -q-icon:            #ffffff;
+    -q-icon-hover:      #ffd60a;
+
+    /* ---- Song section headings in the lyrics lists ------------------- */
+    -q-section-verse:   #7cc7ff;
+    -q-section-chorus:  #ff9e9e;
+    -q-section-other:   #8dff9e;
+
+    /* ---- Lyrics editor syntax colours -------------------------------- */
+    -q-lyrics-title:    #7cc7ff;
+    -q-lyrics-chords:   #d0d0d0;
+    -q-lyrics-error:    #ff6b6b;
+
+    /* ---- Map the palette onto JavaFX's built-in Modena theme --------- */
+    -fx-base:                           #000000;
+    -fx-background:                     -q-window;
+    -fx-control-inner-background:       -q-surface;
+    -fx-control-inner-background-alt:   -q-surface-alt;
+    -fx-accent:                         -q-accent;
+    -fx-focus-color:                    -q-accent;
+    -fx-faint-focus-color:              #ffd60a33;
+    -fx-selection-bar:                  -q-accent;
+    -fx-selection-bar-non-focused:      -q-accent-soft;
+    -fx-selection-bar-text:             -q-on-accent;
+    -fx-dark-text-color:                #000000;
+    -fx-mid-text-color:                 #ffffff;
+    -fx-light-text-color:               -q-text;
+    -fx-text-fill:                      -q-text;
+}
+
+/* Make keyboard focus and outlines unmistakable */
+.button:focused,
+.toggle-button:focused,
+.text-field:focused,
+.text-area:focused,
+.combo-box-base:focused {
+    -fx-background-insets: 0, 2;
+}
+
+.toolbar-button:focused {
+    -fx-border-color: -q-accent;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+}

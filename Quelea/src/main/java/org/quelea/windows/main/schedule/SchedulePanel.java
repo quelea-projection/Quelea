@@ -48,6 +48,9 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
+import org.quelea.windows.style.StyleManager;
+
+import org.quelea.windows.style.QueleaIcon;
 /**
  * The panel displaying the schedule / order of service. Items from here are
  * loaded into the preview panel where they are viewed and then projected live.
@@ -71,11 +74,8 @@ public class SchedulePanel extends BorderPane {
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
-        ImageView themeButtonIcon = new ImageView(new Image("file:icons/theme.png"));
-        themeButtonIcon.setFitWidth(16);
-        themeButtonIcon.setFitHeight(16);
-        themeButton = new Button("", themeButtonIcon);
+        themeButton = new Button("", QueleaIcon.THEME.create());
+        Utils.setToolbarButtonStyle(themeButton);
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("theme.button.tooltip")));
         scheduleList = new ScheduleList();
         scheduleList.itemsProperty().get().addListener(new ListChangeListener<IndexedDisplayable>() {
@@ -110,11 +110,9 @@ public class SchedulePanel extends BorderPane {
         });
 
         scheduleThemeNode = new ScheduleThemeNode(this::updateSongTheme, this::updateBibleTheme, themePopup, themeButton);
-        scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
+        scheduleThemeNode.getStyleClass().add("schedule-theme-popup");
         Scene scene = new Scene(scheduleThemeNode);
-        if (darkTheme) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         themePopup.setScene(scene);
 
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -145,19 +143,13 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png"));
-        removeIV.setFitWidth(16);
-        removeIV.setFitHeight(16);
-        removeButton = new Button("", removeIV);
+        removeButton = new Button("", QueleaIcon.CLOSE.create());
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip")));
         removeButton.setDisable(true);
         removeButton.setOnAction(new RemoveScheduleItemActionHandler());
 
-        ImageView upIV = new ImageView(new Image(darkTheme ? "file:icons/up-light.png" : "file:icons/up.png"));
-        upIV.setFitWidth(16);
-        upIV.setFitHeight(16);
-        upButton = new Button("", upIV);
+        upButton = new Button("", QueleaIcon.UP.create());
         Utils.setToolbarButtonStyle(upButton);
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip")));
         upButton.setDisable(true);
@@ -168,10 +160,7 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        ImageView downIV = new ImageView(new Image(darkTheme ? "file:icons/down-light.png" : "file:icons/down.png"));
-        downIV.setFitWidth(16);
-        downIV.setFitHeight(16);
-        downButton = new Button("", downIV);
+        downButton = new Button("", QueleaIcon.DOWN.create());
         Utils.setToolbarButtonStyle(downButton);
         downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip")));
         downButton.setDisable(true);
@@ -194,7 +183,7 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
-        headerLabel.setStyle("-fx-font-weight: bold;");
+        headerLabel.getStyleClass().add("panel-header-label");
         header.getItems().add(headerLabel);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);

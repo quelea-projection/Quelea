@@ -37,6 +37,7 @@ import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
 import org.quelea.windows.main.actionhandlers.ViewBibleActionHandler;
 import org.quelea.windows.main.widgets.TestPaneDialog;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's tools menu.
  * <p>
@@ -57,17 +58,16 @@ public class ToolsMenu extends Menu {
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
 
-        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
+        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), QueleaIcon.BIBLE.create());
         viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
 
-        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image(darkTheme ? "file:icons/bible-light.png" : "file:icons/bible.png", 20, 20, false, true)));
+        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), QueleaIcon.SEARCH.create());
         searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
 
-        testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/testbars.png", 20, 20, false, true)));
+        testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), QueleaIcon.TEST_PATTERN.create());
         testItem.setOnAction(t -> {
             TestPaneDialog dialog = testDialog.get();
             if (dialog == null) {
@@ -78,7 +78,7 @@ public class ToolsMenu extends Menu {
         });
         getItems().add(testItem);
 
-        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), new ImageView(new Image(darkTheme ? "file:icons/live_text-light.png" : "file:icons/live_text.png", 20, 20, false, true)));
+        liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), QueleaIcon.LIVE_TEXT.create());
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
         if (QueleaApp.get().getMobileLyricsServer() == null) {
@@ -86,7 +86,7 @@ public class ToolsMenu extends Menu {
         }
         getItems().add(liveTextItem);
 
-        optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
+        optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), QueleaIcon.SETTINGS.create());
         optionsItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getOptionsKeys()));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
 

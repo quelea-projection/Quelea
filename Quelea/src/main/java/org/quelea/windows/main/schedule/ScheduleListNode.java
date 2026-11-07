@@ -34,6 +34,7 @@ import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * @author Michael
@@ -42,22 +43,21 @@ public class ScheduleListNode extends HBox {
 
     private FadeTransition fade;
     private Button themeButton;
-    private ImageView liveIcon;
+    private Region liveIcon;
 
     public ScheduleListNode(Displayable displayable) {
         super(10);
         setAlignment(Pos.CENTER_LEFT);
         Node icon = displayable.getPreviewIcon();
-        liveIcon = new ImageView(new Image("file:icons/recordingssettingsicon.png"));
-        liveIcon.setFitHeight(10);
-        liveIcon.setFitWidth(10);
+        liveIcon = new Region();
+        liveIcon.getStyleClass().add("live-indicator");
         liveIcon.setVisible(false);
         getChildren().add(icon);
         getChildren().add(new Label(displayable.getPreviewText()));
         getChildren().add(liveIcon);
 
         if (displayable instanceof TextDisplayable || displayable instanceof TimerDisplayable) {
-            themeButton = new Button("", new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
+            themeButton = new Button("", QueleaIcon.THEME.create());
             if (displayable instanceof TextDisplayable) {
                 themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable) displayable));
             } else {

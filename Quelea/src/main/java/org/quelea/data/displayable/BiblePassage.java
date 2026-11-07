@@ -44,6 +44,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * A displayable passage from the bible.
  * <p>
@@ -330,8 +331,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @return the bible preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/bible.png"));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.BIBLE.createTile();
     }
 
     /**
