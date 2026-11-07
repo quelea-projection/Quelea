@@ -84,7 +84,13 @@ public class LyricDrawer extends WordDrawer {
     private Group oldTextGroup;
     private String[] oldText;
     private boolean newItem;
+    /**
+     * Player for video backgrounds. Created lazily the first time a video
+     * theme is set and released again as soon as a non-video theme is set, so
+     * drawers that never show a video don't hold a GStreamer pipeline.
+     */
     private VidDisplay vidDisplay;
+    private boolean playVideo = true;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -92,8 +98,6 @@ public class LyricDrawer extends WordDrawer {
         textGroup = new Group();
         smallTextGroup = new Group();
         lastClearedState = new HashMap<>();
-        vidDisplay = new VidDisplay();
-        vidDisplay.setLoop(true);
     }
 
     protected void drawText(double defaultFontSize, boolean dumbWrap) {
@@ -403,17 +407,27 @@ public class LyricDrawer extends WordDrawer {
             Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
         } else if (theme.getBackground() instanceof VideoBackground) {
-            var uri = ((VideoBackground) theme.getBackground()).getVideoFile().toURI();
-            if(!Objects.equals(vidDisplay.getUri(), uri)) {
-                vidDisplay.stop();
-                vidDisplay.setURI(uri);
-                vidDisplay.play();
+            if (playVideo) {
+                var uri = ((VideoBackground) theme.getBackground()).getVideoFile().toURI();
+                if (vidDisplay == null) {
+                    vidDisplay = new VidDisplay();
+                    vidDisplay.setLoop(true);
+                }
+                if (!Objects.equals(vidDisplay.getUri(), uri)) {
+                    vidDisplay.stop();
+                    vidDisplay.setURI(uri);
+                    vidDisplay.play();
+                }
+                newImageView.imageProperty().bind(vidDisplay.imageProperty());
             }
-            newImageView.imageProperty().bind(vidDisplay.imageProperty());
 
         } else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
+        }
+
+        if (!(theme.getBackground() instanceof VideoBackground)) {
+            stopVideo();
         }
 
         Node newBackground;
@@ -428,9 +442,41 @@ public class LyricDrawer extends WordDrawer {
 //        }
         getCanvas().getChildren().add(newImageView);
         newBackground = newImageView;
-        getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
+        Node oldBackground = getCanvas().getCanvasBackground();
+        if (oldBackground instanceof ImageView) {
+            // Detach the old background from any video frame property so it
+            // stops being updated (and referenced) by the video sink.
+            ((ImageView) oldBackground).imageProperty().unbind();
+        }
+        getCanvas().getChildren().remove(oldBackground);
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
+    }
+
+    /**
+     * Set whether video backgrounds should be played. Preview drawers turn this
+     * off while they aren't visible, so no video is decoded for them; the
+     * background is then left black. Turning it off releases any current
+     * player; after turning it back on, set the theme again to restart it.
+     *
+     * @param playVideo true to play video backgrounds (the default).
+     */
+    public void setPlayVideo(boolean playVideo) {
+        this.playVideo = playVideo;
+        if (!playVideo) {
+            stopVideo();
+        }
+    }
+
+    /**
+     * Stop and release the video background player, if there is one. A new
+     * player is created automatically the next time a video theme is set.
+     */
+    private void stopVideo() {
+        if (vidDisplay != null) {
+            vidDisplay.dispose();
+            vidDisplay = null;
+        }
     }
 
     /**

@@ -29,17 +29,12 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import org.quelea.data.ThemeDTO;
-import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Cancellable;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SerializableFont;
-import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ModalCancellableStage;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -60,9 +55,8 @@ public class VideoButton extends Button implements Cancellable {
      * <p/>
      * @param videoLocationField the video location field that goes with this
      * button.
-     * @param canvas the preview canvas to update.
      */
-    public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
+    public VideoButton(final TextField videoLocationField) {
         super("..");
         fileChooser = new FileChooser();
         if (QueleaProperties.get().getLastDirectory() != null) {
@@ -94,22 +88,8 @@ public class VideoButton extends Button implements Cancellable {
                             Platform.runLater(() -> {
                                 copyStage.hide();
                                 vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
+                                // The location field's listener updates the theme preview.
                                 videoLocationField.setText(vidLocation);
-                                LyricDrawer drawer = new LyricDrawer();
-                                drawer.setCanvas(canvas);
-                                ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                                        drawer.getTheme().getFontPaint(),
-                                        new SerializableFont(drawer.getTheme().getTranslateFont()),
-                                        drawer.getTheme().getTranslateFontPaint(),
-                                        new VideoBackground(vidLocation, 0, false),
-                                        drawer.getTheme().getShadow(),
-                                        drawer.getTheme().isBold(),
-                                        drawer.getTheme().isItalic(),
-                                        drawer.getTheme().isTranslateBold(),
-                                        drawer.getTheme().isTranslateItalic(),
-                                        drawer.getTheme().getTextPosition(),
-                                        drawer.getTheme().getTextAlignment());
-                                drawer.setTheme(theme);
                             });
                         }
                     }

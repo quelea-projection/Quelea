@@ -286,7 +286,7 @@ public class ThemeToolbar extends HBox {
                 checkConfirmButton();
             }
         });
-        Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation, themePanel.getCanvas());
+        Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation);
         imagePanel.getChildren().add(backgroundImageLocation);
         imagePanel.getChildren().add(backgroundImageSelectButton);
         backgroundCentre.add(imagePanel, "image");
@@ -302,7 +302,7 @@ public class ThemeToolbar extends HBox {
                 checkConfirmButton();
             }
         });
-        Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
+        Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation);
         vidLocationPanel.getChildren().add(backgroundVidLocation);
         vidLocationPanel.getChildren().add(backgroundVidSelectButton);
         vidPanel.getChildren().add(vidLocationPanel);

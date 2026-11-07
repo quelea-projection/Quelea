@@ -27,6 +27,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -63,6 +65,12 @@ public class ThemePreviewPanel extends VBox {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
+    private WordDrawer drawer;
+    /**
+     * Whether this panel is in a showing window - video backgrounds are only
+     * played while it is.
+     */
+    private final ObservableValue<Boolean> showing;
     private RadioButton songSelectButton;
     private RadioButton bibleSelectButton;
     private Button removeButton;
@@ -87,6 +95,13 @@ public class ThemePreviewPanel extends VBox {
         final ThemeDTO updateTheme = theme;
         canvas = new DisplayCanvas( false, () -> updateThemePreviewCanvas(updateTheme), Priority.LOW);
         canvas.setPrefSize(200, 160);
+        showing = sceneProperty().flatMap(Scene::windowProperty).flatMap(Window::showingProperty).orElse(false);
+        showing.addListener((ov, wasShowing, isShowing) -> {
+            setPreviewVideo(isShowing);
+            if (isShowing) {
+                updateThemePreviewCanvas(updateTheme);
+            }
+        });
         updateThemePreviewCanvas(theme);
         String name;
         if (theme == ThemeDTO.DEFAULT_THEME) {
@@ -202,15 +217,25 @@ public class ThemePreviewPanel extends VBox {
     }
 
     private void updateThemePreviewCanvas(ThemeDTO theme) {
-        WordDrawer drawer;
-        if (canvas.isStageView()) {
-            drawer = new StageDrawer();
-        } else {
-            drawer = new LyricDrawer();
+        // Reuse one drawer so a video theme doesn't start a new player on
+        // every update.
+        if (drawer == null) {
+            if (canvas.isStageView()) {
+                drawer = new StageDrawer();
+            } else {
+                drawer = new LyricDrawer();
+            }
+            drawer.setCanvas(canvas);
+            setPreviewVideo(showing.getValue());
         }
-        drawer.setCanvas(canvas);
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
+    }
+
+    private void setPreviewVideo(boolean play) {
+        if (drawer instanceof LyricDrawer) {
+            ((LyricDrawer) drawer).setPlayVideo(play);
+        }
     }
 
     public Image getThemePreviewImage() {

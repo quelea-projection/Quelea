@@ -26,18 +26,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
-import org.quelea.data.ImageBackground;
-import org.quelea.data.ThemeDTO;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.LyricDrawer;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.WordDrawer;
-import org.quelea.windows.stage.StageDrawer;
 
 /**
  * The image button where the user selects a image.
@@ -55,9 +48,8 @@ public class ImageButton extends Button {
      * <p>
      * @param imageLocationField the image location field that goes with this
      * button.
-     * @param canvas the preview canvas to update.
      */
-    public ImageButton(final TextField imageLocationField, final DisplayCanvas canvas) {
+    public ImageButton(final TextField imageLocationField) {
         super("..");
 //        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         final File imageDir = QueleaProperties.get().getImageDir();
@@ -81,23 +73,8 @@ public class ImageButton extends Button {
                 }
 
                 imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
+                // The location field's listener updates the theme preview.
                 imageLocationField.setText(imageLocation);
-                WordDrawer drawer;
-                if (canvas.isStageView()) {
-                    drawer = new StageDrawer();
-                } else {
-                    drawer = new LyricDrawer();
-                }
-                drawer.setCanvas(canvas);
-                ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                        drawer.getTheme().getFontPaint(), new SerializableFont(drawer.getTheme().getTranslateFont()),
-                        drawer.getTheme().getTranslateFontPaint(), new ImageBackground(imageLocation),
-                        drawer.getTheme().getShadow(), drawer.getTheme().isBold(),
-                        drawer.getTheme().isItalic(), drawer.getTheme().isTranslateBold(),
-                        drawer.getTheme().isTranslateItalic(), drawer.getTheme().getTextPosition(),
-                        drawer.getTheme().getTextAlignment());
-
-                drawer.setTheme(theme);
             }
         });
     }

@@ -18,19 +18,33 @@ import org.quelea.services.utils.GStreamerInitState;
 import java.net.URI;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class VidDisplay {
 
     private static int idCounter = 0;
+    /**
+     * Pipelines are shut down off the FX thread: setting a pipeline to NULL can
+     * block (on macOS the FX thread is also the AppKit main thread, which some
+     * GStreamer elements need during shutdown), and that must never freeze the UI.
+     */
+    private static final ExecutorService CLEANUP_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "Video pipeline cleanup");
+        t.setDaemon(true);
+        return t;
+    });
 
-    private PlayBin playBin;
+    private volatile PlayBin playBin;
     private FXImageSink fxImageSink;
     private final int id;
     private boolean loop;
     private URI uri;
     private Consumer<Double> posChanged;
     private Runnable onFinished;
+    private Timeline posTimer;
+    private boolean disposed;
     private static final Image BLANK_IMG;
 
     static {
@@ -49,13 +63,23 @@ public class VidDisplay {
             playBin = new PlayBin("playbin " + id);
             playBin.setVideoSink(fxImageSink.getSinkElement());
             playBin.getBus().connect((Bus.EOS) source -> {
+                PlayBin pb = playBin;
+                if (pb == null) {
+                    return;
+                }
                 if (loop) {
-                    playBin.seekSimple(Format.TIME, EnumSet.of(SeekFlags.FLUSH), 0);
+                    pb.seekSimple(Format.TIME, EnumSet.of(SeekFlags.FLUSH), 0);
                 } else {
                     onFinished.run();
                 }
             });
-            Timeline timer = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            // Only runs while playing (see play()/stop()). A permanently running
+            // timeline would be referenced by the JavaFX toolkit forever, keeping
+            // this display - and its native pipeline - from ever being collected.
+            posTimer = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+                if (playBin == null) {
+                    return;
+                }
                 long dur = playBin.queryDuration(Format.TIME);
                 long pos = playBin.queryPosition(Format.TIME);
                 if (dur > 0) {
@@ -63,8 +87,7 @@ public class VidDisplay {
                     posChanged.accept(relPos);
                 }
             }));
-            timer.setCycleCount(Animation.INDEFINITE);
-            timer.play();
+            posTimer.setCycleCount(Animation.INDEFINITE);
         }
     }
 
@@ -78,6 +101,7 @@ public class VidDisplay {
     public void play() {
         if (playBin != null) {
             playBin.play();
+            posTimer.play();
         }
     }
 
@@ -89,9 +113,32 @@ public class VidDisplay {
 
     public void stop() {
         if (playBin != null) {
+            posTimer.stop();
             playBin.stop();
             fxImageSink.clear();
         }
+    }
+
+    /**
+     * Stop playback and release the native GStreamer pipeline. The display
+     * can't be used again after this has been called.
+     */
+    public void dispose() {
+        if (disposed) {
+            return;
+        }
+        disposed = true;
+        if (playBin != null) {
+            final PlayBin pb = playBin;
+            playBin = null;
+            posTimer.stop();
+            fxImageSink.dispose();
+            CLEANUP_EXECUTOR.execute(() -> {
+                pb.stop();
+                pb.dispose();
+            });
+        }
+        uri = null;
     }
 
     public void setURI(URI uri) {
@@ -134,6 +181,9 @@ public class VidDisplay {
     }
 
     public void seek(double seekPos) {
+        if (playBin == null) {
+            return;
+        }
         long dur = playBin.queryDuration(Format.TIME);
         if (dur > 0) {
             playBin.seekSimple(Format.TIME, EnumSet.of(SeekFlags.FLUSH), (long) (seekPos * dur));
