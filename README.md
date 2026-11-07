@@ -38,4 +38,4 @@ Please note that if we can't recreate a bug, then we can't fix it, so providing 
 Great! Please see our specific [contributing guidelines](CONTRIBUTING.md) for more information.
 
 ## Signing policy
-Please see [SIGNING_POLICY.md](SIGNING_POLICY.md) for more information.
+Free code signing on Windows provided by SignPath.io. Please see [SIGNING_POLICY.md](SIGNING_POLICY.md) for more information.
