@@ -5,4 +5,9 @@ quelea (2027.0) stable
   * Support for bible book names in chapters in Zefania XML import
   * Fix UTF-8 filename issue with snap build
   * Fix issue with positions being wrong when dragging items in schedule
+  * Much faster adding, editing and removing of songs with large song databases
+  * Faster start-up with large song databases
+  * Much faster duplicate check when importing songs
+  * Fix new songs sometimes being saved twice
+  * Fix changes saved just before closing Quelea sometimes being lost
   * Various minor bugfixes
