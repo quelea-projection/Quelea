@@ -298,8 +298,6 @@ test {
         events 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
     }
-    // Keep the tests away from the developer's own ~/.quelea
-    systemProperty 'user.home', temporaryDir.absolutePath
 }
 
 jar {
