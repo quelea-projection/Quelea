@@ -17,11 +17,16 @@
  */
 package org.quelea.windows.main.schedule;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
+import javafx.css.PseudoClass;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ListCell;
@@ -34,10 +39,11 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
@@ -70,8 +76,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,13 +94,23 @@ import java.util.logging.Logger;
  */
 public class ScheduleList extends StackPane {
 
-    //Fudge to get markerRect to line up properly in the face of JavaFX listview bugs
-    public static final double STATIC_FULL_HEIGHT = 36.0;
+    /** Height of the gap that opens where a dragged item will land. */
+    private static final double DROP_GAP_HEIGHT = 40;
+    /** Space between the edge of the gap and the placeholder shown in it. */
+    private static final double DROP_SLOT_INSET = 3;
+    private static final Duration DROP_GAP_ANIMATION = Duration.millis(130);
 
     private final ListView<IndexedDisplayable> listView;
     private Schedule schedule;
-    private final Rectangle markerRect;
+    private final Region dropSlot;
+    private final Set<ListCell<IndexedDisplayable>> cells = Collections.newSetFromMap(new WeakHashMap<>());
+    private final Map<Node, TranslateTransition> slides = new HashMap<>();
+    /** Where a drop would insert, or -1 if it wouldn't insert anything. */
+    private int dropIndex = -1;
+    /** The text item that a dragged image or video would become the background of. */
+    private ListCell<IndexedDisplayable> dropOntoCell = null;
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final PseudoClass DROP_TARGET = PseudoClass.getPseudoClass("drop-target");
     private IndexedDisplayable tempDisp = null;
     private IndexedDisplayable displayableThatSeesMouse = null;
 
@@ -110,15 +131,17 @@ public class ScheduleList extends StackPane {
         listView = new ListView<>();
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         getChildren().add(listView);
-        markerRect = new Rectangle(200, 3, Color.GRAY);
-        markerRect.setVisible(false);
-        getChildren().add(markerRect);
-        markerRect.toFront();
+        dropSlot = new Region();
+        dropSlot.getStyleClass().add("schedule-drop-slot");
+        dropSlot.setManaged(false);
+        dropSlot.setMouseTransparent(true);
+        dropSlot.setVisible(false);
+        getChildren().add(dropSlot);
         Callback<ListView<IndexedDisplayable>, ListCell<IndexedDisplayable>> callback = new Callback<>() {
             @Override
             public ListCell<IndexedDisplayable> call(ListView<IndexedDisplayable> p) {
 
-                return new ListCell<>() {
+                ListCell<IndexedDisplayable> cell = new ListCell<>() {
                     @Override
                     public void updateItem(IndexedDisplayable indexedDisplayable, boolean empty) {
                         super.updateItem(indexedDisplayable, empty);
@@ -147,23 +170,14 @@ public class ScheduleList extends StackPane {
                                 db.setDragView(dragImage);
                             }
                         });
-                        setOnDragDropped(event -> dragDropped(event, this));
                         setOnDragDone(e -> {
-                            markerRect.setVisible(false);
+                            clearDropTarget(false);
                             e.consume();
                         });
 
                         if (empty || indexedDisplayable == null) {
                             setText(null);
                             setGraphic(null);
-                            setOnDragEntered(event -> {
-                                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null
-                                        || event.getDragboard().getString() != null) {
-                                    markerRect.setTranslateX(0);
-                                    markerRect.setTranslateY(listView.getItems().size()*STATIC_FULL_HEIGHT);
-                                    markerRect.setVisible(true);
-                                }
-                            });
                         } else {
                             Displayable item = indexedDisplayable.displayable();
                             ScheduleListNode scheduleListNode = new ScheduleListNode(item);
@@ -173,40 +187,11 @@ public class ScheduleList extends StackPane {
                             if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
                                 setContextMenu(new SchedulePopupMenu(item));
                             }
-
-                            setOnDragEntered(event -> {
-                                if (event.getDragboard().getString() != null) {
-                                    if (event.getDragboard().getString().equals("tempdisp")) {
-                                        markerRect.setTranslateX(getLayoutX() + getTranslateX());
-                                        markerRect.setTranslateY(getLayoutY() + getTranslateY());
-                                        markerRect.setVisible(true);
-                                    } else {
-                                        if (item instanceof SongDisplayable) {
-                                            setStyle("-fx-background-color: #99cccc;");
-                                        } else {
-                                            markerRect.setTranslateX(getLayoutX() + getTranslateX());
-                                            markerRect.setTranslateY(getLayoutY() + getTranslateY());
-                                            markerRect.setVisible(true);
-                                        }
-                                    }
-                                } else if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                                    markerRect.setTranslateX(getLayoutX() + getTranslateX());
-                                    markerRect.setTranslateY(getLayoutY() + getTranslateY());
-                                    markerRect.setVisible(true);
-                                }
-                            });
-                            setOnDragExited(t -> {
-                                setStyle("");
-                                markerRect.setVisible(false);
-                            });
-                            setOnDragOver(event -> {
-                                if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
-                                    event.acceptTransferModes(TransferMode.ANY);
-                                }
-                            });
                         }
                     }
                 };
+                cells.add(cell);
+                return cell;
             }
         };
         listView.setCellFactory(DisplayableListCell.forListView(null, callback, d -> d.displayable() instanceof SongDisplayable || d.displayable() instanceof BiblePassage || d.displayable() instanceof TimerDisplayable));
@@ -219,8 +204,10 @@ public class ScheduleList extends StackPane {
                     event.acceptTransferModes(TransferMode.ANY);
                 });
             }
+            updateDropTarget(event);
         });
-        listView.setOnDragDropped(event -> dragDropped(event, null));
+        listView.setOnDragExited(event -> clearDropTarget(true));
+        listView.setOnDragDropped(this::dragDropped);
         schedule = new Schedule();
         setOnKeyTyped(t -> {
             if (t.getCharacter().equals(" ")) {
@@ -264,12 +251,135 @@ public class ScheduleList extends StackPane {
         getSelectionModel().select(idxDisplayable);
     }
 
-    private void dragDropped(DragEvent event, ListCell<IndexedDisplayable> listCell) {
-
-        if (listCell != null) {
-            listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
+    /**
+     * Work out what a drop at the position of this event would do, and show
+     * it. This is decided here rather than in the cells, and from where the
+     * cells are laid out rather than where they are drawn, because the cells
+     * slide away from under the pointer as the gap opens.
+     */
+    private void updateDropTarget(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        List<ListCell<IndexedDisplayable>> shown = cells.stream()
+                .filter(cell -> cell.isVisible() && cell.getParent() != null)
+                .sorted(Comparator.comparingInt(ListCell::getIndex))
+                .toList();
+        boolean canInsert = db.getString() != null || db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+        if (db.hasFiles() || !canInsert || shown.isEmpty()) {
+            clearDropTarget(true);
+            return;
         }
-        markerRect.setVisible(false);
+        double y = shown.get(0).getParent().sceneToLocal(event.getSceneX(), event.getSceneY()).getY();
+        ListCell<IndexedDisplayable> over = null;
+        int index = -1;
+        int afterLast = 0;
+        for (ListCell<IndexedDisplayable> cell : shown) {
+            if (cell.isEmpty()) {
+                break;
+            }
+            double top = cell.getLayoutY();
+            double height = cell.getHeight();
+            if (y >= top && y < top + height) {
+                over = cell;
+            }
+            if (index < 0 && y < top + height / 2) {
+                index = cell.getIndex();
+            }
+            afterLast = cell.getIndex() + 1;
+        }
+        boolean isMedia = db.getString() != null && !db.getString().equals("tempdisp");
+        if (isMedia && over != null && over.getItem().displayable() instanceof TextDisplayable) {
+            closeDropGap(true);
+            setDropOntoCell(over);
+        } else {
+            setDropOntoCell(null);
+            openDropGap(index < 0 ? afterLast : index, shown);
+        }
+    }
+
+    private void setDropOntoCell(ListCell<IndexedDisplayable> cell) {
+        if (dropOntoCell != null) {
+            dropOntoCell.pseudoClassStateChanged(DROP_TARGET, false);
+        }
+        dropOntoCell = cell;
+        if (cell != null) {
+            cell.pseudoClassStateChanged(DROP_TARGET, true);
+        }
+    }
+
+    /**
+     * Slide the items from this index onwards down to make room, and show a
+     * placeholder in the space.
+     */
+    private void openDropGap(int index, List<ListCell<IndexedDisplayable>> shown) {
+        boolean alreadyOpen = dropIndex >= 0;
+        dropIndex = index;
+        for (ListCell<IndexedDisplayable> cell : cells) {
+            slideTo(cell, cell.getIndex() >= index ? DROP_GAP_HEIGHT : 0, true);
+        }
+        ListCell<IndexedDisplayable> anchor = shown.get(shown.size() - 1);
+        double top = anchor.getLayoutY() + anchor.getHeight();
+        for (ListCell<IndexedDisplayable> cell : shown) {
+            if (cell.getIndex() == index) {
+                anchor = cell;
+                top = cell.getLayoutY();
+                break;
+            }
+        }
+        Point2D position = sceneToLocal(anchor.getParent().localToScene(anchor.getLayoutX(), top));
+        double y = Math.min(position.getY(), getHeight() - DROP_GAP_HEIGHT) + DROP_SLOT_INSET;
+        dropSlot.resize(anchor.getWidth() - 2 * DROP_SLOT_INSET, DROP_GAP_HEIGHT - 2 * DROP_SLOT_INSET);
+        dropSlot.setLayoutX(position.getX() + DROP_SLOT_INSET);
+        if (alreadyOpen) {
+            slideTo(dropSlot, y, true);
+        } else {
+            dropSlot.setTranslateY(y);
+            dropSlot.setVisible(true);
+            FadeTransition fade = new FadeTransition(DROP_GAP_ANIMATION, dropSlot);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            fade.play();
+        }
+    }
+
+    private void closeDropGap(boolean animate) {
+        dropIndex = -1;
+        dropSlot.setVisible(false);
+        slideTo(dropSlot, dropSlot.getTranslateY(), false);
+        for (ListCell<IndexedDisplayable> cell : cells) {
+            slideTo(cell, 0, animate);
+        }
+    }
+
+    private void clearDropTarget(boolean animate) {
+        setDropOntoCell(null);
+        closeDropGap(animate);
+    }
+
+    private void slideTo(Node node, double y, boolean animate) {
+        TranslateTransition slide = slides.get(node);
+        if (animate && (slide == null ? node.getTranslateY() == y : slide.getToY() == y)) {
+            return;
+        }
+        if (slide != null) {
+            slide.stop();
+            slides.remove(node);
+        }
+        if (!animate) {
+            node.setTranslateY(y);
+            return;
+        }
+        TranslateTransition newSlide = new TranslateTransition(DROP_GAP_ANIMATION, node);
+        newSlide.setToY(y);
+        newSlide.setOnFinished(e -> slides.remove(node));
+        slides.put(node, newSlide);
+        newSlide.play();
+    }
+
+    private void dragDropped(DragEvent event) {
+        updateDropTarget(event);
+        int insertAt = dropIndex;
+        IndexedDisplayable dropOnto = dropOntoCell == null ? null : dropOntoCell.getItem();
+        clearDropTarget(false);
 
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
@@ -301,12 +411,7 @@ public class ScheduleList extends StackPane {
                         LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
                     }
                 }
-                boolean isSong = !(listCell == null || listCell.isEmpty());
-                if (isSong) {
-                    if (!(listCell.getItem().displayable() instanceof TextDisplayable)) {
-                        isSong = false;
-                    }
-                }
+                boolean isSong = dropOnto != null;
                 if (!isSong && !useTempDisp) {
                     Displayable visualDisplayable;
                     if (isVideo) {
@@ -323,7 +428,7 @@ public class ScheduleList extends StackPane {
                         //Was not added due to the thought that it could get confusing if someone added image to
                         //schedule and then it all of a sudden disappeared if they were trying to rearrange the schedule.
                     } else {
-                        IndexedDisplayable d = listCell.getItem();
+                        IndexedDisplayable d = dropOnto;
                         if (d.displayable() instanceof TextDisplayable textDisplayable) {
                             ThemeDTO theme = textDisplayable.getTheme();
                             SerializableDropShadow dropShadow = theme.getShadow();
@@ -385,7 +490,7 @@ public class ScheduleList extends StackPane {
                 }
                 for (IndexedDisplayable d : displayables) {
                     int newIndex;
-                    newIndex = listCell == null || listCell.getItem() == null ? listView.getItems().size() : listCell.getItem().index();
+                    newIndex = insertAt < 0 ? listView.getItems().size() : insertAt;
                     if (newIndex > listView.getItems().size()) {
                         newIndex = listView.getItems().size();
                     }

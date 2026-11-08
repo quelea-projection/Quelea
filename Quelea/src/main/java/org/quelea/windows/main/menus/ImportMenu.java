@@ -52,6 +52,7 @@ import org.quelea.services.importexport.ScreenMonkeyImportDialog;
 import org.quelea.services.importexport.WorshipHimImportDialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * Quelea's import menu.
@@ -115,7 +116,7 @@ public class ImportMenu extends Menu {
      * Create the import menu.
      */
     public ImportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("import.heading"), new ImageView(new Image("file:icons/left.png", 16, 16, false, true)));
+        super(LabelGrabber.INSTANCE.getLabel("import.heading"), QueleaIcon.IMPORT.create());
 
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
@@ -270,7 +271,7 @@ public class ImportMenu extends Menu {
             sofImportDialog.show();
         });
 
-        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
+        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), QueleaIcon.TEXT_FILE.create());
         plainTextItem.setOnAction((ActionEvent t) -> {
             plainTextImportDialog.show();
         });

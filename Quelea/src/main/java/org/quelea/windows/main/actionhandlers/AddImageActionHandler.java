@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * The action handler for adding images.
@@ -82,7 +84,10 @@ public class AddImageActionHandler implements EventHandler<ActionEvent> {
                                     TextInputDialog dialog = new TextInputDialog();
                                     dialog.setTitle(LabelGrabber.INSTANCE.getLabel("dialog.image.group.title"));
                                     dialog.setHeaderText(LabelGrabber.INSTANCE.getLabel("dialog.image.group.header"));
-                                    dialog.setGraphic(new ImageView(new Image("file:icons/image-group-schedule.png")));
+                                    javafx.scene.layout.Region icon = QueleaIcon.IMAGES.create(32);
+                                    icon.getStyleClass().add("dialog-icon-info");
+                                    dialog.setGraphic(icon);
+                                    StyleManager.apply(dialog.getDialogPane());
 
                                     String fallbackTitle = ImageGroupDisplayable.concatenatedFileNames(filesArray);
                                     dialog.getEditor().setText(fallbackTitle);

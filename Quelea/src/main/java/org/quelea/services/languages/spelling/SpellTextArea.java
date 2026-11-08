@@ -38,6 +38,8 @@ import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.UndoHandler;
 import org.quelea.windows.lyrics.LyricsTextArea;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 
 /**
  * The spell text area component - wraps a text area to provide spell check
@@ -54,7 +56,7 @@ public class SpellTextArea extends StackPane {
     private LyricsTextArea area;
     private KeyCode runSpellKey;
     private Speller speller;
-    private ImageView warning;
+    private Region warning;
     private Thread checkerThread;
     private volatile SimpleBooleanProperty spellingOkProperty;
     private UndoHandler undoHandler;
@@ -73,7 +75,8 @@ public class SpellTextArea extends StackPane {
         area = new LyricsTextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getTextArea().getText(), true));
         getChildren().add(area);
-        warning = new ImageView("file:icons/warning.png");
+        warning = QueleaIcon.SPELLCHECK.create(18);
+        warning.getStyleClass().add("icon-warning-tint");
         Tooltip.install(warning, new Tooltip(LabelGrabber.INSTANCE.getLabel("spelling.errors.in.doc.label")));
         StackPane.setAlignment(warning, Pos.TOP_RIGHT);
         StackPane.setMargin(warning, new Insets(5));

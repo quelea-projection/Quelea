@@ -98,8 +98,10 @@ import org.quelea.windows.main.StatusPanel;
 public final class Utils {
 
 	private static final Logger LOGGER = LoggerUtils.getLogger();
-	public static final String TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;-fx-text-fill: grey;";
-	public static final String HOVER_TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-padding:3,6,3,6;-fx-text-fill: grey;";
+	/**
+	 * CSS style class for flat, borderless toolbar buttons (see base.css).
+	 */
+	public static final String TOOLBAR_BUTTON_STYLE_CLASS = "toolbar-button";
 
 	/**
 	 * Don't instantiate me. I bite.
@@ -175,34 +177,11 @@ public final class Utils {
 	 * @param button the button to style.
 	 */
 	public static void setToolbarButtonStyle(final Node button) {
-		button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
-		if (button instanceof ToggleButton) {
-			ToggleButton toggle = (ToggleButton) button;
-			toggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
-				@Override
-				public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-					if (t1) {
-						button.setStyle(Utils.HOVER_TOOLBAR_BUTTON_STYLE);
-					} else {
-						button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
-					}
-				}
-			});
+		// Hover, pressed and selected states are handled by the "toolbar-button"
+		// rule in org/quelea/style/base.css.
+		if (!button.getStyleClass().contains(TOOLBAR_BUTTON_STYLE_CLASS)) {
+			button.getStyleClass().add(TOOLBAR_BUTTON_STYLE_CLASS);
 		}
-		button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				button.setStyle(Utils.HOVER_TOOLBAR_BUTTON_STYLE);
-			}
-		});
-		button.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (!(button instanceof ToggleButton && ((ToggleButton) button).isSelected())) {
-					button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
-				}
-			}
-		});
 	}
 
 	/**

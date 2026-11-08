@@ -1,0 +1,68 @@
+/*
+ * Quelea dark theme - colour palette.
+ *
+ * Same colour names as theme-light.css; only the values differ.
+ * (Replaces the old org/modena_dark.css.)
+ */
+.root {
+    /* ---- Surfaces ---------------------------------------------------- */
+    -q-window:          #1b1d21;
+    -q-surface:         #24272c;
+    -q-surface-alt:     #272a30;
+    -q-header:          #202327;
+    -q-border:          #33373e;
+    -q-border-strong:   #444952;
+    -q-backdrop:        #17191c;
+
+    /* ---- Controls ---------------------------------------------------- */
+    -q-control:         #2c3036;
+    -q-control-hover:   #353a41;
+    -q-control-pressed: #3e434b;
+    -q-hover:           rgba(255, 255, 255, 0.07);
+    -q-pressed:         rgba(255, 255, 255, 0.12);
+
+    /* ---- Text -------------------------------------------------------- */
+    -q-text:            #e4e6ea;
+    -q-text-muted:      #9aa1ad;
+    -q-on-accent:       #ffffff;
+
+    /* ---- Accent & status -------------------------------------------- */
+    -q-accent:          #3b7cf6;
+    -q-accent-hover:    #5a91f8;
+    -q-accent-soft:     #2b3a55;
+    -q-live:            #ff5c61;
+    -q-drop-target:     #2d4c48;
+    -q-warning:         #f5a524;
+    -q-error:           #ff6b61;
+    -q-success:         #4ade80;
+
+    /* ---- Icons ------------------------------------------------------- */
+    -q-icon:            #b9bec7;
+    -q-icon-hover:      #ffffff;
+
+    /* ---- Song section headings in the lyrics lists ------------------- */
+    -q-section-verse:   #8db4ff;
+    -q-section-chorus:  #ff8f87;
+    -q-section-other:   #7fdca4;
+
+    /* ---- Lyrics editor syntax colours -------------------------------- */
+    -q-lyrics-title:    #6ea8ff;
+    -q-lyrics-chords:   #a3a9b4;
+    -q-lyrics-error:    #ff6b61;
+
+    /* ---- Map the palette onto JavaFX's built-in Modena theme --------- */
+    -fx-base:                           #2c3036;
+    -fx-background:                     -q-window;
+    -fx-control-inner-background:       -q-surface;
+    -fx-control-inner-background-alt:   -q-surface-alt;
+    -fx-accent:                         -q-accent;
+    -fx-focus-color:                    -q-accent;
+    -fx-faint-focus-color:              #3b7cf622;
+    -fx-selection-bar:                  -q-accent;
+    -fx-selection-bar-non-focused:      -q-accent-soft;
+    -fx-selection-bar-text:             -q-on-accent;
+    -fx-dark-text-color:                #15171a;
+    -fx-mid-text-color:                 #c6cad1;
+    -fx-light-text-color:               -q-text;
+    -fx-text-fill:                      -q-text;
+}

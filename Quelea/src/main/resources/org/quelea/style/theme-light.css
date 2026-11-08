@@ -1,0 +1,69 @@
+/*
+ * Quelea light theme - colour palette.
+ *
+ * A theme file only defines named colours ("looked-up colours") on .root.
+ * All layout and component styling lives in base.css and refers to these
+ * names, so a new theme can be made by copying this file and changing the
+ * values below. See theme-dark.css for a second example.
+ */
+.root {
+    /* ---- Surfaces ---------------------------------------------------- */
+    -q-window:          #eef0f3;   /* main window background            */
+    -q-surface:         #ffffff;   /* lists, text fields, cards         */
+    -q-surface-alt:     #f7f8fa;   /* alternate list rows               */
+    -q-header:          #f7f8fa;   /* panel headers, toolbars, menubar  */
+    -q-border:          #d9dde3;   /* separators, outlines              */
+    -q-border-strong:   #c3c8d0;   /* control borders                   */
+    -q-backdrop:        #e3e6eb;   /* behind slide/image previews       */
+
+    /* ---- Controls ---------------------------------------------------- */
+    -q-control:         #ffffff;
+    -q-control-hover:   #f1f3f6;
+    -q-control-pressed: #e6e9ee;
+    -q-hover:           rgba(15, 23, 42, 0.06);   /* flat button hover   */
+    -q-pressed:         rgba(15, 23, 42, 0.11);
+
+    /* ---- Text -------------------------------------------------------- */
+    -q-text:            #1f2329;
+    -q-text-muted:      #69707d;
+    -q-on-accent:       #ffffff;
+
+    /* ---- Accent & status -------------------------------------------- */
+    -q-accent:          #2563eb;
+    -q-accent-hover:    #1d4fd8;
+    -q-accent-soft:     #dbe6fd;   /* selected, but list not focused     */
+    -q-live:            #e5484d;   /* the "live" indicator               */
+    -q-drop-target:     #cfe9e4;   /* drag & drop highlight              */
+    -q-warning:         #d97706;
+    -q-error:           #dc2626;
+    -q-success:         #16a34a;
+
+    /* ---- Icons ------------------------------------------------------- */
+    -q-icon:            #4a5260;
+    -q-icon-hover:      #1f2329;
+
+    /* ---- Song section headings in the lyrics lists ------------------- */
+    -q-section-verse:   #1d4ed8;
+    -q-section-chorus:  #b42318;
+    -q-section-other:   #157f3c;
+
+    /* ---- Lyrics editor syntax colours -------------------------------- */
+    -q-lyrics-title:    #1d4ed8;
+    -q-lyrics-chords:   #7a828f;
+    -q-lyrics-error:    #d92d20;
+
+    /* ---- Map the palette onto JavaFX's built-in Modena theme --------- */
+    -fx-base:                           #f3f4f6;
+    -fx-background:                     -q-window;
+    -fx-control-inner-background:       -q-surface;
+    -fx-control-inner-background-alt:   -q-surface-alt;
+    -fx-accent:                         -q-accent;
+    -fx-focus-color:                    -q-accent;
+    -fx-faint-focus-color:              #2563eb22;
+    -fx-selection-bar:                  -q-accent;
+    -fx-selection-bar-non-focused:      -q-accent-soft;
+    -fx-selection-bar-text:             -q-on-accent;
+    -fx-dark-text-color:                -q-text;
+    -fx-mid-text-color:                 #3a404a;
+    -fx-light-text-color:               #ffffff;
+}

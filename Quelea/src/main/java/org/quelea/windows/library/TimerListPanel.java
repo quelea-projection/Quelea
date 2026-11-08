@@ -47,6 +47,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
 import org.quelea.windows.timer.TimerIO;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel displayed on the library to select the list of videos..
@@ -113,7 +114,7 @@ public class TimerListPanel extends BorderPane {
         });
 
         ContextMenu removeMenu = new ContextMenu();
-        MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
+        MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), QueleaIcon.DELETE.create());
         removeItem.setOnAction(new RemoveTimerActionHandler());
         removeMenu.getItems().add(removeItem);
         timerList.setCellFactory(DisplayableListCell.forListView(removeMenu, callback, null));

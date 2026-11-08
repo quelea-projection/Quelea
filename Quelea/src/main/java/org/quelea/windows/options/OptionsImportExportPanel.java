@@ -34,6 +34,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the recording options
@@ -58,7 +59,7 @@ public class OptionsImportExportPanel {
     }
 
     public Category getImportExportTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("importexport.options.heading"), new ImageView(new Image("file:icons/arrows.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("importexport.options.heading"), QueleaIcon.IMPORT_EXPORT.create(),
                 Group.of(LabelGrabber.INSTANCE.getLabel("elevanto.import.heading"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("client.id"), elevantoClientIdProperty).customKey(elevantoClientIdKey)),
                 Group.of(LabelGrabber.INSTANCE.getLabel("pco.import.heading"),

@@ -41,6 +41,7 @@ import org.quelea.windows.timer.TimerDrawer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A displayable that's a countdown timer.
@@ -246,8 +247,8 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * @return the timer's preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/timer-small-light.png" : "file:icons/timer-small.png", 30, 30, false, true));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.TIMER.createTile();
     }
 
     /**

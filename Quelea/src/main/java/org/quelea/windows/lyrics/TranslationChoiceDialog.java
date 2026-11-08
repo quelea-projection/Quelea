@@ -40,6 +40,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * Dialog where users can select the translations to be displayed.
  *
@@ -59,7 +61,7 @@ public class TranslationChoiceDialog extends Stage {
         Utils.addIconsToStage(this);
         BorderPane root = new BorderPane();
         content = new VBox(5);
-        BorderPane.setMargin(content, new Insets(10));
+        BorderPane.setMargin(content, new Insets(16));
         root.setCenter(content);
 
         Label selectTranslationLabel = new Label(LabelGrabber.INSTANCE.getLabel("select.translation.label"));
@@ -75,16 +77,14 @@ public class TranslationChoiceDialog extends Stage {
             }
         });
         okButton.setDefaultButton(true);
-        StackPane.setMargin(okButton, new Insets(5));
+        StyleManager.markPrimaryButton(okButton);
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
         buttonPane.getChildren().add(okButton);
         root.setBottom(buttonPane);
 
         Scene scene = new Scene(root);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

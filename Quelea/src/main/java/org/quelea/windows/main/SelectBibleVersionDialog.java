@@ -23,26 +23,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * Dialog used for choosing which bible versions to show, and in what order.
@@ -79,7 +78,8 @@ public class SelectBibleVersionDialog extends Stage {
         Label hintLabel = new Label(LabelGrabber.INSTANCE.getLabel("select.bible.versions.hint"));
         hintLabel.setWrapText(true);
         root.getChildren().addAll(hintLabel, listView);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(okButton);
         okButton.setDefaultButton(true);
         okButton.setDisable(true);
         okButton.setOnAction(t -> {
@@ -90,20 +90,18 @@ public class SelectBibleVersionDialog extends Stage {
             okButton.setDisable(ticked.isEmpty());
             listView.refresh();
         });
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         cancelButton.setCancelButton(true);
         cancelButton.setOnAction(t -> hide());
-        HBox buttonPanel = new HBox(5);
-        buttonPanel.setAlignment(Pos.CENTER);
+        HBox buttonPanel = new HBox(8);
         buttonPanel.getChildren().addAll(okButton, cancelButton);
-        root.getChildren().add(buttonPanel);
-        StackPane containerPane = new StackPane();
-        StackPane.setMargin(root, new Insets(10));
-        containerPane.getChildren().add(root);
-        Scene scene = new Scene(containerPane, 420, 320);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        root.setSpacing(8);
+        root.setPadding(new Insets(16, 18, 16, 18));
+        VBox.setVgrow(listView, Priority.ALWAYS);
+        BorderPane containerPane = new BorderPane(root);
+        containerPane.setBottom(buttonPanel);
+        Scene scene = new Scene(containerPane, 420, 340);
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

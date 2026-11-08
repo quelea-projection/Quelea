@@ -31,6 +31,9 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.services.utils.Utils;
+
 /**
  * A dialog where the user can browse through the installed bibles.
  * <p/>
@@ -48,7 +51,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
     public BibleBrowseDialog() {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.browser.title"));
-        getIcons().add(new Image("file:icons/bible.png"));
+        Utils.addIconsToStage(this);
 
         HBox northPanel = new HBox();
         bibles = new ComboBox<>();
@@ -59,8 +62,8 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         selectBibleLabel.setLabelFor(bibles);
         northPanel.getChildren().add(selectBibleLabel);
         northPanel.getChildren().add(bibles);
-        northPanel.setSpacing(5);
-        BorderPane.setMargin(northPanel, new Insets(0, 5, 5, 5));
+        northPanel.getStyleClass().add("dialog-toolbar");
+        northPanel.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         mainPane.setTop(northPanel);
 
         books = new ListView<>();
@@ -79,9 +82,7 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         updateBibles();
 
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

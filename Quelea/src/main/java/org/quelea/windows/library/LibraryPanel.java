@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.style.UiEffects;
 
 /**
  * The panel that's used to display the library of media (pictures, video) and
@@ -50,6 +51,7 @@ public class LibraryPanel extends VBox {
     public LibraryPanel() {
         LOGGER.log(Level.INFO, "Creating library panel");
         tabPane = new TabPane();
+        UiEffects.installTabFade(tabPane);
 
         LOGGER.log(Level.INFO, "Creating library song panel");
         songPanel = new LibrarySongPanel();

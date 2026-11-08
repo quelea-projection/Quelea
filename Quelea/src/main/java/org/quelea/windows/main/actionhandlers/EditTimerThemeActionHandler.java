@@ -37,6 +37,9 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.newsong.ThemePanel;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * Called when the theme of the current timer in the schedule should be edited.
  *
@@ -75,8 +78,9 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
             wordsArea.replaceText(selectedDisplayable.getPretext() + selectedDisplayable.secondsToTime(seconds) + selectedDisplayable.getPosttext());
         }
         
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(confirmButton);
+        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
@@ -107,9 +111,7 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
         bp.setBottom(hb);
 
         Scene scene = new Scene(bp);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         s.setScene(scene);
         s.setMinHeight(600);
         s.setMinWidth(250);

@@ -42,6 +42,9 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * A dialog showing the available test patterns that can be projected on the
  * displays.
@@ -77,9 +80,7 @@ public class TestPaneDialog extends Stage {
         });
 
         BorderPane root = new BorderPane();
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            root.setStyle("-fx-background-color:#dddddd;");
-        }
+        root.getStyleClass().add("preview-backdrop");
         Label explanation = new Label(LabelGrabber.INSTANCE.getLabel("test.patterns.explanation"));
         explanation.setWrapText(true);
         BorderPane.setMargin(explanation, new Insets(20));
@@ -97,7 +98,8 @@ public class TestPaneDialog extends Stage {
         root.setCenter(centrePane);
 
         StackPane bottomPane = new StackPane();
-        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"), new ImageView(new Image("file:icons/tick.png")));
+        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(closeButton);
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -110,9 +112,7 @@ public class TestPaneDialog extends Stage {
         root.setBottom(bottomPane);
 
         Scene scene = new Scene(root);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

@@ -43,37 +43,41 @@ public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent
     @Override
     public void handle(ActionEvent event) {
         ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-        List<BiblePassage> passages = new ArrayList<>();
+        List<IndexedDisplayable> passages = new ArrayList<>();
         for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
-            if (d.displayable() instanceof BiblePassage passage) {
-                passages.add(passage);
+            if (d.displayable() instanceof BiblePassage) {
+                passages.add(d);
             }
         }
         if (passages.isEmpty()) {
             return;
         }
-        List<Bible> bibles = new SelectBibleVersionDialog().getVersions(passages.get(0).getBibleVersions());
+        List<Bible> bibles = new SelectBibleVersionDialog().getVersions(((BiblePassage) passages.get(0).displayable()).getBibleVersions());
         if (bibles == null) {
             return;
         }
-        Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
+        Map<IndexedDisplayable, BiblePassage> replaceMap = new IdentityHashMap<>();
         List<String> missing = new ArrayList<>();
-        for (BiblePassage passage : passages) {
+        for (IndexedDisplayable item : passages) {
+            BiblePassage passage = (BiblePassage) item.displayable();
             BiblePassage newPassage = passage.withVersions(bibles);
             if (newPassage == null) {
                 missing.add(passage.getLocation());
             } else {
-                replaceMap.put(passage, newPassage);
+                replaceMap.put(item, newPassage);
                 missing.addAll(newPassage.getMissingVerses());
             }
         }
         List<Integer> selected = new ArrayList<>(sl.getSelectionModel().getSelectedIndices());
         sl.getSelectionModel().clearSelection();
-        for (BiblePassage key : replaceMap.keySet()) {
-            int index = sl.indexOf(key);
-            if (index != -1) {
-                sl.getItems().remove(index);
-                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
+        //Find the list entries by identity, as the same passage can be in the schedule more than once
+        for (Map.Entry<IndexedDisplayable, BiblePassage> entry : replaceMap.entrySet()) {
+            for (int index = 0; index < sl.getItems().size(); index++) {
+                if (sl.getItems().get(index) == entry.getKey()) {
+                    sl.getItems().remove(index);
+                    sl.getItems().add(index, new IndexedDisplayable(entry.getValue(), index));
+                    break;
+                }
             }
         }
         if (!selected.isEmpty()) {

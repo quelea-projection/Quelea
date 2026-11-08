@@ -45,6 +45,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * The panel used for browsing the database of songs and adding any songs to the
  * order of service.
@@ -64,7 +65,6 @@ public class LibrarySongPanel extends BorderPane {
      * Create and initialise the library song panel.
      */
     public LibrarySongPanel() {
-        boolean darkTheme = QueleaProperties.get().getUseDarkTheme();
         songList = new LibrarySongList(true);
         songList.getListView().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -82,11 +82,13 @@ public class LibrarySongPanel extends BorderPane {
         setCenter(listScrollPane);
 
         HBox northPanel = new HBox(3);
-        Label searchLabel = new Label(LabelGrabber.INSTANCE.getLabel("library.song.search"));
+        Label searchLabel = new Label("", QueleaIcon.SEARCH.create());
+        searchLabel.getStyleClass().add("search-icon-label");
         searchLabel.setMaxHeight(Double.MAX_VALUE);
         searchLabel.setAlignment(Pos.CENTER);
         northPanel.getChildren().add(searchLabel);
         searchBox = new TextField();
+        searchBox.setPromptText(LabelGrabber.INSTANCE.getLabel("library.song.search"));
         HBox.setHgrow(searchBox, Priority.SOMETIMES);
         searchBox.setMaxWidth(Double.MAX_VALUE);
         searchBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -105,7 +107,7 @@ public class LibrarySongPanel extends BorderPane {
             }
         });
         northPanel.getChildren().add(searchBox);
-        searchCancelButton = new Button("", new ImageView(new Image(darkTheme ? "file:icons/cross-light.png" : "file:icons/cross.png")));
+        searchCancelButton = new Button("", QueleaIcon.CLOSE.create());
         Utils.setToolbarButtonStyle(searchCancelButton);
         searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
         searchCancelButton.setDisable(true);
@@ -116,24 +118,19 @@ public class LibrarySongPanel extends BorderPane {
             }
         });
         northPanel.getChildren().add(searchCancelButton);
-        BorderPane.setMargin(northPanel, new Insets(0, 5, 0, 5));
+        northPanel.setAlignment(Pos.CENTER_LEFT);
+        BorderPane.setMargin(northPanel, new Insets(6, 6, 6, 6));
         setTop(northPanel);
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
 
-        ImageView addIV = new ImageView(new Image(darkTheme ? "file:icons/newsongdb-light.png" : "file:icons/newsongdb.png"));
-        addIV.setFitWidth(16);
-        addIV.setFitHeight(16);
-        addButton = new Button("", addIV);
+        addButton = new Button("", QueleaIcon.LIBRARY_ADD.create());
         Utils.setToolbarButtonStyle(addButton);
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
         addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
-        ImageView removeIV = new ImageView(new Image(darkTheme ? "file:icons/removedb-light.png" : "file:icons/removedb.png"));
-        removeIV.setFitWidth(16);
-        removeIV.setFitHeight(16);
-        removeButton = new Button("", removeIV);
+        removeButton = new Button("", QueleaIcon.DELETE.create());
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.text")));
         removeButton.setDisable(true);

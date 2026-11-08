@@ -47,15 +47,9 @@ public class DisplayPreview extends StackPane {
      */
     public DisplayPreview(DisplayCanvas canvas) {
         this.canvas = canvas;
-        DropShadow dropShadow = new DropShadow();
-        dropShadow.setRadius(10);
-        dropShadow.setOffsetX(6);
-        dropShadow.setOffsetY(6);
-        dropShadow.setColor(Color.GRAY);
-        canvas.setEffect(dropShadow);
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            setStyle("-fx-background-color:#dddddd;");
-        }
+        // Drop shadow: see .display-preview-canvas in base.css
+        canvas.getStyleClass().add("display-preview-canvas");
+        getStyleClass().add("preview-backdrop");
         getChildren().add(canvas);
         updateSize();
         ChangeListener<Number> cl = (ov, t, t1) -> updateSize();

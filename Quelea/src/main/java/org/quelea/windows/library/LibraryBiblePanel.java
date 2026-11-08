@@ -55,6 +55,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * The panel used to get bible verses.
@@ -97,6 +99,14 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         preview = new WebView();
         webEngine = preview.getEngine();
         clearWebView();
+        // Redraw the HTML preview in the new colours when the theme changes
+        StyleManager.themeProperty().addListener((obs, oldTheme, newTheme) -> {
+            if (getPassageSelector().getText().isEmpty()) {
+                clearWebView();
+            } else {
+                update();
+            }
+        });
         if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
         } else {
@@ -125,7 +135,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         BorderPane bottomPane = new BorderPane();
         VBox.setVgrow(bottomPane, Priority.SOMETIMES);
         bottomPane.setCenter(preview);
-        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), QueleaIcon.CHECK.create());
         addToSchedule.setOnAction((ActionEvent t) -> {
             Bible bible = bibleSelector.getSelectionModel().getSelectedItem();
             BiblePassage passage = new BiblePassage(bible.getName(), getBibleLocation(), getVerses(), multi);

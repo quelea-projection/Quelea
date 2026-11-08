@@ -28,6 +28,11 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.presentation.PowerPointHandler;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+
 /**
  *
  * @author Anton Smirnov (dev@antonsmirnov.name), Michael Berry
@@ -38,7 +43,7 @@ public class Dialog extends Stage {
     protected double originalWidth, originalHeight;
     protected Scene scene;
     protected BorderPane borderPanel;
-    protected ImageView icon;
+    protected StackPane icon;
     protected VBox messageBox;
     protected Label messageLabel;
     protected boolean stacktraceVisible;
@@ -73,7 +78,7 @@ public class Dialog extends Stage {
         protected static final int MESSAGE_MAX_WIDTH = 800;
         protected static final int BUTTON_WIDTH = 60;
         protected static final double MARGIN = 10;
-        protected static final String ICON_PATH = "/org/javafx/dialog/";
+        protected static final double ICON_SIZE = 36;
         protected Dialog stage;
 
         public Builder create() {
@@ -84,10 +89,14 @@ public class Dialog extends Stage {
             stage.centerOnScreen();
             stage.borderPanel = new BorderPane();
 
-            // icon
-            stage.icon = new ImageView();
+            stage.borderPanel.getStyleClass().add("quelea-dialog");
+
+            // icon (filled in by one of the set*Icon() methods)
+            stage.icon = new StackPane();
+            stage.icon.getStyleClass().add("dialog-icon");
             stage.borderPanel.setLeft(stage.icon);
-            BorderPane.setMargin(stage.icon, new Insets(MARGIN));
+            BorderPane.setAlignment(stage.icon, Pos.TOP_CENTER);
+            BorderPane.setMargin(stage.icon, new Insets(2 * MARGIN, 0, MARGIN, 2 * MARGIN));
 
             // message
             stage.messageBox = new VBox();
@@ -101,20 +110,18 @@ public class Dialog extends Stage {
             stage.messageBox.getChildren().add(stage.messageLabel);
             stage.borderPanel.setCenter(stage.messageBox);
             BorderPane.setAlignment(stage.messageBox, Pos.CENTER);
-            BorderPane.setMargin(stage.messageBox, new Insets(MARGIN, MARGIN, MARGIN, 2 * MARGIN));
+            BorderPane.setMargin(stage.messageBox, new Insets(2 * MARGIN, 2 * MARGIN, 2 * MARGIN, 1.5 * MARGIN));
 
             // buttons
             stage.buttonsPanel = new HBox();
             stage.buttonsPanel.setSpacing(MARGIN);
-            stage.buttonsPanel.setAlignment(Pos.BOTTOM_CENTER);
-            BorderPane.setMargin(stage.buttonsPanel, new Insets(0, 0, 1.5 * MARGIN, 0));
+            stage.buttonsPanel.setAlignment(Pos.CENTER_RIGHT);
+            stage.buttonsPanel.getStyleClass().add("dialog-button-bar");
             stage.borderPanel.setBottom(stage.buttonsPanel);
             stage.borderPanel.widthProperty().addListener((ov, t, t1) -> stage.buttonsPanel.layout());
 
             stage.scene = new Scene(stage.borderPanel);
-            if (QueleaProperties.get().getUseDarkTheme()) {
-                stage.scene.getStylesheets().add("org/modena_dark.css");
-            }
+            StyleManager.apply(stage.scene);
             stage.setScene(stage.scene);
             return this;
         }
@@ -140,7 +147,7 @@ public class Dialog extends Stage {
 
         private void alignScrollPane() {
             stage.setWidth(
-                    stage.icon.getImage().getWidth()
+                    ICON_SIZE
                     + Math.max(
                             stage.messageLabel.getWidth(),
                             (stage.stacktraceVisible
@@ -152,7 +159,7 @@ public class Dialog extends Stage {
 
             stage.setHeight(
                     Math.max(
-                            stage.icon.getImage().getHeight(),
+                            ICON_SIZE,
                             stage.messageLabel.getHeight()
                             + stage.stacktraceButtonsPanel.getHeight()
                             + (stage.stacktraceVisible
@@ -236,33 +243,38 @@ public class Dialog extends Stage {
             return this;
         }
 
-        protected void setIconFromResource(String resourceName) {
-            final Image image = new Image(getClass().getResourceAsStream(resourceName));
-            stage.icon.setImage(image);
+        /**
+         * Show a vector icon at the left of the dialog. The colour comes from
+         * the .dialog-icon-* style class (see base.css).
+         */
+        protected void setIcon(QueleaIcon icon, String kind) {
+            Region iconNode = icon.create(ICON_SIZE);
+            iconNode.getStyleClass().add("dialog-icon-" + kind);
+            stage.icon.getChildren().setAll(iconNode);
         }
 
         public Builder setWarningIcon() {
-            setIconFromResource(ICON_PATH + "warningIcon.png");
+            setIcon(QueleaIcon.WARNING, "warning");
             return this;
         }
 
         public Builder setErrorIcon() {
-            setIconFromResource(ICON_PATH + "errorIcon.png");
+            setIcon(QueleaIcon.ERROR, "error");
             return this;
         }
 
         protected Builder setThrowableIcon() {
-            setIconFromResource(ICON_PATH + "bugIcon.png");
+            setIcon(QueleaIcon.BUG, "error");
             return this;
         }
 
         protected Builder setInfoIcon() {
-            setIconFromResource(ICON_PATH + "infoIcon.png");
+            setIcon(QueleaIcon.INFO, "info");
             return this;
         }
 
         protected Builder setConfirmationIcon() {
-            setIconFromResource(ICON_PATH + "confirmationIcon.png");
+            setIcon(QueleaIcon.HELP, "info");
             return this;
         }
 
@@ -347,6 +359,8 @@ public class Dialog extends Stage {
             }
 
             stage.buttonsPanel.getChildren().get(0).requestFocus();
+            // Style the first button as the primary action (see .primary-button in base.css)
+            stage.buttonsPanel.getChildren().get(0).getStyleClass().add("primary-button");
             return stage;
         }
     }

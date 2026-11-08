@@ -47,6 +47,10 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.main.widgets.LoadingPane;
 
+import org.quelea.windows.style.StyleManager;
+
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
 /**
  * A dialog that can be used for searching for bible passages.
  * <p/>
@@ -69,27 +73,29 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     public BibleSearchDialog() {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
-        getIcons().add(new Image("file:icons/search.png"));
+        Utils.addIconsToStage(this);
 
         overlay = new LoadingPane();
         searchField = new TextField();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
         chapterPane = new FlowPane();
+        chapterPane.getStyleClass().add("bible-chapter-text");
         scrollPane = new ScrollPane();
         scrollPane.setContent(chapterPane);
         searchResults = new BibleSearchTreeView(scrollPane, bibles);
         resultsField = new Text(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
-        resultsField.setFont(Font.font("Sans", 14));
-        resultsField.getStyleClass().add("text");
-        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        resultsField.getStyleClass().addAll("text", "muted-text");
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(addToSchedule);
 
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();
 
         //top panel
         HBox northPanel = new HBox();
-        northPanel.setPadding(new Insets(5, 5, 5, 5));
+        northPanel.getStyleClass().add("dialog-toolbar");
+        northPanel.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         northPanel.getChildren().addAll(bibles, searchField, addToSchedule, resultsField);
         mainPane.setTop(northPanel);
 
@@ -133,9 +139,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
 
         reset();
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 
@@ -144,16 +148,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      */
     public final void reset() {
 //        searchResults.itemsProperty().get().clear();
-        searchField.setText(LabelGrabber.INSTANCE.getLabel("initial.search.text"));
-        searchField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1) {
-                    searchField.setText("");
-                    searchField.focusedProperty().removeListener(this);
-                }
-            }
-        });
+        searchField.clear();
+        searchField.setPromptText(LabelGrabber.INSTANCE.getLabel("initial.search.text").replaceAll("[<>]", ""));
         searchField.setDisable(true);
         BibleManager.get().runOnIndexInit(() -> {
             searchField.setDisable(false);

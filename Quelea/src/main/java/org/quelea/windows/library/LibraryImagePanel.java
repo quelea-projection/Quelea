@@ -44,6 +44,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The image panel in the library.
@@ -64,7 +65,7 @@ public class LibraryImagePanel extends BorderPane {
         setCenter(imagePanel);
         toolbar = new ToolBar();
 
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", QueleaIcon.ADD.create());
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override

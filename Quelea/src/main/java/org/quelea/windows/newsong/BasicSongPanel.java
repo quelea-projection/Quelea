@@ -57,6 +57,8 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.InputMethodRequestsObject;
 import org.quelea.windows.lyrics.LyricsTextArea;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.geometry.Insets;
 
 /**
  * The panel that manages the basic input of song information - the title,
@@ -83,16 +85,17 @@ public class BasicSongPanel extends BorderPane {
     private String saveHash = "";
     private final TextField sequenceField;
     private final Button sequenceButton;
-    private boolean darkTheme = false;
 
     /**
      * Create and initialise the song panel.
      */
     public BasicSongPanel() {
-        darkTheme = QueleaProperties.get().getUseDarkTheme();
         final VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
         GridPane topPanel = new GridPane();
+        topPanel.setHgap(10);
+        topPanel.setVgap(6);
+        topPanel.setPadding(new Insets(0, 0, 8, 0));
 
         titleField = new TextField();
         GridPane.setHgrow(titleField, Priority.ALWAYS);
@@ -132,10 +135,10 @@ public class BasicSongPanel extends BorderPane {
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(nonBreakingLineButton);
 
-        chorusButton = getTitleButton("chorus.png", "chorus.tooltip", "Chorus");
-        preChorusButton = getTitleButton("pre_chorus.png", "prechorus.tooltip", "Pre-chorus");
-        bridgeButton = getTitleButton("bridge.png", "bridge.tooltip", "Bridge");
-        tagButton = getTitleButton("tag_coda.png", "tag.tooltip", "Tag");
+        chorusButton = getTitleButton("C", "chorus.tooltip", "Chorus");
+        preChorusButton = getTitleButton("P", "prechorus.tooltip", "Pre-chorus");
+        bridgeButton = getTitleButton("B", "bridge.tooltip", "Bridge");
+        tagButton = getTitleButton("T", "tag.tooltip", "Tag");
         verseButton = getVerseButton();
         lyricsToolbar.getItems().add(new Separator());
         lyricsToolbar.getItems().add(chorusButton);
@@ -197,7 +200,7 @@ public class BasicSongPanel extends BorderPane {
     }
 
     private Button getNonBreakingLineButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/nonbreakline.png", 24, 24, false, true)));
+        Button ret = new Button("", QueleaIcon.NON_BREAK.create());
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
         ret.setOnAction((event) -> {
@@ -231,15 +234,13 @@ public class BasicSongPanel extends BorderPane {
     /**
      * Get a title button
      *
-     * @param fileName  Image file name
+     * @param letter    Letter shown on the button, e.g. "C" for chorus
      * @param label     Tooltip label
      * @param titleName Title name to be inserted
      * @return the title button
      */
-    private Button getTitleButton(String fileName, String label, String titleName) {
-        if (darkTheme)
-            fileName = fileName.replace(".png", "-light.png");
-        Button ret = new Button("", new ImageView(new Image("file:icons/" + fileName, 24, 24, false, true)));
+    private Button getTitleButton(String letter, String label, String titleName) {
+        Button ret = new Button("", getSectionLetter(letter));
         Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(label)));
         ret.setOnAction((event) -> insertTitle(titleName, ""));
@@ -253,7 +254,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the sequence button
      */
     private Button getSequenceButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/edit32.png", 24, 24, false, true)));
+        Button ret = new Button("", QueleaIcon.EDIT.create());
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.sequence.editor.tooltip")));
         ret.setOnAction((event) -> {
             SequenceSelectionDialog sequenceSelectionDialog = new SequenceSelectionDialog();
@@ -296,7 +297,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the button used for transposing the chords.
      */
     private Button getTransposeButton() {
-        Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
+        Button ret = new Button("", QueleaIcon.TRANSPOSE.create());
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
         ret.setOnAction(t -> {
             String originalKey = getKey(0);
@@ -362,7 +363,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the spell checker button.
      */
     private Button getDictButton() {
-        Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
+        Button button = new Button("", QueleaIcon.DICTIONARY.create());
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
         button.setOnAction(t -> lyricsArea.runSpellCheck());
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
@@ -446,17 +447,32 @@ public class BasicSongPanel extends BorderPane {
      */
     private SplitMenuButton getVerseButton() {
         SplitMenuButton m = new SplitMenuButton();
-        m.setGraphic(new ImageView(new Image(darkTheme ? "file:icons/verse-light.png" : "file:icons/verse.png", 24, 24, false, true)));
+        m.setGraphic(getSectionLetter("V"));
+        m.getStyleClass().add("section-split-button");
         m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
         m.setOnMouseClicked((MouseEvent event) -> insertTitle("Verse", ""));
         for (int i = 1; i < 10; i++) {
-            MenuItem mi = new MenuItem("", new ImageView(new Image(darkTheme ? "file:icons/verse" + i + "-light.png" : "file:icons/verse" + i + ".png", 24, 24, false, true)));
+            MenuItem mi = new MenuItem("", getSectionLetter("V" + i));
             final int finalI = i;
             mi.setOnAction((ActionEvent event) -> insertTitle("Verse", Integer.toString(finalI)));
             m.getItems().add(mi);
         }
         getLyricsField().requestFocus();
         return m;
+    }
+
+    /**
+     * Get a small rounded "letter tile" used to mark song section buttons
+     * (C = chorus, V = verse...). Styled by .section-letter in base.css.
+     *
+     * @param text the letter(s) to show.
+     * @return the graphic node.
+     */
+    private Label getSectionLetter(String text) {
+        Label letter = new Label(text);
+        letter.getStyleClass().add("section-letter");
+        letter.setMinWidth(Region.USE_PREF_SIZE);
+        return letter;
     }
 
     /**

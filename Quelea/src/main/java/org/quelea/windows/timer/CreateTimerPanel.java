@@ -39,6 +39,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -53,6 +54,10 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.newsong.ThemePanel;
+
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
 
 /**
  * Creates the creation panel for a timer displayable
@@ -73,7 +78,8 @@ public class CreateTimerPanel extends Stage {
     private final ThemePanel tp;
 
     public CreateTimerPanel(TimerDisplayable td) {
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(confirmButton);
 
         setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         initModality(Modality.APPLICATION_MODAL);
@@ -106,19 +112,12 @@ public class CreateTimerPanel extends Stage {
         durationTextField = new TextField();
         durationTextField.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("duration.tooltip.label")));
         durationTextField.setPromptText("5:00");
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            durationTextField.setStyle("-fx-prompt-text-fill: #404040");
-        }
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (parsable(newValue)) {
-                if (!QueleaProperties.get().getUseDarkTheme()) {
-                    durationTextField.setStyle("-fx-text-fill: black;");
-                } else {
-                    durationTextField.setStyle("-fx-text-fill: white;");
-                }
+                durationTextField.setStyle("");
                 confirmButton.setDisable(false);
             } else {
-                durationTextField.setStyle("-fx-text-fill: red;");
+                durationTextField.setStyle("-fx-text-fill: -q-lyrics-error;");
                 confirmButton.setDisable(true);
             }
         });
@@ -134,9 +133,6 @@ public class CreateTimerPanel extends Stage {
         textTextArea.setPrefRowCount(4);
         textTextArea.setPrefColumnCount(30);
         textTextArea.setPromptText(LabelGrabber.INSTANCE.getLabel("timer.text.prompt"));
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            textTextArea.setStyle("-fx-prompt-text-fill: #404040");
-        }
         textLabel.setLabelFor(textTextArea);
         GridPane.setConstraints(textTextArea, 1, rows);
         grid.getChildren().add(textTextArea);
@@ -145,8 +141,9 @@ public class CreateTimerPanel extends Stage {
         Label themeLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.theme.label"));
         GridPane.setConstraints(themeLabel, 0, rows);
         grid.getChildren().add(themeLabel);
-        Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-        tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), QueleaIcon.THEME.create());
+        tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(tpConfirm);
         tpConfirm.setAlignment(Pos.CENTER);
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(durationTextField.getText());
@@ -158,14 +155,14 @@ public class CreateTimerPanel extends Stage {
             tp.setTheme(td.getTheme());
         }
         Stage tpStage = new Stage();
+        tpStage.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
+        Utils.addIconsToStage(tpStage);
         BorderPane bp = new BorderPane();
         bp.setCenter(tp);
         bp.setBottom(tpConfirm);
         BorderPane.setAlignment(tpConfirm, Pos.CENTER);
         Scene sc = new Scene(bp);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            sc.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(sc);
         tpStage.setScene(sc);
         themeButton.setOnAction((ActionEvent Event) -> {
             tpStage.showAndWait();
@@ -188,9 +185,7 @@ public class CreateTimerPanel extends Stage {
         grid.getChildren().add(saveBox);
         rows++;
 
-        GridPane.setConstraints(confirmButton, 0, rows, 2, 1);
-        GridPane.setHalignment(confirmButton, HPos.CENTER);
-        grid.getChildren().add(confirmButton);
+        // OK button lives in the dialog footer (see below)
 
         confirmButton.setOnAction((ActionEvent event) -> {
             if (!durationTextField.getText().isEmpty() && parsable(durationTextField.getText())) {
@@ -245,10 +240,10 @@ public class CreateTimerPanel extends Stage {
         if (td != null) {
             createEdit(td);
         }
-        Scene scene = new Scene(grid);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        BorderPane root = new BorderPane(grid);
+        root.setBottom(new HBox(confirmButton));
+        Scene scene = new Scene(root);
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

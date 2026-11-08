@@ -36,6 +36,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * An input dialog for Live Text.
  *
@@ -59,7 +61,7 @@ public class LiveTextDialog extends Stage {
         BorderPane mainPane = new BorderPane();
         mainPane.setMaxSize(500, 300);
         messageLabel = new Label();
-        BorderPane.setMargin(messageLabel, new Insets(5));
+        BorderPane.setMargin(messageLabel, new Insets(16, 16, 8, 16));
         mainPane.setTop(messageLabel);
         textField = new TextArea();
         textField.setPrefColumnCount(5);
@@ -88,7 +90,7 @@ public class LiveTextDialog extends Stage {
             setLiveText(textField.getText());
         });
 
-        BorderPane.setMargin(textField, new Insets(5));
+        BorderPane.setMargin(textField, new Insets(4, 16, 16, 16));
         mainPane.setCenter(textField);
         clear = new Button(LabelGrabber.INSTANCE.getLabel("clear.live.text"));
         clear.setDefaultButton(true);
@@ -103,18 +105,14 @@ public class LiveTextDialog extends Stage {
             dialog.close();
         });
 
-        HBox okPane = new HBox(10);
-        VBox.setMargin(okPane, new Insets(10));
-        okPane.setAlignment(Pos.CENTER);
+        HBox okPane = new HBox(8);
         okPane.getChildren().add(clear);
         okPane.getChildren().add(exit);
-        BorderPane.setMargin(okPane, new Insets(5));
-        BorderPane.setAlignment(okPane, Pos.CENTER);
+        okPane.getStyleClass().add("dialog-button-bar");
+        okPane.setAlignment(Pos.CENTER_RIGHT);
         mainPane.setBottom(okPane);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 
@@ -132,7 +130,7 @@ public class LiveTextDialog extends Stage {
             dialog.textField.clear();
             dialog.messageLabel.setText(message);
             dialog.messageLabel.setWrapText(true);
-            dialog.getIcons().add(new Image("file:icons/live_text.png"));
+            Utils.addIconsToStage(dialog);
             dialog.showAndWait();
         });
         while (dialog.isShowing()) {

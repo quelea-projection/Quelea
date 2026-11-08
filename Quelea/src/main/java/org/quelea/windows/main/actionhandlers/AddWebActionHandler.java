@@ -28,6 +28,9 @@ import javafx.stage.Stage;
 import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.style.StyleManager;
 
 /**
  * The action handler responsible for letting the user add a websites to the
@@ -43,9 +46,12 @@ public class AddWebActionHandler implements EventHandler<ActionEvent> {
         dialog.setTitle(LabelGrabber.INSTANCE.getLabel("website.dialog.title"));
         dialog.setHeaderText(LabelGrabber.INSTANCE.getLabel("website.dialog.header"));
         dialog.setContentText(LabelGrabber.INSTANCE.getLabel("website.dialog.content"));
-        dialog.setGraphic(new ImageView(new Image("file:icons/website.png")));
+        javafx.scene.layout.Region icon = QueleaIcon.WEB.create(32);
+        icon.getStyleClass().add("dialog-icon-info");
+        dialog.setGraphic(icon);
+        StyleManager.apply(dialog.getDialogPane());
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:icons/web-small.png"));
+        Utils.addIconsToStage(stage);
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {

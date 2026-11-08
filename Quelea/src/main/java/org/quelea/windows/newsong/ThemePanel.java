@@ -19,7 +19,9 @@ package org.quelea.windows.newsong;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
@@ -52,6 +55,17 @@ public class ThemePanel extends BorderPane {
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
     private final DisplayPreview preview;
+    /**
+     * Single drawer reused for every preview update. Creating a new drawer per
+     * update (e.g. on every slider tick) used to start a new video player each
+     * time for video themes, which were never stopped.
+     */
+    private final WordDrawer drawer;
+    /**
+     * Whether this panel is currently in a showing window. Video backgrounds
+     * are only played while it is, so closing a theme dialog stops the video.
+     */
+    private final ObservableValue<Boolean> showing;
     private final ThemeToolbar themeToolbar;
     private DisplayPositionSelector positionSelector;
     private String saveHash = "";
@@ -84,10 +98,8 @@ public class ThemePanel extends BorderPane {
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
-        if (!QueleaProperties.get().getUseDarkTheme()) {
-            label.setStyle("-fx-text-fill:#666666;");
-            centrePane.setStyle("-fx-background-color:#dddddd;");
-        }
+        label.getStyleClass().add("muted-label");
+        centrePane.getStyleClass().add("preview-backdrop");
         centrePane.getChildren().add(label);
         StackPane themePreviewPane = new StackPane();
         themePreviewPane.getStyleClass().add("text-area");
@@ -95,13 +107,20 @@ public class ThemePanel extends BorderPane {
         themePreviewPane.getChildren().add(positionSelector);
         centrePane.getChildren().add(themePreviewPane);
         setCenter(centrePane);
-        final WordDrawer drawer;
         if (canvas.isStageView()) {
             drawer = new StageDrawer();
         } else {
             drawer = new LyricDrawer();
         }
         drawer.setCanvas(canvas);
+        showing = sceneProperty().flatMap(Scene::windowProperty).flatMap(Window::showingProperty).orElse(false);
+        setPreviewVideo(showing.getValue());
+        showing.addListener((ov, wasShowing, isShowing) -> {
+            setPreviewVideo(isShowing);
+            if (isShowing) {
+                updateTheme(false);
+            }
+        });
         text = SAMPLE_LYRICS;
         if (wordsArea != null) {
             ChangeListener<String> cl = (ov, t, newText) -> {
@@ -201,17 +220,15 @@ public class ThemePanel extends BorderPane {
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
         Platform.runLater(() -> {
-            WordDrawer drawer;
-            if (preview.getCanvas().isStageView()) {
-                drawer = new StageDrawer();
-            } else {
-                drawer = new LyricDrawer();
-            }
-            drawer.setCanvas(preview.getCanvas());
             drawer.setTheme(theme);
             drawer.setText(text, null, null, false, -1);
-
         });
+    }
+
+    private void setPreviewVideo(boolean play) {
+        if (drawer instanceof LyricDrawer) {
+            ((LyricDrawer) drawer).setPlayVideo(play);
+        }
     }
 
     /**

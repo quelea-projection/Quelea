@@ -60,12 +60,12 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.ThemePreviewPanel;
+import org.quelea.windows.main.ThemeThumbnails;
+import org.quelea.data.ThemeDTO;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
-import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
 
 /**
@@ -311,25 +311,28 @@ public class RemoteControlServer {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
 
         public void handle(HttpExchange t) {
-            Utils.fxRunAndWait(() -> {
-                try {
-                    ScheduleThemeNode stn = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode();
-                    int themeNum = Integer.parseInt(t.getRequestURI().getPath().replace("/themethumb", ""));
-                    BufferedImage image = SwingFXUtils.fromFXImage(((ThemePreviewPanel) stn.getThemePreviews().getChildren().get(themeNum)).getThemePreviewImage(), null);
-                    ByteArrayOutputStream output = new ByteArrayOutputStream();
-                    ImageIO.write(image, "png", output);
-                    byte[] byteArray = output.toByteArray();
-                    t.sendResponseHeaders(200, byteArray.length);
-                    try (OutputStream out = t.getResponseBody()) {
-                        out.write(byteArray);
-                    }
-
-                } catch (IOException e) {
-                    System.out.println("Failed saving");
-                } catch (Exception e) {
-                    System.out.println("Exception " + e);
+            try {
+                // Same numbering as /getthemes: the theme files, then the default theme.
+                int themeNum = Integer.parseInt(t.getRequestURI().getPath().replace("/themethumb", ""));
+                List<ThemeDTO> themes = ThemeUtils.getThemes();
+                ThemeDTO theme = themeNum < themes.size() ? themes.get(themeNum) : ThemeDTO.DEFAULT_THEME;
+                // Rendered off-screen, so the theme popup doesn't need to have been opened.
+                BufferedImage image = SwingFXUtils.fromFXImage(ThemeThumbnails.render(theme), null);
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", output);
+                byte[] byteArray = output.toByteArray();
+                t.sendResponseHeaders(200, byteArray.length);
+                try (OutputStream out = t.getResponseBody()) {
+                    out.write(byteArray);
                 }
-            });
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Couldn't send theme thumbnail", e);
+                try {
+                    t.sendResponseHeaders(500, -1);
+                } catch (IOException ignored) {
+                }
+                t.close();
+            }
         }
     }
 

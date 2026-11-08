@@ -26,6 +26,7 @@ import org.quelea.windows.main.GraphicsDeviceWatcher;
 import org.quelea.windows.main.QueleaApp;
 
 import java.util.HashMap;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
@@ -56,7 +57,7 @@ public class OptionsDisplaySetupPanel {
     }
 
     Category getDisplaySetupTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), new ImageView(new Image("file:icons/monitorsettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), QueleaIcon.MONITOR.create(),
                 controlScreen.getGroup(),
                 projectorScreen.getGroup(),
                 stageScreen.getGroup()

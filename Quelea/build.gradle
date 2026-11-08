@@ -95,19 +95,19 @@ tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTa
 tasks.register('downloadGStreamer') {
     def f = new File('gs.msi')
     if (!f.exists()) {
-        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.6/msvc/gstreamer-1.0-msvc-x86_64-1.26.6.msi').withInputStream { i -> f.withOutputStream { it << i } }
+        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.11/msvc/gstreamer-1.0-msvc-x86_64-1.26.11.msi').withInputStream { i -> f.withOutputStream { it << i } }
     }
 }
 
 tasks.register('downloadJres') {
     def mf = new File('macjre.zip')
     if (!mf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-macosx_x64.zip').withInputStream { i -> mf.withOutputStream { it << i } }
+        new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-macosx_x64.zip').withInputStream { i -> mf.withOutputStream { it << i } }
     }
 
     def wf = new File('winjre64.zip')
     if (!wf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-win_x64.zip').withInputStream { i -> wf.withOutputStream { it << i } }
+        new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-win_x64.zip').withInputStream { i -> wf.withOutputStream { it << i } }
     }
 
     doLast {
@@ -139,7 +139,7 @@ tasks.register('copyToDist') {
         def wf = new File('bundlejre/winjre64.zip')
         if (wf.exists()) {
             copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
-            file("dist/zulu25.28.85-ca-fx-jre25.0.0-win_x64").renameTo(file("dist/winjre64"))
+            file("dist/zulu25.38.109-ca-fx-jre25.0.5.0.3-win_x64").renameTo(file("dist/winjre64"))
         }
         copy { from file("build/libs/Quelea.jar") into file(project.distdir) }
         copy { from file("README.TXT") into file(project.distdir) }
@@ -292,6 +292,12 @@ dependencies {
 test {
     useJUnitPlatform()
     failOnNoDiscoveredTests = false
+    // Same JVM options as the application, so video code under test behaves as it does at runtime.
+    jvmArgs application.applicationDefaultJvmArgs
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'full'
+    }
     // Keep the tests away from the developer's own ~/.quelea
     systemProperty 'user.home', temporaryDir.absolutePath
 }

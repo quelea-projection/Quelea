@@ -1,0 +1,12 @@
+/*
+ * Rules shared by every dark theme. Loaded before the palette, so a theme
+ * can still override them.
+ */
+/* Plain Text nodes created in code default to black; make them readable. */
+.text {
+    -fx-fill: -q-text;
+}
+
+.text-area {
+    -fx-control-inner-background: -q-surface;
+}

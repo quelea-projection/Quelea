@@ -42,6 +42,8 @@ import java.util.HashMap;
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import static org.quelea.windows.options.PreferencesDialog.getPositionSelector;
 import static org.quelea.windows.options.PreferencesDialog.getShowOnSlidesSelector;
+import org.quelea.windows.style.QueleaIcon;
+import org.quelea.windows.style.UiTheme;
 
 /**
  * A panel where the general options in the program are set.
@@ -97,10 +99,12 @@ public class OptionsGeneralPanel {
         languageItemsList = FXCollections.observableArrayList(LanguageFileManager.INSTANCE.languageFiles());
         languageSelectionProperty = new SimpleObjectProperty<>(LanguageFileManager.INSTANCE.getCurrentFile());
 
-        applicationThemeList = FXCollections.observableArrayList(Arrays.asList(
-                LabelGrabber.INSTANCE.getLabel("default.theme.label"), LabelGrabber.INSTANCE.getLabel("dark.theme.label"))
-        );
-        applicationThemeProperty = new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel("default.theme.label"));
+        // All interface themes, in the order they are listed in UiTheme
+        applicationThemeList = FXCollections.observableArrayList();
+        for (UiTheme theme : UiTheme.values()) {
+            applicationThemeList.add(theme.getLabel());
+        }
+        applicationThemeProperty = new SimpleObjectProperty<>(UiTheme.current().getLabel());
 
         dbSongPreviewList = FXCollections.observableArrayList(Arrays.asList(
                 LabelGrabber.INSTANCE.getLabel("db.song.preview.label.control"), LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"),
@@ -120,12 +124,12 @@ public class OptionsGeneralPanel {
         bindings.put(smallBibleSizeControllerField, showSmallBibleProperty.not());
         bindings.put(defaultTranslationNameField, useDefaultTranslationProperty.not());
 
-        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), new ImageView(new Image("file:icons/generalsettingsicon.png")))
+        return Category.of(LabelGrabber.INSTANCE.getLabel("general.options.heading"), QueleaIcon.GENERAL.create())
                 .subCategories(
                         Category.of(LabelGrabber.INSTANCE.getLabel("interface.options.options"),
                                 Group.of(LabelGrabber.INSTANCE.getLabel("general.interface.options"),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("interface.language.label"), languageItemsList, languageSelectionProperty).customKey(languageFileKey),
-                                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(darkThemeKey),
+                                        Setting.of(LabelGrabber.INSTANCE.getLabel("interface.theme.label"), applicationThemeList, applicationThemeProperty).customKey(uiThemeKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("db.song.preview.label"), dbSongPreviewList, dbSongPreviewProperty).customKey(dbSongPreviewKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"), new SimpleBooleanProperty(QueleaProperties.get().getDisplayVideoTab())).customKey(videoTabKey),
                                         Setting.of(LabelGrabber.INSTANCE.getLabel("show.extra.live.panel.toolbar.options.label"), new SimpleBooleanProperty(QueleaProperties.get().getShowExtraLivePanelToolbarOptions())).customKey(showExtraLivePanelToolbarOptionsKey),

@@ -39,6 +39,7 @@ import java.util.HashMap;
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import static org.quelea.services.utils.QueleaPropertyKeys.use24hClockKey;
 import static org.quelea.windows.options.PreferencesDialog.getColorPicker;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the stage view options.
@@ -71,7 +72,7 @@ public class OptionsStageViewPanel {
     }
 
     public Category getStageViewTab() {
-        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), new ImageView(new Image("file:icons/stageviewsettingsicon.png")),
+        return Category.of(LabelGrabber.INSTANCE.getLabel("stage.options.heading"), QueleaIcon.STAGE_VIEW.create(),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.show.chords"), new SimpleBooleanProperty(QueleaProperties.get().getShowChords())).customKey(stageShowChordsKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"), lineAlignmentList, alignmentSelectionProperty).customKey(stageTextAlignmentKey),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("stage.font.selection"), fontsList, fontSelectionProperty).customKey(stageFontKey),
