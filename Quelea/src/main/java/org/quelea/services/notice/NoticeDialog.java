@@ -164,15 +164,7 @@ public class NoticeDialog extends Stage {
 
         noticeTemplates.setOnMouseClicked(e -> {
             if (noticeTemplates.getSelectionModel().getSelectedItem() != null) {
-                Notice n = noticeTemplates.getSelectionModel().getSelectedItem();
-                n.setTimes(n.getOriginalTimes());
-                Notice notice = NoticeEntryDialog.getNotice(n, true);
-                if (notice != null && NoticeEntryDialog.closed) {
-                    noticeList.getItems().add(notice);
-                    for (NoticeDrawer drawer : noticeDrawers) {
-                        drawer.addNotice(notice);
-                    }
-                }
+                useTemplate(noticeTemplates.getSelectionModel().getSelectedItem());
                 noticeTemplates.getSelectionModel().clearSelection();
             }
         });
@@ -191,6 +183,25 @@ public class NoticeDialog extends Stage {
         Scene scene = new Scene(mainPane);
         StyleManager.apply(scene);
         setScene(scene);
+    }
+
+    /**
+     * Offer a saved notice to be shown. It only goes on screen if the user
+     * confirms it in the dialog that this opens.
+     * <p/>
+     * @param template the saved notice.
+     */
+    public void useTemplate(Notice template) {
+        show();
+        toFront();
+        template.setTimes(template.getOriginalTimes());
+        Notice notice = NoticeEntryDialog.getNotice(template, true);
+        if (notice != null && NoticeEntryDialog.closed) {
+            noticeList.getItems().add(notice);
+            for (NoticeDrawer drawer : noticeDrawers) {
+                drawer.addNotice(notice);
+            }
+        }
     }
 
     /**
