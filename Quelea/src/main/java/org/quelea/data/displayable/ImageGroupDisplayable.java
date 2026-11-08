@@ -33,6 +33,7 @@ package org.quelea.data.displayable;
  import org.quelea.services.utils.Utils;
  import org.w3c.dom.Node;
  import org.w3c.dom.NodeList;
+import org.quelea.windows.style.QueleaIcon;
 
  /**
  * A displayable that's an image group.
@@ -133,8 +134,8 @@ public class ImageGroupDisplayable implements Displayable {
      * @return the imagegroup preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/image-group-schedule.png", 30, 30, false, true));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.IMAGES.createTile();
     }
 
     /**

@@ -30,6 +30,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 
+import org.quelea.windows.style.QueleaIcon;
 /**
  * Quelea's database menu.
  *
@@ -47,7 +48,7 @@ public class DatabaseMenu extends Menu {
     public DatabaseMenu() {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
 
-        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image(QueleaProperties.get().getUseDarkTheme() ? "file:icons/newsong-light.png" : "file:icons/newsong.png", 16, 16, false, true)));
+        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), QueleaIcon.NEW_SONG.create());
         newSongItem.setOnAction(new NewSongActionHandler());
         newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         getItems().add(newSongItem);

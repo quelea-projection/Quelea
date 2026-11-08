@@ -87,6 +87,14 @@ public class FXImageSink {
     private Sample activeSample;
     private Buffer activeBuffer;
     private final Queue<Sample> oldSamples;
+    /**
+     * Passes decoded samples to the FX thread. Only the latest frame is kept:
+     * if the FX thread falls behind, superseded frames are dropped instead of
+     * piling up (each one is a full native video frame).
+     */
+    private final LatestFrameHandoff<Sample> handoff =
+            new LatestFrameHandoff<>(Platform::runLater, this::updateImage, Sample::dispose);
+    private Runnable onFrame;
 
     /**
      * Create an FXImageSink. A new AppSink element will be created that can be
@@ -108,13 +116,13 @@ public class FXImageSink {
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
             if (s == null) throw new IllegalStateException();
-            Platform.runLater(() -> updateImage(s));
+            handoff.offer(s);
             return FlowReturn.OK;
         });
         sink.connect((AppSink.NEW_PREROLL) appsink -> {
             Sample s = appsink.pullPreroll();
             if (s == null) throw new IllegalStateException();
-            Platform.runLater(() -> updateImage(s));
+            handoff.offer(s);
             return FlowReturn.OK;
         });
         sink.setCaps(Caps.fromString(DEFAULT_CAPS));
@@ -221,6 +229,9 @@ public class FXImageSink {
         while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
             oldSamples.remove().dispose();
         }
+        if (onFrame != null) {
+            onFrame.run();
+        }
 
 //        long dur = System.nanoTime() - val;
 //        System.out.println("REFRESH TIME: " + dur / 1000);
@@ -240,10 +251,29 @@ public class FXImageSink {
         }
     }
 
+    /**
+     * Set a callback run on the FX thread each time a new frame has been
+     * written to the image. The image is only valid during the callback and
+     * until the next frame arrives.
+     */
+    void setOnFrame(Runnable onFrame) {
+        this.onFrame = onFrame;
+    }
+
+    /**
+     * Clear the image and stop accepting new frames. Any frames that arrive
+     * afterwards are released immediately.
+     */
+    public void dispose() {
+        handoff.dispose();
+        clear();
+    }
+
     private void clearImage() {
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("Not on FX application thread");
         }
+        handoff.clear();
         image.set(new WritableImage(1, 1));
         if (activeBuffer != null) {
             activeBuffer.unmap();
@@ -252,6 +282,9 @@ public class FXImageSink {
         if (activeSample != null) {
             activeSample.dispose();
             activeSample = null;
+        }
+        while (!oldSamples.isEmpty()) {
+            oldSamples.remove().dispose();
         }
     }
 }

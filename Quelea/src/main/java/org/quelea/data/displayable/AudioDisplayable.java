@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  *
@@ -94,8 +95,8 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
      * @return the video's preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/audio30.png"));
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.AUDIO.createTile();
     }
 
     /**

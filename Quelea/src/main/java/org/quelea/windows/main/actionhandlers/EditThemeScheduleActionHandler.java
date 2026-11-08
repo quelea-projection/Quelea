@@ -45,6 +45,9 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.newsong.ThemePanel;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * Called when the theme of the current item in the schedule should be edited.
  *
@@ -75,12 +78,14 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         }
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(firstSelected.getSections()[0].toString().trim());
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(confirmButton);
+        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), QueleaIcon.CLOSE.create());
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
         s.resizableProperty().setValue(false);
+        s.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.setPrefSize(500, 500);
@@ -126,9 +131,7 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         bp.setBottom(hb);
 
         Scene scene = new Scene(bp);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         s.setScene(scene);
         s.setMinHeight(600);
         s.setMinWidth(250);

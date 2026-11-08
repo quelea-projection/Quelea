@@ -53,6 +53,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.clearStageviewWithMai
 import static org.quelea.services.utils.QueleaPropertyKeys.controlScreenKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.convertMp3Key;
 import static org.quelea.services.utils.QueleaPropertyKeys.darkThemeKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.uiThemeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.dbSongPreviewKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.defaultBibleKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.defaultSongDbUpdateKey;
@@ -179,7 +180,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.wikiPageKey;
  */
 public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2026.0", VersionType.CI);
+    public static final Version VERSION = new Version("2027.0", VersionType.CI);
     private static QueleaProperties INSTANCE;
     private String userHome;
 
@@ -2719,12 +2720,40 @@ public final class QueleaProperties extends SortedProperties {
         setProperty(slideTransitionOutDurationKey, Integer.toString(millis));
     }
 
+    /**
+     * @return true if the current interface theme is a dark one.
+     */
     public boolean getUseDarkTheme() {
-        return Boolean.parseBoolean(getProperty(darkThemeKey, "false"));
+        return org.quelea.windows.style.UiTheme.current().isDark();
     }
 
     public void setUseDarkTheme(boolean useDarkTheme) {
-        setProperty(darkThemeKey, String.valueOf(useDarkTheme));
+        setUiTheme(useDarkTheme ? "dark" : "light");
+    }
+
+    /**
+     * Get the id of the interface theme (see UiTheme). Installations that
+     * only have the older "use.dark.theme" setting get "dark" or "light".
+     *
+     * @return the theme id.
+     */
+    public String getUiTheme() {
+        String theme = getProperty(uiThemeKey);
+        if (theme == null || theme.isBlank()) {
+            return Boolean.parseBoolean(getProperty(darkThemeKey, "false")) ? "dark" : "light";
+        }
+        return theme;
+    }
+
+    /**
+     * Set the interface theme. "use.dark.theme" is kept in step so older
+     * versions of Quelea still get a matching light or dark look.
+     *
+     * @param themeId the theme id (see UiTheme).
+     */
+    public void setUiTheme(String themeId) {
+        setProperty(uiThemeKey, themeId);
+        setProperty(darkThemeKey, String.valueOf(org.quelea.windows.style.UiTheme.fromId(themeId).isDark()));
     }
 
     public boolean getDisableDirectShowForWVC1() {

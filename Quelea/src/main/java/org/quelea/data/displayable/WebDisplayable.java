@@ -32,6 +32,7 @@ import javafx.scene.web.WebView;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A displayable that's an webpage.
@@ -106,9 +107,8 @@ public class WebDisplayable implements Displayable {
      * @return the preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
-        ImageView small = new ImageView(new Image("file:icons/website.png"));
-        return small;
+    public javafx.scene.Node getPreviewIcon() {
+        return QueleaIcon.WEB.createTile();
     }
 
     /**

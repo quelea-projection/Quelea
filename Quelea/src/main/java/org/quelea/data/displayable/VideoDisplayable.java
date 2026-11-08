@@ -32,6 +32,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A displayable that's a video.
@@ -127,11 +128,11 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * @return the video's preview icon.
      */
     @Override
-    public ImageView getPreviewIcon() {
+    public javafx.scene.Node getPreviewIcon() {
         if (Utils.fileIsVideo(getLocationAsFile())) {
-            return new ImageView(new Image("file:icons/video.png"));
+            return QueleaIcon.VIDEO.createTile();
         } else {
-            return new ImageView(new Image("file:icons/audio30.png"));
+            return QueleaIcon.AUDIO.createTile();
         }
     }
 

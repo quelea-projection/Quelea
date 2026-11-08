@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,6 +65,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
@@ -72,6 +74,13 @@ import org.xml.sax.SAXException;
  * @author Michael
  */
 public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Serializable {
+
+    private static final Pattern BLANK_LINES = Pattern.compile("\n\n+");
+    private static final Pattern WHITESPACE_ONLY_LINES_LF = Pattern.compile("\\n\\s+\\n");
+    private static final Pattern WHITESPACE_ONLY_LINES_CR = Pattern.compile("\\r\\s+\\r");
+    private static final Pattern WHITESPACE_ONLY_LINES_CRLF = Pattern.compile("\\r\\n\\s+\\r\\n");
+    private static final Pattern SECTION_SEPARATOR = Pattern.compile("(\n\n)|(\r\r)|(\r\n\r\n)");
+    private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");
 
     public int count = 0;
     public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
@@ -778,7 +787,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             ret.append("\n");
         }
-        return ret.toString().replaceAll("\\s+$", "").replace(" ", "<>");
+        return TRAILING_WHITESPACE.matcher(ret).replaceAll("").replace(" ", "<>");
     }
 
     public void addTranslation(String translationName, String translationText) {
@@ -803,16 +812,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         sectionsInSequence.clear();
         fontSizeCache.clear();
         boolean foundTitle = !(title == null || title.isEmpty());
-        lyrics = lyrics.replaceAll("\n\n+", "\n\n");
+        lyrics = BLANK_LINES.matcher(lyrics).replaceAll("\n\n");
         lyrics = lyrics.replace("<>", " ");
 
         // Remove lines that contain only whitespace characers
         // so they are used as e section-split
-        lyrics = lyrics.replaceAll("\\n\\s+\\n", "\n\n");
-        lyrics = lyrics.replaceAll("\\r\\s+\\r", "\r\r");
-        lyrics = lyrics.replaceAll("\\r\\n\\s+\\r\\n", "\r\n\r\n");
+        lyrics = WHITESPACE_ONLY_LINES_LF.matcher(lyrics).replaceAll("\n\n");
+        lyrics = WHITESPACE_ONLY_LINES_CR.matcher(lyrics).replaceAll("\r\r");
+        lyrics = WHITESPACE_ONLY_LINES_CRLF.matcher(lyrics).replaceAll("\r\n\r\n");
         
-        for (String section : lyrics.split("(\n\n)|(\r\r)|(\r\n\r\n)")) {
+        for (String section : SECTION_SEPARATOR.split(lyrics)) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
@@ -1385,35 +1394,27 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public javafx.scene.Node getPreviewIcon() {
-        ImageView iv;
+        QueleaIcon icon;
         if (getID() < 0) {
-            iv = new ImageView(new Image("file:icons/lyricscopy.png"));
+            icon = QueleaIcon.LYRICS_COPY;
         } else if (hasChords()) {
-            iv = new ImageView(new Image("file:icons/lyricsandchords.png"));
+            icon = QueleaIcon.LYRICS_CHORDS;
         } else {
-            iv = new ImageView(new Image("file:icons/lyrics.png"));
+            icon = QueleaIcon.LYRICS;
         }
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(iv);
+        StackPane stackPane = icon.createTile();
         if (!getTranslations().isEmpty()) {
             stackPane.getChildren().add(getTranslationPart());
-            stackPane.setAlignment(Pos.BOTTOM_LEFT);
+            stackPane.setAlignment(Pos.BOTTOM_RIGHT);
         }
         return stackPane;
     }
 
     private StackPane getTranslationPart() {
-        StackPane ret = new StackPane();
-        ImageView iv = new ImageView("file:icons/translate small.png");
-        iv.setFitWidth(13);
-        iv.setPreserveRatio(true);
-        ret.setPadding(new Insets(0,3,0,3));
-        ret.getChildren().add(iv);
-        ret.setMaxWidth(5);
-        ret.setMaxHeight(5);
-        ret.setAlignment(Pos.CENTER);
-        ret.setStyle("-fx-background-color: #333333;");
-        ret.setOpacity(0.9);
+        // Small badge in the corner of the type tile; see .icon-tile-badge in base.css
+        StackPane ret = new StackPane(QueleaIcon.TRANSLATE.create(10));
+        ret.getStyleClass().add("icon-tile-badge");
+        ret.setMaxSize(14, 14);
         return ret;
     }
 

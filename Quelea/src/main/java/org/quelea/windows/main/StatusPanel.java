@@ -28,6 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * A status panel that denotes a background task in Quelea.
@@ -61,7 +62,7 @@ public class StatusPanel extends HBox {
         progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE); //Allow progress bar to fill space.
         HBox.setHgrow(progressBar, Priority.ALWAYS);
-        cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 13, 13, false, true)));
+        cancelButton = new Button("", QueleaIcon.CLOSE.create());
         Utils.setToolbarButtonStyle(cancelButton);
         cancelButton.setAlignment(Pos.CENTER);
         getChildren().add(label);

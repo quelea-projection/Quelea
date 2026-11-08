@@ -33,6 +33,7 @@ import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFSongActionHandler;
 import org.quelea.windows.main.actionhandlers.PreviewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The popup menu that displays when someone right clicks on a song in the
@@ -54,19 +55,19 @@ public class LibraryPopupMenu extends ContextMenu {
      * Create and initialise the popup menu.
      */
     public LibraryPopupMenu() {
-        addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
+        addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), QueleaIcon.ADD.create());
         addToSchedule.setOnAction(new AddSongActionHandler(true));
-        copyToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.copy.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
+        copyToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.copy.to.schedule.text"), QueleaIcon.ADD.create());
         copyToSchedule.setOnAction(new AddSongActionHandler(false));
-        preview = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.preview.song.text"), new ImageView(new Image("file:icons/prev.png", 16, 16, false, true)));
+        preview = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.preview.song.text"), QueleaIcon.PREVIEW.create());
         preview.setOnAction(new PreviewSongActionHandler());
-        editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), QueleaIcon.EDIT.create());
         editDB.setOnAction(new EditSongDBActionHandler());
-        removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
+        removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), QueleaIcon.DELETE.create());
         removeFromDB.setOnAction(new RemoveSongDBActionHandler());
-        exportToPDF = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.pdf.button"), new ImageView(new Image("file:icons/fileexport.png", 16, 16, false, true)));
+        exportToPDF = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.pdf.button"), QueleaIcon.PDF.create());
         exportToPDF.setOnAction(new ExportPDFSongActionHandler());
-        print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), new ImageView(new Image("file:icons/fileprint.png", 16, 16, false, true)));
+        print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), QueleaIcon.PRINT.create());
         print.setOnAction(t -> {
             final SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().get(0);
             if (song != null) {

@@ -54,6 +54,9 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.NumberSpinner;
 import org.quelea.windows.newsong.FontSelectionDialog;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+
 /**
  * The entry dialog for creating a notice.
  * <p/>
@@ -85,7 +88,7 @@ public class NoticeEntryDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
-        getIcons().add(new Image("file:icons/info.png"));
+        Utils.addIconsToStage(this);
         colourPicker = new ColorPicker(Color.WHITE);
         colourPicker.setStyle("-fx-color-label-visible: false ;");
         if (fontSelectionDialog == null) {
@@ -96,7 +99,8 @@ public class NoticeEntryDialog extends Stage {
         fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
         Collections.sort(fontSelection.getItems());
         HBox.setHgrow(fontSelection, Priority.ALWAYS);
-        fontExpandButton = new Button("...");
+        fontExpandButton = new Button("", QueleaIcon.ADD.create());
+        Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
         Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setOnAction((ActionEvent t) -> {
@@ -157,7 +161,8 @@ public class NoticeEntryDialog extends Stage {
         mainPanel.getChildren().add(fontBox);
 
         HBox southPanel = new HBox();
-        addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
+        addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(addButton);
         addButton.setDefaultButton(true);
         addButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -171,7 +176,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(addButton);
-        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), QueleaIcon.CLOSE.create());
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -181,7 +186,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(cancelButton);
-        saveButton = new Button(LabelGrabber.INSTANCE.getLabel("save.add.notice.button"), new ImageView(new Image("file:icons/filesave.png")));
+        saveButton = new Button(LabelGrabber.INSTANCE.getLabel("save.add.notice.button"), QueleaIcon.SAVE.create());
         saveButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -191,7 +196,7 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(saveButton);
-        deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.notice.button"), new ImageView(new Image("file:icons/removedb.png")));
+        deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.notice.button"), QueleaIcon.DELETE.create());
         deleteButton.setOnAction(e -> {
             QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().remove(notice);
             NoticeFileHandler.deleteNotice(notice);
@@ -209,9 +214,7 @@ public class NoticeEntryDialog extends Stage {
         mainPane.setCenter(mainPanel);
         mainPane.setBottom(southPanel);
         Scene scene = new Scene(mainPane);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 

@@ -17,24 +17,22 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.SnapshotParameters;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -51,6 +49,7 @@ import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 import org.quelea.windows.stage.StageDrawer;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * Panel that displays a preview of a particular theme. This is part of the
@@ -63,6 +62,12 @@ public class ThemePreviewPanel extends VBox {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
+    private WordDrawer drawer;
+    /**
+     * Whether this panel is in a showing window - video backgrounds are only
+     * played while it is.
+     */
+    private final ObservableValue<Boolean> showing;
     private RadioButton songSelectButton;
     private RadioButton bibleSelectButton;
     private Button removeButton;
@@ -70,7 +75,6 @@ public class ThemePreviewPanel extends VBox {
     private EditThemeDialog themeDialog;
     private Window popup;
     private ScheduleThemeNode parent;
-    private WritableImage previewImage;
 
     /**
      * Create a new theme preview panel.
@@ -87,6 +91,13 @@ public class ThemePreviewPanel extends VBox {
         final ThemeDTO updateTheme = theme;
         canvas = new DisplayCanvas( false, () -> updateThemePreviewCanvas(updateTheme), Priority.LOW);
         canvas.setPrefSize(200, 160);
+        showing = sceneProperty().flatMap(Scene::windowProperty).flatMap(Window::showingProperty).orElse(false);
+        showing.addListener((ov, wasShowing, isShowing) -> {
+            setPreviewVideo(isShowing);
+            if (isShowing) {
+                updateThemePreviewCanvas(updateTheme);
+            }
+        });
         updateThemePreviewCanvas(theme);
         String name;
         if (theme == ThemeDTO.DEFAULT_THEME) {
@@ -99,7 +110,7 @@ public class ThemePreviewPanel extends VBox {
         songSelectButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("song.default.theme.label"));
         bibleSelectButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("bible.default.theme.label"));
         if (theme != ThemeDTO.DEFAULT_THEME) {
-            editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
+            editButton = new Button("", QueleaIcon.EDIT.create());
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
             editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -120,7 +131,7 @@ public class ThemePreviewPanel extends VBox {
                 }
             });
 
-            removeButton = new Button("", new ImageView(new Image("file:icons/delete.png", 16, 16, false, true)));
+            removeButton = new Button("", QueleaIcon.DELETE.create());
             removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip")));
             removeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -202,24 +213,25 @@ public class ThemePreviewPanel extends VBox {
     }
 
     private void updateThemePreviewCanvas(ThemeDTO theme) {
-        WordDrawer drawer;
-        if (canvas.isStageView()) {
-            drawer = new StageDrawer();
-        } else {
-            drawer = new LyricDrawer();
+        // Reuse one drawer so a video theme doesn't start a new player on
+        // every update.
+        if (drawer == null) {
+            if (canvas.isStageView()) {
+                drawer = new StageDrawer();
+            } else {
+                drawer = new LyricDrawer();
+            }
+            drawer.setCanvas(canvas);
+            setPreviewVideo(showing.getValue());
         }
-        drawer.setCanvas(canvas);
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
     }
 
-    public Image getThemePreviewImage() {
-        previewImage = new WritableImage(200, 150);
-        canvas.snapshot(new SnapshotParameters(), previewImage);
-        BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
-        SwingFXUtils.toFXImage(bi, previewImage);
-
-        return previewImage;
+    private void setPreviewVideo(boolean play) {
+        if (drawer instanceof LyricDrawer) {
+            ((LyricDrawer) drawer).setPlayVideo(play);
+        }
     }
 
 }

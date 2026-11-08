@@ -119,8 +119,8 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
         Text mobUrlLabel = new Text(url);
         if (Desktop.isDesktopSupported() && url.startsWith("http")) {
             mobUrlLabel.setCursor(Cursor.HAND);
-            mobUrlLabel.setFill(Color.BLUE);
-            mobUrlLabel.setStyle("-fx-underline: true;");
+            mobUrlLabel.getStyleClass().add("link-text");
+            mobUrlLabel.getStyleClass().add("link-label");
             mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
                 DesktopApi.browse(url);
             });

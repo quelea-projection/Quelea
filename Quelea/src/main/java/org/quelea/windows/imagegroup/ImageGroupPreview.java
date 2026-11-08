@@ -48,7 +48,7 @@ public class ImageGroupPreview extends ScrollPane {
      * Create a new presentation list.
      */
     public ImageGroupPreview() {
-        setStyle("-fx-focus-color: transparent;-fx-background-color:linear-gradient(to bottom right, #c0c0c0, #e8e8e8);");
+        getStyleClass().add("slide-preview-pane");
         flow = new FlowPane(20, 20);
         flow.setAlignment(Pos.CENTER);
         viewportBoundsProperty().addListener((bounds, oldBounds, newBounds) ->

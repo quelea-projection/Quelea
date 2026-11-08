@@ -62,8 +62,6 @@ import java.util.logging.Logger;
 public class VideoListPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final String BORDER_STYLE_SELECTED = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
-    private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane videoList;
     private final String dir;
     private Thread updateThread;
@@ -200,14 +198,12 @@ public class VideoListPanel extends BorderPane {
 
     private void setupHover(final Node view, String fileName) {
         Tooltip tt = new Tooltip(fileName);
-        view.setStyle(BORDER_STYLE_DESELECTED);
+        view.getStyleClass().add("library-thumbnail"); // hover border: see base.css
         view.setOnMouseEntered((MouseEvent t) -> {
-            view.setStyle(BORDER_STYLE_SELECTED);
             Bounds b = view.localToScreen(view.getLayoutBounds());
             tt.show(view, b.getMaxX(), b.getMinY());
         });
         view.setOnMouseExited((MouseEvent t) -> {
-            view.setStyle(BORDER_STYLE_DESELECTED);
             tt.hide();
         });
     }

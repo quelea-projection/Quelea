@@ -45,6 +45,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.options.customprefs.MobileServerPreference;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
+import org.quelea.windows.style.QueleaIcon;
 
 /**
  * The panel that shows the mobile lyrics and remote control options.
@@ -110,7 +111,7 @@ public class OptionsServerSettingsPanel {
 
     public Category getServerTab() {
         return Category.of(LabelGrabber.INSTANCE.getLabel("server.settings.heading"),
-                new ImageView(new Image("file:icons/serversettingsicon.png")),
+                QueleaIcon.SERVER.create(),
                 Group.of(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label"), useMobileLyricsProperty)
                                 .customKey(useMobLyricsKey),

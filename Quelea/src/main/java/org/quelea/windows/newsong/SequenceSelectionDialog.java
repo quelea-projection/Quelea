@@ -38,6 +38,9 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.StyleManager;
+import org.quelea.windows.style.QueleaIcon;
+import javafx.scene.layout.Region;
 /**
  * The dialog that allows the user to select a song sequence.
  * <p>
@@ -45,6 +48,8 @@ import org.quelea.windows.main.QueleaApp;
  * @author Arvid
  */
 public final class SequenceSelectionDialog extends Stage {
+
+    private static final javafx.css.PseudoClass DROP_TARGET = javafx.css.PseudoClass.getPseudoClass("drop-target");
 
     private ListView<String> chosenSequence;
     private final Button removeButton;
@@ -70,7 +75,7 @@ public final class SequenceSelectionDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("sequence.selection.dialog.title"));
         Utils.addIconsToStage(this);
         BorderPane mainPane = new BorderPane();
-        setScene(new Scene(mainPane));
+        setScene(StyleManager.apply(new Scene(mainPane)));
 
         finished = false;
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("chosen.sequence.explanation") +
@@ -95,9 +100,7 @@ public final class SequenceSelectionDialog extends Stage {
         VBox toolbar = new VBox();
         toolbar.setPadding(new Insets(5));
         toolbar.getChildren().add(new Label());
-        ImageView removeIV = new ImageView(new Image("file:icons/cross.png"));
-        removeIV.setFitWidth(16);
-        removeIV.setFitHeight(16);
+        Region removeIV = QueleaIcon.CLOSE.create();
         removeButton = new Button("", removeIV);
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.sequence.tooltip")));
@@ -106,18 +109,14 @@ public final class SequenceSelectionDialog extends Stage {
             chosenSequence.getItems().remove(chosenSequence.selectionModelProperty().get().getSelectedIndex());
         });
 
-        ImageView upIV = new ImageView(new Image("file:icons/up.png"));
-        upIV.setFitWidth(16);
-        upIV.setFitHeight(16);
+        Region upIV = QueleaIcon.UP.create();
         upButton = new Button("", upIV);
         Utils.setToolbarButtonStyle(upButton);
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.sequence.tooltip")));
         upButton.setDisable(true);
         upButton.setOnAction(t -> moveCurrentItem(Direction.UP));
 
-        ImageView downIV = new ImageView(new Image("file:icons/down.png"));
-        downIV.setFitWidth(16);
-        downIV.setFitHeight(16);
+        Region downIV = QueleaIcon.DOWN.create();
         downButton = new Button("", downIV);
         Utils.setToolbarButtonStyle(downButton);
         downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.sequence.tooltip")));
@@ -143,7 +142,8 @@ public final class SequenceSelectionDialog extends Stage {
             }
         });
 
-        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        Button doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), QueleaIcon.CHECK.create());
+        StyleManager.markPrimaryButton(doneButton);
         doneButton.setOnAction((ActionEvent t) -> {
             finished = true;
             SequenceSelectionDialog.this.hide();
@@ -206,7 +206,7 @@ public final class SequenceSelectionDialog extends Stage {
 
                 cell.setOnDragEntered((DragEvent event) -> {
                     if (dragFromIndex.get() >= 0 && (dragFromIndex.get() != cell.getIndex() || fromLeft)) {
-                        cell.setStyle("-fx-background-color: gold;");
+                        cell.pseudoClassStateChanged(DROP_TARGET, true);
                         endItem = cell.getIndex();
                     } else {
                         endItem = -1;
@@ -214,7 +214,7 @@ public final class SequenceSelectionDialog extends Stage {
                 });
 
                 cell.setOnDragExited((DragEvent event) -> {
-                    cell.setStyle("");
+                    cell.pseudoClassStateChanged(DROP_TARGET, false);
                 });
 
                 cell.setOnDragDropped((DragEvent event) -> {

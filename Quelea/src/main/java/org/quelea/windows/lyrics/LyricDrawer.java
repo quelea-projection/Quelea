@@ -18,6 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,12 +59,14 @@ import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.utils.FXFontMetrics;
 import org.quelea.utils.WrapTextResult;
 import org.quelea.windows.video.VidDisplay;
+import org.quelea.windows.video.VideoStills;
 
 /**
  * Responsible for drawing lyrics and their background.
@@ -84,7 +87,13 @@ public class LyricDrawer extends WordDrawer {
     private Group oldTextGroup;
     private String[] oldText;
     private boolean newItem;
+    /**
+     * Player for video backgrounds. Created lazily the first time a video
+     * theme is set and released again as soon as a non-video theme is set, so
+     * drawers that never show a video don't hold a GStreamer pipeline.
+     */
     private VidDisplay vidDisplay;
+    private boolean playVideo = true;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -92,8 +101,6 @@ public class LyricDrawer extends WordDrawer {
         textGroup = new Group();
         smallTextGroup = new Group();
         lastClearedState = new HashMap<>();
-        vidDisplay = new VidDisplay();
-        vidDisplay.setLoop(true);
     }
 
     protected void drawText(double defaultFontSize, boolean dumbWrap) {
@@ -113,7 +120,7 @@ public class LyricDrawer extends WordDrawer {
             }
         }
 
-        if (getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+        if (isProjectionCanvas()) {
             newItem = oldText != null && !Arrays.deepEquals(getText(), oldText) && textGroup != null;
             oldText = getText();
         } else {
@@ -341,7 +348,7 @@ public class LyricDrawer extends WordDrawer {
         } else if (QueleaProperties.get().getUseSlideTransition()
                 && !getCanvas().isBlacked() && !getCanvas().isCleared()
                 && !getCanvas().isShowingLogo()
-                && getCanvas().equals(QueleaApp.get().getProjectionWindow().getCanvas())) {
+                && isProjectionCanvas()) {
             if (oldTextGroup != null) {
                 FadeTransition fadeOut = new FadeTransition(Duration.millis(QueleaProperties.get().getSlideTransitionOutDuration()), oldTextGroup);
                 fadeOut.setFromValue(1.0);
@@ -403,17 +410,38 @@ public class LyricDrawer extends WordDrawer {
             Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
         } else if (theme.getBackground() instanceof VideoBackground) {
-            var uri = ((VideoBackground) theme.getBackground()).getVideoFile().toURI();
-            if(!Objects.equals(vidDisplay.getUri(), uri)) {
-                vidDisplay.stop();
-                vidDisplay.setURI(uri);
-                vidDisplay.play();
+            if (playVideo) {
+                var uri = ((VideoBackground) theme.getBackground()).getVideoFile().toURI();
+                if (vidDisplay == null) {
+                    vidDisplay = new VidDisplay();
+                    vidDisplay.setLoop(true);
+                }
+                if (!Objects.equals(vidDisplay.getUri(), uri)) {
+                    vidDisplay.stop();
+                    vidDisplay.setURI(uri);
+                    vidDisplay.play();
+                }
+                newImageView.imageProperty().bind(vidDisplay.imageProperty());
+            } else {
+                // Not on screen: show a still frame instead of decoding the video.
+                File videoFile = ((VideoBackground) theme.getBackground()).getVideoFile();
+                image = VideoStills.getCached(videoFile);
+                if (image == null) {
+                    VideoStills.load(videoFile).thenAccept(still -> still.ifPresent(img -> {
+                        if (!newImageView.imageProperty().isBound()) {
+                            newImageView.setImage(img);
+                        }
+                    }));
+                }
             }
-            newImageView.imageProperty().bind(vidDisplay.imageProperty());
 
         } else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
+        }
+
+        if (!(theme.getBackground() instanceof VideoBackground)) {
+            stopVideo();
         }
 
         Node newBackground;
@@ -428,9 +456,53 @@ public class LyricDrawer extends WordDrawer {
 //        }
         getCanvas().getChildren().add(newImageView);
         newBackground = newImageView;
-        getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
+        Node oldBackground = getCanvas().getCanvasBackground();
+        if (oldBackground instanceof ImageView) {
+            // Detach the old background from any video frame property so it
+            // stops being updated (and referenced) by the video sink.
+            ((ImageView) oldBackground).imageProperty().unbind();
+        }
+        getCanvas().getChildren().remove(oldBackground);
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
+    }
+
+    /**
+     * @return true if this drawer draws on the main projection window. False
+     * for previews and off-screen canvases, and while the projection window
+     * hasn't been created yet.
+     */
+    private boolean isProjectionCanvas() {
+        QueleaApp app = QueleaApp.get();
+        DisplayStage projectionWindow = app == null ? null : app.getProjectionWindow();
+        return projectionWindow != null && getCanvas().equals(projectionWindow.getCanvas());
+    }
+
+    /**
+     * Set whether video backgrounds should be played. Preview drawers turn this
+     * off while they aren't visible, so no video is decoded for them; a still
+     * frame of the video is shown instead (see {@link VideoStills}). Turning it
+     * off releases any current player; after changing it, set the theme again
+     * to update the background.
+     *
+     * @param playVideo true to play video backgrounds (the default).
+     */
+    public void setPlayVideo(boolean playVideo) {
+        this.playVideo = playVideo;
+        if (!playVideo) {
+            stopVideo();
+        }
+    }
+
+    /**
+     * Stop and release the video background player, if there is one. A new
+     * player is created automatically the next time a video theme is set.
+     */
+    private void stopVideo() {
+        if (vidDisplay != null) {
+            vidDisplay.dispose();
+            vidDisplay = null;
+        }
     }
 
     /**

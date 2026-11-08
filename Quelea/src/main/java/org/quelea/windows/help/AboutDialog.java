@@ -44,6 +44,8 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.DesktopApi;
 
+import org.quelea.windows.style.StyleManager;
+
 /**
  * Quelea's about Dialog, displaying general features about the program and the
  * debug log location (so we can point any users here who may be looking for
@@ -70,8 +72,7 @@ public class AboutDialog extends Stage {
 
         VBox subLayout = new VBox();
         Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString());
-        headingText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        headingText.getStyleClass().add("text");
+        headingText.getStyleClass().addAll("text", "about-heading");
         subLayout.getChildren().add(headingText);
         subLayout.getChildren().add(new Text(" "));
         Text text1 = new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1"));
@@ -91,8 +92,7 @@ public class AboutDialog extends Stage {
         debugLogText.getStyleClass().add("text");
         if(Desktop.isDesktopSupported()) {
             debugLogText.setCursor(Cursor.HAND);
-            debugLogText.setFill(Color.BLUE);
-            debugLogText.setStyle("-fx-underline: true;");
+            debugLogText.getStyleClass().add("link-text");
             debugLogText.setOnMouseClicked(t -> {
                 DesktopApi.open(new File(LoggerUtils.getHandlerFileLocation()));
             });
@@ -103,16 +103,15 @@ public class AboutDialog extends Stage {
         closeButton.setOnAction(t -> {
             hide();
         });
+        StyleManager.markPrimaryButton(closeButton);
         newLayout.setCenter(subLayout);
-        BorderPane.setMargin(subLayout, new Insets(10));
+        BorderPane.setMargin(subLayout, new Insets(16, 20, 20, 20));
         BorderPane.setAlignment(closeButton, Pos.CENTER);
         BorderPane.setMargin(closeButton, new Insets(10));
         newLayout.setBottom(closeButton);
 
         Scene scene = new Scene(newLayout);
-        if (QueleaProperties.get().getUseDarkTheme()) {
-            scene.getStylesheets().add("org/modena_dark.css");
-        }
+        StyleManager.apply(scene);
         setScene(scene);
     }
 }
