@@ -41,6 +41,7 @@ import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.PreferencesDialog;
+import org.quelea.windows.search.UniversalSearchWindow;
 
 import javafx.scene.Parent;
 
@@ -57,6 +58,7 @@ public class MainWindow extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private SongEntryWindow songEntryWindow;
+    private UniversalSearchWindow universalSearchWindow;
     private final TranslationChoiceDialog translationChoiceDialog;
     private final NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
@@ -237,6 +239,20 @@ public class MainWindow extends Stage {
             songEntryWindow = new SongEntryWindow();
         }
         return songEntryWindow;
+    }
+
+    /**
+     * Get the universal search window used for this window.
+     * <p/>
+     *
+     * @return the universal search window.
+     */
+    public UniversalSearchWindow getUniversalSearchWindow() {
+        if (universalSearchWindow == null) {
+            LOGGER.log(Level.INFO, "Creating universal search window");
+            universalSearchWindow = new UniversalSearchWindow(this);
+        }
+        return universalSearchWindow;
     }
 
     /**

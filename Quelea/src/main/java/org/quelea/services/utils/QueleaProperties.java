@@ -2589,6 +2589,10 @@ public final class QueleaProperties extends SortedProperties {
         return getProperty("search.keys", "Ctrl,L").split(",");
     }
 
+    public String[] getUniversalSearchKeys() {
+        return getProperty("universal.search.keys", "Shortcut,K").split(",");
+    }
+
     public String[] getOptionsKeys() {
         return getProperty("options.keys", "Shortcut,T").split(",");
     }

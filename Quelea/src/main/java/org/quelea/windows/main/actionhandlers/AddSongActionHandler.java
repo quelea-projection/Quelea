@@ -51,24 +51,33 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
-        SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
         List<SongDisplayable> songs = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValues();
         for(SongDisplayable song : songs) {
-            if (QueleaProperties.get().getSongOverflow() || !updateInDB) {
-                song = new SongDisplayable(song);
-            }
-            if (!updateInDB) {
-                song.setID(-1);
-                song.setNoDBUpdate();
-            }
-            if (QueleaProperties.get().getUseDefaultTranslation()) {
-                String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
-                if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
-                    song.setCurrentTranslationLyrics(defaultTranslation);
-                }
-            }
-            schedulePanel.getScheduleList().add(song);
+            add(song);
             libraryPanel.getLibrarySongPanel().getSearchBox().clear();
         }
+    }
+
+    /**
+     * Add a song to the schedule.
+     * <p/>
+     * @param song the song to add.
+     */
+    public void add(SongDisplayable song) {
+        SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
+        if (QueleaProperties.get().getSongOverflow() || !updateInDB) {
+            song = new SongDisplayable(song);
+        }
+        if (!updateInDB) {
+            song.setID(-1);
+            song.setNoDBUpdate();
+        }
+        if (QueleaProperties.get().getUseDefaultTranslation()) {
+            String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+            if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                song.setCurrentTranslationLyrics(defaultTranslation);
+            }
+        }
+        schedulePanel.getScheduleList().add(song);
     }
 }

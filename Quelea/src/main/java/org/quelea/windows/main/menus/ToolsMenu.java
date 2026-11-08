@@ -34,6 +34,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
+import org.quelea.windows.main.actionhandlers.UniversalSearchActionHandler;
 import org.quelea.windows.main.actionhandlers.ViewBibleActionHandler;
 import org.quelea.windows.main.widgets.TestPaneDialog;
 
@@ -46,6 +47,7 @@ import org.quelea.windows.style.QueleaIcon;
  */
 public class ToolsMenu extends Menu {
 
+    private final MenuItem universalSearchItem;
     private final MenuItem searchBibleItem;
     private final MenuItem viewBibleItem;
     private final MenuItem liveTextItem;
@@ -58,6 +60,11 @@ public class ToolsMenu extends Menu {
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
+
+        universalSearchItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("universal.search.menu"), QueleaIcon.SEARCH.create());
+        universalSearchItem.setAccelerator(ShortcutManager.getKeyCodeCombination(QueleaProperties.get().getUniversalSearchKeys()));
+        universalSearchItem.setOnAction(new UniversalSearchActionHandler());
+        getItems().add(universalSearchItem);
 
         viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), QueleaIcon.BIBLE.create());
         viewBibleItem.setOnAction(new ViewBibleActionHandler());

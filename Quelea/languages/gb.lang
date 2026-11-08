@@ -861,3 +861,6 @@ bible.book.2john=2 John
 bible.book.3john=3 John
 bible.book.jude=Jude
 bible.book.revelation=Revelation
+universal.search.menu=Search everything...
+universal.search.prompt=Search songs, bible passages, images, videos and timers
+universal.search.no.results=No results
