@@ -2,6 +2,7 @@ quelea (2027.0) stable
 
   * Upgrade to Java25 and OpenJFX 25
   * New modern, clean theme
+  * Universal search box (Ctrl/Cmd+K) to find songs, bible passages, images, videos, timers and notices, with a preview, and add them to the schedule
   * Projector output can be sent over NDI to OBS Studio and other software (requires the NDI Runtime)
   * Default translations now used when adding song via server
   * Support for bible book names in chapters in Zefania XML import
