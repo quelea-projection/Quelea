@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
@@ -16,7 +15,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +34,10 @@ public class BiblePassageVersionsTest {
     private static final int GENESIS = 1;
     private static final int JOHN = 43;
 
-    @TempDir
-    static Path home;
-
     @BeforeAll
     static void createBibles() throws Exception {
-        QueleaProperties.init(home.toString());
+        // Not a @TempDir: that is deleted after this class, while other tests in the run keep using these properties
+        QueleaProperties.init(Files.createTempDirectory("quelea-bible-versions-test").toString());
         Files.createDirectories(QueleaProperties.get().getBibleDir().toPath());
         writeBible("alpha.xml", ALPHA,
                 book(GENESIS, "Genesis", 1, verse(1, "Alpha one."), verse(2, "Alpha two."), verse(3, "Alpha three.")),
