@@ -47,24 +47,68 @@
  * Menu bar, menus, context menus, tooltips
  * ==================================================================== */
 
+/* The in-window menu bar (Windows and Linux; macOS uses the system menu bar).
+   The titles look like tabs: plain text with a short separator between them,
+   lighting up on hover. The open menu's title becomes a tab that joins the
+   menu below it into one shape. (The titles are menu-button controls, so
+   the button style is reset. MainMenuBar sets :menu-open and .first-menu.) */
 .menu-bar {
     -fx-background-color: -q-header;
     -fx-border-color: transparent transparent -q-border transparent;
-    -fx-padding: 2 4 2 4;
+    -fx-padding: 4 8 0 8;
 }
 
+.menu-bar > .container {
+    -fx-spacing: 2;
+}
+
+/* The tab outline is a border; the short separator in the gap to the left
+   is a second background layer (a gradient that is 1px of colour, then
+   transparent), so that it doesn't add to the title's height the way border
+   insets would. */
 .menu-bar > .container > .menu-button {
-    -fx-background-radius: 6;
-    -fx-padding: 4 10 4 10;
+    -fx-background-color: transparent,
+        linear-gradient(from 0px 0px to 2px 0px, -q-border 50%, transparent 50%);
+    -fx-background-insets: 0, 8 0 8 -2;
+    -fx-background-radius: 6 6 0 0, 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 1 1 0 1;
+    -fx-border-radius: 6 6 0 0;
+    -fx-border-insets: 0;
+    -fx-padding: 5 14 5 14;
+    -fx-translate-y: 1; /* covers the bar's bottom line under the open tab */
+    /* Light up at once, like a native menu. (A fade from "transparent",
+       which is transparent black, passes through grey.) */
+    transition: -fx-background-color 0s;
 }
 
-.menu-bar > .container > .menu-button:hover,
-.menu-bar > .container > .menu-button:showing {
-    -fx-background-color: -q-hover;
+.menu-bar > .container > .menu-button.first-menu,
+.menu-bar:menu-open > .container > .menu-button {
+    -fx-background-color: transparent, transparent;
+}
+
+/* ".menu" (on every title) makes these outrank the .first-menu rule above */
+.menu-bar > .container > .menu-button.menu:hover {
+    -fx-background-color: -q-accent-soft, transparent;
+}
+
+.menu-bar > .container > .menu-button.menu:showing,
+.menu-bar > .container > .menu-button.menu:showing:hover,
+.menu-bar:menu-open > .container > .menu-button.menu:showing {
+    -fx-background-color: -q-surface, transparent;
+    -fx-border-color: -q-border;
 }
 
 .menu-bar > .container > .menu-button > .label {
     -fx-text-fill: -q-text;
+}
+
+/* The menu under the open tab (marked by MainMenuBar): no top edge and a
+   square top-left corner, so tab and menu read as one shape. */
+.context-menu.menu-bar-popup {
+    -fx-background-insets: 0, 0 1 1 1;
+    -fx-background-radius: 0 8 8 8, 0 7 7 7;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.16), 12, 0, 2, 8);
 }
 
 .context-menu {
@@ -855,7 +899,12 @@
 }
 
 .menu-bar > .container > .menu-button:showing > .label {
-    -fx-text-fill: -q-text;
+    -fx-text-fill: -q-accent;
+}
+
+/* dark-common.css colours every .text; keep the open tab's accent colour */
+.menu-bar > .container > .menu-button:showing > .label > .text {
+    -fx-fill: -q-accent;
 }
 
 /* ======================================================================

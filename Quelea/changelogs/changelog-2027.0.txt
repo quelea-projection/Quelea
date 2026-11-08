@@ -1,0 +1,17 @@
+quelea (2027.0) stable
+
+  * Upgrade to Java25 and OpenJFX 25
+  * New modern, clean theme
+  * Default translations now used when adding song via server
+  * Support for bible book names in chapters in Zefania XML import
+  * Fix UTF-8 filename issue with snap build
+  * Fix issue with positions being wrong when dragging items in schedule
+  * Fix memory use growing without limit (and Quelea hanging) when editing a theme with a video background
+  * Theme previews that aren't on screen no longer keep playing video backgrounds in the background
+  * Remote control theme thumbnails now show video backgrounds, and no longer need the theme window to be opened at startup
+  * Much faster adding, editing and removing of songs with large song databases
+  * Faster start-up with large song databases
+  * Much faster duplicate check when importing songs
+  * Fix new songs sometimes being saved twice
+  * Fix changes saved just before closing Quelea sometimes being lost
+  * Various minor bugfixes
