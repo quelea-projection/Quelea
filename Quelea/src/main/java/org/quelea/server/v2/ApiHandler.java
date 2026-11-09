@@ -120,6 +120,13 @@ final class ApiHandler extends Handler.Abstract {
         // they may contain spaces and slashes.
         route("GET", "/songs", Scope.VIEW,
                 call -> control.searchSongs(call.query("q"), call.intQuery("limit", 50, 1, 200)));
+        route("POST", "/songs", Scope.CONTROL, call -> {
+            JsonObject body = call.body();
+            return control.createSong(new Catalog.NewSong(Json.optionalString(body, "title"),
+                    Json.optionalString(body, "author"), Json.optionalString(body, "lyrics"),
+                    Json.optionalString(body, "ccli"), Json.optionalString(body, "copyright"),
+                    Json.optionalString(body, "key")));
+        });
         route("GET", "/songs/([0-9]+)", Scope.VIEW,
                 call -> control.getSong(Long.parseLong(call.match().group(1))));
         route("GET", "/bible/translations", Scope.VIEW, call -> control.bibleTranslations());

@@ -260,6 +260,19 @@ final class FakeQueleaControl implements QueleaControl {
                 List.of(new LiveSections.Section("Verse 1", List.of("Amazing grace"), null)), List.of("Svenska"));
     }
 
+    final List<Catalog.NewSong> createdSongs = new CopyOnWriteArrayList<>();
+
+    @Override
+    public Catalog.SongDetails createSong(Catalog.NewSong song) {
+        createdSongs.add(song);
+        List<LiveSections.Section> sections = new java.util.ArrayList<>();
+        for (String section : song.lyrics().split("\n\\s*\n")) {
+            sections.add(new LiveSections.Section(null, List.of(section.split("\n")), null));
+        }
+        return new Catalog.SongDetails(100 + createdSongs.size(), song.title(),
+                song.author() == null ? "" : song.author(), sections, List.of());
+    }
+
     @Override
     public List<Catalog.Translation> bibleTranslations() {
         return List.of(new Catalog.Translation("KJV", true), new Catalog.Translation("Svenska 1917", false));

@@ -230,3 +230,18 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 .media .toggles { margin-bottom: 8px; }
 #media-position { width: 100%; padding: 0; min-height: 32px; margin-bottom: 16px; }
 
+/* New song: folded away until needed. */
+#new-song summary { cursor: pointer; list-style: none; }
+#new-song summary::-webkit-details-marker { display: none; }
+#new-song summary h2 { display: inline; margin: 0; }
+#new-song summary::after { content: '＋'; float: right; color: var(--muted); }
+#new-song[open] summary::after { content: '－'; }
+#new-song[open] summary { margin-bottom: 12px; }
+#new-song-form > input, #new-song-form > textarea { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+textarea {
+  font: inherit; color: inherit; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--bg); padding: 10px 12px; resize: vertical;
+}
+.small { font-size: 13px; margin: 0 0 8px; }
+#new-song-form .row button { flex: 1; }
+

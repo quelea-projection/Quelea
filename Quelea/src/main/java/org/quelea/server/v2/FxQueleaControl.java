@@ -325,6 +325,33 @@ final class FxQueleaControl implements QueleaControl {
         if (song == null) {
             throw new NoSuchElementException("No song with id " + songId);
         }
+        return details(song);
+    }
+
+    @Override
+    public Catalog.SongDetails createSong(Catalog.NewSong newSong) {
+        // Off the FX thread, like Quelea's song import: saving waits for the
+        // search index, and the library refreshes itself through its
+        // database listener. The CCLI number and copyright go in before the
+        // lyrics, since the small lines under each section are made from
+        // them.
+        SongDisplayable song = new SongDisplayable.Builder(newSong.title(),
+                newSong.author() == null ? "" : newSong.author())
+                .ccli(newSong.ccli())
+                .copyright(newSong.copyright())
+                .key(newSong.key())
+                .lyrics(newSong.lyrics())
+                .get();
+        if (song.getSectionsWithoutSequence().length == 0) {
+            throw new IllegalArgumentException("The lyrics have no text");
+        }
+        if (!SongManager.get().addSong(song, true)) {
+            throw new IllegalStateException("Quelea could not save the song");
+        }
+        return details(song);
+    }
+
+    private static Catalog.SongDetails details(SongDisplayable song) {
         List<LiveSections.Section> sections = new ArrayList<>();
         for (TextSection section : song.getSectionsWithoutSequence()) {
             List<String> lines = Arrays.asList(section.getText(false, false));

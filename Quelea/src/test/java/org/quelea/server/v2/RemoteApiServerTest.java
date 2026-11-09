@@ -291,6 +291,34 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void createANewSong() throws Exception {
+        HttpResponse<String> created = send("POST", "/api/v2/songs", CONTROL_TOKEN,
+                "{\"title\":\"  Ny  sång \",\"author\":\"Okänd\",\"ccli\":\"\","
+                + "\"lyrics\":\"Vers 1\\r\\nRad ett\\r\\n\\r\\nRefräng\\r\\nRad två\\n\"}");
+        assertEquals(200, created.statusCode());
+        JsonObject song = json(created);
+        assertEquals(101, song.get("id").getAsLong());
+        assertEquals("Ny sång", song.get("title").getAsString(), "whitespace is tidied");
+        assertEquals(2, song.getAsJsonArray("sections").size());
+        Catalog.NewSong saved = control.createdSongs.get(0);
+        assertEquals("Vers 1\nRad ett\n\nRefräng\nRad två", saved.lyrics(), "line endings are normalised");
+        assertNull(saved.ccli(), "blank fields become null");
+    }
+
+    @Test
+    void newSongErrors() throws Exception {
+        assertEquals(400, send("POST", "/api/v2/songs", CONTROL_TOKEN, "{\"lyrics\":\"Hej\"}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/songs", CONTROL_TOKEN, "{\"title\":\"Hej\"}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/songs", CONTROL_TOKEN,
+                "{\"title\":\"Hej\",\"lyrics\":\"" + "x".repeat(20_001) + "\"}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/songs", CONTROL_TOKEN,
+                "{\"title\":\"" + "x".repeat(201) + "\",\"lyrics\":\"Hej\"}").statusCode());
+        assertEquals(403, send("POST", "/api/v2/songs", VIEW_TOKEN,
+                "{\"title\":\"Hej\",\"lyrics\":\"Hej\"}").statusCode());
+        assertTrue(control.createdSongs.isEmpty());
+    }
+
+    @Test
     void showAndRemoveNotices() throws Exception {
         HttpResponse<String> empty = send("GET", "/api/v2/notices", VIEW_TOKEN, null);
         assertEquals(200, empty.statusCode());

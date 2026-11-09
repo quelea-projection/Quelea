@@ -57,6 +57,61 @@ public final class Catalog {
     }
 
     /**
+     * A new song for the database, from {@code POST /api/v2/songs}.
+     *
+     * @param title the title, not blank.
+     * @param author the author, or null.
+     * @param lyrics the lyrics in Quelea's text format: sections separated by
+     * blank lines, each optionally starting with a title line such as
+     * "Verse 1" or "Chorus", and chord lines above the text if wanted.
+     * @param ccli the CCLI song number, or null.
+     * @param copyright the copyright line, or null.
+     * @param key the key, such as "G", or null.
+     */
+    public record NewSong(String title, String author, String lyrics, String ccli, String copyright, String key) {
+
+        /**
+         * The longest lyrics accepted; long hymns stay well below.
+         */
+        public static final int MAX_LYRICS = 20_000;
+
+        /**
+         * The longest title, author, CCLI number, copyright or key accepted.
+         */
+        public static final int MAX_FIELD = 200;
+
+        public NewSong {
+            title = tidy(title, "title");
+            if (title == null) {
+                throw new IllegalArgumentException("\"title\" is required");
+            }
+            author = tidy(author, "author");
+            ccli = tidy(ccli, "ccli");
+            copyright = tidy(copyright, "copyright");
+            key = tidy(key, "key");
+            if (lyrics == null || lyrics.isBlank()) {
+                throw new IllegalArgumentException("\"lyrics\" is required");
+            }
+            if (lyrics.length() > MAX_LYRICS) {
+                throw new IllegalArgumentException("\"lyrics\" is longer than " + MAX_LYRICS + " characters");
+            }
+            // Windows and old Mac line endings become plain newlines.
+            lyrics = lyrics.replace("\r\n", "\n").replace('\r', '\n').strip();
+        }
+
+        private static String tidy(String value, String field) {
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            String tidied = value.strip().replaceAll("\\s+", " ");
+            if (tidied.length() > MAX_FIELD) {
+                throw new IllegalArgumentException("\"" + field + "\" is longer than " + MAX_FIELD + " characters");
+            }
+            return tidied;
+        }
+    }
+
+    /**
      * An installed bible.
      *
      * @param name the bible's name, used to pick it in other requests.

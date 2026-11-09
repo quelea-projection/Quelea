@@ -79,6 +79,19 @@
         </div>
         <ul id="song-results" class="results"></ul>
       </form>
+      <details id="new-song" class="card">
+        <summary><h2 data-t="song.new"></h2></summary>
+        <form id="new-song-form">
+          <input id="new-song-title" maxlength="200" required data-t-placeholder="song.title">
+          <input id="new-song-author" maxlength="200" data-t-placeholder="song.author">
+          <textarea id="new-song-lyrics" rows="10" maxlength="20000" required data-t-placeholder="song.lyrics"></textarea>
+          <p class="muted small" data-t="song.help"></p>
+          <div class="row">
+            <button type="submit" data-t="song.save"></button>
+            <button type="submit" id="new-song-add" class="primary" data-t="song.saveAdd"></button>
+          </div>
+        </form>
+      </details>
       <form id="bible-form" class="card">
         <h2 data-t="add.bible"></h2>
         <select id="bible-translation"></select>

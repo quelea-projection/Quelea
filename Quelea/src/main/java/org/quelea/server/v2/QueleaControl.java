@@ -208,6 +208,16 @@ public interface QueleaControl {
     Catalog.SongDetails getSong(long songId);
 
     /**
+     * Save a new song in the song database, as Quelea's new song window
+     * does. It is not added to the schedule; use addSong for that.
+     *
+     * @param song the title, lyrics and other details.
+     * @return the saved song with its new id.
+     * @throws IllegalArgumentException if the lyrics have no text.
+     */
+    Catalog.SongDetails createSong(Catalog.NewSong song);
+
+    /**
      * @return the installed bibles.
      */
     List<Catalog.Translation> bibleTranslations();

@@ -50,6 +50,14 @@ const TEXTS = {
     'add.show': 'Show',
     'add.add': 'Add to schedule',
     'add.added': 'Added to the schedule',
+    'song.new': 'New song',
+    'song.title': 'Title',
+    'song.author': 'Author',
+    'song.lyrics': 'Verse 1\nFirst line\nSecond line\n\nChorus\n…',
+    'song.help': 'Leave a blank line between sections. A first line such as “Verse 1”, “Chorus” or “Bridge” names the section.',
+    'song.save': 'Save',
+    'song.saveAdd': 'Save and add',
+    'song.saved': 'Song saved',
     'notice.title': 'Notices',
     'notice.text': 'Text that scrolls across the screen',
     'notice.once': 'Once', 'notice.twice': 'Twice', 'notice.three': '3 times', 'notice.five': '5 times',
@@ -118,6 +126,14 @@ const TEXTS = {
     'add.show': 'Visa',
     'add.add': 'Lägg till i schemat',
     'add.added': 'Tillagd i schemat',
+    'song.new': 'Ny sång',
+    'song.title': 'Titel',
+    'song.author': 'Författare',
+    'song.lyrics': 'Verse 1\nFörsta raden\nAndra raden\n\nChorus\n…',
+    'song.help': 'Lämna en tom rad mellan delarna. En första rad som ”Verse 1”, ”Chorus” eller ”Bridge” blir delens namn (Quelea känner igen de engelska namnen).',
+    'song.save': 'Spara',
+    'song.saveAdd': 'Spara och lägg till',
+    'song.saved': 'Sången är sparad',
     'notice.title': 'Meddelanden',
     'notice.text': 'Text som rullar över skärmen',
     'notice.once': 'En gång', 'notice.twice': 'Två gånger', 'notice.three': '3 gånger', 'notice.five': '5 gånger',
@@ -528,6 +544,25 @@ function setupNotices() {
   };
 }
 
+// ---- New song (in the add tab) -----------------------------------------
+
+function setupNewSong() {
+  $('new-song-form').onsubmit = async event => {
+    event.preventDefault();
+    const andAdd = event.submitter && event.submitter.id === 'new-song-add';
+    const song = await run(() => api.post('/songs', {
+      title: $('new-song-title').value,
+      author: $('new-song-author').value,
+      lyrics: $('new-song-lyrics').value
+    }));
+    if (!song) return;
+    $('new-song-form').reset();
+    $('new-song').open = false;
+    if (andAdd) await addToSchedule({ songId: song.id });
+    else toast(t('song.saved'));
+  };
+}
+
 async function loadTranslations() {
   const translations = await run(() => api.get('/bible/translations'));
   const select = $('bible-translation');
@@ -743,6 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLiveTab();
   setupAddTab();
   setupNotices();
+  setupNewSong();
   document.querySelectorAll('#tabs button').forEach(button => { button.onclick = () => showTab(button.dataset.tab); });
   // Reconnect at once when a phone wakes up or the tab comes back.
   document.addEventListener('visibilitychange', () => {
