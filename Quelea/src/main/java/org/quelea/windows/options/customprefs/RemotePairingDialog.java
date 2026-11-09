@@ -49,6 +49,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.quelea.server.v2.DeviceRegistry;
+import org.quelea.server.v2.LanAddress;
 import org.quelea.server.v2.PairingService;
 import org.quelea.server.v2.PairingUri;
 import org.quelea.server.v2.Scope;
@@ -86,7 +87,7 @@ public class RemotePairingDialog extends Stage {
     public RemotePairingDialog(Window owner, PairingService pairing, int port) {
         this.pairing = pairing;
         this.port = port;
-        this.host = MobileServerPreference.getIP();
+        this.host = LanAddress.find().map(InetAddress::getHostAddress).orElse(null);
         initOwner(owner);
         initModality(Modality.WINDOW_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("remote.v2.pair.title"));

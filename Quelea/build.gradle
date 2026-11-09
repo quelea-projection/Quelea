@@ -242,6 +242,8 @@ dependencies {
     // Remote control v2: HTTP API and WebSocket events on one port
     implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '12.1.14'
     implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-server', version: '12.1.14'
+    // Remote control v2: announces the server on the network as _quelea._tcp (mDNS/DNS-SD)
+    implementation group: 'org.jmdns', name: 'jmdns', version: '3.6.4'
     implementation group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '4.0.8'
     implementation group: 'org.apache.lucene', name: 'lucene-core', version: '8.9.0'
     implementation group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.9.0'

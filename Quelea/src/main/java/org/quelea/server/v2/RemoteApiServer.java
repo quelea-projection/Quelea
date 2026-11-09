@@ -18,6 +18,8 @@
 package org.quelea.server.v2;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -54,6 +56,7 @@ public final class RemoteApiServer {
     private final EventHub hub;
     private final DeviceAuth auth;
     private final PairingService pairing;
+    private final List<AutoCloseable> closeOnStop = new CopyOnWriteArrayList<>();
 
     /**
      * Create the server.
@@ -110,6 +113,13 @@ public final class RemoteApiServer {
      * Stop the server and close all client connections.
      */
     public void stop() {
+        for (AutoCloseable closeable : closeOnStop) {
+            try {
+                closeable.close();
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Could not close " + closeable, ex);
+            }
+        }
         hub.close();
         try {
             server.stop();
@@ -123,6 +133,14 @@ public final class RemoteApiServer {
      */
     public int getPort() {
         return connector.getLocalPort();
+    }
+
+    /**
+     * @param closeable something to close when the server stops, such as
+     * the mDNS announcement.
+     */
+    public void closeOnStop(AutoCloseable closeable) {
+        closeOnStop.add(closeable);
     }
 
     /**

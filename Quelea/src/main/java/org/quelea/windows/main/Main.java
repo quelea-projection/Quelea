@@ -32,6 +32,11 @@ import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.server.v2.DeviceRegistry;
 import org.quelea.server.v2.PairingService;
+import org.quelea.server.v2.RemoteAnnouncer;
+import org.quelea.server.v2.LanAddress;
+import java.util.Optional;
+import java.net.UnknownHostException;
+import java.net.InetAddress;
 import org.quelea.server.v2.RemoteApiServer;
 import org.quelea.server.v2.RemoteCore;
 import org.quelea.services.languages.LabelGrabber;
@@ -368,12 +373,34 @@ public final class Main extends Application {
                         core.control(), core.bus(), devices, pairing);
                 server.start();
                 QueleaApp.get().setRemoteV2Server(server);
+                announceRemoteV2(server);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Couldn't start remote control v2 server", ex);
             }
         }, "remote-v2-start");
         starter.setDaemon(true);
         starter.start();
+    }
+
+    /**
+     * Announce the v2 server on the network (mDNS), on the address the
+     * pairing QR code uses.
+     */
+    private static void announceRemoteV2(RemoteApiServer server) {
+        Optional<InetAddress> address = LanAddress.find();
+        if (address.isEmpty()) {
+            LOGGER.log(Level.INFO, "No network address, not announcing remote control v2");
+            return;
+        }
+        String hostName;
+        try {
+            hostName = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            hostName = null;
+        }
+        RemoteAnnouncer announcer = new RemoteAnnouncer();
+        server.closeOnStop(announcer);
+        announcer.start(address.get(), hostName, server.getPort(), 0, QueleaProperties.VERSION.getVersionString());
     }
 
     private void showMonitorWarning(int numMonitors) {
