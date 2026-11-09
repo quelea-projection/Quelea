@@ -289,6 +289,14 @@ final class FakeQueleaControl implements QueleaControl {
     }
 
     @Override
+    public synchronized ScheduleChange addWebPage(String url, Long ifRevision) {
+        String checked = WebAddress.check(url);
+        checkRevision(ifRevision);
+        calls.add("addWebPage " + checked);
+        return added();
+    }
+
+    @Override
     public Catalog.MediaFile uploadLibraryFile(MediaLibrary.Kind kind, String name, long size,
             java.io.InputStream data) {
         String checked = MediaLibrary.checkName(kind, name);

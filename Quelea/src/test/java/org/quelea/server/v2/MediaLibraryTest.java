@@ -50,6 +50,27 @@ class MediaLibraryTest {
     }
 
     @Test
+    void documentsArePdfAndPowerPoint() {
+        assertEquals("Predikan.pptx", MediaLibrary.checkName(MediaLibrary.Kind.DOCUMENT, "Predikan.pptx"));
+        assertEquals("Blad.PDF", MediaLibrary.checkName(MediaLibrary.Kind.DOCUMENT, "Blad.PDF"));
+        assertEquals("gammal.ppt", MediaLibrary.checkName(MediaLibrary.Kind.DOCUMENT, "gammal.ppt"));
+        assertThrows(IllegalArgumentException.class,
+                () -> MediaLibrary.checkName(MediaLibrary.Kind.DOCUMENT, "brev.docx"));
+        assertEquals(MediaLibrary.Kind.DOCUMENT, MediaLibrary.Kind.fromPath("documents"));
+    }
+
+    @Test
+    void webAddressesAreHttpOnly() {
+        assertEquals("http://quelea.org", WebAddress.check(" quelea.org "));
+        assertEquals("https://example.com/a?b=c", WebAddress.check("https://example.com/a?b=c"));
+        assertEquals("http://church-pc:8080/slides", WebAddress.check("church-pc:8080/slides"));
+        for (String bad : List.of("", "file:///etc/passwd", "javascript:alert(1)", "ftp://x.org", "http://",
+                "not a url")) {
+            assertThrows(IllegalArgumentException.class, () -> WebAddress.check(bad), bad);
+        }
+    }
+
+    @Test
     void uploadsNeverReplaceAFile() throws IOException {
         Files.write(dir.resolve("photo.jpg"), new byte[1]);
         Catalog.MediaFile saved = MediaLibrary.save(dir, MediaLibrary.Kind.IMAGE, "photo.jpg", 10, bytes(10));

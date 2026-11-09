@@ -319,6 +319,22 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void addDocumentsAndWebPages() throws Exception {
+        assertEquals(200, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"document\":\"Predikan.pptx\"}").statusCode());
+        assertTrue(control.calls.contains("addLibraryFile DOCUMENT Predikan.pptx"));
+        assertEquals(200, send("GET", "/api/v2/library/documents", VIEW_TOKEN, null).statusCode());
+
+        assertEquals(200, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"url\":\"quelea.org/docs\"}").statusCode());
+        assertTrue(control.calls.contains("addWebPage http://quelea.org/docs"));
+        assertEquals(400, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"url\":\"file:///etc/passwd\"}").statusCode());
+        assertEquals(403, send("POST", "/api/v2/schedule/items", VIEW_TOKEN,
+                "{\"url\":\"https://quelea.org\"}").statusCode());
+    }
+
+    @Test
     void uploadToALibrary() throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + server.getPort()
                 + "/api/v2/library/images?name=" + java.net.URLEncoder.encode("Min bild.jpg", "UTF-8")))

@@ -108,6 +108,13 @@
           </div>
         </form>
       </details>
+      <form id="web-form" class="card">
+        <h2 data-t="web.title"></h2>
+        <div class="row">
+          <input id="web-url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" data-t-placeholder="web.placeholder">
+          <button type="submit" class="primary" data-t="media.add"></button>
+        </div>
+      </form>
       <form id="bible-form" class="card">
         <h2 data-t="add.bible"></h2>
         <select id="bible-translation"></select>
@@ -141,9 +148,10 @@
     </section>
 
     <section id="tab-media" class="tab" hidden>
-      <div class="segmented" role="tablist">
+      <div class="segmented three" role="tablist">
         <button id="media-images" role="tab" aria-selected="true" data-t="media.images"></button>
         <button id="media-videos" role="tab" aria-selected="false" data-t="media.videos"></button>
+        <button id="media-documents" role="tab" aria-selected="false" data-t="media.documents"></button>
       </div>
       <label class="upload-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm0-10h4v6h6v-6h4l-7-7-7 7z"/></svg><span id="upload-label" data-t="media.uploadImages"></span>
         <input id="upload-input" type="file" accept="image/*" multiple>

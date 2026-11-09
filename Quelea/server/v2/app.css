@@ -389,6 +389,7 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
   border: 1px solid var(--border-strong);
   border-radius: 10px;
 }
+.segmented.three { grid-template-columns: 1fr 1fr 1.4fr; }
 .segmented button { border: 0; min-height: 38px; border-radius: 7px; background: transparent; font-weight: 600; color: var(--muted); }
 .segmented button[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
 .upload-button {
@@ -421,6 +422,11 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 .media-list li span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .media-list li button { margin: 0 8px 8px; min-height: 36px; padding: 6px; font-size: 14px; font-weight: 600; }
 .media-list li.video img { aspect-ratio: 16 / 9; }
+/* PDFs and presentations have no thumbnails: a document icon instead. */
+.media-list li.document img {
+  aspect-ratio: 16 / 9;
+  background: var(--border) center / 40px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2369707d'%3E%3Cpath d='M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E");
+}
 /* A video without a thumbnail (Quelea makes them only with its video tab on). */
 .media-list li.video img:not([src]) {
   background: var(--border) center / 40px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2369707d'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");

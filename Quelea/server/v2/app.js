@@ -27,12 +27,18 @@ const TEXTS = {
     'drawer.schedule': 'Schedule',
     'page.add': 'Add songs and bible passages',
     'page.notices': 'Notices',
-    'page.media': 'Images and videos',
+    'page.media': 'Images, videos and files',
     'page.themes': 'Themes',
     'media.images': 'Images',
     'media.videos': 'Videos',
     'media.uploadImages': 'Upload images from this device',
     'media.uploadVideos': 'Upload videos from this device',
+    'media.documents': 'PDF/PowerPoint',
+    'media.uploadDocuments': 'Upload PDF or PowerPoint from this device',
+    'media.opening': 'Opening %s in Quelea…',
+    'web.title': 'Web page',
+    'web.placeholder': 'Web address, for example quelea.org',
+    'web.invalid': 'Only web addresses (http or https) can be added.',
     'media.empty': 'Nothing here yet. Files in Quelea\'s library show up here.',
     'media.add': 'Add',
     'media.added': 'Added to the schedule',
@@ -114,12 +120,18 @@ const TEXTS = {
     'drawer.schedule': 'Gudstjänstordning',
     'page.add': 'Lägg till sånger och bibeltext',
     'page.notices': 'Meddelanden',
-    'page.media': 'Bilder och videor',
+    'page.media': 'Bilder, videor och filer',
     'page.themes': 'Teman',
     'media.images': 'Bilder',
     'media.videos': 'Videor',
     'media.uploadImages': 'Ladda upp bilder från enheten',
     'media.uploadVideos': 'Ladda upp videor från enheten',
+    'media.documents': 'PDF/PowerPoint',
+    'media.uploadDocuments': 'Ladda upp PDF eller PowerPoint från enheten',
+    'media.opening': 'Öppnar %s i Quelea…',
+    'web.title': 'Webbsida',
+    'web.placeholder': 'Webbadress, till exempel quelea.org',
+    'web.invalid': 'Bara webbadresser (http eller https) kan läggas till.',
     'media.empty': 'Här finns inget än. Filer i Queleas bibliotek visas här.',
     'media.add': 'Lägg till',
     'media.added': 'Tillagd i schemat',
@@ -607,12 +619,18 @@ async function loadMedia() {
   $('media-empty').hidden = !files || files.length > 0;
   (files || []).forEach(file => {
     const image = el('img', { alt: '' });
-    const field = kind === 'images' ? 'image' : 'video';
-    list.append(el('li', { class: kind === 'videos' ? 'video' : '' },
+    const field = { images: 'image', videos: 'video', documents: 'document' }[kind];
+    list.append(el('li', { class: kind === 'images' ? '' : kind.slice(0, -1) },
       image,
       el('span', {}, file.name),
-      el('button', { onclick: () => addToSchedule({ [field]: file.name }) }, t('media.add'))));
+      el('button', { onclick: () => {
+        // Quelea reads a whole presentation before adding it: say so.
+        if (kind === 'documents') toast(t('media.opening', file.name));
+        addToSchedule({ [field]: file.name });
+      } }, t('media.add'))));
     // Thumbnails need the token, so they are fetched rather than linked.
+    // Documents have none.
+    if (kind === 'documents') return;
     api.blob('/library/' + kind + '/thumb.png?name=' + encodeURIComponent(file.name))
       .then(blob => { const url = URL.createObjectURL(blob); mediaThumbs.push(url); image.src = url; })
       .catch(() => { /* no thumbnail (yet) */ });
@@ -621,10 +639,16 @@ async function loadMedia() {
 
 function setMediaKind(kind) {
   mediaKind = kind;
-  $('media-images').setAttribute('aria-selected', String(kind === 'images'));
-  $('media-videos').setAttribute('aria-selected', String(kind === 'videos'));
-  $('upload-input').accept = kind === 'images' ? 'image/*' : 'video/*';
-  $('upload-label').textContent = t(kind === 'images' ? 'media.uploadImages' : 'media.uploadVideos');
+  ['images', 'videos', 'documents'].forEach(name =>
+    $('media-' + name).setAttribute('aria-selected', String(kind === name)));
+  $('upload-input').accept = {
+    images: 'image/*',
+    videos: 'video/*',
+    documents: '.pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,'
+      + 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  }[kind];
+  $('upload-label').textContent = t({ images: 'media.uploadImages', videos: 'media.uploadVideos',
+    documents: 'media.uploadDocuments' }[kind]);
   loadMedia();
 }
 
@@ -650,6 +674,20 @@ function uploadFile(kind, file, onProgress) {
 function setupMedia() {
   $('media-images').onclick = () => setMediaKind('images');
   $('media-videos').onclick = () => setMediaKind('videos');
+  $('media-documents').onclick = () => setMediaKind('documents');
+  $('web-form').onsubmit = async event => {
+    event.preventDefault();
+    const url = $('web-url').value.trim();
+    if (!url) return;
+    // Quelea refuses file: and the like too; say why in the page's language.
+    const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(url);
+    if (scheme && !/^https?$/i.test(scheme[1]) && !/^[^:]+:\d/.test(url)) {
+      toast(t('web.invalid'));
+      return;
+    }
+    await addToSchedule({ url });
+    $('web-url').value = '';
+  };
   $('upload-input').onchange = async () => {
     const files = Array.from($('upload-input').files);
     $('upload-input').value = '';

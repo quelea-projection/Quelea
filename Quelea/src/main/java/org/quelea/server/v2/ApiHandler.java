@@ -112,8 +112,15 @@ final class ApiHandler extends Handler.Abstract {
                 return control.addLibraryFile(MediaLibrary.Kind.VIDEO, Json.optionalString(body, "video"),
                         call.ifRevision());
             }
+            if (body.has("document")) {
+                return control.addLibraryFile(MediaLibrary.Kind.DOCUMENT, Json.optionalString(body, "document"),
+                        call.ifRevision());
+            }
+            if (body.has("url")) {
+                return control.addWebPage(Json.optionalString(body, "url"), call.ifRevision());
+            }
             throw ApiException.badRequest("Give \"songId\", \"bible\": {\"translation\", \"reference\"}, "
-                    + "\"image\" or \"video\"");
+                    + "\"image\", \"video\", \"document\" or \"url\"");
         });
         route("DELETE", "/schedule/items/" + ITEM_ID, Scope.CONTROL,
                 call -> control.removeItem(call.match().group(1), call.ifRevision()));
@@ -149,13 +156,13 @@ final class ApiHandler extends Handler.Abstract {
         route("PUT", "/live/theme", Scope.CONTROL,
                 call -> control.setTheme(Json.optionalString(call.body(), "name")));
         // The image and video libraries. Names go in query parameters.
-        route("GET", "/library/(images|videos)", Scope.VIEW,
+        route("GET", "/library/(images|videos|documents)", Scope.VIEW,
                 call -> control.libraryFiles(MediaLibrary.Kind.fromPath(call.match().group(1))));
-        route("GET", "/library/(images|videos)/thumb\\.png", Scope.VIEW,
+        route("GET", "/library/(images|videos|documents)/thumb\\.png", Scope.VIEW,
                 call -> new Binary(control.libraryThumbnail(MediaLibrary.Kind.fromPath(call.match().group(1)),
                         call.query("name")), "image/png", true));
         // An upload is the file itself as the body: PUT /library/images?name=photo.jpg
-        route("PUT", "/library/(images|videos)", Scope.CONTROL, call -> {
+        route("PUT", "/library/(images|videos|documents)", Scope.CONTROL, call -> {
             try (InputStream data = Content.Source.asInputStream(call.request())) {
                 return control.uploadLibraryFile(MediaLibrary.Kind.fromPath(call.match().group(1)),
                         call.query("name"), call.request().getLength(), data);

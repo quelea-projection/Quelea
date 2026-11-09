@@ -52,6 +52,7 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SearchIndex.FilterType;
@@ -418,8 +419,12 @@ final class FxQueleaControl implements QueleaControl {
 
     // ---- Libraries ----
     private static java.nio.file.Path libraryDir(MediaLibrary.Kind kind) {
-        return (kind == MediaLibrary.Kind.IMAGE ? QueleaProperties.get().getImageDir()
-                : QueleaProperties.get().getVidDir()).toPath().toAbsolutePath();
+        java.io.File dir = switch (kind) {
+            case IMAGE -> QueleaProperties.get().getImageDir();
+            case VIDEO -> QueleaProperties.get().getVidDir();
+            case DOCUMENT -> new java.io.File(QueleaProperties.get().getQueleaUserHome(), "documents");
+        };
+        return dir.toPath().toAbsolutePath();
     }
 
     @Override
@@ -443,6 +448,10 @@ final class FxQueleaControl implements QueleaControl {
         byte[] cached = thumbnails.get(key);
         if (cached != null) {
             return cached;
+        }
+        if (kind == MediaLibrary.Kind.DOCUMENT) {
+            // Reading a whole presentation for a thumbnail is too slow.
+            throw new NoSuchElementException("Documents have no thumbnails");
         }
         Image image;
         if (kind == MediaLibrary.Kind.IMAGE) {
@@ -469,10 +478,36 @@ final class FxQueleaControl implements QueleaControl {
     @Override
     public ScheduleChange addLibraryFile(MediaLibrary.Kind kind, String name, Long ifRevision) {
         java.io.File file = MediaLibrary.resolve(libraryDir(kind), kind, name).toFile();
+        Displayable document = null;
+        if (kind == MediaLibrary.Kind.DOCUMENT) {
+            // Opened here, off the FX thread, as Quelea's add handlers do:
+            // a large presentation takes a while to read.
+            try {
+                document = file.getName().toLowerCase(java.util.Locale.ROOT).endsWith(".pdf")
+                        ? new PdfDisplayable(file) : new PresentationDisplayable(file);
+            } catch (IOException | RuntimeException ex) {
+                throw new IllegalArgumentException("Quelea could not open " + name, ex);
+            }
+        }
+        Displayable opened = document;
         return fx.call(() -> {
             checkRevision(ifRevision);
-            scheduleList().add(kind == MediaLibrary.Kind.IMAGE ? new ImageDisplayable(file)
-                    : new VideoDisplayable(file.getAbsolutePath()));
+            scheduleList().add(switch (kind) {
+                case IMAGE -> new ImageDisplayable(file);
+                case VIDEO -> new VideoDisplayable(file.getAbsolutePath());
+                case DOCUMENT -> opened;
+            });
+            return addedLast();
+        });
+    }
+
+    @Override
+    public ScheduleChange addWebPage(String url, Long ifRevision) {
+        String checked = WebAddress.check(url);
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            // A WebView, so on the FX thread, as Quelea's own handler does.
+            scheduleList().add(new WebDisplayable(checked));
             return addedLast();
         });
     }
@@ -490,9 +525,10 @@ final class FxQueleaControl implements QueleaControl {
         fx.run(() -> {
             if (kind == MediaLibrary.Kind.IMAGE) {
                 mainPanel.getLibraryPanel().getImagePanel().getImagePanel().refresh();
-            } else if (mainPanel.getLibraryPanel().getVideoPanel() != null) {
+            } else if (kind == MediaLibrary.Kind.VIDEO && mainPanel.getLibraryPanel().getVideoPanel() != null) {
                 mainPanel.getLibraryPanel().getVideoPanel().getVideoListPanel().refresh();
             }
+            // Documents have no library tab in Quelea.
         });
         return saved;
     }

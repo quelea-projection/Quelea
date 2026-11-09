@@ -293,6 +293,15 @@ public interface QueleaControl {
     ScheduleChange addLibraryFile(MediaLibrary.Kind kind, String name, Long ifRevision);
 
     /**
+     * Add a web page to the end of the schedule, as Quelea's add website
+     * dialog does.
+     *
+     * @param url an http or https address; without a scheme, http.
+     * @throws IllegalArgumentException for anything else.
+     */
+    ScheduleChange addWebPage(String url, Long ifRevision);
+
+    /**
      * Save an uploaded file in a library, which then shows it.
      *
      * @param kind images or videos.

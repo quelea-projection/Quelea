@@ -37,10 +37,12 @@ import java.util.UUID;
 import org.quelea.services.utils.Utils;
 
 /**
- * The image and video folders of Quelea's library (img and vid in Quelea's
- * home folder), as remotes see them: the files Quelea shows in its Images
- * and Videos tabs, looked up by file name only, and files uploaded into
- * them. Nothing outside the two folders can be named, read or written.
+ * The folders remotes can use, all in Quelea's home folder: img and vid,
+ * which Quelea shows in its Images and Videos library tabs, and documents,
+ * which holds PDFs and PowerPoint files uploaded from remotes (Quelea
+ * itself opens those from anywhere on disk). Files are looked up by file
+ * name only; nothing outside the three folders can be named, read or
+ * written.
  */
 final class MediaLibrary {
 
@@ -49,7 +51,9 @@ final class MediaLibrary {
      */
     enum Kind {
         IMAGE("images", 50L * 1024 * 1024, Utils.getImageExtensions()),
-        VIDEO("videos", 4L * 1024 * 1024 * 1024, Utils.getVideoExtensions());
+        VIDEO("videos", 4L * 1024 * 1024 * 1024, Utils.getVideoExtensions()),
+        /** PDFs and the PowerPoint files Quelea opens (FileFilters.POWERPOINT). */
+        DOCUMENT("documents", 300L * 1024 * 1024, List.of("pdf", "ppt", "pptx"));
 
         private final String path;
         private final long maxUpload;
