@@ -20,13 +20,17 @@ package org.quelea.windows.main;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -88,6 +92,8 @@ public class LivePanel extends LivePreviewPanel {
     private WritableImage webPreviewImage;
     private ScheduledExecutorService updateWebPreview;
     private Dialog focusDialog;
+    private final List<Consumer<Displayable>> displayableListeners = new CopyOnWriteArrayList<>();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new live lyrics panel.
@@ -481,6 +487,14 @@ public class LivePanel extends LivePreviewPanel {
             }
         }
         oldD = d;
+        fireDisplayableListeners(d);
+    }
+
+    @Override
+    public void removeDisplayable() {
+        super.removeDisplayable();
+        oldD = null;
+        fireDisplayableListeners(null);
     }
 
     /**
@@ -583,6 +597,48 @@ public class LivePanel extends LivePreviewPanel {
 
     public boolean getCleared() {
         return clear.isSelected();
+    }
+
+    /**
+     * @return the selected state of the logo button, for observers such as
+     * the remote control.
+     */
+    public ReadOnlyBooleanProperty logoProperty() {
+        return logo.selectedProperty();
+    }
+
+    /**
+     * @return the selected state of the black button.
+     */
+    public ReadOnlyBooleanProperty blackProperty() {
+        return black.selectedProperty();
+    }
+
+    /**
+     * @return the selected state of the clear button.
+     */
+    public ReadOnlyBooleanProperty clearProperty() {
+        return clear.selectedProperty();
+    }
+
+    /**
+     * Register a listener that is called on the FX thread whenever the live
+     * displayable changes, including when it is removed (null).
+     *
+     * @param listener the listener to add.
+     */
+    public void addDisplayableListener(Consumer<Displayable> listener) {
+        displayableListeners.add(listener);
+    }
+
+    private void fireDisplayableListeners(Displayable d) {
+        for (Consumer<Displayable> listener : displayableListeners) {
+            try {
+                listener.accept(d);
+            } catch (RuntimeException ex) {
+                LOGGER.log(Level.WARNING, "Live displayable listener failed", ex);
+            }
+        }
     }
 
     public void setBlacked(boolean isBlack) {
