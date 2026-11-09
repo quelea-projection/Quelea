@@ -203,6 +203,116 @@ class RemoteApiServerTest {
         assertThrows(ExecutionException.class, () -> connect("/api/v2/public/ws", Map.of()));
     }
 
+    // ---- Schedule changes ----
+
+    @Test
+    void addSongAndBibleReturnNewItemAndSchedule() throws Exception {
+        HttpResponse<String> song = send("POST", "/api/v2/schedule/items", CONTROL_TOKEN, "{\"songId\":42}");
+        assertEquals(200, song.statusCode());
+        assertEquals("it_3", json(song).get("itemId").getAsString());
+        assertEquals(5, json(song).getAsJsonObject("schedule").get("revision").getAsLong());
+
+        HttpResponse<String> bible = send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"bible\":{\"translation\":\"KJV\",\"reference\":\"John 3:16\"}}");
+        assertEquals("it_4", json(bible).get("itemId").getAsString());
+        assertEquals(List.of("it_1", "it_2", "it_3", "it_4"), control.schedule);
+    }
+
+    @Test
+    void addErrors() throws Exception {
+        assertEquals(404, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN, "{\"songId\":7}").statusCode());
+        assertEquals(404, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"bible\":{\"translation\":\"Nope\",\"reference\":\"John 3:16\"}}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN,
+                "{\"bible\":{\"translation\":\"KJV\",\"reference\":\"Hezekiah 9:9\"}}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN, "{}").statusCode());
+        assertEquals(403, send("POST", "/api/v2/schedule/items", VIEW_TOKEN, "{\"songId\":42}").statusCode());
+    }
+
+    @Test
+    void staleRevisionGives409AndChangesNothing() throws Exception {
+        HttpResponse<String> response = send("POST", "/api/v2/schedule/items?ifRevision=3", CONTROL_TOKEN,
+                "{\"songId\":42}");
+        assertEquals(409, response.statusCode());
+        assertEquals("conflict", errorCode(response));
+        assertEquals(List.of("it_1", "it_2"), control.schedule);
+
+        assertEquals(200, send("POST", "/api/v2/schedule/items?ifRevision=4", CONTROL_TOKEN,
+                "{\"songId\":42}").statusCode());
+        assertEquals(400, send("DELETE", "/api/v2/schedule/items/it_1?ifRevision=x", CONTROL_TOKEN, null).statusCode());
+    }
+
+    @Test
+    void removeAndMoveItems() throws Exception {
+        HttpResponse<String> moved = send("POST", "/api/v2/schedule/items/it_2/move", CONTROL_TOKEN, "{\"to\":0}");
+        assertEquals(200, moved.statusCode());
+        assertEquals(List.of("it_2", "it_1"), control.schedule);
+        assertEquals(400, send("POST", "/api/v2/schedule/items/it_2/move", CONTROL_TOKEN, "{\"to\":9}").statusCode());
+
+        HttpResponse<String> removed = send("DELETE", "/api/v2/schedule/items/it_1", CONTROL_TOKEN, null);
+        assertEquals(200, removed.statusCode());
+        assertEquals("it_1", json(removed).get("itemId").getAsString());
+        assertEquals(List.of("it_2"), control.schedule);
+        assertEquals(404, send("DELETE", "/api/v2/schedule/items/it_1", CONTROL_TOKEN, null).statusCode());
+    }
+
+    @Test
+    void duplicateEntryIdsAreAccepted() throws Exception {
+        control.schedule.add("it_2-2");
+        assertEquals(200, send("DELETE", "/api/v2/schedule/items/it_2-2", CONTROL_TOKEN, null).statusCode());
+        assertEquals(404, send("DELETE", "/api/v2/schedule/items/bogus", CONTROL_TOKEN, null).statusCode());
+    }
+
+    // ---- Songs, bibles, themes and images ----
+
+    @Test
+    void songSearchAndDetails() throws Exception {
+        HttpResponse<String> found = send("GET", "/api/v2/songs?q=amazing%20grace&limit=5", VIEW_TOKEN, null);
+        assertEquals(200, found.statusCode());
+        assertEquals(42, JsonParser.parseString(found.body()).getAsJsonArray().get(0).getAsJsonObject().get("id").getAsLong());
+        assertTrue(control.calls.contains("searchSongs amazing grace 5"));
+        assertEquals(400, send("GET", "/api/v2/songs", VIEW_TOKEN, null).statusCode());
+
+        JsonObject song = json(send("GET", "/api/v2/songs/42", VIEW_TOKEN, null));
+        assertEquals("John Newton", song.get("author").getAsString());
+        assertEquals("Svenska", song.getAsJsonArray("translations").get(0).getAsString());
+        assertEquals(404, send("GET", "/api/v2/songs/7", VIEW_TOKEN, null).statusCode());
+    }
+
+    @Test
+    void bibleLookups() throws Exception {
+        assertEquals(2, JsonParser.parseString(send("GET", "/api/v2/bible/translations", VIEW_TOKEN, null).body())
+                .getAsJsonArray().size());
+        HttpResponse<String> books = send("GET", "/api/v2/bible/books?translation=Svenska%201917", VIEW_TOKEN, null);
+        assertEquals(50, JsonParser.parseString(books.body()).getAsJsonArray().get(0).getAsJsonObject()
+                .get("chapters").getAsInt());
+        assertEquals(404, send("GET", "/api/v2/bible/books?translation=Nope", VIEW_TOKEN, null).statusCode());
+
+        JsonObject passage = json(send("GET", "/api/v2/bible/passage?translation=KJV&ref=John%203%3A16", VIEW_TOKEN, null));
+        assertEquals(16, passage.getAsJsonArray("verses").get(0).getAsJsonObject().get("verse").getAsInt());
+        assertTrue(control.calls.contains("biblePassage KJV / John 3:16"));
+    }
+
+    @Test
+    void themesAndImages() throws Exception {
+        assertEquals(2, JsonParser.parseString(send("GET", "/api/v2/themes", VIEW_TOKEN, null).body())
+                .getAsJsonArray().size());
+        assertEquals(200, send("PUT", "/api/v2/live/theme", CONTROL_TOKEN, "{\"name\":\"Blue\"}").statusCode());
+        assertEquals(404, send("PUT", "/api/v2/live/theme", CONTROL_TOKEN, "{\"name\":\"Pink\"}").statusCode());
+
+        HttpRequest thumb = HttpRequest.newBuilder(URI.create("http://localhost:" + server.getPort()
+                + "/api/v2/themes/thumb.png?name=Blue")).header("Authorization", "Bearer " + VIEW_TOKEN).build();
+        HttpResponse<byte[]> image = http.send(thumb, HttpResponse.BodyHandlers.ofByteArray());
+        assertEquals(200, image.statusCode());
+        assertEquals("image/png", image.headers().firstValue("Content-Type").orElse(""));
+        assertTrue(java.util.Arrays.equals(FakeQueleaControl.PNG, image.body()));
+
+        assertEquals(200, send("GET", "/api/v2/schedule/items/it_2/slides/0.png", VIEW_TOKEN, null).statusCode());
+        assertTrue(control.calls.contains("slideImage it_2 0"));
+        assertEquals(404, send("GET", "/api/v2/schedule/items/it_2/slides/9.png", VIEW_TOKEN, null).statusCode());
+        assertEquals(401, send("GET", "/api/v2/schedule/items/it_2/slides/0.png", null, null).statusCode());
+    }
+
     // ---- WebSocket ----
 
     private static final class Recorder implements WebSocket.Listener {

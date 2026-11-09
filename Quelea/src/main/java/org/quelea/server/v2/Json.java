@@ -86,6 +86,21 @@ final class Json {
     }
 
     /**
+     * @return the field as a long.
+     * @throws ApiException 400 if it is missing or not a number.
+     */
+    static long requireLong(JsonObject obj, String field) {
+        try {
+            if (obj.has(field) && !obj.get(field).isJsonNull()) {
+                return obj.get(field).getAsLong();
+            }
+        } catch (RuntimeException ex) {
+            // Falls through to the error below.
+        }
+        throw ApiException.badRequest("\"" + field + "\" must be a number");
+    }
+
+    /**
      * @return the field as a boolean.
      * @throws ApiException 400 if it is missing or not a boolean.
      */

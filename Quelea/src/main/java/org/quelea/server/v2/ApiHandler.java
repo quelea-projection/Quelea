@@ -19,9 +19,11 @@ package org.quelea.server.v2;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -72,8 +74,46 @@ final class ApiHandler extends Handler.Abstract {
         });
         route("PUT", "/recording", Scope.CONTROL,
                 call -> control.setRecording(Json.requireBoolean(call.body(), "recording")));
-        route("POST", "/schedule/items/([A-Za-z0-9_]+)/live", Scope.CONTROL,
+        route("POST", "/schedule/items/" + ITEM_ID + "/live", Scope.CONTROL,
                 call -> control.goLive(call.match().group(1)));
+
+        // Schedule changes. ?ifRevision=N refuses the change with 409 if
+        // someone else changed the schedule first.
+        route("POST", "/schedule/items", Scope.CONTROL, call -> {
+            JsonObject body = call.body();
+            if (body.has("songId")) {
+                return control.addSong(Json.requireLong(body, "songId"), call.ifRevision());
+            }
+            if (body.has("bible") && body.get("bible").isJsonObject()) {
+                JsonObject bible = body.getAsJsonObject("bible");
+                return control.addBible(Json.optionalString(bible, "translation"),
+                        Json.optionalString(bible, "reference"), call.ifRevision());
+            }
+            throw ApiException.badRequest("Give \"songId\" or \"bible\": {\"translation\", \"reference\"}");
+        });
+        route("DELETE", "/schedule/items/" + ITEM_ID, Scope.CONTROL,
+                call -> control.removeItem(call.match().group(1), call.ifRevision()));
+        route("POST", "/schedule/items/" + ITEM_ID + "/move", Scope.CONTROL,
+                call -> control.moveItem(call.match().group(1), Json.requireInt(call.body(), "to"), call.ifRevision()));
+        route("GET", "/schedule/items/" + ITEM_ID + "/slides/([0-9]+)\\.png", Scope.VIEW,
+                call -> new Binary(control.slideImage(call.match().group(1), Integer.parseInt(call.match().group(2))),
+                        "image/png", false));
+
+        // Songs, bibles and themes. Names go in query parameters, since
+        // they may contain spaces and slashes.
+        route("GET", "/songs", Scope.VIEW,
+                call -> control.searchSongs(call.query("q"), call.intQuery("limit", 50, 1, 200)));
+        route("GET", "/songs/([0-9]+)", Scope.VIEW,
+                call -> control.getSong(Long.parseLong(call.match().group(1))));
+        route("GET", "/bible/translations", Scope.VIEW, call -> control.bibleTranslations());
+        route("GET", "/bible/books", Scope.VIEW, call -> control.bibleBooks(call.query("translation")));
+        route("GET", "/bible/passage", Scope.VIEW,
+                call -> control.biblePassage(call.query("translation"), call.query("ref")));
+        route("GET", "/themes", Scope.VIEW, call -> control.themes());
+        route("GET", "/themes/thumb\\.png", Scope.VIEW,
+                call -> new Binary(control.themeThumbnail(call.query("name")), "image/png", true));
+        route("PUT", "/live/theme", Scope.CONTROL,
+                call -> control.setTheme(Json.optionalString(call.body(), "name")));
         if (config.publicEnabled()) {
             route("GET", "/public/live", null, call -> PublicLive.from(control));
         }
@@ -89,6 +129,22 @@ final class ApiHandler extends Handler.Abstract {
      * @param publicEnabled true if the open endpoints under /public/ answer.
      */
     record Info(int api, String quelea, boolean tls, boolean pairing, boolean publicEnabled) {
+    }
+
+    /**
+     * Schedule item ids: "it_12", or "it_12-2" for the second entry of the
+     * same displayable.
+     */
+    private static final String ITEM_ID = "(it_[0-9]+(?:-[0-9]+)?)";
+
+    /**
+     * A non-JSON answer, such as an image.
+     *
+     * @param data the bytes.
+     * @param contentType the media type.
+     * @param cacheable true if clients may cache it for a minute.
+     */
+    record Binary(byte[] data, String contentType, boolean cacheable) {
     }
 
     @FunctionalInterface
@@ -112,6 +168,34 @@ final class ApiHandler extends Handler.Abstract {
                 throw ApiException.badRequest("Could not read the request body");
             }
         }
+
+        String query(String name) {
+            return Request.extractQueryParameters(request, StandardCharsets.UTF_8).getValue(name);
+        }
+
+        int intQuery(String name, int defaultValue, int min, int max) {
+            String value = query(name);
+            if (value == null || value.isBlank()) {
+                return defaultValue;
+            }
+            try {
+                return Math.max(min, Math.min(max, Integer.parseInt(value.trim())));
+            } catch (NumberFormatException ex) {
+                throw ApiException.badRequest("\"" + name + "\" must be a number");
+            }
+        }
+
+        Long ifRevision() {
+            String value = query("ifRevision");
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            try {
+                return Long.parseLong(value.trim());
+            } catch (NumberFormatException ex) {
+                throw ApiException.badRequest("\"ifRevision\" must be a number");
+            }
+        }
     }
 
     private void route(String method, String path, Scope scope, Action action) {
@@ -127,14 +211,26 @@ final class ApiHandler extends Handler.Abstract {
         int status = 200;
         String body;
         try {
-            body = Json.write(dispatch(request, path.substring(PREFIX.length())));
+            Object result = dispatch(request, path.substring(PREFIX.length()));
+            if (result instanceof Binary binary) {
+                response.setStatus(200);
+                response.getHeaders().put(HttpHeader.CONTENT_TYPE, binary.contentType());
+                response.getHeaders().put(HttpHeader.CACHE_CONTROL, binary.cacheable() ? "max-age=60" : "no-store");
+                response.write(true, ByteBuffer.wrap(binary.data()), callback);
+                return true;
+            }
+            body = Json.write(result);
         } catch (ApiException ex) {
             status = ex.getStatus();
             body = Json.error(ex);
-        } catch (NoSuchItemException ex) {
+        } catch (NoSuchItemException | NoSuchElementException ex) {
             ApiException notFound = ApiException.notFound(ex.getMessage());
             status = notFound.getStatus();
             body = Json.error(notFound);
+        } catch (ScheduleConflictException ex) {
+            ApiException conflict = new ApiException(409, "conflict", ex.getMessage());
+            status = conflict.getStatus();
+            body = Json.error(conflict);
         } catch (IllegalArgumentException ex) {
             ApiException bad = ApiException.badRequest(ex.getMessage());
             status = bad.getStatus();

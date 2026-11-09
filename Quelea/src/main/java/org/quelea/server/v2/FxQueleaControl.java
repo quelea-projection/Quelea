@@ -17,38 +17,71 @@
  */
 package org.quelea.server.v2;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.LongSupplier;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.bible.Bible;
+import org.quelea.data.bible.BibleManager;
+import org.quelea.data.bible.BibleReferenceParser;
+import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
-import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextSection;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.lucene.SearchIndex.FilterType;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.ThemeThumbnails;
+import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
+import org.quelea.windows.main.schedule.ScheduleList.Direction;
+import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
 
 /**
- * {@link QueleaControl} backed by Quelea's real user interface. Every call
- * runs on the FX thread through {@link FxCall}, so callers on network threads
- * never touch JavaFX directly and never wait for it longer than the timeout.
+ * {@link QueleaControl} backed by Quelea's real user interface. Everything
+ * that touches the user interface runs on the FX thread through
+ * {@link FxCall}, so callers on network threads never touch JavaFX directly
+ * and never wait for it longer than the timeout. Song and bible lookups do
+ * not touch the user interface and run on the caller's thread.
  */
 final class FxQueleaControl implements QueleaControl {
 
     private final MainPanel mainPanel;
     private final MainToolbar toolbar;
-    private final ItemIds ids;
     private final LiveReader reader;
+    private final LongSupplier scheduleRevision;
     private final FxCall fx;
 
-    FxQueleaControl(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, LiveReader reader, FxCall fx) {
+    FxQueleaControl(MainPanel mainPanel, MainToolbar toolbar, LiveReader reader, LongSupplier scheduleRevision,
+            FxCall fx) {
         this.mainPanel = mainPanel;
         this.toolbar = toolbar;
-        this.ids = ids;
         this.reader = reader;
+        this.scheduleRevision = scheduleRevision;
         this.fx = fx;
     }
 
+    // ---- State ----
     @Override
     public LiveState getState() {
         return fx.call(reader::state);
@@ -64,6 +97,7 @@ final class FxQueleaControl implements QueleaControl {
         return fx.call(reader::sections);
     }
 
+    // ---- Live commands ----
     @Override
     public LiveState next() {
         return command(() -> mainPanel.getLivePanel().advance());
@@ -104,7 +138,7 @@ final class FxQueleaControl implements QueleaControl {
             if (size == 0) {
                 return;
             }
-            int current = indexOf(schedule.getItems(), mainPanel.getLivePanel().getDisplayable());
+            int current = liveIndex(schedule);
             goLiveAt(schedule, Math.min(current + 1, size - 1));
         });
     }
@@ -116,21 +150,14 @@ final class FxQueleaControl implements QueleaControl {
             if (schedule.getItems().isEmpty()) {
                 return;
             }
-            int current = indexOf(schedule.getItems(), mainPanel.getLivePanel().getDisplayable());
+            int current = liveIndex(schedule);
             goLiveAt(schedule, Math.max(current - 1, 0));
         });
     }
 
     @Override
     public LiveState goLive(String itemId) {
-        return command(() -> {
-            ScheduleList schedule = scheduleList();
-            int index = indexOf(schedule.getItems(), ids.find(itemId));
-            if (index < 0) {
-                throw new NoSuchItemException(itemId);
-            }
-            goLiveAt(schedule, index);
-        });
+        return command(() -> goLiveAt(scheduleList(), requireIndex(itemId)));
     }
 
     @Override
@@ -163,6 +190,179 @@ final class FxQueleaControl implements QueleaControl {
         });
     }
 
+    // ---- Schedule changes ----
+    @Override
+    public ScheduleChange addSong(long songId, Long ifRevision) {
+        SongDisplayable song = SongManager.get().getIndex().getByID(songId);
+        if (song == null) {
+            throw new NoSuchElementException("No song with id " + songId);
+        }
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            // The same handler as the library, so the default translation
+            // and the database settings apply.
+            new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).add(song);
+            return addedLast();
+        });
+    }
+
+    @Override
+    public ScheduleChange addBible(String translation, String reference, Long ifRevision) {
+        Bible bible = requireBible(translation);
+        BibleReferenceParser.Reference ref = parseReference(bible, reference);
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            scheduleList().add(new BiblePassage(bible.getName(), ref.getLocation(),
+                    ref.verses().toArray(new BibleVerse[0]), ref.multi()));
+            return addedLast();
+        });
+    }
+
+    @Override
+    public ScheduleChange removeItem(String itemId, Long ifRevision) {
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            ScheduleList schedule = scheduleList();
+            int index = requireIndex(itemId);
+            // removeCurrentItem also clears live and preview when needed.
+            schedule.getSelectionModel().clearSelection();
+            schedule.getSelectionModel().select(index);
+            schedule.removeCurrentItem();
+            return new ScheduleChange(itemId, reader.schedule());
+        });
+    }
+
+    @Override
+    public ScheduleChange moveItem(String itemId, int to, Long ifRevision) {
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            ScheduleList schedule = scheduleList();
+            int from = requireIndex(itemId);
+            int size = schedule.getItems().size();
+            if (to < 0 || to >= size) {
+                throw new IllegalArgumentException("Position " + to + " is out of range (0 to " + (size - 1) + ")");
+            }
+            // Moved one step at a time, the way the schedule's own buttons
+            // do, so the selection and the item indexes stay consistent.
+            schedule.getSelectionModel().clearSelection();
+            schedule.getSelectionModel().select(from);
+            Direction direction = to < from ? Direction.UP : Direction.DOWN;
+            for (int i = 0; i < Math.abs(to - from); i++) {
+                schedule.moveCurrentItem(direction);
+            }
+            return new ScheduleChange(reader.scheduleIds().get(to), reader.schedule());
+        });
+    }
+
+    // ---- Songs, bibles and themes ----
+    @Override
+    public List<Catalog.Song> searchSongs(String query, int limit) {
+        if (query == null || query.isBlank()) {
+            throw new IllegalArgumentException("A search text is required");
+        }
+        // Title matches first, then author, then lyrics; each song once.
+        Map<Long, Catalog.Song> found = new LinkedHashMap<>();
+        for (FilterType type : new FilterType[]{FilterType.TITLE, FilterType.AUTHOR, FilterType.BODY}) {
+            for (SongDisplayable song : SongManager.get().getIndex().filter(query, type)) {
+                found.putIfAbsent(song.getID(), new Catalog.Song(song.getID(), song.getTitle(), song.getAuthor()));
+            }
+        }
+        return found.values().stream().limit(limit).toList();
+    }
+
+    @Override
+    public Catalog.SongDetails getSong(long songId) {
+        SongDisplayable song = SongManager.get().getIndex().getByID(songId);
+        if (song == null) {
+            throw new NoSuchElementException("No song with id " + songId);
+        }
+        List<LiveSections.Section> sections = new ArrayList<>();
+        for (TextSection section : song.getSectionsWithoutSequence()) {
+            List<String> lines = Arrays.asList(section.getText(false, false));
+            List<String> chordLines = Arrays.asList(section.getText(true, false));
+            sections.add(new LiveSections.Section(section.getTitle(), lines,
+                    chordLines.equals(lines) ? null : chordLines));
+        }
+        return new Catalog.SongDetails(song.getID(), song.getTitle(), song.getAuthor(), sections,
+                new ArrayList<>(song.getTranslations().keySet()));
+    }
+
+    @Override
+    public List<Catalog.Translation> bibleTranslations() {
+        String defaultBible = QueleaProperties.get().getDefaultBible();
+        return Arrays.stream(BibleManager.get().getBibles())
+                .map(bible -> new Catalog.Translation(bible.getBibleName(), bible.getBibleName().equals(defaultBible)))
+                .toList();
+    }
+
+    @Override
+    public List<Catalog.Book> bibleBooks(String translation) {
+        return Arrays.stream(requireBible(translation).getBooks())
+                .map(book -> new Catalog.Book(book.getBookName(), book.getChapters().length))
+                .toList();
+    }
+
+    @Override
+    public Catalog.Passage biblePassage(String translation, String reference) {
+        Bible bible = requireBible(translation);
+        BibleReferenceParser.Reference ref = parseReference(bible, reference);
+        List<Catalog.Verse> verses = ref.verses().stream()
+                .map(verse -> new Catalog.Verse(verse.getChapter().getNum(), verse.getNum(), verse.getVerseText()))
+                .toList();
+        return new Catalog.Passage(bible.getBibleName(), ref.getLocation(), verses);
+    }
+
+    @Override
+    public List<Catalog.Theme> themes() {
+        List<Catalog.Theme> themes = new ArrayList<>();
+        for (ThemeDTO theme : ThemeUtils.getThemes()) {
+            themes.add(new Catalog.Theme(theme.getThemeName(), false));
+        }
+        themes.add(new Catalog.Theme(defaultThemeName(), true));
+        return themes;
+    }
+
+    @Override
+    public LiveState setTheme(String name) {
+        ThemeDTO theme = requireTheme(name);
+        return command(() -> {
+            ScheduleThemeNode themeNode = mainPanel.getSchedulePanel().getThemeNode();
+            themeNode.selectSongTheme(theme);
+            themeNode.selectBibleTheme(theme);
+        });
+    }
+
+    @Override
+    public byte[] themeThumbnail(String name) {
+        // Rendered off the FX thread: for a video theme it waits for a still.
+        return png(ThemeThumbnails.render(requireTheme(name)));
+    }
+
+    @Override
+    public byte[] slideImage(String itemId, int slide) {
+        Image image = fx.call(() -> {
+            Displayable d = scheduleList().getItems().get(requireIndex(itemId)).displayable();
+            int count;
+            if (d instanceof PresentationDisplayable presentation) {
+                count = presentation.getPresentation().getSlides().length;
+                checkSlide(slide, count);
+                return presentation.getPresentation().getSlide(slide).getImage();
+            } else if (d instanceof PdfDisplayable pdf) {
+                count = pdf.getPresentation().getSlides().length;
+                checkSlide(slide, count);
+                return pdf.getPresentation().getSlide(slide).getImage();
+            } else if (d instanceof ImageGroupDisplayable images) {
+                count = images.getPresentation().getSlides().length;
+                checkSlide(slide, count);
+                return images.getPresentation().getSlide(slide).getImage();
+            }
+            throw new IllegalArgumentException("Item " + itemId + " has no slides");
+        });
+        // Encoded on the caller's thread, so the FX thread is not held up.
+        return png(image);
+    }
+
+    // ---- Helpers ----
     private LiveState command(Runnable action) {
         return fx.call(() -> {
             action.run();
@@ -180,20 +380,90 @@ final class FxQueleaControl implements QueleaControl {
         mainPanel.getPreviewPanel().goLive();
     }
 
-    /**
-     * Find a displayable in the schedule by identity.
-     *
-     * @return its position, or -1.
-     */
-    private static int indexOf(List<IndexedDisplayable> items, Displayable d) {
-        if (d == null) {
-            return -1;
-        }
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).displayable() == d) {
+    private int liveIndex(ScheduleList schedule) {
+        Displayable live = mainPanel.getLivePanel().getDisplayable();
+        for (int i = 0; i < schedule.getItems().size(); i++) {
+            if (schedule.getItems().get(i).displayable() == live) {
                 return i;
             }
         }
         return -1;
+    }
+
+    private int requireIndex(String itemId) {
+        int index = reader.indexOfId(itemId);
+        if (index < 0) {
+            throw new NoSuchItemException(itemId);
+        }
+        return index;
+    }
+
+    private void checkRevision(Long ifRevision) {
+        long current = scheduleRevision.getAsLong();
+        if (ifRevision != null && ifRevision != current) {
+            throw new ScheduleConflictException(ifRevision, current);
+        }
+    }
+
+    private ScheduleChange addedLast() {
+        List<String> itemIds = reader.scheduleIds();
+        return new ScheduleChange(itemIds.isEmpty() ? null : itemIds.getLast(), reader.schedule());
+    }
+
+    private static void checkSlide(int slide, int count) {
+        if (slide < 0 || slide >= count) {
+            throw new NoSuchElementException("Slide " + slide + " does not exist (0 to " + (count - 1) + ")");
+        }
+    }
+
+    private static Bible requireBible(String translation) {
+        if (translation != null) {
+            for (Bible bible : BibleManager.get().getBibles()) {
+                if (bible.getBibleName().equalsIgnoreCase(translation) || bible.getName().equalsIgnoreCase(translation)) {
+                    return bible;
+                }
+            }
+        }
+        throw new NoSuchElementException("No bible named " + translation);
+    }
+
+    private static BibleReferenceParser.Reference parseReference(Bible bible, String reference) {
+        if (reference == null || reference.isBlank()) {
+            throw new IllegalArgumentException("A bible reference is required");
+        }
+        List<BibleReferenceParser.Reference> refs = BibleReferenceParser.parse(reference, bible);
+        if (refs.isEmpty() || refs.getFirst().verses().isEmpty()) {
+            throw new IllegalArgumentException("Could not understand the reference \"" + reference + "\"");
+        }
+        return refs.getFirst();
+    }
+
+    private static String defaultThemeName() {
+        return LabelGrabber.INSTANCE.getLabel("default.theme.text");
+    }
+
+    private static ThemeDTO requireTheme(String name) {
+        if (name != null) {
+            for (ThemeDTO theme : ThemeUtils.getThemes()) {
+                if (name.equals(theme.getThemeName())) {
+                    return theme;
+                }
+            }
+            if (name.equals(defaultThemeName())) {
+                return ThemeDTO.DEFAULT_THEME;
+            }
+        }
+        throw new NoSuchElementException("No theme named " + name);
+    }
+
+    private static byte[] png(Image image) {
+        BufferedImage buffered = SwingFXUtils.fromFXImage(image, null);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(buffered, "png", out);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return out.toByteArray();
     }
 }

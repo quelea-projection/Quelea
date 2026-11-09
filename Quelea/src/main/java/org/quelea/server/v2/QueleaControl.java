@@ -17,6 +17,8 @@
  */
 package org.quelea.server.v2;
 
+import java.util.List;
+
 /**
  * What the v2 remote API can see and do in Quelea. The server only talks to
  * this interface, so it can be tested without JavaFX.
@@ -108,4 +110,120 @@ public interface QueleaControl {
      * @return the new state.
      */
     LiveState setRecording(boolean recording);
+
+    // ---- Schedule changes. A non-null ifRevision makes the change fail
+    // with ScheduleConflictException if the schedule has another revision.
+    /**
+     * Add a song from the database to the end of the schedule.
+     *
+     * @param songId the song's database id.
+     * @param ifRevision the expected schedule revision, or null.
+     * @return the new item and schedule.
+     * @throws java.util.NoSuchElementException if there is no such song.
+     */
+    ScheduleChange addSong(long songId, Long ifRevision);
+
+    /**
+     * Add a bible passage to the end of the schedule.
+     *
+     * @param translation the bible's name.
+     * @param reference the passage, for example "John 3:16-18".
+     * @param ifRevision the expected schedule revision, or null.
+     * @return the new item and schedule.
+     * @throws java.util.NoSuchElementException if there is no such bible.
+     * @throws IllegalArgumentException if the reference is not understood.
+     */
+    ScheduleChange addBible(String translation, String reference, Long ifRevision);
+
+    /**
+     * Remove an item from the schedule.
+     *
+     * @param itemId the item's id.
+     * @param ifRevision the expected schedule revision, or null.
+     * @return the removed item's id and the new schedule.
+     * @throws NoSuchItemException if there is no such item.
+     */
+    ScheduleChange removeItem(String itemId, Long ifRevision);
+
+    /**
+     * Move an item to another position in the schedule.
+     *
+     * @param itemId the item's id.
+     * @param to the new zero-based position.
+     * @param ifRevision the expected schedule revision, or null.
+     * @return the moved item's id and the new schedule.
+     * @throws NoSuchItemException if there is no such item.
+     * @throws IllegalArgumentException if the position is out of range.
+     */
+    ScheduleChange moveItem(String itemId, int to, Long ifRevision);
+
+    // ---- Songs, bibles and themes.
+    /**
+     * Search the song database by title, author and lyrics.
+     *
+     * @param query the search text.
+     * @param limit the maximum number of results.
+     * @return the matching songs, best matches first.
+     */
+    List<Catalog.Song> searchSongs(String query, int limit);
+
+    /**
+     * @param songId the song's database id.
+     * @return the song with its text.
+     * @throws java.util.NoSuchElementException if there is no such song.
+     */
+    Catalog.SongDetails getSong(long songId);
+
+    /**
+     * @return the installed bibles.
+     */
+    List<Catalog.Translation> bibleTranslations();
+
+    /**
+     * @param translation the bible's name.
+     * @return its books.
+     * @throws java.util.NoSuchElementException if there is no such bible.
+     */
+    List<Catalog.Book> bibleBooks(String translation);
+
+    /**
+     * @param translation the bible's name.
+     * @param reference the passage, for example "John 3:16-18".
+     * @return the verses.
+     * @throws java.util.NoSuchElementException if there is no such bible.
+     * @throws IllegalArgumentException if the reference is not understood.
+     */
+    Catalog.Passage biblePassage(String translation, String reference);
+
+    /**
+     * @return the themes, Quelea's default theme last.
+     */
+    List<Catalog.Theme> themes();
+
+    /**
+     * Use a theme for songs and bible passages, like the theme menu above
+     * the schedule.
+     *
+     * @param name the theme's name.
+     * @return the new state.
+     * @throws java.util.NoSuchElementException if there is no such theme.
+     */
+    LiveState setTheme(String name);
+
+    /**
+     * @param name the theme's name.
+     * @return a PNG preview of the theme.
+     * @throws java.util.NoSuchElementException if there is no such theme.
+     */
+    byte[] themeThumbnail(String name);
+
+    /**
+     * @param itemId a presentation, PDF or image group in the schedule.
+     * @param slide the zero-based slide number.
+     * @return the slide as PNG.
+     * @throws NoSuchItemException if there is no such item.
+     * @throws java.util.NoSuchElementException if there is no such slide.
+     * @throws IllegalArgumentException if the item has no slides.
+     */
+    byte[] slideImage(String itemId, int slide);
 }

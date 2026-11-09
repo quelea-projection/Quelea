@@ -18,7 +18,9 @@
 package org.quelea.server.v2;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.LongSupplier;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
@@ -53,7 +55,7 @@ final class LiveReader {
         Displayable d = lp.getDisplayable();
         return new LiveState(
                 ids.idFor(d),
-                d == null ? null : d.getPreviewText(),
+                ItemText.title(d),
                 ItemTypes.of(d),
                 sectionIndex(),
                 sectionCount(),
@@ -67,12 +69,42 @@ final class LiveReader {
     ScheduleSnapshot schedule() {
         Displayable live = mainPanel.getLivePanel().getDisplayable();
         Displayable preview = mainPanel.getPreviewPanel().getDisplayable();
+        List<IndexedDisplayable> items = mainPanel.getSchedulePanel().getScheduleList().getItems();
+        List<String> itemIds = scheduleIds();
         List<ScheduleSnapshot.Entry> entries = new ArrayList<>();
-        for (IndexedDisplayable item : mainPanel.getSchedulePanel().getScheduleList().getItems()) {
-            Displayable d = item.displayable();
-            entries.add(new ScheduleSnapshot.Entry(ids.idFor(d), ItemTypes.of(d), d.getPreviewText(), d == live, d == preview));
+        for (int i = 0; i < items.size(); i++) {
+            Displayable d = items.get(i).displayable();
+            entries.add(new ScheduleSnapshot.Entry(itemIds.get(i), ItemTypes.of(d), ItemText.title(d), d == live, d == preview));
         }
         return new ScheduleSnapshot(scheduleRevision.getAsLong(), entries);
+    }
+
+    /**
+     * The ids of the schedule items, in schedule order. Quelea can put the
+     * same displayable in the schedule twice (a song added twice from the
+     * library); its second entry gets "-2" after the id, the third "-3",
+     * so that every entry can be addressed.
+     *
+     * @return one id per schedule item.
+     */
+    List<String> scheduleIds() {
+        Map<Displayable, Integer> seen = new IdentityHashMap<>();
+        List<String> result = new ArrayList<>();
+        for (IndexedDisplayable item : mainPanel.getSchedulePanel().getScheduleList().getItems()) {
+            Displayable d = item.displayable();
+            int occurrence = seen.merge(d, 1, Integer::sum);
+            String id = ids.idFor(d);
+            result.add(occurrence == 1 ? id : id + "-" + occurrence);
+        }
+        return result;
+    }
+
+    /**
+     * @param itemId a schedule item id.
+     * @return the item's position in the schedule, or -1.
+     */
+    int indexOfId(String itemId) {
+        return itemId == null ? -1 : scheduleIds().indexOf(itemId);
     }
 
     LiveSections sections() {
@@ -85,6 +117,7 @@ final class LiveReader {
             for (TextSection section : lp.getLyricsPanel().getLyricsList().getItems()) {
                 List<String> lines = lines(section.getText(false, false));
                 List<String> chordLines = lines(section.getText(true, false));
+                // Bible passages carry HTML for verse numbers.
                 sections.add(new LiveSections.Section(section.getTitle(), lines,
                         chordLines.equals(lines) ? null : chordLines));
             }
@@ -100,7 +133,7 @@ final class LiveReader {
         List<String> lines = new ArrayList<>(text.length);
         for (String line : text) {
             if (line != null) {
-                lines.add(line);
+                lines.add(ItemText.plain(line));
             }
         }
         return lines;

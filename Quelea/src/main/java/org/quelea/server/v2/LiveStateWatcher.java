@@ -19,6 +19,7 @@ package org.quelea.server.v2;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -48,6 +49,7 @@ final class LiveStateWatcher {
 
     private final ListChangeListener<IndexedDisplayable> scheduleListener = change -> scheduleChanged();
     private Displayable lastLive;
+    private boolean settleScheduled;
     private String lastSectionItem;
     private int lastSectionIndex = Integer.MIN_VALUE;
     private boolean installed;
@@ -124,7 +126,7 @@ final class LiveStateWatcher {
             lastLive = d;
             bus.publish(new RemoteEvent.LiveItemChanged(
                     ids.idFor(d),
-                    d == null ? null : d.getPreviewText(),
+                    ItemText.title(d),
                     ItemTypes.of(d),
                     reader.sectionCount()));
         }
@@ -151,8 +153,22 @@ final class LiveStateWatcher {
     }
 
     private void scheduleChanged() {
-        long revision = scheduleRevision.incrementAndGet();
+        // The revision changes at once, so a change made right after this
+        // one is checked against it.
+        scheduleRevision.incrementAndGet();
+        // Pruning ids and telling clients waits until the whole operation
+        // is done. Moving an item swaps two list entries one at a time, and
+        // in between the moved item is briefly not in the list at all:
+        // pruning then would give it a new id.
+        if (!settleScheduled) {
+            settleScheduled = true;
+            Platform.runLater(this::scheduleSettled);
+        }
+    }
+
+    private void scheduleSettled() {
+        settleScheduled = false;
         ids.retainOnly(reader.displayablesInUse());
-        bus.publish(new RemoteEvent.ScheduleChanged(revision));
+        bus.publish(new RemoteEvent.ScheduleChanged(scheduleRevision.get()));
     }
 }
