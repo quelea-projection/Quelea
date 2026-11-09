@@ -128,6 +128,8 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 
 .toggles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
 .toggle[aria-pressed="true"] { background: var(--live); border-color: var(--live); color: #fff; }
+/* Red means the projection is affected; showing chords only changes this page. */
+#toggle-chords[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); }
 
 .sections, .schedule, .results, .themes { list-style: none; margin: 0; padding: 0; }
 
@@ -143,6 +145,8 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 .sections li.current { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
 .sections .stitle { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
 .sections li.slide { text-align: center; color: var(--muted); }
+/* Chord lines line up with the words under them only in a fixed-width font. */
+.sections li.chords { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; white-space: pre-wrap; }
 
 .schedule li {
   display: flex;

@@ -40,6 +40,7 @@ import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
@@ -68,14 +69,16 @@ final class FxQueleaControl implements QueleaControl {
 
     private final MainPanel mainPanel;
     private final MainToolbar toolbar;
+    private final ItemIds ids;
     private final LiveReader reader;
     private final LongSupplier scheduleRevision;
     private final FxCall fx;
 
-    FxQueleaControl(MainPanel mainPanel, MainToolbar toolbar, LiveReader reader, LongSupplier scheduleRevision,
-            FxCall fx) {
+    FxQueleaControl(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, LiveReader reader,
+            LongSupplier scheduleRevision, FxCall fx) {
         this.mainPanel = mainPanel;
         this.toolbar = toolbar;
+        this.ids = ids;
         this.reader = reader;
         this.scheduleRevision = scheduleRevision;
         this.fx = fx;
@@ -251,6 +254,39 @@ final class FxQueleaControl implements QueleaControl {
                 schedule.moveCurrentItem(direction);
             }
             return new ScheduleChange(reader.scheduleIds().get(to), reader.schedule());
+        });
+    }
+
+    @Override
+    public ScheduleChange transpose(String itemId, int semitones, Long ifRevision) {
+        if (semitones < -11 || semitones > 11) {
+            throw new IllegalArgumentException("semitones must be between -11 and 11");
+        }
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            ScheduleList schedule = scheduleList();
+            int index = requireIndex(itemId);
+            if (!(schedule.getItems().get(index).displayable() instanceof SongDisplayable song)) {
+                throw new IllegalArgumentException("Only songs can be transposed");
+            }
+            SongDisplayable copy = new SongDisplayable(song);
+            // The copy lives in this schedule only and is never saved to
+            // the song database, so the song keeps its key elsewhere.
+            copy.setNoDBUpdate();
+            String newKey = SongTransposer.transposeKey(song.getKey(), semitones);
+            copy.setKey(newKey);
+            copy.setLyrics(SongTransposer.transposeLyrics(song.getLyrics(true, true, false), newKey, semitones));
+            ids.transfer(song, copy);
+            schedule.getItems().set(index, new IndexedDisplayable(copy, index));
+
+            LivePanel live = mainPanel.getLivePanel();
+            if (live.getDisplayable() == song) {
+                live.setDisplayable(copy, Math.max(0, reader.sectionIndex()));
+            }
+            if (mainPanel.getPreviewPanel().getDisplayable() == song) {
+                mainPanel.getPreviewPanel().setDisplayable(copy, 0);
+            }
+            return new ScheduleChange(itemId, reader.schedule());
         });
     }
 

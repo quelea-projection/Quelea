@@ -101,6 +101,9 @@ final class ApiHandler extends Handler.Abstract {
                 call -> control.removeItem(call.match().group(1), call.ifRevision()));
         route("POST", "/schedule/items/" + ITEM_ID + "/move", Scope.CONTROL,
                 call -> control.moveItem(call.match().group(1), Json.requireInt(call.body(), "to"), call.ifRevision()));
+        route("POST", "/schedule/items/" + ITEM_ID + "/transpose", Scope.CONTROL,
+                call -> control.transpose(call.match().group(1), Json.requireInt(call.body(), "semitones"),
+                        call.ifRevision()));
         route("GET", "/schedule/items/" + ITEM_ID + "/slides/([0-9]+)\\.png", Scope.VIEW,
                 call -> new Binary(control.slideImage(call.match().group(1), Integer.parseInt(call.match().group(2))),
                         "image/png", false));

@@ -75,6 +75,21 @@ public final class ItemIds {
     }
 
     /**
+     * Give a replacement displayable the id of the one it replaces, for
+     * example a transposed copy of a song, so clients keep addressing the
+     * same schedule item.
+     *
+     * @param old the displayable being replaced.
+     * @param replacement the displayable taking its place.
+     */
+    public synchronized void transfer(Displayable old, Displayable replacement) {
+        String id = ids.remove(old);
+        if (id != null) {
+            ids.put(replacement, id);
+        }
+    }
+
+    /**
      * Forget every displayable that is not in the given collection, so that
      * removed items can be garbage collected. Their ids are never reused.
      *

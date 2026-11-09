@@ -257,6 +257,20 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void transposeASong() throws Exception {
+        HttpResponse<String> response = send("POST", "/api/v2/schedule/items/it_1/transpose", CONTROL_TOKEN,
+                "{\"semitones\":-2}");
+        assertEquals(200, response.statusCode());
+        assertEquals("it_1", json(response).get("itemId").getAsString());
+        assertTrue(control.calls.contains("transpose it_1 -2"));
+        assertEquals(400, send("POST", "/api/v2/schedule/items/it_2/transpose", CONTROL_TOKEN,
+                "{\"semitones\":1}").statusCode(), "not a song");
+        assertEquals(400, send("POST", "/api/v2/schedule/items/it_1/transpose", CONTROL_TOKEN, "{}").statusCode());
+        assertEquals(403, send("POST", "/api/v2/schedule/items/it_1/transpose", VIEW_TOKEN,
+                "{\"semitones\":1}").statusCode());
+    }
+
+    @Test
     void duplicateEntryIdsAreAccepted() throws Exception {
         control.schedule.add("it_2-2");
         assertEquals(200, send("DELETE", "/api/v2/schedule/items/it_2-2", CONTROL_TOKEN, null).statusCode());

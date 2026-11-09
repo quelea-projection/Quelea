@@ -54,6 +54,20 @@ class ItemIdsTest {
     }
 
     @Test
+    void transferKeepsTheIdForAReplacement() {
+        ItemIds ids = new ItemIds();
+        FakeDisplayable song = new FakeDisplayable("Song");
+        FakeDisplayable transposed = new FakeDisplayable("Song");
+        String id = ids.idFor(song);
+
+        ids.transfer(song, transposed);
+
+        assertEquals(id, ids.idFor(transposed));
+        assertSame(transposed, ids.find(id));
+        assertEquals(1, ids.size());
+    }
+
+    @Test
     void retainOnlyComparesByIdentity() {
         ItemIds ids = new ItemIds();
         FakeDisplayable original = new FakeDisplayable("same");

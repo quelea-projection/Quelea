@@ -179,6 +179,20 @@ final class FakeQueleaControl implements QueleaControl {
         return new ScheduleChange(itemId, snapshot());
     }
 
+    @Override
+    public synchronized ScheduleChange transpose(String itemId, int semitones, Long ifRevision) {
+        calls.add("transpose " + itemId + " " + semitones);
+        checkRevision(ifRevision);
+        if (!schedule.contains(itemId)) {
+            throw new NoSuchItemException(itemId);
+        }
+        if (itemId.equals("it_2")) {
+            throw new IllegalArgumentException("Only songs can be transposed");
+        }
+        revision++;
+        return new ScheduleChange(itemId, snapshot());
+    }
+
     // ---- Songs, bibles and themes ----
     @Override
     public List<Catalog.Song> searchSongs(String query, int limit) {

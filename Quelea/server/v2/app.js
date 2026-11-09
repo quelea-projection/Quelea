@@ -30,6 +30,10 @@ const TEXTS = {
     'live.clear': 'Clear',
     'live.nothing': 'Nothing is live.',
     'live.slide': 'Slide',
+    'live.transposeDown': '♭ −1',
+    'live.transposeUp': '♯ +1',
+    'live.chords': 'Chords',
+    'live.transposed': 'Transposed for this service only',
     'schedule.empty': 'The schedule is empty.',
     'schedule.up': 'Move up',
     'schedule.down': 'Move down',
@@ -81,6 +85,10 @@ const TEXTS = {
     'live.clear': 'Rensa',
     'live.nothing': 'Inget är live.',
     'live.slide': 'Bild',
+    'live.transposeDown': '♭ −1',
+    'live.transposeUp': '♯ +1',
+    'live.chords': 'Ackord',
+    'live.transposed': 'Transponerad bara för den här gången',
     'schedule.empty': 'Schemat är tomt.',
     'schedule.up': 'Flytta upp',
     'schedule.down': 'Flytta ned',
@@ -240,6 +248,8 @@ let retryDelay = 500;
 let pingTimer = null;
 let pongTimer = null;
 let reconnectTimer = null;
+let showChords = false;
+try { showChords = localStorage.getItem('quelea.v2.chords') === '1'; } catch (e) { /* storage blocked */ }
 
 // ---- Live tab ----------------------------------------------------------
 
@@ -250,6 +260,8 @@ function renderLive() {
   });
   const nothing = !live || !live.itemId;
   $('nothing-live').hidden = !nothing;
+  $('song-tools').hidden = !live || live.itemType !== 'song';
+  $('toggle-chords').setAttribute('aria-pressed', showChords ? 'true' : 'false');
   ['prev', 'next'].forEach(id => { $(id).disabled = nothing; });
 }
 
@@ -259,12 +271,13 @@ function renderSections() {
   if (!sections || !sections.itemId) return;
   sections.sections.forEach((section, index) => {
     const hasText = section.lines.length > 0;
+    const chords = showChords && section.chordLines;
     const item = el('li', {
-      class: (hasText ? '' : 'slide ') + (index === sections.sectionIndex ? 'current' : ''),
+      class: (hasText ? '' : 'slide ') + (chords ? 'chords ' : '') + (index === sections.sectionIndex ? 'current' : ''),
       onclick: () => run(() => api.post('/live/section', { index }).then(applyState))
     },
     section.title ? el('span', { class: 'stitle' }, section.title) : null,
-    hasText ? section.lines.join('\n') : t('live.slide') + ' ' + (index + 1));
+    hasText ? (chords ? section.chordLines : section.lines).join('\n') : t('live.slide') + ' ' + (index + 1));
     list.append(item);
   });
   scrollToCurrent();
@@ -303,6 +316,17 @@ function setupLiveTab() {
   ['logo', 'black', 'clear'].forEach(name => {
     $('toggle-' + name).onclick = () => run(() => api.put('/live/screen', { [name]: !(live && live[name]) }).then(applyState));
   });
+  // The transposed song replaces the live item; live.item then reloads the sections.
+  const transpose = semitones => run(() => api.post('/schedule/items/' + live.itemId + '/transpose', { semitones })
+    .then(() => toast(t('live.transposed'))));
+  $('transpose-down').onclick = () => transpose(-1);
+  $('transpose-up').onclick = () => transpose(1);
+  $('toggle-chords').onclick = () => {
+    showChords = !showChords;
+    try { localStorage.setItem('quelea.v2.chords', showChords ? '1' : '0'); } catch (e) { /* storage blocked */ }
+    renderLive();
+    renderSections();
+  };
 }
 
 // ---- Schedule tab ------------------------------------------------------

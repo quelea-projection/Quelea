@@ -46,7 +46,7 @@ public final class RemoteCore {
         ItemIds ids = new ItemIds();
         LiveStateWatcher watcher = new LiveStateWatcher(window.getMainPanel(), window.getMainToolbar(), ids, bus);
         FxCall.fx().run(watcher::install);
-        QueleaControl control = new FxQueleaControl(window.getMainPanel(), window.getMainToolbar(),
+        QueleaControl control = new FxQueleaControl(window.getMainPanel(), window.getMainToolbar(), ids,
                 watcher.reader(), watcher::scheduleRevision, FxCall.fx());
         return new RemoteCore(control, bus);
     }

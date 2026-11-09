@@ -157,6 +157,21 @@ public interface QueleaControl {
      */
     ScheduleChange moveItem(String itemId, int to, Long ifRevision);
 
+    /**
+     * Transpose a song in the schedule for this session only: the schedule
+     * entry is replaced by a transposed copy that is never written to the
+     * song database. The item keeps its id; if it is live, the transposed
+     * version is shown at once.
+     *
+     * @param itemId the item's id.
+     * @param semitones how far to move the chords, for example -2.
+     * @param ifRevision the expected schedule revision, or null.
+     * @return the item's id and the new schedule.
+     * @throws NoSuchItemException if there is no such item.
+     * @throws IllegalArgumentException if the item is not a song.
+     */
+    ScheduleChange transpose(String itemId, int semitones, Long ifRevision);
+
     // ---- Songs, bibles and themes.
     /**
      * Search the song database by title, author and lyrics.
