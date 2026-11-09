@@ -101,6 +101,20 @@ final class Json {
     }
 
     /**
+     * @return the field as a number, or null if it is missing.
+     * @throws ApiException 400 if it is present but not a number.
+     */
+    static Double optionalDouble(JsonObject obj, String field) {
+        if (!obj.has(field) || obj.get(field).isJsonNull()) {
+            return null;
+        }
+        if (obj.get(field).isJsonPrimitive() && obj.get(field).getAsJsonPrimitive().isNumber()) {
+            return obj.get(field).getAsDouble();
+        }
+        throw ApiException.badRequest("\"" + field + "\" must be a number");
+    }
+
+    /**
      * @return the field as an int, or null if it is missing.
      * @throws ApiException 400 if it is present but not a whole number.
      */

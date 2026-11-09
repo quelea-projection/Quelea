@@ -22,6 +22,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.LongSupplier;
+import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.IndexedDisplayable;
@@ -29,9 +30,12 @@ import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.toolbars.MainToolbar;
+import org.quelea.windows.multimedia.MultimediaControls;
 
 /**
  * Reads Quelea's live state and schedule. Must be called on the FX thread.
@@ -63,7 +67,33 @@ final class LiveReader {
                 lp.getBlacked(),
                 lp.getCleared(),
                 toolbar.recordingProperty().get(),
-                scheduleRevision.getAsLong());
+                scheduleRevision.getAsLong(),
+                media());
+    }
+
+    /**
+     * @return the playback of the live video, audio file or timer, or null.
+     */
+    LiveState.Media media() {
+        LivePanel lp = mainPanel.getLivePanel();
+        Displayable d = lp.getDisplayable();
+        if (d instanceof VideoDisplayable) {
+            return multimedia("video", lp.getVideoPanel().getControls());
+        }
+        if (d instanceof AudioDisplayable) {
+            return multimedia("audio", lp.getAudioPanel().getControls());
+        }
+        if (d instanceof TimerDisplayable) {
+            return new LiveState.Media("timer", lp.getTimerPanel().runningProperty().get(), null, null);
+        }
+        return null;
+    }
+
+    private static LiveState.Media multimedia(String kind, MultimediaControls controls) {
+        // The slider's value, not a query to the player: asking GStreamer
+        // from the FX thread can hang Quelea (see VidDisplay).
+        double position = Math.round(controls.getPosition() * 1000) / 1000.0;
+        return new LiveState.Media(kind, controls.playingProperty().get(), controls.loopProperty().get(), position);
     }
 
     ScheduleSnapshot schedule() {

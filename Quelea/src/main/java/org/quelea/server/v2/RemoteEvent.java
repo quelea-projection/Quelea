@@ -114,6 +114,23 @@ public sealed interface RemoteEvent {
         }
     }
 
+    /**
+     * The live video, audio file or timer started, paused, stopped or
+     * changed its looping. Positions are not sent as events; read them
+     * from the state.
+     *
+     * @param itemId the live item.
+     * @param media its playback, without a position; null if the live item
+     * is not a video, audio file or timer.
+     */
+    record MediaChanged(String itemId, LiveState.Media media) implements RemoteEvent {
+
+        @Override
+        public String type() {
+            return "live.media";
+        }
+    }
+
     record RecordingChanged(boolean recording) implements RemoteEvent {
 
         @Override

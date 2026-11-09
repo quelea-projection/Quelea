@@ -1,6 +1,7 @@
 package org.quelea.server.v2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -257,6 +258,39 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void controlTheLiveVideo() throws Exception {
+        assertEquals(400, send("POST", "/api/v2/live/media/play", CONTROL_TOKEN, null).statusCode(),
+                "a song cannot play");
+        assertTrue(json(send("GET", "/api/v2/state", VIEW_TOKEN, null)).get("media").isJsonNull());
+
+        control.media = new LiveState.Media("video", false, false, 0.0);
+        JsonObject media = json(send("POST", "/api/v2/live/media/play", CONTROL_TOKEN, null)).getAsJsonObject("media");
+        assertEquals("video", media.get("kind").getAsString());
+        assertTrue(media.get("playing").getAsBoolean());
+
+        media = json(send("PUT", "/api/v2/live/media", CONTROL_TOKEN, "{\"position\":0.25,\"loop\":true}"))
+                .getAsJsonObject("media");
+        assertEquals(0.25, media.get("position").getAsDouble());
+        assertTrue(media.get("loop").getAsBoolean());
+        assertEquals(400, send("PUT", "/api/v2/live/media", CONTROL_TOKEN, "{\"position\":1.5}").statusCode());
+        assertEquals(400, send("PUT", "/api/v2/live/media", CONTROL_TOKEN, "{\"position\":\"half\"}").statusCode());
+
+        assertFalse(json(send("POST", "/api/v2/live/media/pause", CONTROL_TOKEN, null))
+                .getAsJsonObject("media").get("playing").getAsBoolean());
+        assertEquals(0.0, json(send("POST", "/api/v2/live/media/stop", CONTROL_TOKEN, null))
+                .getAsJsonObject("media").get("position").getAsDouble());
+        assertEquals(403, send("POST", "/api/v2/live/media/play", VIEW_TOKEN, null).statusCode());
+    }
+
+    @Test
+    void timersPlayButCannotJump() throws Exception {
+        control.media = new LiveState.Media("timer", true, null, null);
+        assertFalse(json(send("POST", "/api/v2/live/media/pause", CONTROL_TOKEN, null))
+                .getAsJsonObject("media").get("playing").getAsBoolean());
+        assertEquals(400, send("PUT", "/api/v2/live/media", CONTROL_TOKEN, "{\"loop\":true}").statusCode());
+    }
+
+    @Test
     void showAndRemoveNotices() throws Exception {
         HttpResponse<String> empty = send("GET", "/api/v2/notices", VIEW_TOKEN, null);
         assertEquals(200, empty.statusCode());
@@ -439,6 +473,17 @@ class RemoteApiServerTest {
         assertEquals(snapshotSeq + 1, event.get("seq").getAsLong());
         assertEquals(2, event.getAsJsonObject("data").get("index").getAsInt());
         assertEquals("it_1", event.getAsJsonObject("data").get("itemId").getAsString());
+    }
+
+    @Test
+    void mediaChangesAreSentAsEvents() throws Exception {
+        Connection c = connectAndAuth(VIEW_TOKEN);
+        assertEquals("snapshot", c.recorder().next().get("type").getAsString());
+        bus.publish(new RemoteEvent.MediaChanged("it_2", new LiveState.Media("audio", true, false, null)));
+        JsonObject event = c.recorder().next();
+        assertEquals("live.media", event.get("type").getAsString());
+        assertEquals("it_2", event.getAsJsonObject("data").get("itemId").getAsString());
+        assertTrue(event.getAsJsonObject("data").getAsJsonObject("media").get("playing").getAsBoolean());
     }
 
     @Test

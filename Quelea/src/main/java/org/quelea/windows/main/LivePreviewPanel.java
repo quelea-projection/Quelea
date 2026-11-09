@@ -165,6 +165,16 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
+     * Get the audio panel on this live / preview panel.
+     * <p/>
+     *
+     * @return the audio panel.
+     */
+    public MultimediaPanel getAudioPanel() {
+        return audioPanel;
+    }
+
+    /**
      * Get the presentation panel on this live / preview panel.
      * <p/>
      *

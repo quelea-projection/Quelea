@@ -226,3 +226,7 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 #notice-times { flex: 1; }
 #notices:not(:empty) { margin-bottom: 8px; }
 
+/* Play, stop and loop for a live video, audio file or timer. */
+.media .toggles { margin-bottom: 8px; }
+#media-position { width: 100%; padding: 0; min-height: 32px; margin-bottom: 16px; }
+

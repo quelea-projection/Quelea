@@ -48,6 +48,14 @@
         <button id="toggle-black" class="toggle" data-t="live.black" aria-pressed="false"></button>
         <button id="toggle-clear" class="toggle" data-t="live.clear" aria-pressed="false"></button>
       </div>
+      <div id="media-tools" class="media" hidden>
+        <div class="toggles">
+          <button id="media-play" class="primary" data-t="media.play"></button>
+          <button id="media-stop" data-t="media.stop"></button>
+          <button id="media-loop" class="toggle" data-t="media.loop" aria-pressed="false"></button>
+        </div>
+        <input id="media-position" type="range" min="0" max="1" step="0.001" value="0" data-t-title="media.position">
+      </div>
       <div id="song-tools" class="toggles" hidden>
         <button id="transpose-down" data-t="live.transposeDown"></button>
         <button id="transpose-up" data-t="live.transposeUp"></button>

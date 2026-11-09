@@ -33,6 +33,8 @@ const TEXTS = {
     'live.transposeDown': '♭ −1',
     'live.transposeUp': '♯ +1',
     'live.chords': 'Chords',
+    'media.play': '▶ Play', 'media.pause': '❚❚ Pause', 'media.stop': '■ Stop', 'media.loop': 'Loop',
+    'media.position': 'Position',
     'live.transposed': 'Transposed for this service only',
     'schedule.empty': 'The schedule is empty.',
     'schedule.up': 'Move up',
@@ -99,6 +101,8 @@ const TEXTS = {
     'live.transposeDown': '♭ −1',
     'live.transposeUp': '♯ +1',
     'live.chords': 'Ackord',
+    'media.play': '▶ Spela', 'media.pause': '❚❚ Pausa', 'media.stop': '■ Stopp', 'media.loop': 'Upprepa',
+    'media.position': 'Position',
     'live.transposed': 'Transponerad bara för den här gången',
     'schedule.empty': 'Schemat är tomt.',
     'schedule.up': 'Flytta upp',
@@ -286,6 +290,32 @@ function renderLive() {
   $('song-tools').hidden = !live || live.itemType !== 'song';
   $('toggle-chords').setAttribute('aria-pressed', showChords ? 'true' : 'false');
   ['prev', 'next'].forEach(id => { $(id).disabled = nothing; });
+  renderMedia();
+}
+
+// The live video, audio file or timer. Positions are not sent as events,
+// so the state is fetched every second while something plays.
+let mediaPoll = null;
+let seeking = false;
+
+function renderMedia() {
+  const media = live && live.media;
+  $('media-tools').hidden = !media;
+  clearInterval(mediaPoll);
+  mediaPoll = null;
+  if (!media) return;
+  $('media-play').textContent = t(media.playing ? 'media.pause' : 'media.play');
+  const timer = media.kind === 'timer';
+  $('media-loop').hidden = timer;
+  $('media-position').hidden = timer;
+  $('media-loop').setAttribute('aria-pressed', media.loop ? 'true' : 'false');
+  if (!seeking && typeof media.position === 'number') $('media-position').value = media.position;
+  if (media.playing && !timer) {
+    mediaPoll = setInterval(() => {
+      if (document.hidden || $('tab-live').hidden) return;
+      api.get('/state').then(applyState).catch(() => { /* the WebSocket reports connection problems */ });
+    }, 1000);
+  }
 }
 
 function renderSections() {
@@ -344,6 +374,14 @@ function setupLiveTab() {
     .then(() => toast(t('live.transposed'))));
   $('transpose-down').onclick = () => transpose(-1);
   $('transpose-up').onclick = () => transpose(1);
+  $('media-play').onclick = () => run(() => api.post(live.media.playing ? '/live/media/pause' : '/live/media/play')
+    .then(applyState));
+  $('media-stop').onclick = () => run(() => api.post('/live/media/stop').then(applyState));
+  $('media-loop').onclick = () => run(() => api.put('/live/media', { loop: !live.media.loop }).then(applyState));
+  const position = $('media-position');
+  position.oninput = () => { seeking = true; };
+  position.onchange = () => run(() => api.put('/live/media', { position: Number(position.value) })
+    .then(applyState)).finally(() => { seeking = false; });
   $('toggle-chords').onclick = () => {
     showChords = !showChords;
     try { localStorage.setItem('quelea.v2.chords', showChords ? '1' : '0'); } catch (e) { /* storage blocked */ }
@@ -601,6 +639,8 @@ function handleMessage(message) {
         live.itemId = data.itemId;
         live.title = data.title;
         live.itemType = data.itemType;
+        // live.media follows for an item that plays.
+        live.media = null;
       }
       renderLive();
       loadSections();
@@ -610,6 +650,15 @@ function handleMessage(message) {
       if (live) live.sectionIndex = data.index;
       if (sections && sections.itemId === data.itemId) markSection(data.index);
       else loadSections();
+      break;
+    case 'live.media':
+      if (live && live.itemId === data.itemId) {
+        live.media = data.media;
+        renderLive();
+        // Events carry no position, and a stopped or finished video has
+        // jumped back to the start: read it.
+        if (data.media && data.media.kind !== 'timer') api.get('/state').then(applyState).catch(() => {});
+      }
       break;
     case 'live.screen':
       if (live) Object.assign(live, data);

@@ -21,7 +21,55 @@ final class FakeQueleaControl implements QueleaControl {
     @Override
     public LiveState getState() {
         checkTimeout();
-        return new LiveState("it_1", "Amazing Grace", "song", section, 3, logo, black, clear, recording, 4);
+        return new LiveState("it_1", "Amazing Grace", "song", section, 3, logo, black, clear, recording, 4, media);
+    }
+
+    /**
+     * The live item's playback; null means it is not a video, audio file or
+     * timer.
+     */
+    volatile LiveState.Media media;
+
+    private LiveState.Media requireMedia() {
+        if (media == null) {
+            throw new IllegalArgumentException("The live item is not a video, audio file or timer");
+        }
+        return media;
+    }
+
+    @Override
+    public LiveState playMedia() {
+        LiveState.Media m = requireMedia();
+        media = new LiveState.Media(m.kind(), true, m.loop(), m.position());
+        return getState();
+    }
+
+    @Override
+    public LiveState pauseMedia() {
+        LiveState.Media m = requireMedia();
+        media = new LiveState.Media(m.kind(), false, m.loop(), m.position());
+        return getState();
+    }
+
+    @Override
+    public LiveState stopMedia() {
+        LiveState.Media m = requireMedia();
+        media = new LiveState.Media(m.kind(), false, m.loop(), m.position() == null ? null : 0.0);
+        return getState();
+    }
+
+    @Override
+    public LiveState setMedia(Double position, Boolean loop) {
+        if (position != null && (position < 0 || position > 1)) {
+            throw new IllegalArgumentException("\"position\" must be from 0 to 1");
+        }
+        LiveState.Media m = requireMedia();
+        if ("timer".equals(m.kind())) {
+            throw new IllegalArgumentException("A timer cannot jump or loop");
+        }
+        media = new LiveState.Media(m.kind(), m.playing(), loop == null ? m.loop() : loop,
+                position == null ? m.position() : position);
+        return getState();
     }
 
     @Override

@@ -80,6 +80,14 @@ final class ApiHandler extends Handler.Abstract {
         });
         route("PUT", "/recording", Scope.CONTROL,
                 call -> control.setRecording(Json.requireBoolean(call.body(), "recording")));
+        // The live video, audio file or timer.
+        route("POST", "/live/media/play", Scope.CONTROL, call -> control.playMedia());
+        route("POST", "/live/media/pause", Scope.CONTROL, call -> control.pauseMedia());
+        route("POST", "/live/media/stop", Scope.CONTROL, call -> control.stopMedia());
+        route("PUT", "/live/media", Scope.CONTROL, call -> {
+            JsonObject body = call.body();
+            return control.setMedia(Json.optionalDouble(body, "position"), Json.optionalBoolean(body, "loop"));
+        });
         route("POST", "/schedule/items/" + ITEM_ID + "/live", Scope.CONTROL,
                 call -> control.goLive(call.match().group(1)));
 

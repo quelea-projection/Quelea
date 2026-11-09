@@ -56,6 +56,8 @@ final class LiveStateWatcher {
     private boolean installed;
     private final NoticeReader notices;
     private boolean noticesScheduled;
+    private boolean mediaScheduled;
+    private RemoteEvent.MediaChanged lastMedia;
     private List<Notices.Active> lastNotices = List.of();
 
     LiveStateWatcher(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, RemoteEventBus bus,
@@ -112,6 +114,16 @@ final class LiveStateWatcher {
             scheduleChanged();
         });
 
+        // Playback of the live video, audio file or timer. A video that
+        // ends is reported from the FX thread too, but runLater keeps any
+        // other caller safe and folds a reset plus a new item into one event.
+        ChangeListener<Boolean> mediaListener = (obs, oldValue, newValue) -> scheduleMedia();
+        lp.getVideoPanel().getControls().playingProperty().addListener(mediaListener);
+        lp.getVideoPanel().getControls().loopProperty().addListener(mediaListener);
+        lp.getAudioPanel().getControls().playingProperty().addListener(mediaListener);
+        lp.getAudioPanel().getControls().loopProperty().addListener(mediaListener);
+        lp.getTimerPanel().runningProperty().addListener(mediaListener);
+
         // The notice dialog rebuilds its list after every pass, clearing
         // and refilling it: report once the list has settled, and only
         // if something a remote shows actually changed.
@@ -123,6 +135,25 @@ final class LiveStateWatcher {
         });
 
         lastLive = lp.getDisplayable();
+    }
+
+    private void scheduleMedia() {
+        if (!mediaScheduled) {
+            mediaScheduled = true;
+            Platform.runLater(this::publishMedia);
+        }
+    }
+
+    private void publishMedia() {
+        mediaScheduled = false;
+        LiveState.Media media = reader.media();
+        RemoteEvent.MediaChanged event = new RemoteEvent.MediaChanged(
+                ids.idFor(mainPanel.getLivePanel().getDisplayable()),
+                media == null ? null : new LiveState.Media(media.kind(), media.playing(), media.loop(), null));
+        if (!event.equals(lastMedia)) {
+            lastMedia = event;
+            bus.publish(event);
+        }
     }
 
     private void noticesSettled() {
@@ -155,6 +186,9 @@ final class LiveStateWatcher {
                     ItemText.title(d),
                     ItemTypes.of(d),
                     reader.sectionCount()));
+            // The new item may play by itself (videos can start on going
+            // live, timers always do); say so after live.item.
+            scheduleMedia();
         }
         publishSection();
     }

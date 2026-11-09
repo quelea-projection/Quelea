@@ -112,6 +112,23 @@ public interface QueleaControl {
      */
     LiveState setRecording(boolean recording);
 
+    // ---- The live video, audio file or timer. Each fails with
+    // IllegalArgumentException if the live item is none of those.
+    LiveState playMedia();
+
+    LiveState pauseMedia();
+
+    LiveState stopMedia();
+
+    /**
+     * Jump and/or change looping; null leaves a setting as it is.
+     *
+     * @param position where to jump to, from 0 to 1.
+     * @param loop true to play again at the end.
+     * @return the new state.
+     */
+    LiveState setMedia(Double position, Boolean loop);
+
     // ---- Schedule changes. A non-null ifRevision makes the change fail
     // with ScheduleConflictException if the schedule has another revision.
     /**

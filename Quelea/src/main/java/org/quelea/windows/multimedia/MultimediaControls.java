@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -90,6 +92,8 @@ public class MultimediaControls extends StackPane {
     private int vol = 100;
     private final MediaButton muteButton;
     private boolean looping;
+    private final ReadOnlyBooleanWrapper playing = new ReadOnlyBooleanWrapper(false);
+    private final ReadOnlyBooleanWrapper loop = new ReadOnlyBooleanWrapper(false);
 
     private Runnable onPlay;
     private Runnable onPause;
@@ -159,10 +163,7 @@ public class MultimediaControls extends StackPane {
         loopButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("video.loop.tooltip")));
         loopButton.setOnAction(e -> {
             if (!disableControls) {
-                boolean loopOn = loopButton.getIcon() == QueleaIcon.LOOP;
-                loopButton.setIcon(loopOn ? QueleaIcon.LOOP_ON : QueleaIcon.LOOP);
-                loopButton.setActive(loopOn);
-                onLoopChanged.accept(loopOn);
+                setLoop(loopButton.getIcon() == QueleaIcon.LOOP);
             }
         });
         setButtonParams(loopButton);
@@ -309,8 +310,56 @@ public class MultimediaControls extends StackPane {
         }
     }
 
+    /**
+     * Turn looping on or off, as the loop button does.
+     *
+     * @param loopOn true to play the media again when it ends.
+     */
+    public void setLoop(boolean loopOn) {
+        loopButton.setIcon(loopOn ? QueleaIcon.LOOP_ON : QueleaIcon.LOOP);
+        loopButton.setActive(loopOn);
+        loop.set(loopOn);
+        onLoopChanged.accept(loopOn);
+    }
+
+    /**
+     * @return true while the media plays; false when paused or stopped.
+     * May change off the FX thread when the media ends.
+     */
+    public ReadOnlyBooleanProperty playingProperty() {
+        return playing.getReadOnlyProperty();
+    }
+
+    /**
+     * @return true if the media plays again when it ends.
+     */
+    public ReadOnlyBooleanProperty loopProperty() {
+        return loop.getReadOnlyProperty();
+    }
+
+    /**
+     * @return how far the media has played, from 0 to 1, as the position
+     * slider shows it.
+     */
+    public double getPosition() {
+        return posSlider.getValue();
+    }
+
+    /**
+     * Jump to a position, as dragging the position slider does.
+     *
+     * @param pos the position, from 0 to 1.
+     */
+    public void seek(double pos) {
+        disablePosSliderListener = true;
+        posSlider.setValue(pos);
+        disablePosSliderListener = false;
+        onSeek.accept(pos);
+    }
+
     public void play() {
         playpause = !playpause;
+        playing.set(playpause);
         if (playpause) {
             playButton.setIcon(QueleaIcon.PAUSE);
 
@@ -336,6 +385,7 @@ public class MultimediaControls extends StackPane {
     public void reset() {
         playButton.setIcon(QueleaIcon.PLAY);
         playpause = false;
+        playing.set(false);
         disablePosSliderListener = true;
         posSlider.setValue(0);
         posSlider.setDisable(true);

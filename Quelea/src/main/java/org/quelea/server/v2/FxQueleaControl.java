@@ -41,6 +41,7 @@ import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleReferenceParser;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
@@ -49,6 +50,8 @@ import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SearchIndex.FilterType;
 import org.quelea.services.notice.Notice;
@@ -64,6 +67,7 @@ import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.schedule.ScheduleList.Direction;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
+import org.quelea.windows.multimedia.MultimediaControls;
 
 /**
  * {@link QueleaControl} backed by Quelea's real user interface. Everything
@@ -381,6 +385,88 @@ final class FxQueleaControl implements QueleaControl {
     public byte[] themeThumbnail(String name) {
         // Rendered off the FX thread: for a video theme it waits for a still.
         return png(ThemeThumbnails.render(requireTheme(name)));
+    }
+
+    // ---- Media ----
+    @Override
+    public LiveState playMedia() {
+        return command(() -> {
+            LivePanel lp = mainPanel.getLivePanel();
+            if (lp.getDisplayable() instanceof TimerDisplayable) {
+                if (!lp.getTimerPanel().runningProperty().get()) {
+                    lp.getTimerPanel().play();
+                }
+                return;
+            }
+            MultimediaControls controls = liveControls();
+            if (!controls.playingProperty().get()) {
+                controls.play();
+            }
+        });
+    }
+
+    @Override
+    public LiveState pauseMedia() {
+        return command(() -> {
+            LivePanel lp = mainPanel.getLivePanel();
+            if (lp.getDisplayable() instanceof TimerDisplayable) {
+                if (lp.getTimerPanel().runningProperty().get()) {
+                    lp.getTimerPanel().togglePause();
+                }
+                return;
+            }
+            MultimediaControls controls = liveControls();
+            if (controls.playingProperty().get()) {
+                // The play button toggles between playing and paused.
+                controls.play();
+            }
+        });
+    }
+
+    @Override
+    public LiveState stopMedia() {
+        return command(() -> {
+            LivePanel lp = mainPanel.getLivePanel();
+            if (lp.getDisplayable() instanceof TimerDisplayable) {
+                lp.getTimerPanel().stop();
+                return;
+            }
+            liveControls().reset();
+        });
+    }
+
+    @Override
+    public LiveState setMedia(Double position, Boolean loop) {
+        if (position != null && (position.isNaN() || position < 0 || position > 1)) {
+            throw new IllegalArgumentException("\"position\" must be from 0 to 1");
+        }
+        return command(() -> {
+            if (mainPanel.getLivePanel().getDisplayable() instanceof TimerDisplayable) {
+                throw new IllegalArgumentException("A timer cannot jump or loop");
+            }
+            MultimediaControls controls = liveControls();
+            if (loop != null && loop != controls.loopProperty().get()) {
+                controls.setLoop(loop);
+            }
+            if (position != null) {
+                controls.seek(position);
+            }
+        });
+    }
+
+    /**
+     * @return the controls of the live video or audio file.
+     */
+    private MultimediaControls liveControls() {
+        LivePanel lp = mainPanel.getLivePanel();
+        Displayable d = lp.getDisplayable();
+        if (d instanceof VideoDisplayable) {
+            return lp.getVideoPanel().getControls();
+        }
+        if (d instanceof AudioDisplayable) {
+            return lp.getAudioPanel().getControls();
+        }
+        throw new IllegalArgumentException("The live item is not a video, audio file or timer");
     }
 
     // ---- Notices ----

@@ -18,6 +18,8 @@
  */
 package org.quelea.windows.timer;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -55,6 +57,7 @@ public class TimerControls extends StackPane {
     private boolean disableControls;
     private Set<Timer> timers;
     private boolean sync = false;
+    private final ReadOnlyBooleanWrapper running = new ReadOnlyBooleanWrapper(false);
 
     public TimerControls() {
         timers = new HashSet<>();
@@ -100,6 +103,7 @@ public class TimerControls extends StackPane {
 
     public void play(boolean pause) {
         playpause = !playpause;
+        running.set(!pause);
         if (pause) {
             playButton.setIcon(QueleaIcon.PLAY);
             timers.forEach(Timer::pause);
@@ -116,6 +120,14 @@ public class TimerControls extends StackPane {
             timers.forEach(Timer::stop);
         }
         playpause = false;
+        running.set(false);
+    }
+
+    /**
+     * @return true while the timer counts; false when paused or stopped.
+     */
+    public ReadOnlyBooleanProperty runningProperty() {
+        return running.getReadOnlyProperty();
     }
 
     private void setButtonParams(final MediaButton button) {

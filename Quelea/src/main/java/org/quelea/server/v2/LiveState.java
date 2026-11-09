@@ -32,6 +32,8 @@ package org.quelea.server.v2;
  * @param clear true if the text is cleared.
  * @param recording true while audio is being recorded.
  * @param scheduleRevision the current schedule revision.
+ * @param media the playback of a live video, audio file or timer, or null
+ * if the live item is none of those.
  */
 public record LiveState(
         String itemId,
@@ -43,5 +45,17 @@ public record LiveState(
         boolean black,
         boolean clear,
         boolean recording,
-        long scheduleRevision) {
+        long scheduleRevision,
+        Media media) {
+
+    /**
+     * The playback of the live video, audio file or timer.
+     *
+     * @param kind "video", "audio" or "timer".
+     * @param playing true while it plays or counts.
+     * @param loop true if it plays again when it ends; null for a timer.
+     * @param position how far it has played, from 0 to 1; null for a timer.
+     */
+    public record Media(String kind, boolean playing, Boolean loop, Double position) {
+    }
 }
