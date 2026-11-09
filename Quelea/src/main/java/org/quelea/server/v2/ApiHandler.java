@@ -19,6 +19,7 @@ package org.quelea.server.v2;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -103,7 +104,16 @@ final class ApiHandler extends Handler.Abstract {
                 return control.addBible(Json.optionalString(bible, "translation"),
                         Json.optionalString(bible, "reference"), call.ifRevision());
             }
-            throw ApiException.badRequest("Give \"songId\" or \"bible\": {\"translation\", \"reference\"}");
+            if (body.has("image")) {
+                return control.addLibraryFile(MediaLibrary.Kind.IMAGE, Json.optionalString(body, "image"),
+                        call.ifRevision());
+            }
+            if (body.has("video")) {
+                return control.addLibraryFile(MediaLibrary.Kind.VIDEO, Json.optionalString(body, "video"),
+                        call.ifRevision());
+            }
+            throw ApiException.badRequest("Give \"songId\", \"bible\": {\"translation\", \"reference\"}, "
+                    + "\"image\" or \"video\"");
         });
         route("DELETE", "/schedule/items/" + ITEM_ID, Scope.CONTROL,
                 call -> control.removeItem(call.match().group(1), call.ifRevision()));
@@ -138,6 +148,22 @@ final class ApiHandler extends Handler.Abstract {
                 call -> new Binary(control.themeThumbnail(call.query("name")), "image/png", true));
         route("PUT", "/live/theme", Scope.CONTROL,
                 call -> control.setTheme(Json.optionalString(call.body(), "name")));
+        // The image and video libraries. Names go in query parameters.
+        route("GET", "/library/(images|videos)", Scope.VIEW,
+                call -> control.libraryFiles(MediaLibrary.Kind.fromPath(call.match().group(1))));
+        route("GET", "/library/(images|videos)/thumb\\.png", Scope.VIEW,
+                call -> new Binary(control.libraryThumbnail(MediaLibrary.Kind.fromPath(call.match().group(1)),
+                        call.query("name")), "image/png", true));
+        // An upload is the file itself as the body: PUT /library/images?name=photo.jpg
+        route("PUT", "/library/(images|videos)", Scope.CONTROL, call -> {
+            try (InputStream data = Content.Source.asInputStream(call.request())) {
+                return control.uploadLibraryFile(MediaLibrary.Kind.fromPath(call.match().group(1)),
+                        call.query("name"), call.request().getLength(), data);
+            } catch (IOException ex) {
+                throw ApiException.badRequest("Could not read the upload: " + ex.getMessage());
+            }
+        });
+
         // Notices scrolling across the screen.
         route("GET", "/notices", Scope.VIEW, call -> control.notices());
         route("POST", "/notices", Scope.CONTROL, call -> {

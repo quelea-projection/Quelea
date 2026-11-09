@@ -45,6 +45,7 @@ import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
@@ -59,6 +60,7 @@ import org.quelea.services.utils.SerializableColor;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThemeUtils;
+import org.quelea.windows.library.LibraryVideoPanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.ThemeThumbnails;
@@ -412,6 +414,87 @@ final class FxQueleaControl implements QueleaControl {
     public byte[] themeThumbnail(String name) {
         // Rendered off the FX thread: for a video theme it waits for a still.
         return png(ThemeThumbnails.render(requireTheme(name)));
+    }
+
+    // ---- Libraries ----
+    private static java.nio.file.Path libraryDir(MediaLibrary.Kind kind) {
+        return (kind == MediaLibrary.Kind.IMAGE ? QueleaProperties.get().getImageDir()
+                : QueleaProperties.get().getVidDir()).toPath().toAbsolutePath();
+    }
+
+    @Override
+    public List<Catalog.MediaFile> libraryFiles(MediaLibrary.Kind kind) {
+        return MediaLibrary.list(libraryDir(kind), kind);
+    }
+
+    /** Recent thumbnails by file and change time; small, so a few hundred are fine. */
+    private final Map<String, byte[]> thumbnails = java.util.Collections.synchronizedMap(
+            new LinkedHashMap<>(64, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
+            return size() > 300;
+        }
+    });
+
+    @Override
+    public byte[] libraryThumbnail(MediaLibrary.Kind kind, String name) {
+        java.nio.file.Path file = MediaLibrary.resolve(libraryDir(kind), kind, name);
+        String key = file + "@" + file.toFile().lastModified();
+        byte[] cached = thumbnails.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        Image image;
+        if (kind == MediaLibrary.Kind.IMAGE) {
+            // Loaded and scaled off the FX thread, which Image allows.
+            image = new Image(file.toUri().toString(), 320, 180, true, true, false);
+            if (image.isError()) {
+                throw new NoSuchElementException("Quelea cannot read " + name);
+            }
+        } else {
+            // The thumbnail Quelea's video list already made: asking
+            // GStreamer again could hang Quelea (see VidDisplay).
+            // Without the video tab (an option in Quelea) there are none.
+            LibraryVideoPanel videos = mainPanel.getLibraryPanel().getVideoPanel();
+            image = videos == null ? null : videos.getVideoListPanel().getPreview(file.toFile());
+            if (image == null) {
+                throw new NoSuchElementException("No thumbnail of " + name + " yet");
+            }
+        }
+        byte[] png = png(image);
+        thumbnails.put(key, png);
+        return png;
+    }
+
+    @Override
+    public ScheduleChange addLibraryFile(MediaLibrary.Kind kind, String name, Long ifRevision) {
+        java.io.File file = MediaLibrary.resolve(libraryDir(kind), kind, name).toFile();
+        return fx.call(() -> {
+            checkRevision(ifRevision);
+            scheduleList().add(kind == MediaLibrary.Kind.IMAGE ? new ImageDisplayable(file)
+                    : new VideoDisplayable(file.getAbsolutePath()));
+            return addedLast();
+        });
+    }
+
+    @Override
+    public Catalog.MediaFile uploadLibraryFile(MediaLibrary.Kind kind, String name, long size,
+            java.io.InputStream data) {
+        Catalog.MediaFile saved;
+        try {
+            saved = MediaLibrary.save(libraryDir(kind), kind, name, size, data);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        // Show it in Quelea's library tab, as a file dropped there would be.
+        fx.run(() -> {
+            if (kind == MediaLibrary.Kind.IMAGE) {
+                mainPanel.getLibraryPanel().getImagePanel().getImagePanel().refresh();
+            } else if (mainPanel.getLibraryPanel().getVideoPanel() != null) {
+                mainPanel.getLibraryPanel().getVideoPanel().getVideoListPanel().refresh();
+            }
+        });
+        return saved;
     }
 
     // ---- Media ----

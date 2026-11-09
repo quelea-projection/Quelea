@@ -59,6 +59,13 @@ public class LibraryVideoPanel extends BorderPane {
     /**
      * Create a new library video panel.
      */
+    /**
+     * @return the list of videos.
+     */
+    public VideoListPanel getVideoListPanel() {
+        return videoPanel;
+    }
+
     public LibraryVideoPanel() {
         videoPanel = new VideoListPanel(QueleaProperties.get().getVidDir().getAbsolutePath());
         setCenter(videoPanel);

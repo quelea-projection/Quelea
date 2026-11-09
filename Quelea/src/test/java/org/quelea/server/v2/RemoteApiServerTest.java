@@ -291,6 +291,54 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void listAndAddLibraryFiles() throws Exception {
+        HttpResponse<String> images = send("GET", "/api/v2/library/images", VIEW_TOKEN, null);
+        assertEquals(200, images.statusCode());
+        assertEquals("Sunrise.jpg", JsonParser.parseString(images.body()).getAsJsonArray().get(0)
+                .getAsJsonObject().get("name").getAsString());
+        assertEquals(200, send("GET", "/api/v2/library/videos", VIEW_TOKEN, null).statusCode());
+        assertEquals(404, send("GET", "/api/v2/library/audio", VIEW_TOKEN, null).statusCode());
+
+        HttpResponse<String> thumb = send("GET", "/api/v2/library/images/thumb.png?name=Sunrise.jpg", VIEW_TOKEN, null);
+        assertEquals(200, thumb.statusCode());
+        assertEquals("image/png", thumb.headers().firstValue("content-type").orElse(""));
+        assertEquals(404, send("GET", "/api/v2/library/images/thumb.png?name=Missing.jpg", VIEW_TOKEN, null)
+                .statusCode());
+
+        HttpResponse<String> added = send("POST", "/api/v2/schedule/items?ifRevision=4", CONTROL_TOKEN,
+                "{\"image\":\"Sunrise.jpg\"}");
+        assertEquals(200, added.statusCode());
+        assertEquals("it_3", json(added).get("itemId").getAsString());
+        assertTrue(control.calls.contains("addLibraryFile IMAGE Sunrise.jpg"));
+        send("POST", "/api/v2/schedule/items", CONTROL_TOKEN, "{\"video\":\"Intro.mp4\"}");
+        assertTrue(control.calls.contains("addLibraryFile VIDEO Intro.mp4"));
+        assertEquals(404, send("POST", "/api/v2/schedule/items", CONTROL_TOKEN, "{\"image\":\"Missing.jpg\"}")
+                .statusCode());
+        assertEquals(403, send("POST", "/api/v2/schedule/items", VIEW_TOKEN, "{\"image\":\"Sunrise.jpg\"}")
+                .statusCode());
+    }
+
+    @Test
+    void uploadToALibrary() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + server.getPort()
+                + "/api/v2/library/images?name=" + java.net.URLEncoder.encode("Min bild.jpg", "UTF-8")))
+                .header("Authorization", "Bearer " + CONTROL_TOKEN)
+                .header("Content-Type", "image/jpeg")
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(new byte[5000]))
+                .build();
+        HttpResponse<String> uploaded = http.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, uploaded.statusCode());
+        assertEquals("Min bild.jpg", json(uploaded).get("name").getAsString());
+        assertEquals(List.of("Min bild.jpg 5000 5000"), control.uploads);
+
+        assertEquals(400, send("PUT", "/api/v2/library/images?name=..%2Fevil.jpg", CONTROL_TOKEN, "x").statusCode());
+        assertEquals(400, send("PUT", "/api/v2/library/images?name=notes.txt", CONTROL_TOKEN, "x").statusCode());
+        assertEquals(400, send("PUT", "/api/v2/library/images", CONTROL_TOKEN, "x").statusCode());
+        assertEquals(403, send("PUT", "/api/v2/library/images?name=a.jpg", VIEW_TOKEN, "x").statusCode());
+        assertEquals(1, control.uploads.size());
+    }
+
+    @Test
     void createANewSong() throws Exception {
         HttpResponse<String> created = send("POST", "/api/v2/songs", CONTROL_TOKEN,
                 "{\"title\":\"  Ny  sång \",\"author\":\"Okänd\",\"ccli\":\"\","

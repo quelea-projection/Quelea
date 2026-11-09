@@ -66,6 +66,8 @@ public class VideoListPanel extends BorderPane {
     private final String dir;
     private Thread updateThread;
     private final VidPreviewDisplay vidPreviewDisplay;
+    /** The thumbnails made for the list, for the remote control to reuse. */
+    private final java.util.Map<File, Image> previews = new java.util.concurrent.ConcurrentHashMap<>();
     public static final Image BLANK = new Image("file:icons/vid preview.png");
     public static final Image UNSUPPORTED = new Image("file:icons/unsupported vid preview.png");
 
@@ -120,6 +122,17 @@ public class VideoListPanel extends BorderPane {
     /**
      * Refresh the contents of this video list panel.
      */
+    /**
+     * The thumbnail this list made for a video, so others need not ask
+     * GStreamer for one again.
+     *
+     * @param file the video.
+     * @return its thumbnail, or null if the list has not made one (yet).
+     */
+    public Image getPreview(File file) {
+        return previews.get(file.getAbsoluteFile());
+    }
+
     public void refresh() {
         updateVideos();
     }
@@ -152,7 +165,9 @@ public class VideoListPanel extends BorderPane {
         final ImageView view = new ImageView();
         final Label fileLabel = new Label(trim17(file.getName()));
 
-        view.setImage(resize(vidPreviewDisplay.getPreviewImg(file.toURI())));
+        Image preview = resize(vidPreviewDisplay.getPreviewImg(file.toURI()));
+        previews.put(file.getAbsoluteFile(), preview);
+        view.setImage(preview);
 
         Platform.runLater(() -> {
             final VBox viewBox = new VBox();

@@ -57,6 +57,15 @@ public final class Catalog {
     }
 
     /**
+     * An image or video in Quelea's library.
+     *
+     * @param name the file name, used to pick it in other requests.
+     * @param size the size in bytes.
+     */
+    public record MediaFile(String name, long size) {
+    }
+
+    /**
      * A new song for the database, from {@code POST /api/v2/songs}.
      *
      * @param title the title, not blank.

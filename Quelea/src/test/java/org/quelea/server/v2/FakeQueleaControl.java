@@ -260,6 +260,47 @@ final class FakeQueleaControl implements QueleaControl {
                 List.of(new LiveSections.Section("Verse 1", List.of("Amazing grace"), null)), List.of("Svenska"));
     }
 
+    final List<String> library = new CopyOnWriteArrayList<>(List.of("Sunrise.jpg", "Welcome.png"));
+    final List<String> uploads = new CopyOnWriteArrayList<>();
+
+    @Override
+    public List<Catalog.MediaFile> libraryFiles(MediaLibrary.Kind kind) {
+        return kind == MediaLibrary.Kind.IMAGE
+                ? library.stream().map(name -> new Catalog.MediaFile(name, 1000)).toList()
+                : List.of(new Catalog.MediaFile("Intro.mp4", 5_000_000));
+    }
+
+    @Override
+    public byte[] libraryThumbnail(MediaLibrary.Kind kind, String name) {
+        if (!library.contains(name)) {
+            throw new java.util.NoSuchElementException("No images file named " + name);
+        }
+        return PNG;
+    }
+
+    @Override
+    public synchronized ScheduleChange addLibraryFile(MediaLibrary.Kind kind, String name, Long ifRevision) {
+        checkRevision(ifRevision);
+        if (kind == MediaLibrary.Kind.IMAGE && !library.contains(name)) {
+            throw new java.util.NoSuchElementException("No images file named " + name);
+        }
+        calls.add("addLibraryFile " + kind + " " + name);
+        return added();
+    }
+
+    @Override
+    public Catalog.MediaFile uploadLibraryFile(MediaLibrary.Kind kind, String name, long size,
+            java.io.InputStream data) {
+        String checked = MediaLibrary.checkName(kind, name);
+        try {
+            byte[] bytes = data.readAllBytes();
+            uploads.add(checked + " " + bytes.length + " " + size);
+            return new Catalog.MediaFile(checked, bytes.length);
+        } catch (java.io.IOException ex) {
+            throw new java.io.UncheckedIOException(ex);
+        }
+    }
+
     final List<Catalog.NewSong> createdSongs = new CopyOnWriteArrayList<>();
 
     @Override

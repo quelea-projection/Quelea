@@ -270,6 +270,39 @@ public interface QueleaControl {
      */
     byte[] slideImage(String itemId, int slide);
 
+    // ---- The image and video libraries (img and vid in Quelea's home).
+    /**
+     * @param kind images or videos.
+     * @return the files Quelea shows in that library tab.
+     */
+    List<Catalog.MediaFile> libraryFiles(MediaLibrary.Kind kind);
+
+    /**
+     * @param kind images or videos.
+     * @param name a file name from libraryFiles.
+     * @return a small PNG of it.
+     * @throws NoSuchElementException if there is no such file, or no
+     * thumbnail of a video yet.
+     */
+    byte[] libraryThumbnail(MediaLibrary.Kind kind, String name);
+
+    /**
+     * Add a library file to the end of the schedule, as double-clicking it
+     * in Quelea does.
+     */
+    ScheduleChange addLibraryFile(MediaLibrary.Kind kind, String name, Long ifRevision);
+
+    /**
+     * Save an uploaded file in a library, which then shows it.
+     *
+     * @param kind images or videos.
+     * @param name the file name wanted; a taken name gets a number.
+     * @param size the Content-Length, or -1.
+     * @param data the bytes.
+     * @return the file as saved.
+     */
+    Catalog.MediaFile uploadLibraryFile(MediaLibrary.Kind kind, String name, long size, java.io.InputStream data);
+
     // ---- Notices.
     /**
      * @return the notices being shown and the saved ones.
