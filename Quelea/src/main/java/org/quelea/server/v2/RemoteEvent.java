@@ -17,6 +17,8 @@
  */
 package org.quelea.server.v2;
 
+import java.util.List;
+
 /**
  * A change in Quelea that remote clients are told about. Each event's
  * {@link #type()} is the {@code type} field of the WebSocket message; the
@@ -94,6 +96,24 @@ public sealed interface RemoteEvent {
      *
      * @param recording true while recording.
      */
+    /**
+     * The notices being shown changed: one was added or removed, or one
+     * scrolled past and counted down.
+     *
+     * @param notices all notices being shown now.
+     */
+    record NoticesChanged(List<Notices.Active> notices) implements RemoteEvent {
+
+        public NoticesChanged {
+            notices = List.copyOf(notices);
+        }
+
+        @Override
+        public String type() {
+            return "notices.changed";
+        }
+    }
+
     record RecordingChanged(boolean recording) implements RemoteEvent {
 
         @Override

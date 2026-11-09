@@ -48,6 +48,17 @@ const TEXTS = {
     'add.show': 'Show',
     'add.add': 'Add to schedule',
     'add.added': 'Added to the schedule',
+    'notice.title': 'Notices',
+    'notice.text': 'Text that scrolls across the screen',
+    'notice.once': 'Once', 'notice.twice': 'Twice', 'notice.three': '3 times', 'notice.five': '5 times',
+    'notice.always': 'Until removed',
+    'notice.color': 'Text colour',
+    'notice.show': 'Show',
+    'notice.shown': 'Notice shown',
+    'notice.remove': 'Remove',
+    'notice.left': '%s more times',
+    'notice.leftOne': 'Once more',
+    'notice.untilRemoved': 'Until removed',
     'tab.live': 'Live',
     'tab.schedule': 'Schedule',
     'tab.add': 'Add',
@@ -103,6 +114,17 @@ const TEXTS = {
     'add.show': 'Visa',
     'add.add': 'Lägg till i schemat',
     'add.added': 'Tillagd i schemat',
+    'notice.title': 'Meddelanden',
+    'notice.text': 'Text som rullar över skärmen',
+    'notice.once': 'En gång', 'notice.twice': 'Två gånger', 'notice.three': '3 gånger', 'notice.five': '5 gånger',
+    'notice.always': 'Tills det tas bort',
+    'notice.color': 'Textfärg',
+    'notice.show': 'Visa',
+    'notice.shown': 'Meddelandet visas',
+    'notice.remove': 'Ta bort',
+    'notice.left': '%s gånger till',
+    'notice.leftOne': '1 gång till',
+    'notice.untilRemoved': 'Tills det tas bort',
     'tab.live': 'Live',
     'tab.schedule': 'Schema',
     'tab.add': 'Lägg till',
@@ -134,6 +156,7 @@ function applyTexts() {
   document.documentElement.lang = LANG;
   document.querySelectorAll('[data-t]').forEach(node => { node.textContent = t(node.dataset.t); });
   document.querySelectorAll('[data-t-placeholder]').forEach(node => { node.placeholder = t(node.dataset.tPlaceholder); });
+  document.querySelectorAll('[data-t-title]').forEach(node => { node.title = t(node.dataset.tTitle); });
 }
 
 // ---- Small helpers -----------------------------------------------------
@@ -411,6 +434,62 @@ function setupAddTab() {
   };
 }
 
+// ---- Notices (in the add tab) ------------------------------------------
+
+let notices = [];
+
+function renderNotices() {
+  const list = $('notices');
+  list.replaceChildren();
+  notices.forEach(notice => list.append(el('li', {},
+    el('span', {}, notice.text,
+      el('small', {}, notice.timesLeft == null ? t('notice.untilRemoved')
+        : notice.timesLeft === 1 ? t('notice.leftOne') : t('notice.left', notice.timesLeft))),
+    el('button', { onclick: () => removeNotice(notice) }, t('notice.remove')))));
+}
+
+async function loadNotices() {
+  const result = await run(() => api.get('/notices'));
+  if (!result) return;
+  notices = result.notices;
+  renderNotices();
+  const saved = $('notice-saved');
+  saved.replaceChildren();
+  result.saved.forEach(notice => saved.append(el('button', {
+    type: 'button',
+    onclick: () => {
+      $('notice-text').value = notice.text;
+      $('notice-times').value = [1, 2, 3, 5, 0].includes(notice.times) ? String(notice.times) : '1';
+      $('notice-color').value = notice.color;
+      $('notice-text').focus();
+    }
+  }, notice.text)));
+}
+
+async function removeNotice(notice) {
+  const result = await run(() => api.del('/notices/' + encodeURIComponent(notice.id)));
+  if (result) {
+    notices = result.notices;
+    renderNotices();
+  }
+}
+
+function setupNotices() {
+  $('notice-form').onsubmit = async event => {
+    event.preventDefault();
+    const text = $('notice-text').value.trim();
+    if (!text) return;
+    const result = await run(() => api.post('/notices',
+      { text, times: Number($('notice-times').value), color: $('notice-color').value }));
+    if (result) {
+      notices = result.notices;
+      renderNotices();
+      $('notice-text').value = '';
+      toast(t('notice.shown'));
+    }
+  };
+}
+
 async function loadTranslations() {
   const translations = await run(() => api.get('/bible/translations'));
   const select = $('bible-translation');
@@ -441,7 +520,7 @@ async function loadThemes() {
 
 // ---- Tabs --------------------------------------------------------------
 
-const TAB_LOADERS = { schedule: loadSchedule, add: loadTranslations, themes: loadThemes };
+const TAB_LOADERS = { schedule: loadSchedule, add: () => { loadTranslations(); loadNotices(); }, themes: loadThemes };
 const loadedTabs = new Set();
 
 function showTab(name) {
@@ -536,6 +615,10 @@ function handleMessage(message) {
       if (live) Object.assign(live, data);
       renderLive();
       break;
+    case 'notices.changed':
+      notices = data.notices || [];
+      renderNotices();
+      break;
     case 'schedule.changed':
       if (!schedule || schedule.revision !== data.revision) loadSchedule();
       break;
@@ -610,6 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupPairing();
   setupLiveTab();
   setupAddTab();
+  setupNotices();
   document.querySelectorAll('#tabs button').forEach(button => { button.onclick = () => showTab(button.dataset.tab); });
   // Reconnect at once when a phone wakes up or the tab comes back.
   document.addEventListener('visibilitychange', () => {

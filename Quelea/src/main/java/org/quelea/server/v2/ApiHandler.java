@@ -123,6 +123,16 @@ final class ApiHandler extends Handler.Abstract {
                 call -> new Binary(control.themeThumbnail(call.query("name")), "image/png", true));
         route("PUT", "/live/theme", Scope.CONTROL,
                 call -> control.setTheme(Json.optionalString(call.body(), "name")));
+        // Notices scrolling across the screen.
+        route("GET", "/notices", Scope.VIEW, call -> control.notices());
+        route("POST", "/notices", Scope.CONTROL, call -> {
+            JsonObject body = call.body();
+            Integer times = Json.optionalInt(body, "times");
+            return control.addNotice(new Notices.Request(Json.optionalString(body, "text"),
+                    times == null ? 1 : times, Json.optionalString(body, "color")));
+        });
+        route("DELETE", "/notices/(nt_[0-9]+)", Scope.CONTROL,
+                call -> control.removeNotice(call.match().group(1)));
         if (config.publicEnabled()) {
             route("GET", "/public/live", null, call -> PublicLive.from(control));
         }

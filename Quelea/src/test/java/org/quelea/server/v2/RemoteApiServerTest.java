@@ -257,6 +257,52 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void showAndRemoveNotices() throws Exception {
+        HttpResponse<String> empty = send("GET", "/api/v2/notices", VIEW_TOKEN, null);
+        assertEquals(200, empty.statusCode());
+        assertEquals(0, json(empty).getAsJsonArray("notices").size());
+        assertEquals("Coffee after the service",
+                json(empty).getAsJsonArray("saved").get(0).getAsJsonObject().get("text").getAsString());
+
+        HttpResponse<String> added = send("POST", "/api/v2/notices", CONTROL_TOKEN,
+                "{\"text\":\"  Car  ABC 123,\\nlights on \",\"times\":3,\"color\":\"#ffcc00\"}");
+        assertEquals(200, added.statusCode());
+        JsonObject notice = json(added).getAsJsonArray("notices").get(0).getAsJsonObject();
+        assertEquals("nt_1", notice.get("id").getAsString());
+        assertEquals("Car ABC 123, lights on", notice.get("text").getAsString(), "whitespace is tidied");
+        assertEquals(3, notice.get("timesLeft").getAsInt());
+
+        send("POST", "/api/v2/notices", CONTROL_TOKEN, "{\"text\":\"Welcome\",\"times\":0}");
+        assertTrue(control.calls.contains("addNotice Welcome 0 null"), "0 means until removed");
+        assertTrue(control.calls.contains("addNotice Car ABC 123, lights on 3 #ffcc00"));
+        send("POST", "/api/v2/notices", CONTROL_TOKEN, "{\"text\":\"Once\"}");
+        assertTrue(control.calls.contains("addNotice Once 1 null"), "once by default");
+
+        HttpResponse<String> removed = send("DELETE", "/api/v2/notices/nt_1", CONTROL_TOKEN, null);
+        assertEquals(200, removed.statusCode());
+        assertEquals(2, json(removed).getAsJsonArray("notices").size());
+        assertEquals(404, send("DELETE", "/api/v2/notices/nt_1", CONTROL_TOKEN, null).statusCode());
+    }
+
+    @Test
+    void noticeErrors() throws Exception {
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN, "{}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN, "{\"text\":\"   \"}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN,
+                "{\"text\":\"Hi\",\"times\":101}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN,
+                "{\"text\":\"Hi\",\"times\":1.5}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN,
+                "{\"text\":\"Hi\",\"color\":\"red\"}").statusCode());
+        assertEquals(400, send("POST", "/api/v2/notices", CONTROL_TOKEN,
+                "{\"text\":\"" + "x".repeat(501) + "\"}").statusCode());
+        assertEquals(403, send("POST", "/api/v2/notices", VIEW_TOKEN, "{\"text\":\"Hi\"}").statusCode());
+        assertEquals(403, send("DELETE", "/api/v2/notices/nt_1", VIEW_TOKEN, null).statusCode());
+        assertEquals(401, send("GET", "/api/v2/notices", null, null).statusCode());
+        assertTrue(control.notices.isEmpty());
+    }
+
+    @Test
     void transposeASong() throws Exception {
         HttpResponse<String> response = send("POST", "/api/v2/schedule/items/it_1/transpose", CONTROL_TOKEN,
                 "{\"semitones\":-2}");
@@ -396,6 +442,18 @@ class RemoteApiServerTest {
     }
 
     @Test
+    void noticeChangesAreSentAsEvents() throws Exception {
+        Connection c = connectAndAuth(VIEW_TOKEN);
+        assertEquals("snapshot", c.recorder().next().get("type").getAsString());
+        bus.publish(new RemoteEvent.NoticesChanged(List.of(new Notices.Active("nt_4", "Welcome", null, "#ffffff"))));
+        JsonObject event = c.recorder().next();
+        assertEquals("notices.changed", event.get("type").getAsString());
+        JsonObject notice = event.getAsJsonObject("data").getAsJsonArray("notices").get(0).getAsJsonObject();
+        assertEquals("nt_4", notice.get("id").getAsString());
+        assertTrue(notice.get("timesLeft") == null || notice.get("timesLeft").isJsonNull(), "until removed");
+    }
+
+    @Test
     void pingGetsPong() throws Exception {
         Connection c = connectAndAuth(VIEW_TOKEN);
         assertEquals("snapshot", c.recorder().next().get("type").getAsString());
@@ -445,6 +503,7 @@ class RemoteApiServerTest {
         assertEquals("Amazing Grace", snapshot.getAsJsonObject("data").get("title").getAsString());
 
         bus.publish(new RemoteEvent.ScheduleChanged(5));
+        bus.publish(new RemoteEvent.NoticesChanged(List.of()));
         bus.publish(new RemoteEvent.RecordingChanged(true));
         bus.publish(new RemoteEvent.ScreenChanged(false, true, false));
         JsonObject event = c.recorder().next();

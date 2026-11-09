@@ -30,6 +30,10 @@ import java.util.NoSuchElementException;
 import java.util.function.LongSupplier;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javax.imageio.ImageIO;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
@@ -47,6 +51,9 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SearchIndex.FilterType;
+import org.quelea.services.notice.Notice;
+import org.quelea.services.utils.SerializableColor;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.ThemeUtils;
 import org.quelea.windows.main.LivePanel;
@@ -73,9 +80,11 @@ final class FxQueleaControl implements QueleaControl {
     private final LiveReader reader;
     private final LongSupplier scheduleRevision;
     private final FxCall fx;
+    private final NoticeReader notices;
 
     FxQueleaControl(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, LiveReader reader,
-            LongSupplier scheduleRevision, FxCall fx) {
+            LongSupplier scheduleRevision, FxCall fx, NoticeReader notices) {
+        this.notices = notices;
         this.mainPanel = mainPanel;
         this.toolbar = toolbar;
         this.ids = ids;
@@ -372,6 +381,38 @@ final class FxQueleaControl implements QueleaControl {
     public byte[] themeThumbnail(String name) {
         // Rendered off the FX thread: for a video theme it waits for a still.
         return png(ThemeThumbnails.render(requireTheme(name)));
+    }
+
+    // ---- Notices ----
+    @Override
+    public Notices notices() {
+        return fx.call(notices::notices);
+    }
+
+    @Override
+    public Notices addNotice(Notices.Request request) {
+        Color color = request.color() == null ? Color.WHITE : Color.web(request.color());
+        return fx.call(() -> {
+            // The same font as a new notice in Quelea's notice dialog.
+            Font font = Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR,
+                    QueleaProperties.get().getNoticeFontSize());
+            notices.dialog().addNotice(new Notice(request.text(),
+                    request.times() == 0 ? Integer.MAX_VALUE : request.times(),
+                    new SerializableColor(color), new SerializableFont(font)));
+            return notices.notices();
+        });
+    }
+
+    @Override
+    public Notices removeNotice(String noticeId) {
+        return fx.call(() -> {
+            Notice notice = notices.find(noticeId);
+            if (notice == null) {
+                throw new NoSuchElementException("No notice " + noticeId + " is being shown");
+            }
+            notices.dialog().removeNotice(notice);
+            return notices.notices();
+        });
     }
 
     @Override

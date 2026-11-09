@@ -18,6 +18,7 @@
 package org.quelea.server.v2;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * What the v2 remote API can see and do in Quelea. The server only talks to
@@ -241,4 +242,27 @@ public interface QueleaControl {
      * @throws IllegalArgumentException if the item has no slides.
      */
     byte[] slideImage(String itemId, int slide);
+
+    // ---- Notices.
+    /**
+     * @return the notices being shown and the saved ones.
+     */
+    Notices notices();
+
+    /**
+     * Start showing a notice, as the notice dialog in Quelea does.
+     *
+     * @param request the text, times and colour.
+     * @return the notices afterwards.
+     */
+    Notices addNotice(Notices.Request request);
+
+    /**
+     * Stop showing a notice. One scrolling past right now finishes its pass.
+     *
+     * @param noticeId the notice's id.
+     * @return the notices afterwards.
+     * @throws NoSuchElementException if no notice with that id is shown.
+     */
+    Notices removeNotice(String noticeId);
 }

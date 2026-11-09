@@ -216,3 +216,13 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
   border-radius: 20px;
   z-index: 3;
 }
+
+/* Saved notices: tap one to fill in the form. */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chips:empty { display: none; }
+.chips button { font-size: 13px; padding: 4px 10px; border-radius: 999px; }
+#notice-form > input { width: 100%; margin-bottom: 8px; box-sizing: border-box; }
+#notice-color { width: 48px; padding: 2px; flex: none; }
+#notice-times { flex: 1; }
+#notices:not(:empty) { margin-bottom: 8px; }
+

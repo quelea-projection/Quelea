@@ -44,10 +44,12 @@ public final class RemoteCore {
     public static RemoteCore install(MainWindow window) {
         RemoteEventBus bus = RemoteEventBus.get();
         ItemIds ids = new ItemIds();
-        LiveStateWatcher watcher = new LiveStateWatcher(window.getMainPanel(), window.getMainToolbar(), ids, bus);
+        NoticeReader notices = new NoticeReader(window.getNoticeDialog(), new NoticeIds());
+        LiveStateWatcher watcher = new LiveStateWatcher(window.getMainPanel(), window.getMainToolbar(), ids, bus,
+                notices);
         FxCall.fx().run(watcher::install);
         QueleaControl control = new FxQueleaControl(window.getMainPanel(), window.getMainToolbar(), ids,
-                watcher.reader(), watcher::scheduleRevision, FxCall.fx());
+                watcher.reader(), watcher::scheduleRevision, FxCall.fx(), notices);
         return new RemoteCore(control, bus);
     }
 

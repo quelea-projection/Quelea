@@ -101,6 +101,23 @@ final class Json {
     }
 
     /**
+     * @return the field as an int, or null if it is missing.
+     * @throws ApiException 400 if it is present but not a whole number.
+     */
+    static Integer optionalInt(JsonObject obj, String field) {
+        if (!obj.has(field) || obj.get(field).isJsonNull()) {
+            return null;
+        }
+        if (obj.get(field).isJsonPrimitive() && obj.get(field).getAsJsonPrimitive().isNumber()) {
+            double value = obj.get(field).getAsDouble();
+            if (value == Math.rint(value) && Math.abs(value) <= Integer.MAX_VALUE) {
+                return (int) value;
+            }
+        }
+        throw ApiException.badRequest("\"" + field + "\" must be a whole number");
+    }
+
+    /**
      * @return the field as a boolean.
      * @throws ApiException 400 if it is missing or not a boolean.
      */

@@ -17,6 +17,7 @@
  */
 package org.quelea.server.v2;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import javafx.application.Platform;
@@ -53,8 +54,13 @@ final class LiveStateWatcher {
     private String lastSectionItem;
     private int lastSectionIndex = Integer.MIN_VALUE;
     private boolean installed;
+    private final NoticeReader notices;
+    private boolean noticesScheduled;
+    private List<Notices.Active> lastNotices = List.of();
 
-    LiveStateWatcher(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, RemoteEventBus bus) {
+    LiveStateWatcher(MainPanel mainPanel, MainToolbar toolbar, ItemIds ids, RemoteEventBus bus,
+            NoticeReader notices) {
+        this.notices = notices;
         this.mainPanel = mainPanel;
         this.toolbar = toolbar;
         this.ids = ids;
@@ -106,7 +112,27 @@ final class LiveStateWatcher {
             scheduleChanged();
         });
 
+        // The notice dialog rebuilds its list after every pass, clearing
+        // and refilling it: report once the list has settled, and only
+        // if something a remote shows actually changed.
+        notices.dialog().getCurrentNotices().addListener((ListChangeListener<Object>) change -> {
+            if (!noticesScheduled) {
+                noticesScheduled = true;
+                Platform.runLater(this::noticesSettled);
+            }
+        });
+
         lastLive = lp.getDisplayable();
+    }
+
+    private void noticesSettled() {
+        noticesScheduled = false;
+        notices.pruneIds();
+        List<Notices.Active> now = notices.active();
+        if (!now.equals(lastNotices)) {
+            lastNotices = now;
+            bus.publish(new RemoteEvent.NoticesChanged(now));
+        }
     }
 
     private void moveScheduleListener(ObservableList<IndexedDisplayable> oldItems,

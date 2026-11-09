@@ -81,6 +81,23 @@
         <div id="bible-preview" class="preview"></div>
         <button id="bible-add" class="primary" data-t="add.add" hidden></button>
       </form>
+      <form id="notice-form" class="card">
+        <h2 data-t="notice.title"></h2>
+        <ul id="notices" class="results"></ul>
+        <div id="notice-saved" class="chips"></div>
+        <input id="notice-text" maxlength="500" data-t-placeholder="notice.text">
+        <div class="row">
+          <select id="notice-times">
+            <option value="1" data-t="notice.once"></option>
+            <option value="2" data-t="notice.twice"></option>
+            <option value="3" data-t="notice.three"></option>
+            <option value="5" data-t="notice.five"></option>
+            <option value="0" data-t="notice.always"></option>
+          </select>
+          <input id="notice-color" type="color" value="#ffffff" data-t-title="notice.color">
+          <button type="submit" class="primary" data-t="notice.show"></button>
+        </div>
+      </form>
     </section>
 
     <section id="tab-themes" class="tab" hidden>

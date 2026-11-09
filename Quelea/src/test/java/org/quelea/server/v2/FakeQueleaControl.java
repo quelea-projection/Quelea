@@ -262,6 +262,31 @@ final class FakeQueleaControl implements QueleaControl {
         return PNG;
     }
 
+    final List<Notices.Active> notices = new CopyOnWriteArrayList<>();
+    private int nextNotice = 1;
+
+    @Override
+    public Notices notices() {
+        return new Notices(notices, List.of(new Notices.Saved("Coffee after the service", 2, "#ffffff")));
+    }
+
+    @Override
+    public synchronized Notices addNotice(Notices.Request request) {
+        calls.add("addNotice " + request.text() + " " + request.times() + " " + request.color());
+        notices.add(new Notices.Active("nt_" + nextNotice++, request.text(),
+                request.times() == 0 ? null : request.times(), request.color() == null ? "#ffffff" : request.color()));
+        return notices();
+    }
+
+    @Override
+    public Notices removeNotice(String noticeId) {
+        calls.add("removeNotice " + noticeId);
+        if (!notices.removeIf(n -> n.id().equals(noticeId))) {
+            throw new java.util.NoSuchElementException("No notice " + noticeId + " is being shown");
+        }
+        return notices();
+    }
+
     private void checkTimeout() {
         if (timeOut) {
             throw new FxCall.TimeoutException(Duration.ofSeconds(2));

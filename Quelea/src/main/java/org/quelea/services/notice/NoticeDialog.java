@@ -25,7 +25,9 @@ import java.util.Set;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,6 +66,7 @@ public class NoticeDialog extends Stage {
     private List<NoticeDrawer> noticeDrawers;
     private final Text savedNoticesLabel;
     private Thread noticeTemplatesUpdateThread;
+    private ObservableList<Notice> readOnlyNotices;
 
     /**
      * Create a new notice dialog.
@@ -80,10 +83,7 @@ public class NoticeDialog extends Stage {
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = NoticeEntryDialog.getNotice(null, false);
                 if (notice != null) {
-                    noticeList.getItems().add(notice);
-                    for (NoticeDrawer drawer : noticeDrawers) {
-                        drawer.addNotice(notice);
-                    }
+                    addNotice(notice);
                 }
             }
         });
@@ -108,11 +108,7 @@ public class NoticeDialog extends Stage {
         removeNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                Notice notice = noticeList.getSelectionModel().getSelectedItem();
-                noticeList.getItems().remove(noticeList.getSelectionModel().getSelectedIndex());
-                for (NoticeDrawer drawer : noticeDrawers) {
-                    drawer.removeNotice(notice);
-                }
+                removeNotice(noticeList.getSelectionModel().getSelectedItem());
             }
         });
         getNoticesFromFile();
@@ -132,6 +128,7 @@ public class NoticeDialog extends Stage {
         mainPane.setLeft(leftPanel);
 
         noticeList = new ListView<>();
+        readOnlyNotices = FXCollections.unmodifiableObservableList(noticeList.getItems());
         noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
             @Override
             public void changed(ObservableValue<? extends Notice> ov, Notice t, Notice t1) {
@@ -197,11 +194,44 @@ public class NoticeDialog extends Stage {
         template.setTimes(template.getOriginalTimes());
         Notice notice = NoticeEntryDialog.getNotice(template, true);
         if (notice != null && NoticeEntryDialog.closed) {
-            noticeList.getItems().add(notice);
-            for (NoticeDrawer drawer : noticeDrawers) {
-                drawer.addNotice(notice);
-            }
+            addNotice(notice);
         }
+    }
+
+    /**
+     * Show a notice on every registered canvas and list it here.
+     * <p/>
+     * @param notice the notice to show.
+     */
+    public void addNotice(Notice notice) {
+        noticeList.getItems().add(notice);
+        for (NoticeDrawer drawer : noticeDrawers) {
+            drawer.addNotice(notice);
+        }
+    }
+
+    /**
+     * Stop showing a notice. One that is scrolling past right now finishes
+     * its pass.
+     * <p/>
+     * @param notice the notice to remove.
+     */
+    public void removeNotice(Notice notice) {
+        noticeList.getItems().remove(notice);
+        for (NoticeDrawer drawer : noticeDrawers) {
+            drawer.removeNotice(notice);
+        }
+    }
+
+    /**
+     * The notices being shown, kept up to date as they are added, removed
+     * or counted down. Read-only; use {@link #addNotice} and
+     * {@link #removeNotice} to change it.
+     * <p/>
+     * @return the current notices.
+     */
+    public ObservableList<Notice> getCurrentNotices() {
+        return readOnlyNotices;
     }
 
     /**
