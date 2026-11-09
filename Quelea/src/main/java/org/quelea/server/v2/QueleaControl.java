@@ -39,6 +39,11 @@ public interface QueleaControl {
     ScheduleSnapshot getSchedule();
 
     /**
+     * @return the sections of the live item, with their text.
+     */
+    LiveSections getLiveSections();
+
+    /**
      * Go to the next section, or the next item if the setting for that is on.
      *
      * @return the new state.

@@ -30,6 +30,9 @@ import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
+import org.quelea.server.v2.DeviceAuth;
+import org.quelea.server.v2.RemoteApiServer;
+import org.quelea.server.v2.RemoteCore;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.GStreamerInitState;
@@ -322,6 +325,9 @@ public final class Main extends Application {
                     }
                     mainWindow.show();
                     QueleaApp.get().doneLoading();
+                    if (QueleaProperties.get().getUseRemoteV2()) {
+                        startRemoteV2(mainWindow);
+                    }
                 });
             } catch (Throwable ex) {
                 LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
@@ -339,6 +345,33 @@ public final class Main extends Application {
      *
      * @param numMonitors the number of monitors.
      */
+    /**
+     * Start the v2 remote control server off the FX thread, once the main
+     * window exists. Until devices can be paired no token is accepted, so
+     * only the open endpoints answer.
+     *
+     * @param window the main window.
+     */
+    private void startRemoteV2(MainWindow window) {
+        Thread starter = new Thread(() -> {
+            int port = QueleaProperties.get().getRemoteV2Port();
+            LOGGER.log(Level.INFO, "Starting remote control v2 server on {0}", port);
+            try {
+                RemoteCore core = RemoteCore.install(window);
+                RemoteApiServer server = new RemoteApiServer(
+                        new RemoteApiServer.Config(port, QueleaProperties.get().getUseMobLyrics(),
+                                QueleaProperties.VERSION.getVersionString()),
+                        core.control(), core.bus(), DeviceAuth.NONE);
+                server.start();
+                QueleaApp.get().setRemoteV2Server(server);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Couldn't start remote control v2 server", ex);
+            }
+        }, "remote-v2-start");
+        starter.setDaemon(true);
+        starter.start();
+    }
+
     private void showMonitorWarning(int numMonitors) {
         if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));

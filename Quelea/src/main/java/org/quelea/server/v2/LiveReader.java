@@ -26,6 +26,7 @@ import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.toolbars.MainToolbar;
@@ -72,6 +73,37 @@ final class LiveReader {
             entries.add(new ScheduleSnapshot.Entry(ids.idFor(d), ItemTypes.of(d), d.getPreviewText(), d == live, d == preview));
         }
         return new ScheduleSnapshot(scheduleRevision.getAsLong(), entries);
+    }
+
+    LiveSections sections() {
+        LivePanel lp = mainPanel.getLivePanel();
+        Displayable d = lp.getDisplayable();
+        List<LiveSections.Section> sections = new ArrayList<>();
+        if (d instanceof TextDisplayable) {
+            // The live list, not getSections(): its entries are what the
+            // section index counts.
+            for (TextSection section : lp.getLyricsPanel().getLyricsList().getItems()) {
+                List<String> lines = lines(section.getText(false, false));
+                List<String> chordLines = lines(section.getText(true, false));
+                sections.add(new LiveSections.Section(section.getTitle(), lines,
+                        chordLines.equals(lines) ? null : chordLines));
+            }
+        } else {
+            for (int i = 0; i < sectionCount(); i++) {
+                sections.add(new LiveSections.Section(null, List.of(), null));
+            }
+        }
+        return new LiveSections(ids.idFor(d), sectionIndex(), sections);
+    }
+
+    private static List<String> lines(String[] text) {
+        List<String> lines = new ArrayList<>(text.length);
+        for (String line : text) {
+            if (line != null) {
+                lines.add(line);
+            }
+        }
+        return lines;
     }
 
     /**

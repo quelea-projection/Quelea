@@ -92,6 +92,8 @@ public class QueleaPropertyKeys {
     public static final String useRemoteControlKey = "use.remote.control";
     public static final String remoteControlPortKey = "remote.control.port";
     public static final String remoteControlPasswordKey = "remote.control.password";
+    public static final String useRemoteV2Key = "use.remote.v2";
+    public static final String remoteV2PortKey = "remote.v2.port";
     public static final String smallSongTextHPositionKey = "small.song.text.h.position";
     public static final String smallSongTextVPositionKey = "small.song.text.v.position";
     public static final String smallSongTextSizeKey = "small.song.text.size";

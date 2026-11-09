@@ -25,6 +25,7 @@ import org.quelea.data.Schedule;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
+import org.quelea.server.v2.RemoteApiServer;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -41,6 +42,7 @@ public class QueleaApp {
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
     private AutoDetectServer ads;
+    private volatile RemoteApiServer remoteV2;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -182,6 +184,20 @@ public class QueleaApp {
      */
     public void setRemoteControlServer(RemoteControlServer rcs) {
         this.rcs = rcs;
+    }
+
+    /**
+     * @return the v2 remote control server, or null if it is not running.
+     */
+    public RemoteApiServer getRemoteV2Server() {
+        return remoteV2;
+    }
+
+    /**
+     * @param server the v2 remote control server now running.
+     */
+    public void setRemoteV2Server(RemoteApiServer server) {
+        this.remoteV2 = server;
     }
 
     public void setAutoDetectServer(AutoDetectServer ads) {

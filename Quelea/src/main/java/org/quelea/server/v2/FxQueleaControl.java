@@ -60,6 +60,11 @@ final class FxQueleaControl implements QueleaControl {
     }
 
     @Override
+    public LiveSections getLiveSections() {
+        return fx.call(reader::sections);
+    }
+
+    @Override
     public LiveState next() {
         return command(() -> mainPanel.getLivePanel().advance());
     }

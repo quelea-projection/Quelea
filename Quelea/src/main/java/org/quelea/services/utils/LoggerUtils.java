@@ -116,7 +116,13 @@ public final class LoggerUtils {
     }
 
     private static void writeToLog(String message) {
-        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(handlerFile, true)))) {
+        File file = handlerFile;
+        if(file == null) {
+            // No properties yet (early start-up or unit tests), so there is no
+            // log file; the console handler still prints the message.
+            return;
+        }
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)))) {
             out.println(message);
         }
         catch(IOException ex) {

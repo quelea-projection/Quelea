@@ -116,6 +116,8 @@ import static org.quelea.services.utils.QueleaPropertyKeys.queleaSongpackExtensi
 import static org.quelea.services.utils.QueleaPropertyKeys.recPathKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.remoteControlPasswordKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.remoteControlPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.remoteV2PortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.useRemoteV2Key;
 import static org.quelea.services.utils.QueleaPropertyKeys.sceneInfoKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.scheduleEmbedMediaKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.showExtraLivePanelToolbarOptionsKey;
@@ -2215,6 +2217,37 @@ public final class QueleaProperties extends SortedProperties {
 
     public void setRemoteControlPassword(String text) {
         setProperty(remoteControlPasswordKey, text);
+        write();
+    }
+
+    /**
+     * Determine whether the v2 remote control server (JSON API and
+     * WebSocket events) should be started. Off by default.
+     *
+     * @return true if it should be started.
+     */
+    public boolean getUseRemoteV2() {
+        return Boolean.parseBoolean(getProperty(useRemoteV2Key, "false"));
+    }
+
+    public void setUseRemoteV2(boolean val) {
+        setProperty(useRemoteV2Key, Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * @return the port of the v2 remote control server.
+     */
+    public int getRemoteV2Port() {
+        try {
+            return Integer.parseInt(getProperty(remoteV2PortKey, "1113"));
+        } catch (NumberFormatException e) {
+            return 1113;
+        }
+    }
+
+    public void setRemoteV2Port(int port) {
+        setProperty(remoteV2PortKey, Integer.toString(port));
         write();
     }
 
