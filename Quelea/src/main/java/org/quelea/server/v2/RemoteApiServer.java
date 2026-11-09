@@ -52,8 +52,23 @@ public final class RemoteApiServer {
     private final Server server;
     private final ServerConnector connector;
     private final EventHub hub;
+    private final DeviceAuth auth;
+    private final PairingService pairing;
 
-    public RemoteApiServer(Config config, QueleaControl control, RemoteEventBus bus, DeviceAuth auth) {
+    /**
+     * Create the server.
+     *
+     * @param config the settings.
+     * @param control what the API can see and do in Quelea.
+     * @param bus the events to forward to WebSocket clients.
+     * @param auth checks tokens; a {@link DeviceRegistry} also handles
+     * revocation.
+     * @param pairing lets new devices pair, or null to refuse pairing.
+     */
+    public RemoteApiServer(Config config, QueleaControl control, RemoteEventBus bus, DeviceAuth auth,
+            PairingService pairing) {
+        this.pairing = pairing;
+        this.auth = auth;
         QueuedThreadPool threads = new QueuedThreadPool(16, 2);
         threads.setName("remote-v2");
         threads.setDaemon(true);
@@ -74,7 +89,8 @@ public final class RemoteApiServer {
                 container.addMapping(ApiHandler.PREFIX + "/public/ws", hub::createPublic);
             }
         });
-        webSockets.setHandler(new ApiHandler(control, auth, config));
+        webSockets.setHandler(new ApiHandler(control, auth, pairing, config));
+        auth.addRevokedListener(hub::revoked);
         server.setHandler(webSockets);
         server.setStopTimeout(1000);
     }
@@ -107,6 +123,21 @@ public final class RemoteApiServer {
      */
     public int getPort() {
         return connector.getLocalPort();
+    }
+
+    /**
+     * @return the pairing service, or null if pairing is not available.
+     */
+    public PairingService getPairing() {
+        return pairing;
+    }
+
+    /**
+     * @return the paired devices, or null if this server does not use a
+     * {@link DeviceRegistry}.
+     */
+    public DeviceRegistry getDevices() {
+        return auth instanceof DeviceRegistry registry ? registry : null;
     }
 
     /**

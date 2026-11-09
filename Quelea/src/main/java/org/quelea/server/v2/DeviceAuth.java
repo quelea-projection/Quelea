@@ -18,6 +18,7 @@
 package org.quelea.server.v2;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Checks the token a client sends and says which paired device it belongs
@@ -38,6 +39,22 @@ public interface DeviceAuth {
      * @return the device, or empty if the token is unknown or revoked.
      */
     Optional<Device> authenticate(String token);
+
+    /**
+     * Revoke a device, if this kind of auth supports it.
+     *
+     * @param deviceId the device id.
+     * @return true if a device was revoked.
+     */
+    default boolean revoke(String deviceId) {
+        return false;
+    }
+
+    /**
+     * @param listener called with the device id when a device is revoked.
+     */
+    default void addRevokedListener(Consumer<String> listener) {
+    }
 
     /**
      * A paired device.

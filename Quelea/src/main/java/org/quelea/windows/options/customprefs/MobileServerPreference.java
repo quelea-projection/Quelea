@@ -205,7 +205,11 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
         return urlRCCache;
     }
 
-    private static String getIP() {
+    /**
+     * @return the IP address other devices on the network can reach this
+     * computer on, or null.
+     */
+    public static String getIP() {
         String v6address = null;
         Enumeration<NetworkInterface> interfaces = null;
         try {

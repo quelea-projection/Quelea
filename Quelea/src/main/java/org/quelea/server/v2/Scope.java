@@ -17,6 +17,8 @@
  */
 package org.quelea.server.v2;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * What a paired device may do. {@link #CONTROL} includes everything
  * {@link #VIEW} allows.
@@ -26,10 +28,12 @@ public enum Scope {
     /**
      * Read state, schedule and texts; no commands.
      */
+    @SerializedName("view")
     VIEW,
     /**
      * Everything, including commands.
      */
+    @SerializedName("control")
     CONTROL;
 
     /**

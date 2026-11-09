@@ -128,6 +128,9 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         if (QueleaApp.get().getRemoteV2Server() != null) {
             LOGGER.log(Level.INFO, "Stopping remote control v2 server");
             QueleaApp.get().getRemoteV2Server().stop();
+            if (QueleaApp.get().getRemoteV2Server().getDevices() != null) {
+                QueleaApp.get().getRemoteV2Server().getDevices().flush();
+            }
         }
         if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof PresentationDisplayable) {
             LOGGER.log(Level.INFO, "Closing open PowerPoint presentations");

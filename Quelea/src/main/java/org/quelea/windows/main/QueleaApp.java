@@ -26,6 +26,8 @@ import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.server.v2.RemoteApiServer;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -42,7 +44,7 @@ public class QueleaApp {
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
     private AutoDetectServer ads;
-    private volatile RemoteApiServer remoteV2;
+    private final ReadOnlyObjectWrapper<RemoteApiServer> remoteV2 = new ReadOnlyObjectWrapper<>();
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -190,14 +192,22 @@ public class QueleaApp {
      * @return the v2 remote control server, or null if it is not running.
      */
     public RemoteApiServer getRemoteV2Server() {
-        return remoteV2;
+        return remoteV2.get();
     }
 
     /**
      * @param server the v2 remote control server now running.
      */
     public void setRemoteV2Server(RemoteApiServer server) {
-        this.remoteV2 = server;
+        remoteV2.set(server);
+    }
+
+    /**
+     * @return the v2 remote control server, so the settings can follow it
+     * starting after they were built. Changes may arrive on any thread.
+     */
+    public ReadOnlyObjectProperty<RemoteApiServer> remoteV2ServerProperty() {
+        return remoteV2.getReadOnlyProperty();
     }
 
     public void setAutoDetectServer(AutoDetectServer ads) {

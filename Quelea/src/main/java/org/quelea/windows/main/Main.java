@@ -30,7 +30,8 @@ import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
-import org.quelea.server.v2.DeviceAuth;
+import org.quelea.server.v2.DeviceRegistry;
+import org.quelea.server.v2.PairingService;
 import org.quelea.server.v2.RemoteApiServer;
 import org.quelea.server.v2.RemoteCore;
 import org.quelea.services.languages.LabelGrabber;
@@ -347,8 +348,7 @@ public final class Main extends Application {
      */
     /**
      * Start the v2 remote control server off the FX thread, once the main
-     * window exists. Until devices can be paired no token is accepted, so
-     * only the open endpoints answer.
+     * window exists.
      *
      * @param window the main window.
      */
@@ -358,10 +358,14 @@ public final class Main extends Application {
             LOGGER.log(Level.INFO, "Starting remote control v2 server on {0}", port);
             try {
                 RemoteCore core = RemoteCore.install(window);
+                DeviceRegistry devices = new DeviceRegistry(QueleaProperties.get().getRemoteV2DevicesFile().toPath());
+                PairingService pairing = new PairingService(devices,
+                        () -> QueleaProperties.get().getRemoteControlPassword(),
+                        () -> QueleaProperties.get().getRemoteV2AllowPassword());
                 RemoteApiServer server = new RemoteApiServer(
                         new RemoteApiServer.Config(port, QueleaProperties.get().getUseMobLyrics(),
                                 QueleaProperties.VERSION.getVersionString()),
-                        core.control(), core.bus(), DeviceAuth.NONE);
+                        core.control(), core.bus(), devices, pairing);
                 server.start();
                 QueleaApp.get().setRemoteV2Server(server);
             } catch (Exception ex) {

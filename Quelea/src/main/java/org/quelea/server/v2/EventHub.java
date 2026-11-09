@@ -145,6 +145,20 @@ public final class EventHub implements RemoteEventBus.Listener, AutoCloseable {
         }
     }
 
+    /**
+     * Close the connections of a revoked device, telling it why first.
+     *
+     * @param deviceId the revoked device.
+     */
+    void revoked(String deviceId) {
+        for (Client client : clients) {
+            if (deviceId.equals(client.deviceId)) {
+                client.send(Json.write(Map.of("type", "device.revoked")));
+                client.close(CLOSE_UNAUTHORIZED, "Device revoked");
+            }
+        }
+    }
+
     @Override
     public void onEvent(long seq, RemoteEvent event) {
         String json = Json.message(event.type(), seq, event);
@@ -167,6 +181,7 @@ public final class EventHub implements RemoteEventBus.Listener, AutoCloseable {
     public final class Client implements Session.Listener.AutoDemanding {
 
         private final boolean isPublic;
+        private volatile String deviceId;
         private volatile Session session;
         // Guarded by this.
         private State state = State.AWAITING_AUTH;
@@ -238,6 +253,7 @@ public final class EventHub implements RemoteEventBus.Listener, AutoCloseable {
                 close(CLOSE_UNAUTHORIZED, "Invalid token");
                 return;
             }
+            deviceId = device.get().id();
             sendSnapshot();
         }
 

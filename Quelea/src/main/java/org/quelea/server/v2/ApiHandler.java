@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,12 +53,17 @@ final class ApiHandler extends Handler.Abstract {
     private final DeviceAuth auth;
     private final List<Route> routes = new ArrayList<>();
 
-    ApiHandler(QueleaControl control, DeviceAuth auth, RemoteApiServer.Config config) {
+    ApiHandler(QueleaControl control, DeviceAuth auth, PairingService pairing, RemoteApiServer.Config config) {
         this.control = control;
         this.auth = auth;
-        Info info = new Info(2, config.queleaVersion(), false, false, config.publicEnabled());
 
-        route("GET", "/info", null, call -> info);
+        route("GET", "/info", null, call -> new Info(2, config.queleaVersion(), false,
+                pairing != null && pairing.isOpen(), config.publicEnabled()));
+        route("POST", "/pair", null, call -> pair(pairing, call.body()));
+        route("DELETE", "/devices/me", Scope.VIEW, call -> {
+            auth.revoke(call.device().id());
+            return Map.of("revoked", call.device().id());
+        });
         route("GET", "/state", Scope.VIEW, call -> control.getState());
         route("GET", "/schedule", Scope.VIEW, call -> control.getSchedule());
         route("GET", "/live/sections", Scope.VIEW, call -> control.getLiveSections());
@@ -159,7 +165,7 @@ final class ApiHandler extends Handler.Abstract {
     /**
      * One request being handled.
      */
-    private record Call(Request request, Matcher match) {
+    private record Call(Request request, Matcher match, DeviceAuth.Device device) {
 
         JsonObject body() {
             try {
@@ -227,6 +233,10 @@ final class ApiHandler extends Handler.Abstract {
             ApiException notFound = ApiException.notFound(ex.getMessage());
             status = notFound.getStatus();
             body = Json.error(notFound);
+        } catch (PairingService.PairingException ex) {
+            ApiException failed = pairingError(ex);
+            status = failed.getStatus();
+            body = Json.error(failed);
         } catch (ScheduleConflictException ex) {
             ApiException conflict = new ApiException(409, "conflict", ex.getMessage());
             status = conflict.getStatus();
@@ -262,19 +272,53 @@ final class ApiHandler extends Handler.Abstract {
             if (!route.method().equals(request.getMethod())) {
                 continue;
             }
+            DeviceAuth.Device device = null;
             if (route.scope() != null) {
-                DeviceAuth.Device device = auth.authenticate(bearerToken(request))
+                device = auth.authenticate(bearerToken(request))
                         .orElseThrow(ApiException::unauthorized);
                 if (!device.can(route.scope())) {
                     throw ApiException.forbidden();
                 }
             }
-            return route.action().run(new Call(request, match));
+            return route.action().run(new Call(request, match, device));
         }
         if (pathKnown) {
             throw ApiException.methodNotAllowed(request.getMethod());
         }
         throw ApiException.notFound("No such endpoint: " + path);
+    }
+
+    /**
+     * {"code":…} pairs with the code shown in Quelea, {"password":…} with
+     * the remote control password. "name" and "platform" describe the device.
+     */
+    private static DeviceRegistry.Paired pair(PairingService pairing, JsonObject body) {
+        if (pairing == null) {
+            throw new PairingService.PairingException(PairingService.Failure.CLOSED, "Pairing is not available");
+        }
+        String name = Json.optionalString(body, "name");
+        String platform = Json.optionalString(body, "platform");
+        if (name == null || name.isBlank()) {
+            throw ApiException.badRequest("\"name\" is required");
+        }
+        String code = Json.optionalString(body, "code");
+        if (code != null) {
+            return pairing.pairWithCode(code, name, platform);
+        }
+        String password = Json.optionalString(body, "password");
+        if (password != null) {
+            return pairing.pairWithPassword(password, name, platform);
+        }
+        throw ApiException.badRequest("Give \"code\" or \"password\"");
+    }
+
+    private static ApiException pairingError(PairingService.PairingException ex) {
+        return switch (ex.getFailure()) {
+            case CLOSED -> new ApiException(403, "pairing_closed", ex.getMessage());
+            case WRONG -> new ApiException(401, "wrong_secret", ex.getMessage());
+            case LOCKED -> new ApiException(429, "locked", ex.getMessage());
+            case PASSWORD_DISABLED -> new ApiException(403, "password_disabled", ex.getMessage());
+        };
     }
 
     private static String bearerToken(Request request) {

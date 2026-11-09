@@ -116,6 +116,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.queleaSongpackExtensi
 import static org.quelea.services.utils.QueleaPropertyKeys.recPathKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.remoteControlPasswordKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.remoteControlPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.remoteV2AllowPasswordKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.remoteV2PortKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.useRemoteV2Key;
 import static org.quelea.services.utils.QueleaPropertyKeys.sceneInfoKey;
@@ -2249,6 +2250,23 @@ public final class QueleaProperties extends SortedProperties {
     public void setRemoteV2Port(int port) {
         setProperty(remoteV2PortKey, Integer.toString(port));
         write();
+    }
+
+    /**
+     * Determine whether devices may pair with the v2 remote control using
+     * the remote control password, besides the code shown in Quelea.
+     *
+     * @return true if password pairing is allowed. On by default.
+     */
+    public boolean getRemoteV2AllowPassword() {
+        return Boolean.parseBoolean(getProperty(remoteV2AllowPasswordKey, "true"));
+    }
+
+    /**
+     * @return the file the v2 remote control keeps paired devices in.
+     */
+    public File getRemoteV2DevicesFile() {
+        return new File(getQueleaUserHome(), "remote-devices.json");
     }
 
     public String getRemoteControlPassword() {
