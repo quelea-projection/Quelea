@@ -21,6 +21,24 @@ const TEXTS = {
     'pair.button': 'Pair',
     'pair.defaultName': 'Web browser',
     'pair.needSecret': 'Enter the code or the password.',
+    'app.title': 'Quelea Remote',
+    'menu.open': 'Schedule',
+    'menu.back': 'Back',
+    'drawer.schedule': 'Schedule',
+    'page.add': 'Add songs and bible passages',
+    'page.notices': 'Notices',
+    'page.media': 'Images and videos',
+    'page.themes': 'Themes',
+    'media.images': 'Images',
+    'media.videos': 'Videos',
+    'media.uploadImages': 'Upload images from this device',
+    'media.uploadVideos': 'Upload videos from this device',
+    'media.empty': 'Nothing here yet. Files in Quelea\'s library show up here.',
+    'media.add': 'Add',
+    'media.added': 'Added to the schedule',
+    'media.uploading': 'Uploading %s…',
+    'media.uploaded': 'Uploaded %s',
+    'media.uploadFailed': 'Could not upload %s',
     'app.remote': 'Remote',
     'live.prev': 'Previous section',
     'live.next': 'Next section',
@@ -31,12 +49,8 @@ const TEXTS = {
     'live.clear': 'Clear text',
     'live.nothing': 'Nothing is live.',
     'live.slide': 'Slide',
-    'live.transposeDown': '♭ −1',
-    'live.transposeUp': '♯ +1',
-    'live.chords': 'Chords',
     'media.play': '▶ Play', 'media.pause': '❚❚ Pause', 'media.stop': '■ Stop', 'media.loop': 'Loop',
     'media.position': 'Position',
-    'live.transposed': 'Transposed for this service only',
     'schedule.empty': 'The schedule is empty.',
     'schedule.up': 'Move up',
     'schedule.down': 'Move down',
@@ -70,10 +84,6 @@ const TEXTS = {
     'notice.left': '%s more times',
     'notice.leftOne': 'Once more',
     'notice.untilRemoved': 'Until removed',
-    'tab.live': 'Live',
-    'tab.schedule': 'Schedule',
-    'tab.add': 'Add',
-    'tab.themes': 'Themes',
     'more.unpair': 'Unpair this browser',
     'more.unpairConfirm': 'Unpair this browser? You will need a new code to use it again.',
     'theme.set': 'Theme changed',
@@ -98,6 +108,24 @@ const TEXTS = {
     'pair.button': 'Para',
     'pair.defaultName': 'Webbläsare',
     'pair.needSecret': 'Skriv in koden eller lösenordet.',
+    'app.title': 'Quelea Fjärrstyrning',
+    'menu.open': 'Gudstjänstordning',
+    'menu.back': 'Tillbaka',
+    'drawer.schedule': 'Gudstjänstordning',
+    'page.add': 'Lägg till sånger och bibeltext',
+    'page.notices': 'Meddelanden',
+    'page.media': 'Bilder och videor',
+    'page.themes': 'Teman',
+    'media.images': 'Bilder',
+    'media.videos': 'Videor',
+    'media.uploadImages': 'Ladda upp bilder från enheten',
+    'media.uploadVideos': 'Ladda upp videor från enheten',
+    'media.empty': 'Här finns inget än. Filer i Queleas bibliotek visas här.',
+    'media.add': 'Lägg till',
+    'media.added': 'Tillagd i schemat',
+    'media.uploading': 'Laddar upp %s…',
+    'media.uploaded': '%s är uppladdad',
+    'media.uploadFailed': 'Kunde inte ladda upp %s',
     'app.remote': 'Fjärrstyrning',
     'live.prev': 'Föregående del',
     'live.next': 'Nästa del',
@@ -108,12 +136,8 @@ const TEXTS = {
     'live.clear': 'Blank skärm',
     'live.nothing': 'Inget är live.',
     'live.slide': 'Bild',
-    'live.transposeDown': '♭ −1',
-    'live.transposeUp': '♯ +1',
-    'live.chords': 'Ackord',
     'media.play': '▶ Spela', 'media.pause': '❚❚ Pausa', 'media.stop': '■ Stopp', 'media.loop': 'Upprepa',
     'media.position': 'Position',
-    'live.transposed': 'Transponerad bara för den här gången',
     'schedule.empty': 'Schemat är tomt.',
     'schedule.up': 'Flytta upp',
     'schedule.down': 'Flytta ned',
@@ -147,10 +171,6 @@ const TEXTS = {
     'notice.left': '%s gånger till',
     'notice.leftOne': '1 gång till',
     'notice.untilRemoved': 'Tills det tas bort',
-    'tab.live': 'Live',
-    'tab.schedule': 'Schema',
-    'tab.add': 'Lägg till',
-    'tab.themes': 'Teman',
     'more.unpair': 'Avpara den här webbläsaren',
     'more.unpairConfirm': 'Avpara den här webbläsaren? Du behöver en ny kod för att använda den igen.',
     'theme.set': 'Temat är bytt',
@@ -298,8 +318,6 @@ let retryDelay = 500;
 let pingTimer = null;
 let pongTimer = null;
 let reconnectTimer = null;
-let showChords = false;
-try { showChords = localStorage.getItem('quelea.v2.chords') === '1'; } catch (e) { /* storage blocked */ }
 
 // ---- Live tab ----------------------------------------------------------
 
@@ -311,8 +329,6 @@ function renderLive() {
   });
   const nothing = !live || !live.itemId;
   $('nothing-live').hidden = !nothing;
-  $('song-tools').hidden = !live || live.itemType !== 'song';
-  $('toggle-chords').setAttribute('aria-pressed', showChords ? 'true' : 'false');
   ['prev', 'next'].forEach(id => { $(id).disabled = nothing; });
   renderMedia();
 }
@@ -348,13 +364,12 @@ function renderSections() {
   if (!sections || !sections.itemId) return;
   sections.sections.forEach((section, index) => {
     const hasText = section.lines.length > 0;
-    const chords = showChords && section.chordLines;
     const item = el('li', {
-      class: (hasText ? '' : 'slide ') + (chords ? 'chords ' : '') + (index === sections.sectionIndex ? 'current' : ''),
+      class: (hasText ? '' : 'slide ') + (index === sections.sectionIndex ? 'current' : ''),
       onclick: () => run(() => api.post('/live/section', { index }).then(applyState))
     },
     section.title ? el('span', { class: 'stitle ' + sectionKind(section.title) }, section.title) : null,
-    hasText ? (chords ? section.chordLines : section.lines).join('\n') : t('live.slide') + ' ' + (index + 1));
+    hasText ? section.lines.join('\n') : t('live.slide') + ' ' + (index + 1));
     list.append(item);
   });
   scrollToCurrent();
@@ -401,11 +416,6 @@ function setupLiveTab() {
   ['logo', 'black', 'clear'].forEach(name => {
     $('toggle-' + name).onclick = () => run(() => api.put('/live/screen', { [name]: !(live && live[name]) }).then(applyState));
   });
-  // The transposed song replaces the live item; live.item then reloads the sections.
-  const transpose = semitones => run(() => api.post('/schedule/items/' + live.itemId + '/transpose', { semitones })
-    .then(() => toast(t('live.transposed'))));
-  $('transpose-down').onclick = () => transpose(-1);
-  $('transpose-up').onclick = () => transpose(1);
   $('media-play').onclick = () => run(() => api.post(live.media.playing ? '/live/media/pause' : '/live/media/play')
     .then(applyState));
   $('media-stop').onclick = () => run(() => api.post('/live/media/stop').then(applyState));
@@ -414,12 +424,6 @@ function setupLiveTab() {
   position.oninput = () => { seeking = true; };
   position.onchange = () => run(() => api.put('/live/media', { position: Number(position.value) })
     .then(applyState)).finally(() => { seeking = false; });
-  $('toggle-chords').onclick = () => {
-    showChords = !showChords;
-    try { localStorage.setItem('quelea.v2.chords', showChords ? '1' : '0'); } catch (e) { /* storage blocked */ }
-    renderLive();
-    renderSections();
-  };
 }
 
 // ---- Schedule tab ------------------------------------------------------
@@ -445,7 +449,7 @@ function renderSchedule() {
       }));
     list.append(el('li', { class: item.live ? 'live' : item.preview ? 'preview' : '' },
       el('span', { class: 'live-dot', 'aria-hidden': 'true' }),
-      el('span', { class: 'item-title', onclick: () => run(() => api.post('/schedule/items/' + item.id + '/live').then(applyState)) },
+      el('span', { class: 'item-title', onclick: () => { closeDrawer(); run(() => api.post('/schedule/items/' + item.id + '/live').then(applyState)); } },
         item.title, el('span', { class: 'item-type' }, t('type.' + item.type))),
       el('button', { title: t('schedule.up'), 'aria-label': t('schedule.up'), disabled: index === 0,
         onclick: () => change('POST', '/schedule/items/' + item.id + '/move', { to: index - 1 }) }, '↑'),
@@ -588,6 +592,87 @@ async function loadTranslations() {
     el('option', { value: translation.name, selected: translation.isDefault }, translation.name)));
 }
 
+// ---- Images and videos (Quelea's library) --------------------------------
+
+let mediaKind = 'images';
+const mediaThumbs = [];
+
+async function loadMedia() {
+  const kind = mediaKind;
+  const files = await run(() => api.get('/library/' + kind));
+  if (kind !== mediaKind) return;
+  mediaThumbs.splice(0).forEach(url => URL.revokeObjectURL(url));
+  const list = $('media-list');
+  list.replaceChildren();
+  $('media-empty').hidden = !files || files.length > 0;
+  (files || []).forEach(file => {
+    const image = el('img', { alt: '' });
+    const field = kind === 'images' ? 'image' : 'video';
+    list.append(el('li', { class: kind === 'videos' ? 'video' : '' },
+      image,
+      el('span', {}, file.name),
+      el('button', { onclick: () => addToSchedule({ [field]: file.name }) }, t('media.add'))));
+    // Thumbnails need the token, so they are fetched rather than linked.
+    api.blob('/library/' + kind + '/thumb.png?name=' + encodeURIComponent(file.name))
+      .then(blob => { const url = URL.createObjectURL(blob); mediaThumbs.push(url); image.src = url; })
+      .catch(() => { /* no thumbnail (yet) */ });
+  });
+}
+
+function setMediaKind(kind) {
+  mediaKind = kind;
+  $('media-images').setAttribute('aria-selected', String(kind === 'images'));
+  $('media-videos').setAttribute('aria-selected', String(kind === 'videos'));
+  $('upload-input').accept = kind === 'images' ? 'image/*' : 'video/*';
+  $('upload-label').textContent = t(kind === 'images' ? 'media.uploadImages' : 'media.uploadVideos');
+  loadMedia();
+}
+
+/** Upload one file with progress: fetch cannot report upload progress. */
+function uploadFile(kind, file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', API + '/library/' + kind + '?name=' + encodeURIComponent(file.name));
+    if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+    xhr.upload.onprogress = event => { if (event.lengthComputable) onProgress(event.loaded / event.total); };
+    xhr.onload = () => {
+      let body = null;
+      try { body = JSON.parse(xhr.responseText); } catch (e) { /* not JSON */ }
+      if (xhr.status === 200) resolve(body);
+      else reject(new Error(body && body.error ? body.error.message : 'HTTP ' + xhr.status));
+    };
+    xhr.onerror = () => reject(new Error(t('error.network')));
+    xhr.send(file);
+  });
+}
+
+function setupMedia() {
+  $('media-images').onclick = () => setMediaKind('images');
+  $('media-videos').onclick = () => setMediaKind('videos');
+  $('upload-input').onchange = async () => {
+    const files = Array.from($('upload-input').files);
+    $('upload-input').value = '';
+    const kind = mediaKind;
+    const bar = $('upload-progress');
+    for (const file of files) {
+      bar.hidden = false;
+      bar.querySelector('span').textContent = t('media.uploading', file.name);
+      bar.querySelector('div').style.width = '0%';
+      try {
+        const saved = await uploadFile(kind, file, fraction => {
+          bar.querySelector('div').style.width = Math.round(fraction * 100) + '%';
+        });
+        toast(t('media.uploaded', saved ? saved.name : file.name));
+      } catch (e) {
+        toast(t('media.uploadFailed', file.name) + ': ' + e.message);
+      }
+    }
+    bar.hidden = true;
+    if (kind === mediaKind) loadMedia();
+  };
+}
+
 // ---- Themes tab --------------------------------------------------------
 
 const thumbUrls = [];
@@ -608,19 +693,55 @@ async function loadThemes() {
   });
 }
 
-// ---- Tabs --------------------------------------------------------------
+// ---- Pages and the drawer ----------------------------------------------
+// Like the mobile app: the live view, the schedule in a drawer, and pages
+// for adding, notices, images and videos, and themes with a back button.
 
-const TAB_LOADERS = { schedule: loadSchedule, add: () => { loadTranslations(); loadNotices(); }, themes: loadThemes };
+const TAB_LOADERS = { add: loadTranslations, notices: loadNotices, media: loadMedia, themes: loadThemes };
 const loadedTabs = new Set();
+let currentPage = 'live';
 
 function showTab(name) {
+  currentPage = name;
   document.querySelectorAll('.tab').forEach(tab => { tab.hidden = tab.id !== 'tab-' + name; });
-  document.querySelectorAll('#tabs button').forEach(button => button.classList.toggle('active', button.dataset.tab === name));
+  const isLive = name === 'live';
+  $('menu-button').hidden = !isLive;
+  $('back-button').hidden = isLive;
+  $('page-title').textContent = isLive ? t('app.title') : t('page.' + name);
   if (TAB_LOADERS[name] && !loadedTabs.has(name)) {
     loadedTabs.add(name);
     TAB_LOADERS[name]();
   }
-  if (name === 'live') scrollToCurrent();
+  window.scrollTo(0, 0);
+  if (isLive) scrollToCurrent();
+}
+
+function openDrawer() {
+  $('drawer').classList.add('open');
+  $('drawer').setAttribute('aria-hidden', 'false');
+  $('scrim').hidden = false;
+}
+
+function closeDrawer() {
+  $('drawer').classList.remove('open');
+  $('drawer').setAttribute('aria-hidden', 'true');
+  $('scrim').hidden = true;
+}
+
+function setupPages() {
+  $('menu-button').onclick = openDrawer;
+  $('scrim').onclick = closeDrawer;
+  $('back-button').onclick = () => showTab('live');
+  document.querySelectorAll('[data-page]').forEach(button => {
+    button.onclick = () => {
+      closeDrawer();
+      showTab(button.dataset.page);
+      if (button.dataset.open) $(button.dataset.open).open = true;
+    };
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { closeDrawer(); if (currentPage !== 'live') showTab('live'); }
+  });
 }
 
 // ---- WebSocket ---------------------------------------------------------
@@ -677,6 +798,7 @@ function handleMessage(message) {
     lastSeq = message.seq;
     live = null;
     applyState(message.data);
+    loadSchedule();
     loadedTabs.forEach(name => TAB_LOADERS[name]());
     return;
   }
@@ -733,7 +855,9 @@ function handleMessage(message) {
 
 function showPairing(message) {
   $('app-view').hidden = true;
-  $('tabs').hidden = true;
+  closeDrawer();
+  ['menu-button', 'back-button', 'search-button', 'notices-button'].forEach(id => { $(id).hidden = true; });
+  $('page-title').textContent = 'Quelea';
   $('pair-view').hidden = false;
   $('pair-error').textContent = message || '';
   $('live-title').textContent = '';
@@ -743,7 +867,8 @@ function showPairing(message) {
 function showApp() {
   $('pair-view').hidden = true;
   $('app-view').hidden = false;
-  $('tabs').hidden = false;
+  $('search-button').hidden = false;
+  $('notices-button').hidden = false;
   showTab('live');
   connect();
 }
@@ -781,6 +906,7 @@ function setupPairing() {
     }
   };
   $('unpair').onclick = async () => {
+    closeDrawer();
     if (!confirm(t('more.unpairConfirm'))) return;
     await run(() => api.del('/devices/me'));
     signedOut('');
@@ -796,7 +922,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAddTab();
   setupNotices();
   setupNewSong();
-  document.querySelectorAll('#tabs button').forEach(button => { button.onclick = () => showTab(button.dataset.tab); });
+  setupMedia();
+  setupPages();
   // Reconnect at once when a phone wakes up or the tab comes back.
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && token && !socket) connect();

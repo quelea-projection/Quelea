@@ -10,10 +10,29 @@
 </head>
 <body>
   <header class="topbar">
-    <span class="brand">Quelea</span>
-    <span class="brand-sub" data-t="app.remote"></span>
+    <button id="menu-button" class="icon-button" data-t-label="menu.open" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <button id="back-button" class="icon-button" data-t-label="menu.back" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+    <span id="page-title" class="page-title">Quelea</span>
+    <button id="search-button" class="icon-button app-only" data-page="add" data-t-label="page.add" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
+    <button id="notices-button" class="icon-button app-only" data-page="notices" data-t-label="page.notices" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg></button>
     <span id="conn" class="conn" data-state="offline" title=""></span>
   </header>
+
+  <!-- The schedule in a drawer, as in the mobile app. -->
+  <div id="scrim" class="scrim" hidden></div>
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h2 data-t="drawer.schedule"></h2>
+      <button class="icon-button" data-page="add" data-open="new-song" data-t-label="song.new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg></button>
+      <button class="icon-button" data-page="media" data-t-label="page.media"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4 2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg></button>
+      <button class="icon-button" data-page="themes" data-t-label="page.themes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></button>
+    </div>
+    <ol id="schedule" class="schedule"></ol>
+    <p id="schedule-empty" class="muted center" data-t="schedule.empty" hidden></p>
+    <div class="drawer-footer">
+      <button id="unpair" class="text-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg><span data-t="more.unpair"></span></button>
+    </div>
+  </aside>
 
   <!-- Shown until this browser is paired. -->
   <main id="pair-view" class="view" hidden>
@@ -54,11 +73,6 @@
             </div>
             <input id="media-position" type="range" min="0" max="1" step="0.001" value="0" data-t-title="media.position">
           </div>
-          <div id="song-tools" class="toggles" hidden>
-            <button id="transpose-down" data-t="live.transposeDown"></button>
-            <button id="transpose-up" data-t="live.transposeUp"></button>
-            <button id="toggle-chords" class="toggle" data-t="live.chords" aria-pressed="false"></button>
-          </div>
           <ol id="sections" class="sections"></ol>
           <p id="nothing-live" class="muted center" data-t="live.nothing" hidden></p>
         </div>
@@ -70,11 +84,6 @@
           <button id="next-item" class="nav" data-t-label="live.nextItem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.41 16.59 5 12 9.58 7.41 5 6 6.41l6 6zM18 13l-1.41-1.41L12 16.17l-4.59-4.58L6 13l6 6z"/></svg></button>
         </div>
       </div>
-    </section>
-
-    <section id="tab-schedule" class="tab" hidden>
-      <ol id="schedule" class="schedule"></ol>
-      <p id="schedule-empty" class="muted center" data-t="schedule.empty" hidden></p>
     </section>
 
     <section id="tab-add" class="tab" hidden>
@@ -109,6 +118,9 @@
         <div id="bible-preview" class="preview"></div>
         <button id="bible-add" class="primary" data-t="add.add" hidden></button>
       </form>
+    </section>
+
+    <section id="tab-notices" class="tab" hidden>
       <form id="notice-form" class="card">
         <h2 data-t="notice.title"></h2>
         <ul id="notices" class="results"></ul>
@@ -128,18 +140,24 @@
       </form>
     </section>
 
+    <section id="tab-media" class="tab" hidden>
+      <div class="segmented" role="tablist">
+        <button id="media-images" role="tab" aria-selected="true" data-t="media.images"></button>
+        <button id="media-videos" role="tab" aria-selected="false" data-t="media.videos"></button>
+      </div>
+      <label class="upload-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm0-10h4v6h6v-6h4l-7-7-7 7z"/></svg><span id="upload-label" data-t="media.uploadImages"></span>
+        <input id="upload-input" type="file" accept="image/*" multiple>
+      </label>
+      <div id="upload-progress" class="upload-progress" hidden><div></div><span></span></div>
+      <ul id="media-list" class="themes media-list"></ul>
+      <p id="media-empty" class="muted center" data-t="media.empty" hidden></p>
+    </section>
+
     <section id="tab-themes" class="tab" hidden>
       <ul id="themes" class="themes"></ul>
-      <button id="unpair" class="danger" data-t="more.unpair"></button>
     </section>
   </main>
 
-  <nav id="tabs" class="tabs" hidden>
-    <button data-tab="live" class="active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-t="tab.live"></span></button>
-    <button data-tab="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg><span data-t="tab.schedule"></span></button>
-    <button data-tab="add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span data-t="tab.add"></span></button>
-    <button data-tab="themes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span data-t="tab.themes"></span></button>
-  </nav>
 
   <div id="toast" class="toast" role="status" hidden></div>
 </body>
