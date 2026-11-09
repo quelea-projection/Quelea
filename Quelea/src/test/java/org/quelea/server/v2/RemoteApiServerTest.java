@@ -64,7 +64,7 @@ class RemoteApiServerTest {
     }
 
     private RemoteApiServer start(boolean publicEnabled) throws Exception {
-        RemoteApiServer s = new RemoteApiServer(new RemoteApiServer.Config(0, publicEnabled, "2027.0-test"),
+        RemoteApiServer s = new RemoteApiServer(new RemoteApiServer.Config(0, publicEnabled, "2027.0-test", null),
                 control, bus, AUTH, null);
         s.start();
         return s;

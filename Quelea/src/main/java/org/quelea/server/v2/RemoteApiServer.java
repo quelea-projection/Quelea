@@ -17,15 +17,23 @@
  */
 package org.quelea.server.v2;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeHandler;
 import org.quelea.services.utils.LoggerUtils;
@@ -47,8 +55,30 @@ public final class RemoteApiServer {
      * @param publicEnabled true to answer the open endpoints under /public/,
      * which follow the mobile lyrics setting.
      * @param queleaVersion the Quelea version reported by /info.
+     * @param webRoot the folder with the web remote (index.html …), or null
+     * to serve only the API.
      */
-    public record Config(int port, boolean publicEnabled, String queleaVersion) {
+    public record Config(int port, boolean publicEnabled, String queleaVersion, Path webRoot) {
+    }
+
+    /**
+     * The web remote's page loads nothing from other sites and may only be
+     * shown by itself, not framed by another page.
+     */
+    private static final class SecurityHeaders extends Handler.Wrapper {
+
+        SecurityHeaders(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public boolean handle(Request request, Response response, Callback callback) throws Exception {
+            response.getHeaders().put("Content-Security-Policy", "default-src 'self'; img-src 'self' data: blob:; "
+                    + "connect-src 'self' ws: wss:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+            response.getHeaders().put("X-Content-Type-Options", "nosniff");
+            response.getHeaders().put("Referrer-Policy", "no-referrer");
+            return super.handle(request, response, callback);
+        }
     }
 
     private final Server server;
@@ -92,7 +122,20 @@ public final class RemoteApiServer {
                 container.addMapping(ApiHandler.PREFIX + "/public/ws", hub::createPublic);
             }
         });
-        webSockets.setHandler(new ApiHandler(control, auth, pairing, config));
+        ApiHandler api = new ApiHandler(control, auth, pairing, config);
+        if (config.webRoot() != null && Files.isDirectory(config.webRoot())) {
+            ResourceHandler files = new ResourceHandler();
+            files.setBaseResource(ResourceFactory.of(server).newResource(config.webRoot().toAbsolutePath()));
+            files.setDirAllowed(false);
+            files.setWelcomeFiles("index.html");
+            // A new Quelea version must not be hidden behind cached files.
+            files.setCacheControl("no-cache");
+            // Mapped files stay locked on Windows while Quelea runs.
+            files.setUseFileMapping(false);
+            webSockets.setHandler(new Handler.Sequence(api, new SecurityHeaders(files)));
+        } else {
+            webSockets.setHandler(api);
+        }
         auth.addRevokedListener(hub::revoked);
         server.setHandler(webSockets);
         server.setStopTimeout(1000);

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16181d">
+  <title>Quelea Remote</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">Quelea</span>
+    <span id="live-title" class="live-title"></span>
+    <span id="conn" class="conn" data-state="offline" title=""></span>
+  </header>
+
+  <!-- Shown until this browser is paired. -->
+  <main id="pair-view" class="view" hidden>
+    <form id="pair-form" class="card pair">
+      <h1 data-t="pair.title"></h1>
+      <p data-t="pair.help" class="muted"></p>
+      <label><span data-t="pair.code"></span>
+        <input id="pair-code" autocomplete="one-time-code" autocapitalize="characters" maxlength="6" spellcheck="false">
+      </label>
+      <p class="or" data-t="pair.or"></p>
+      <label><span data-t="pair.password"></span>
+        <input id="pair-password" type="password" autocomplete="current-password">
+      </label>
+      <label><span data-t="pair.name"></span>
+        <input id="pair-name" maxlength="64">
+      </label>
+      <button type="submit" class="primary" data-t="pair.button"></button>
+      <p id="pair-error" class="error" role="alert"></p>
+    </form>
+  </main>
+
+  <main id="app-view" class="view" hidden>
+    <section id="tab-live" class="tab">
+      <div class="controls">
+        <button id="prev" class="big" data-t="live.prev"></button>
+        <button id="next" class="big primary" data-t="live.next"></button>
+        <button id="prev-item" data-t="live.prevItem"></button>
+        <button id="next-item" data-t="live.nextItem"></button>
+      </div>
+      <div class="toggles">
+        <button id="toggle-logo" class="toggle" data-t="live.logo" aria-pressed="false"></button>
+        <button id="toggle-black" class="toggle" data-t="live.black" aria-pressed="false"></button>
+        <button id="toggle-clear" class="toggle" data-t="live.clear" aria-pressed="false"></button>
+      </div>
+      <ol id="sections" class="sections"></ol>
+      <p id="nothing-live" class="muted center" data-t="live.nothing" hidden></p>
+    </section>
+
+    <section id="tab-schedule" class="tab" hidden>
+      <ol id="schedule" class="schedule"></ol>
+      <p id="schedule-empty" class="muted center" data-t="schedule.empty" hidden></p>
+    </section>
+
+    <section id="tab-add" class="tab" hidden>
+      <form id="song-search" class="card">
+        <h2 data-t="add.songs"></h2>
+        <div class="row">
+          <input id="song-query" type="search" data-t-placeholder="add.songSearch">
+          <button type="submit" data-t="add.search"></button>
+        </div>
+        <ul id="song-results" class="results"></ul>
+      </form>
+      <form id="bible-form" class="card">
+        <h2 data-t="add.bible"></h2>
+        <select id="bible-translation"></select>
+        <div class="row">
+          <input id="bible-ref" data-t-placeholder="add.bibleRef" spellcheck="false">
+          <button type="submit" data-t="add.show"></button>
+        </div>
+        <div id="bible-preview" class="preview"></div>
+        <button id="bible-add" class="primary" data-t="add.add" hidden></button>
+      </form>
+    </section>
+
+    <section id="tab-themes" class="tab" hidden>
+      <ul id="themes" class="themes"></ul>
+      <button id="unpair" class="danger" data-t="more.unpair"></button>
+    </section>
+  </main>
+
+  <nav id="tabs" class="tabs" hidden>
+    <button data-tab="live" class="active" data-t="tab.live"></button>
+    <button data-tab="schedule" data-t="tab.schedule"></button>
+    <button data-tab="add" data-t="tab.add"></button>
+    <button data-tab="themes" data-t="tab.themes"></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

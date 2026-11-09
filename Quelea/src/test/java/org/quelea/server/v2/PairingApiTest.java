@@ -47,7 +47,7 @@ class PairingApiTest {
         dispatcher = Executors.newSingleThreadExecutor();
         registry = new DeviceRegistry(dir.resolve("devices.json"), new MutableClock(), new SecureRandom());
         pairing = new PairingService(registry, () -> "quelea", () -> true);
-        server = new RemoteApiServer(new RemoteApiServer.Config(0, false, "test"), new FakeQueleaControl(),
+        server = new RemoteApiServer(new RemoteApiServer.Config(0, false, "test", null), new FakeQueleaControl(),
                 new RemoteEventBus(dispatcher), registry, pairing);
         server.start();
     }

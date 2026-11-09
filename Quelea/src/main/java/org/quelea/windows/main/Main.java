@@ -369,7 +369,7 @@ public final class Main extends Application {
                         () -> QueleaProperties.get().getRemoteV2AllowPassword());
                 RemoteApiServer server = new RemoteApiServer(
                         new RemoteApiServer.Config(port, QueleaProperties.get().getUseMobLyrics(),
-                                QueleaProperties.VERSION.getVersionString()),
+                                QueleaProperties.VERSION.getVersionString(), java.nio.file.Path.of("server", "v2")),
                         core.control(), core.bus(), devices, pairing);
                 server.start();
                 QueleaApp.get().setRemoteV2Server(server);
