@@ -21,13 +21,14 @@ const TEXTS = {
     'pair.button': 'Pair',
     'pair.defaultName': 'Web browser',
     'pair.needSecret': 'Enter the code or the password.',
-    'live.prev': '◀ Previous',
-    'live.next': 'Next ▶',
-    'live.prevItem': '⏮ Previous item',
-    'live.nextItem': 'Next item ⏭',
+    'app.remote': 'Remote',
+    'live.prev': 'Previous section',
+    'live.next': 'Next section',
+    'live.prevItem': 'Previous item',
+    'live.nextItem': 'Next item',
     'live.logo': 'Logo',
-    'live.black': 'Black',
-    'live.clear': 'Clear',
+    'live.black': 'Black screen',
+    'live.clear': 'Clear text',
     'live.nothing': 'Nothing is live.',
     'live.slide': 'Slide',
     'live.transposeDown': '♭ −1',
@@ -97,13 +98,14 @@ const TEXTS = {
     'pair.button': 'Para',
     'pair.defaultName': 'Webbläsare',
     'pair.needSecret': 'Skriv in koden eller lösenordet.',
-    'live.prev': '◀ Föregående',
-    'live.next': 'Nästa ▶',
-    'live.prevItem': '⏮ Föregående post',
-    'live.nextItem': 'Nästa post ⏭',
-    'live.logo': 'Logo',
-    'live.black': 'Svart',
-    'live.clear': 'Rensa',
+    'app.remote': 'Fjärrstyrning',
+    'live.prev': 'Föregående del',
+    'live.next': 'Nästa del',
+    'live.prevItem': 'Föregående post',
+    'live.nextItem': 'Nästa post',
+    'live.logo': 'Logga',
+    'live.black': 'Svart skärm',
+    'live.clear': 'Blank skärm',
     'live.nothing': 'Inget är live.',
     'live.slide': 'Bild',
     'live.transposeDown': '♭ −1',
@@ -177,6 +179,11 @@ function applyTexts() {
   document.querySelectorAll('[data-t]').forEach(node => { node.textContent = t(node.dataset.t); });
   document.querySelectorAll('[data-t-placeholder]').forEach(node => { node.placeholder = t(node.dataset.tPlaceholder); });
   document.querySelectorAll('[data-t-title]').forEach(node => { node.title = t(node.dataset.tTitle); });
+  // Icon-only buttons: the label is for screen readers and the tooltip.
+  document.querySelectorAll('[data-t-label]').forEach(node => {
+    node.title = t(node.dataset.tLabel);
+    node.setAttribute('aria-label', t(node.dataset.tLabel));
+  });
 }
 
 // ---- Small helpers -----------------------------------------------------
@@ -298,6 +305,7 @@ try { showChords = localStorage.getItem('quelea.v2.chords') === '1'; } catch (e)
 
 function renderLive() {
   $('live-title').textContent = live && live.title ? live.title : '';
+  $('live-heading').hidden = !(live && live.title);
   ['logo', 'black', 'clear'].forEach(name => {
     $('toggle-' + name).setAttribute('aria-pressed', live && live[name] ? 'true' : 'false');
   });
@@ -345,11 +353,19 @@ function renderSections() {
       class: (hasText ? '' : 'slide ') + (chords ? 'chords ' : '') + (index === sections.sectionIndex ? 'current' : ''),
       onclick: () => run(() => api.post('/live/section', { index }).then(applyState))
     },
-    section.title ? el('span', { class: 'stitle' }, section.title) : null,
+    section.title ? el('span', { class: 'stitle ' + sectionKind(section.title) }, section.title) : null,
     hasText ? (chords ? section.chordLines : section.lines).join('\n') : t('live.slide') + ' ' + (index + 1));
     list.append(item);
   });
   scrollToCurrent();
+}
+
+// Section headings take Quelea's colours: verses, choruses and the rest.
+function sectionKind(title) {
+  const lower = title.toLowerCase();
+  if (lower.startsWith('verse')) return 'verse';
+  if (lower.startsWith('chorus') || lower.startsWith('pre-chorus') || lower.startsWith('pre chorus')) return 'chorus';
+  return 'other';
 }
 
 function markSection(index) {
@@ -427,7 +443,8 @@ function renderSchedule() {
         schedule = result.schedule;
         renderSchedule();
       }));
-    list.append(el('li', { class: item.live ? 'live' : '' },
+    list.append(el('li', { class: item.live ? 'live' : item.preview ? 'preview' : '' },
+      el('span', { class: 'live-dot', 'aria-hidden': 'true' }),
       el('span', { class: 'item-title', onclick: () => run(() => api.post('/schedule/items/' + item.id + '/live').then(applyState)) },
         item.title, el('span', { class: 'item-type' }, t('type.' + item.type))),
       el('button', { title: t('schedule.up'), 'aria-label': t('schedule.up'), disabled: index === 0,

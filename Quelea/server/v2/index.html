@@ -11,7 +11,7 @@
 <body>
   <header class="topbar">
     <span class="brand">Quelea</span>
-    <span id="live-title" class="live-title"></span>
+    <span class="brand-sub" data-t="app.remote"></span>
     <span id="conn" class="conn" data-state="offline" title=""></span>
   </header>
 
@@ -37,32 +37,39 @@
 
   <main id="app-view" class="view" hidden>
     <section id="tab-live" class="tab">
-      <div class="controls">
-        <button id="prev" class="big" data-t="live.prev"></button>
-        <button id="next" class="big primary" data-t="live.next"></button>
-        <button id="prev-item" data-t="live.prevItem"></button>
-        <button id="next-item" data-t="live.nextItem"></button>
+      <!-- The icons of Quelea's live panel (icons.css: icon-logo, icon-black, icon-clear-text). -->
+      <div class="toggles screen">
+        <button id="toggle-logo" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M435-274h301q12.75 0 21.38-8.63Q766-291.25 766-304v-198q0-12.75-8.62-21.38Q748.75-532 736-532H435q-12.75 0-21.37 8.62Q405-514.75 405-502v198q0 12.75 8.63 21.37Q422.25-274 435-274ZM140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Zm0-60h680v-520H140v520Zm0 0v-520 520Z"/></svg><span data-t="live.logo"></span></button>
+        <button id="toggle-black" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M140-160q-25 0-42.5-17.5T80-220v-520q0-25 17.5-42.5T140-800h680q25 0 42.5 17.5T880-740v520q0 25-17.5 42.5T820-160H140Z"/></svg><span data-t="live.black"></span></button>
+        <button id="toggle-clear" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m507-524-77-76 24-56h-58q-26 0-38.5-16T345-708q0-20 13-36t39-16h353q21 0 35.5 14.5T800-710q0 21-14.5 35.5T750-660H565l-58 136ZM785-77 457-406l-75 176q-6 14-18.5 22t-27.5 8q-27 0-42-22.5t-4-47.5l90-212L77-785q-9-9-9-21t9-21q9-9 21-9t21 9l708 708q9 9 9 21t-9 21q-9 9-21 9t-21-9Z"/></svg><span data-t="live.clear"></span></button>
       </div>
-      <div class="toggles">
-        <button id="toggle-logo" class="toggle" data-t="live.logo" aria-pressed="false"></button>
-        <button id="toggle-black" class="toggle" data-t="live.black" aria-pressed="false"></button>
-        <button id="toggle-clear" class="toggle" data-t="live.clear" aria-pressed="false"></button>
-      </div>
-      <div id="media-tools" class="media" hidden>
-        <div class="toggles">
-          <button id="media-play" class="primary" data-t="media.play"></button>
-          <button id="media-stop" data-t="media.stop"></button>
-          <button id="media-loop" class="toggle" data-t="media.loop" aria-pressed="false"></button>
+      <div class="live-area">
+        <div class="live-main">
+          <h2 id="live-heading" class="live-heading" hidden><span class="live-dot"></span><span id="live-title"></span></h2>
+          <div id="media-tools" class="media" hidden>
+            <div class="toggles">
+              <button id="media-play" class="primary" data-t="media.play"></button>
+              <button id="media-stop" data-t="media.stop"></button>
+              <button id="media-loop" class="toggle" data-t="media.loop" aria-pressed="false"></button>
+            </div>
+            <input id="media-position" type="range" min="0" max="1" step="0.001" value="0" data-t-title="media.position">
+          </div>
+          <div id="song-tools" class="toggles" hidden>
+            <button id="transpose-down" data-t="live.transposeDown"></button>
+            <button id="transpose-up" data-t="live.transposeUp"></button>
+            <button id="toggle-chords" class="toggle" data-t="live.chords" aria-pressed="false"></button>
+          </div>
+          <ol id="sections" class="sections"></ol>
+          <p id="nothing-live" class="muted center" data-t="live.nothing" hidden></p>
         </div>
-        <input id="media-position" type="range" min="0" max="1" step="0.001" value="0" data-t-title="media.position">
+        <!-- Beside the lyrics, as in the app; next section is the largest. -->
+        <div class="nav-column">
+          <button id="prev-item" class="nav" data-t-label="live.prevItem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17.59 7.41 19 12 14.42 16.59 19 18 17.59l-6-6zM6 11l1.41 1.41L12 7.83l4.59 4.58L18 11l-6-6z"/></svg></button>
+          <button id="prev" class="nav mid" data-t-label="live.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></button>
+          <button id="next" class="nav big" data-t-label="live.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+          <button id="next-item" class="nav" data-t-label="live.nextItem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.41 16.59 5 12 9.58 7.41 5 6 6.41l6 6zM18 13l-1.41-1.41L12 16.17l-4.59-4.58L6 13l6 6z"/></svg></button>
+        </div>
       </div>
-      <div id="song-tools" class="toggles" hidden>
-        <button id="transpose-down" data-t="live.transposeDown"></button>
-        <button id="transpose-up" data-t="live.transposeUp"></button>
-        <button id="toggle-chords" class="toggle" data-t="live.chords" aria-pressed="false"></button>
-      </div>
-      <ol id="sections" class="sections"></ol>
-      <p id="nothing-live" class="muted center" data-t="live.nothing" hidden></p>
     </section>
 
     <section id="tab-schedule" class="tab" hidden>
@@ -128,10 +135,10 @@
   </main>
 
   <nav id="tabs" class="tabs" hidden>
-    <button data-tab="live" class="active" data-t="tab.live"></button>
-    <button data-tab="schedule" data-t="tab.schedule"></button>
-    <button data-tab="add" data-t="tab.add"></button>
-    <button data-tab="themes" data-t="tab.themes"></button>
+    <button data-tab="live" class="active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-t="tab.live"></span></button>
+    <button data-tab="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg><span data-t="tab.schedule"></span></button>
+    <button data-tab="add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span data-t="tab.add"></span></button>
+    <button data-tab="themes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span data-t="tab.themes"></span></button>
   </nav>
 
   <div id="toast" class="toast" role="status" hidden></div>
