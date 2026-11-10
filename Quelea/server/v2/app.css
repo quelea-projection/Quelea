@@ -326,6 +326,38 @@ button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 .themes img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--border); }
 .themes span { display: block; padding: 8px 10px; font-size: 13px; font-weight: 600; }
 
+/* ---- Add menu: everything that can be added, as in the app ------------ */
+
+.add-menu { list-style: none; margin: 0 0 12px; padding: 4px; }
+.add-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 8px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: left;
+  color: var(--text);
+}
+.add-option + .add-option, .add-menu li + li .add-option { border-top: 0; }
+.add-option .icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  flex: none;
+}
+.add-option .icon-tile svg { width: 22px; height: 22px; }
+.add-text { flex: 1; min-width: 0; font-weight: 600; }
+.add-text small { display: block; font-weight: normal; font-size: 13px; color: var(--muted); }
+.add-option > svg { color: var(--muted); }
+
 /* ---- The schedule drawer, as in the mobile app ------------------------- */
 
 .scrim {

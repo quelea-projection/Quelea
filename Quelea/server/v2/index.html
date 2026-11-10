@@ -13,7 +13,7 @@
     <button id="menu-button" class="icon-button" data-t-label="menu.open" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
     <button id="back-button" class="icon-button" data-t-label="menu.back" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
     <span id="page-title" class="page-title">Quelea</span>
-    <button id="search-button" class="icon-button app-only" data-page="add" data-t-label="page.add" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
+    <button id="search-button" class="icon-button app-only" data-page="add" data-t-label="page.add" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
     <button id="notices-button" class="icon-button app-only" data-page="notices" data-t-label="page.notices" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg></button>
     <span id="conn" class="conn" data-state="offline" title=""></span>
   </header>
@@ -23,8 +23,6 @@
   <aside id="drawer" class="drawer" aria-hidden="true">
     <div class="drawer-header">
       <h2 data-t="drawer.schedule"></h2>
-      <button class="icon-button" data-page="add" data-open="new-song" data-t-label="song.new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg></button>
-      <button class="icon-button" data-page="media" data-t-label="page.media"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4 2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg></button>
       <button class="icon-button" data-page="themes" data-t-label="page.themes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></button>
     </div>
     <ol id="schedule" class="schedule"></ol>
@@ -86,18 +84,59 @@
       </div>
     </section>
 
+    <!-- Everything that can be added, in one place, as in the app. -->
     <section id="tab-add" class="tab" hidden>
+      <ul class="add-menu card">
+        <li><button class="add-option" data-page="add-song">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></span>
+          <span class="add-text"><span data-t="add.song"></span><small data-t="add.song.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-new-song">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg></span>
+          <span class="add-text"><span data-t="song.new"></span><small data-t="add.newsong.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-bible">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
+          <span class="add-text"><span data-t="add.bibleItem"></span><small data-t="add.bible.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="images">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></span>
+          <span class="add-text"><span data-t="add.image"></span><small data-t="add.media.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="videos">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg></span>
+          <span class="add-text"><span data-t="add.video"></span><small data-t="add.media.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="documents">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg></span>
+          <span class="add-text"><span data-t="add.document"></span><small data-t="add.document.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-web">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></span>
+          <span class="add-text"><span data-t="web.title"></span><small data-t="add.web.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+      </ul>
+    </section>
+
+    <section id="tab-add-song" class="tab" hidden>
       <form id="song-search" class="card">
-        <h2 data-t="add.songs"></h2>
         <div class="row">
           <input id="song-query" type="search" data-t-placeholder="add.songSearch">
           <button type="submit" data-t="add.search"></button>
         </div>
         <ul id="song-results" class="results"></ul>
       </form>
-      <details id="new-song" class="card">
-        <summary><h2 data-t="song.new"></h2></summary>
-        <form id="new-song-form">
+    </section>
+
+    <section id="tab-add-new-song" class="tab" hidden>
+      <form id="new-song-form" class="card">
           <input id="new-song-title" maxlength="200" required data-t-placeholder="song.title">
           <input id="new-song-author" maxlength="200" data-t-placeholder="song.author">
           <textarea id="new-song-lyrics" rows="10" maxlength="20000" required data-t-placeholder="song.lyrics"></textarea>
@@ -107,16 +146,10 @@
             <button type="submit" id="new-song-add" class="primary" data-t="song.saveAdd"></button>
           </div>
         </form>
-      </details>
-      <form id="web-form" class="card">
-        <h2 data-t="web.title"></h2>
-        <div class="row">
-          <input id="web-url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" data-t-placeholder="web.placeholder">
-          <button type="submit" class="primary" data-t="media.add"></button>
-        </div>
-      </form>
+    </section>
+
+    <section id="tab-add-bible" class="tab" hidden>
       <form id="bible-form" class="card">
-        <h2 data-t="add.bible"></h2>
         <select id="bible-translation"></select>
         <div class="row">
           <input id="bible-ref" data-t-placeholder="add.bibleRef" spellcheck="false">
@@ -124,6 +157,15 @@
         </div>
         <div id="bible-preview" class="preview"></div>
         <button id="bible-add" class="primary" data-t="add.add" hidden></button>
+      </form>
+    </section>
+
+    <section id="tab-add-web" class="tab" hidden>
+      <form id="web-form" class="card">
+        <div class="row">
+          <input id="web-url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" data-t-placeholder="web.placeholder">
+          <button type="submit" class="primary" data-t="media.add"></button>
+        </div>
       </form>
     </section>
 

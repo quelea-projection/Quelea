@@ -25,7 +25,22 @@ const TEXTS = {
     'menu.open': 'Schedule',
     'menu.back': 'Back',
     'drawer.schedule': 'Schedule',
-    'page.add': 'Add songs and bible passages',
+    'page.add': 'Add',
+    'page.add-song': 'Song',
+    'page.add-new-song': 'New song',
+    'page.add-bible': 'Bible passage',
+    'page.add-web': 'Web page',
+    'add.song': 'Song',
+    'add.song.sub': 'Search Quelea\'s songs',
+    'add.newsong.sub': 'Write a song that is not there yet',
+    'add.bibleItem': 'Bible passage',
+    'add.bible.sub': 'Choose a translation and a passage',
+    'add.image': 'Image',
+    'add.video': 'Video',
+    'add.media.sub': 'From Quelea\'s library or this device',
+    'add.document': 'PDF or PowerPoint',
+    'add.document.sub': 'Uploaded files or a new one from this device',
+    'add.web.sub': 'Show a page from the internet',
     'page.notices': 'Notices',
     'page.media': 'Images, videos and files',
     'page.themes': 'Themes',
@@ -118,7 +133,22 @@ const TEXTS = {
     'menu.open': 'Gudstjänstordning',
     'menu.back': 'Tillbaka',
     'drawer.schedule': 'Gudstjänstordning',
-    'page.add': 'Lägg till sånger och bibeltext',
+    'page.add': 'Lägg till',
+    'page.add-song': 'Sång',
+    'page.add-new-song': 'Ny sång',
+    'page.add-bible': 'Bibeltext',
+    'page.add-web': 'Webbsida',
+    'add.song': 'Sång',
+    'add.song.sub': 'Sök bland Queleas sånger',
+    'add.newsong.sub': 'Skriv in en sång som inte finns än',
+    'add.bibleItem': 'Bibeltext',
+    'add.bible.sub': 'Välj översättning och bibelställe',
+    'add.image': 'Bild',
+    'add.video': 'Video',
+    'add.media.sub': 'Från Queleas bibliotek eller enheten',
+    'add.document': 'PDF eller PowerPoint',
+    'add.document.sub': 'Uppladdade filer eller en ny från enheten',
+    'add.web.sub': 'Visa en sida från internet',
     'page.notices': 'Meddelanden',
     'page.media': 'Bilder, videor och filer',
     'page.themes': 'Teman',
@@ -590,9 +620,12 @@ function setupNewSong() {
     }));
     if (!song) return;
     $('new-song-form').reset();
-    $('new-song').open = false;
-    if (andAdd) await addToSchedule({ songId: song.id });
-    else toast(t('song.saved'));
+    if (andAdd) {
+      await addToSchedule({ songId: song.id });
+      showTab('live');
+    } else {
+      toast(t('song.saved'));
+    }
   };
 }
 
@@ -735,7 +768,9 @@ async function loadThemes() {
 // Like the mobile app: the live view, the schedule in a drawer, and pages
 // for adding, notices, images and videos, and themes with a back button.
 
-const TAB_LOADERS = { add: loadTranslations, notices: loadNotices, media: loadMedia, themes: loadThemes };
+const TAB_LOADERS = { 'add-bible': loadTranslations, notices: loadNotices, media: loadMedia, themes: loadThemes };
+// Pages opened from the add menu go back to it; the others to the live view.
+const PARENT_PAGE = { 'add-song': 'add', 'add-new-song': 'add', 'add-bible': 'add', 'add-web': 'add', media: 'add' };
 const loadedTabs = new Set();
 let currentPage = 'live';
 
@@ -769,16 +804,16 @@ function closeDrawer() {
 function setupPages() {
   $('menu-button').onclick = openDrawer;
   $('scrim').onclick = closeDrawer;
-  $('back-button').onclick = () => showTab('live');
+  $('back-button').onclick = () => showTab(PARENT_PAGE[currentPage] || 'live');
   document.querySelectorAll('[data-page]').forEach(button => {
     button.onclick = () => {
       closeDrawer();
       showTab(button.dataset.page);
-      if (button.dataset.open) $(button.dataset.open).open = true;
+      if (button.dataset.kind) setMediaKind(button.dataset.kind);
     };
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { closeDrawer(); if (currentPage !== 'live') showTab('live'); }
+    if (event.key === 'Escape') { closeDrawer(); if (currentPage !== 'live') showTab(PARENT_PAGE[currentPage] || 'live'); }
   });
 }
 
