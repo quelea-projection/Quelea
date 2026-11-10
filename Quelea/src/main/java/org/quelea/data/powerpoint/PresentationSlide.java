@@ -24,6 +24,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
@@ -47,8 +49,24 @@ public class PresentationSlide {
     private WritableImage image;
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
-    private static double scaleWidth = 0;
-    private static double scaleHeight = 0;
+    /**
+     * The scale of each presentation. Rendering the first slide resizes the
+     * presentation's page to {@link #HEIGHT} pixels high, so the scale must be
+     * remembered for its other slides - but per presentation, otherwise a deck
+     * that is 1080 high already would use the previous deck's scale (or 0 =
+     * blank slides if it is the first one loaded).
+     */
+    private static final Map<SlideShow<?, ?>, Double> SCALES = new WeakHashMap<>();
+
+    /**
+     * Create a slide from an image rendered elsewhere (by PowerPoint itself,
+     * see {@link RenderedPresentation}).
+     *
+     * @param image the slide.
+     */
+    public PresentationSlide(WritableImage image) {
+        this.image = image;
+    }
 
     /**
      * Create a new presentation slide.
@@ -57,18 +75,12 @@ public class PresentationSlide {
      */
     public PresentationSlide(Slide slide, int numSlide) {
         SlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
+        double scale = scaleFor(slideshow);
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
+            g2.setTransform(AffineTransform.getScaleInstance(scale, scale));
             slide.draw(g2);
         } catch (Exception ex) {
             if (QueleaProperties.get().getUsePP()) {
@@ -91,18 +103,12 @@ public class PresentationSlide {
      */
     public PresentationSlide(XSLFSlide slide, int numSlide) {
         org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
+        double scale = scaleFor(slideshow);
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
+            g2.setTransform(AffineTransform.getScaleInstance(scale, scale));
             slide.draw(g2);
         } catch (NullPointerException ex) {
             if (QueleaProperties.get().getUsePP()) {
@@ -114,6 +120,31 @@ public class PresentationSlide {
         }
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
+    }
+
+    /**
+     * Get the scale for this presentation, resizing its page to
+     * {@link #HEIGHT} pixels high the first time.
+     *
+     * @param slideshow the presentation.
+     * @return the factor to draw its shapes with.
+     */
+    private static double scaleFor(SlideShow<?, ?> slideshow) {
+        synchronized (SCALES) {
+            Double scale = SCALES.get(slideshow);
+            if (scale == null) {
+                Dimension size = slideshow.getPageSize();
+                if (Math.abs(size.getHeight() - HEIGHT) > 0.1) {
+                    int adjustWidth = (int) ((HEIGHT / size.getHeight()) * size.getWidth());
+                    scale = HEIGHT / size.getHeight();
+                    slideshow.setPageSize(new Dimension(adjustWidth, HEIGHT));
+                } else {
+                    scale = 1.0;
+                }
+                SCALES.put(slideshow, scale);
+            }
+            return scale;
+        }
     }
 
     private void draw(Graphics2D graphics, int width, int height, int num) {

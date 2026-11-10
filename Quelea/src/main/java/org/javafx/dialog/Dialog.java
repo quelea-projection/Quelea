@@ -26,7 +26,7 @@ import javafx.stage.Window;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.presentation.PowerPointHandler;
+import org.quelea.windows.presentation.powerpoint.PowerPointService;
 
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
@@ -552,10 +552,10 @@ public class Dialog extends Stage {
                 .setTitle(LabelGrabber.INSTANCE.getLabel("focus.switcher.title"))
                 .setMessage(LabelGrabber.INSTANCE.getLabel("focus.switcher.message"))
                 .addApplyButton(LabelGrabber.INSTANCE.getLabel("focus.quelea"), (ActionEvent event) -> {
-                    PowerPointHandler.focusQuelea();
+                    QueleaApp.get().getMainWindow().toFront();
                 })
                 .addApplyButton(LabelGrabber.INSTANCE.getLabel("focus.pp"), (ActionEvent event) -> {
-                    PowerPointHandler.focusPowerPoint();
+                    PowerPointService.get().focus();
                 });
     }
 }

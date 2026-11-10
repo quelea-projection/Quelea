@@ -200,6 +200,20 @@ tasks.register('runPackr', JavaExec) {
     classpath = files('packr.jar')
     mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
+
+    doLast {
+        // macOS shows this text when Quelea first asks to control PowerPoint
+        // (Automation permission); without it the prompt has no explanation.
+        def plist = file("out-mac/Quelea.app/Contents/Info.plist")
+        if (plist.exists() && !plist.text.contains("NSAppleEventsUsageDescription")) {
+            def text = plist.text
+            int end = text.lastIndexOf("</dict>")
+            plist.text = text.substring(0, end) +
+                    "\t<key>NSAppleEventsUsageDescription</key>\n" +
+                    "\t<string>Quelea controls Microsoft PowerPoint to run presentations in its slide show.</string>\n" +
+                    text.substring(end)
+        }
+    }
 }
 
 tasks.register('zipMacPackr', Zip) {
@@ -294,6 +308,8 @@ test {
     failOnNoDiscoveredTests = false
     // Same JVM options as the application, so video code under test behaves as it does at runtime.
     jvmArgs application.applicationDefaultJvmArgs
+    // Opt-in tests that drive real applications, e.g. -Dquelea.test.powerpoint=true
+    systemProperties System.properties.findAll { it.key.toString().startsWith('quelea.test.') }
     testLogging {
         events 'passed', 'skipped', 'failed'
         exceptionFormat 'full'

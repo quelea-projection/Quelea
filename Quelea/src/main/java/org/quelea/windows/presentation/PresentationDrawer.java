@@ -19,18 +19,36 @@ package org.quelea.windows.presentation;
 
 import javafx.scene.image.ImageView;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.QueleaApp;
 
 /**
+ * Draws presentations while PowerPoint shows them. The projection shows the
+ * slide itself (Quelea's own rendering) until the PowerPoint show is up on
+ * the projector screen; then it is left empty, and the projection window is
+ * transparent, so PowerPoint shows through while Quelea's logo, black screen
+ * and notices can still be drawn over it.
  *
  * @author Arvid
  */
 public class PresentationDrawer extends DisplayableDrawer {
 
+    private final ImageDrawer slideDrawer = new ImageDrawer();
+    private boolean showSlides = true;
 
     public PresentationDrawer(PresentationControls controlPanel) {
+    }
+
+    /**
+     * @param showSlides true to draw the slides on the projection, false to
+     * leave it empty for the PowerPoint show underneath.
+     */
+    public void setShowSlides(boolean showSlides) {
+        this.showSlides = showSlides;
     }
 
     @Override
@@ -40,7 +58,13 @@ public class PresentationDrawer extends DisplayableDrawer {
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
         }
-        else {
+        else if(!showSlides && QueleaApp.get().getProjectionWindow() != null
+                && getCanvas() == QueleaApp.get().getProjectionWindow().getCanvas()) {
+            getCanvas().clearNonPermanentChildren();
+        }
+        else if(displayable instanceof ImageDisplayable) {
+            slideDrawer.setCanvas(getCanvas());
+            slideDrawer.draw(displayable);
         }
     }
 

@@ -36,8 +36,12 @@ import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.*;
+import org.quelea.windows.presentation.powerpoint.PowerPointException;
+import org.quelea.windows.presentation.powerpoint.PowerPointService;
+import org.quelea.windows.presentation.powerpoint.SlideState;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
@@ -55,6 +59,10 @@ public class PresentationPanel extends AbstractPanel {
     private PresentationControls controlPanel;
     private Timeline loopTimeline;
     private final boolean usePowerPoint;
+    /** True while the selection is changed to follow PowerPoint, so it is not sent back. */
+    private boolean syncingFromPowerPoint;
+    /** True while the PowerPoint show is up on the projector screen. */
+    private boolean powerPointCovering;
 
     /**
      * Create a new presentation panel.
@@ -77,9 +85,10 @@ public class PresentationPanel extends AbstractPanel {
         presentationPreview.addSlideChangedListener(newSlide -> {
             if (live) {
                 LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                if (lp.getDisplayable() instanceof PresentationDisplayable) {
-                    if (!PowerPointHandler.getCurrentSlide().equals(String.valueOf(presentationPreview.getSelectedIndex()))) {
-                        PowerPointHandler.gotoSlide(presentationPreview.getSelectedIndex());
+                if (usePowerPoint && !syncingFromPowerPoint && lp.getDisplayable() instanceof PresentationDisplayable) {
+                    int index = presentationPreview.getSelectedIndex();
+                    if (index > 0 && index != PowerPointService.get().getLastState().getSlide()) {
+                        PowerPointService.get().gotoSlide(index);
                     }
                 }
                 if (newSlide != null && displayable != null) {
@@ -97,12 +106,12 @@ public class PresentationPanel extends AbstractPanel {
                         pres.gotoSlide(presentationPreview.getSelectedIndex() - 1);
                     }
                 }
-                if (QueleaProperties.get().getUsePP() && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                    lp.setBlacked(false);
-                }
             }
         });
         presentationPreview.select(0);
+        if (usePowerPoint) {
+            PowerPointService.get().addStateListener(this::powerPointStateChanged);
+        }
 
         presentationPreview.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
             if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN) || t.getCode().equals(KeyCode.RIGHT)) {
@@ -122,47 +131,86 @@ public class PresentationPanel extends AbstractPanel {
         presentationPreview.requestFocus();
     }
 
-    public void buildLoopTimeline() {
-        loopTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(0),
-                        actionEvent -> {
-                            if (containerPanel instanceof LivePanel) {
-                                LivePanel livePanel = ((LivePanel) containerPanel);
-                                if (livePanel.isLoopSelected()) {
-                                    if (QueleaProperties.get().getUsePP() && livePanel.getDisplayable() instanceof PresentationDisplayable) {
-                                        String result = PowerPointHandler.gotoNext();
-                                        if (result.contains("not running")) {
-                                            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
-                                            livePanel.stopLoop();
-                                        }
-                                    } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
-                                        presentationPreview.advanceSlide(true);
-                                    } else {
-                                        if (livePanel.getIndex() != livePanel.getLength()) {
-                                            livePanel.advance();
-                                        } else {
-                                            livePanel.selectFirstLyric();
-                                        }
-                                    }
-                                    LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                                    if (lp.getDisplayable() instanceof PresentationDisplayable) {
-                                        String result = PowerPointHandler.getCurrentSlide();
-                                        if (!result.contains("not running") && !result.isEmpty()) {
-                                            int i = Integer.parseInt(result);
-                                            presentationPreview.select(i, false);
-                                        }
-                                    }
-                                    if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                                        lp.setBlacked(false);
-                                    }
-                                }
-                            }
-                        }
-                ),
-                new KeyFrame(Duration.seconds(10))
-        );
-        loopTimeline.setCycleCount(Animation.INDEFINITE);
+    /**
+     * Follow what PowerPoint shows: select the slide it is on and mirror its
+     * black screen on the black button. Called on the FX thread.
+     *
+     * @param state the new PowerPoint state.
+     */
+    private void powerPointStateChanged(SlideState state) {
+        if (!live) {
+            return;
+        }
+        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+        if (!(lp.getDisplayable() instanceof PresentationDisplayable)) {
+            return;
+        }
+        if (powerPointCovering && !state.isShowing()) {
+            setPowerPointCovering(false); // PowerPoint closed: show the slides again.
+        }
+        int slide = state.getSlide();
+        if (slide > 0 && slide <= presentationPreview.getSlideCount() && slide != presentationPreview.getSelectedIndex()) {
+            syncingFromPowerPoint = true;
+            try {
+                presentationPreview.select(slide, true);
+            } finally {
+                syncingFromPowerPoint = false;
+            }
+        }
+        // On macOS Quelea's own black screen covers the show and PowerPoint is
+        // never blacked, so only Windows follows PowerPoint's black screen.
+        // PAUSED is what PowerPoint reports while it is not in front.
+        if (!Utils.isMac() && (state.getMode() == SlideState.Mode.RUNNING || state.getMode() == SlideState.Mode.PAUSED
+                || state.getMode() == SlideState.Mode.BLACK)) {
+            if (lp.getBlacked() != state.isBlack()) {
+                lp.setBlacked(state.isBlack());
+            }
+        }
+    }
 
+    /**
+     * One step of loop mode: next slide (wrapping around) or next item.
+     */
+    private void loopTick() {
+        if (!(containerPanel instanceof LivePanel)) {
+            return;
+        }
+        LivePanel livePanel = ((LivePanel) containerPanel);
+        if (!livePanel.isLoopSelected()) {
+            return;
+        }
+        if (usePowerPoint && livePanel.getDisplayable() instanceof PresentationDisplayable) {
+            PowerPointService.get().nextWrapping().whenComplete((state, failure) -> {
+                PowerPointException ex = failure == null ? null : PowerPointService.unwrap(failure);
+                if (ex != null && ex.getKind() == PowerPointException.Kind.NOT_RUNNING) {
+                    Platform.runLater(() -> {
+                        Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
+                        livePanel.stopLoop();
+                    });
+                }
+            });
+        } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
+            presentationPreview.advanceSlide(true);
+        } else {
+            if (livePanel.getIndex() != livePanel.getLength()) {
+                livePanel.advance();
+            } else {
+                livePanel.selectFirstLyric();
+            }
+        }
+    }
+
+    private Timeline createLoopTimeline(int seconds) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0), actionEvent -> loopTick()),
+                new KeyFrame(Duration.seconds(seconds))
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        return timeline;
+    }
+
+    public void buildLoopTimeline() {
+        loopTimeline = createLoopTimeline(10);
         loopTimeline.play();
 
         QueleaApp.get()
@@ -177,45 +225,7 @@ public class PresentationPanel extends AbstractPanel {
                             return;
                         }
                         loopTimeline.stop();
-                        loopTimeline = new Timeline(
-                                new KeyFrame(Duration.seconds(0),
-                                        actionEvent -> {
-                                            if (containerPanel instanceof LivePanel) {
-                                                LivePanel livePanel = ((LivePanel) containerPanel);
-                                                if (livePanel.isLoopSelected()) {
-                                                    if (QueleaProperties.get().getUsePP() && livePanel.getDisplayable() instanceof PresentationDisplayable) {
-                                                        String result = PowerPointHandler.gotoNext();
-                                                        if (result.contains("not running")) {
-                                                            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("set.loop.manually.title"), LabelGrabber.INSTANCE.getLabel("set.loop.manually.message"));
-                                                            livePanel.stopLoop();
-                                                        }
-                                                    } else if (livePanel.getDisplayable() instanceof PresentationDisplayable) {
-                                                        presentationPreview.advanceSlide(true);
-                                                    } else {
-                                                        if (livePanel.getIndex() != livePanel.getLength()) {
-                                                            livePanel.advance();
-                                                        } else {
-                                                            livePanel.selectFirstLyric();
-                                                        }
-                                                    }
-                                                    LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-                                                    if (lp.getDisplayable() instanceof PresentationDisplayable) {
-                                                        String result = PowerPointHandler.getCurrentSlide();
-                                                        if (!result.contains("not running") && !result.isEmpty()) {
-                                                            int i = Integer.parseInt(result);
-                                                            presentationPreview.select(i, false);
-                                                        }
-                                                    }
-                                                    if (lp.getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP() && !QueleaProperties.get().getPPPath().contains("PPTVIEW") && lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                                                        lp.setBlacked(false);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                ),
-                                new KeyFrame(Duration.seconds(newTime))
-                        );
-                        loopTimeline.setCycleCount(Animation.INDEFINITE);
+                        loopTimeline = createLoopTimeline(newTime);
                         loopTimeline.play();
                     }
                 })
@@ -266,6 +276,9 @@ public class PresentationPanel extends AbstractPanel {
             return;
         }
         this.displayable = displayable;
+        if (usePowerPoint && live) {
+            setPowerPointCovering(false); // Until PowerPoint shows this one.
+        }
         if (displayable == null) {
             presentationPreview.clear();
             return;
@@ -331,13 +344,8 @@ public class PresentationPanel extends AbstractPanel {
     }
 
     public void advance() {
-        if (QueleaProperties.get().getUsePP()) {
-            PowerPointHandler.gotoNext();
-            String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.isEmpty()) {
-                int i = Integer.parseInt(result);
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
-            }
+        if (usePowerPoint) {
+            PowerPointService.get().next(); // The state listener follows the slide.
         } else if (displayable.getOOPresentation() != null) {
             displayable.getOOPresentation().goForward();
         } else {
@@ -346,17 +354,38 @@ public class PresentationPanel extends AbstractPanel {
     }
 
     public void previous() {
-        if (QueleaProperties.get().getUsePP()) {
-            PowerPointHandler.gotoPrevious();
-            String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.isEmpty()) {
-                int i = Integer.parseInt(result);
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
-            }
+        if (usePowerPoint) {
+            PowerPointService.get().previous(); // The state listener follows the slide.
         } else if (displayable.getOOPresentation() != null) {
             displayable.getOOPresentation().goBack();
         }else {
             presentationPreview.previousSlide();
+        }
+    }
+
+    /**
+     * Let the PowerPoint show take over the projector, or take it back.
+     * While it covers the projector, the projection window is left empty
+     * (it is transparent) and kept above the show (macOS), so Quelea's logo,
+     * black screen and notices still appear over it. Otherwise the projection
+     * shows the slides itself, e.g. while PowerPoint starts, or when the show
+     * could not be put on the projector screen.
+     *
+     * @param covering true when the show is on the projector screen.
+     */
+    public void setPowerPointCovering(boolean covering) {
+        if (!usePowerPoint || !(drawer instanceof PresentationDrawer)) {
+            return;
+        }
+        powerPointCovering = covering;
+        ((PresentationDrawer) drawer).setShowSlides(!covering);
+        DisplayStage projection = QueleaApp.get().getProjectionWindow();
+        if (projection != null && Utils.isMac()) {
+            projection.setAlwaysOnTop(covering);
+        }
+        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+        if (live && displayable != null && lp.getDisplayable() == displayable) {
+            updateCanvas(); // Not when something else has gone live meanwhile.
         }
     }
 
