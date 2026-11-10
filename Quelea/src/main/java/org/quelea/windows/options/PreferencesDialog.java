@@ -47,6 +47,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import org.quelea.server.ServerManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -122,6 +123,14 @@ public class PreferencesDialog extends Stage {
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
+            if (ServerManager.INSTANCE.applySettings()) {
+                optionsServerSettingsPanel.getLyricsPreference().refresh();
+                optionsServerSettingsPanel.getRemotePreference().refresh();
+            }
+            QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel()
+                    .setVideoTabVisible(QueleaProperties.get().getDisplayVideoTab());
+            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getPresentationPanel().applyPowerPointSetting();
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().applyPowerPointSetting();
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
             // Show any changed logo settings straight away

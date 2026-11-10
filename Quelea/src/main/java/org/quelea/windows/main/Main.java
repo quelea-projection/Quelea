@@ -27,9 +27,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
-import org.quelea.server.AutoDetectServer;
-import org.quelea.server.MobileLyricsServer;
-import org.quelea.server.RemoteControlServer;
+import org.quelea.server.ServerManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.GStreamerInitState;
@@ -134,44 +132,7 @@ public final class Main extends Application {
                 final boolean lyricsHidden = !QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0);
                 final boolean stageHidden = !QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitorNumber || stageScreen < 0);
 
-                if (QueleaProperties.get().getUseMobLyrics()) {
-                    LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
-                    try {
-                        MobileLyricsServer mls = new MobileLyricsServer(QueleaProperties.get().getMobLyricsPort());
-                        mls.start();
-                        QueleaApp.get().setMobileLyricsServer(mls);
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.INFO, "Couldn't create lyric server", ex);
-                    }
-                } else {
-                    LOGGER.log(Level.INFO, "Mobile lyrics disabled");
-                }
-
-                if (QueleaProperties.get().getUseRemoteControl()) {
-                    LOGGER.log(Level.INFO, "Starting remote control server on {0}", QueleaProperties.get().getRemoteControlPort());
-                    try {
-                        RemoteControlServer rcs = new RemoteControlServer(QueleaProperties.get().getRemoteControlPort());
-                        rcs.start();
-                        QueleaApp.get().setRemoteControlServer(rcs);
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.INFO, "Couldn't create remote control server", ex);
-                    }
-                } else {
-                    LOGGER.log(Level.INFO, "Remote control disabled");
-                }
-
-                if (QueleaProperties.get().getUseMobLyrics() || QueleaProperties.get().getUseRemoteControl()) {
-                    LOGGER.log(Level.INFO, "Starting auto-detection server on {0}", QueleaProperties.get().getAutoDetectPort());
-                    try {
-                        AutoDetectServer ads = new AutoDetectServer(QueleaProperties.get().getAutoDetectPort());
-                        ads.start();
-                        QueleaApp.get().setAutoDetectServer(ads);
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.INFO, "Couldn't create auto-detect server", ex);
-                    }
-                } else {
-                    LOGGER.log(Level.INFO, "Auto-detect servers disabled");
-                }
+                ServerManager.INSTANCE.applySettings();
 
                 if (QueleaProperties.get().getWebProxyHost() != null && QueleaProperties.get().getWebProxyPort() != null && QueleaProperties.get().getWebProxyUser() != null && QueleaProperties.get().getWebProxyPassword() != null) {
                     System.setProperty("http.proxyHost", QueleaProperties.get().getWebProxyHost());

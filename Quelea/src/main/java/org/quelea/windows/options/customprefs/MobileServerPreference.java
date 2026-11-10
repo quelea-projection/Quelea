@@ -141,6 +141,20 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
         node.setAlignment(Pos.CENTER_LEFT);
     }
 
+    /**
+     * Rebuild the URL and QR code after the server has been started, stopped
+     * or moved to another port.
+     */
+    public void refresh() {
+        urlMLCache = null;
+        urlRCCache = null;
+        qrImage = null;
+        if (node != null) {
+            node.getChildren().clear();
+            layoutParts();
+        }
+    }
+
     private Image getQRImage() {
         if (qrImage == null) {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();

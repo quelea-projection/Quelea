@@ -58,7 +58,8 @@ public class PresentationPanel extends AbstractPanel {
     private LivePreviewPanel containerPanel;
     private PresentationControls controlPanel;
     private Timeline loopTimeline;
-    private final boolean usePowerPoint;
+    private boolean usePowerPoint;
+    private boolean listeningToPowerPoint;
     /** True while the selection is changed to follow PowerPoint, so it is not sent back. */
     private boolean syncingFromPowerPoint;
     /** True while the PowerPoint show is up on the projector screen. */
@@ -70,15 +71,7 @@ public class PresentationPanel extends AbstractPanel {
      * @param containerPanel the panel to create.
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
-        usePowerPoint = QueleaProperties.get().getUsePP();
-        if (usePowerPoint) {
-            this.controlPanel = new PresentationControls();
-            drawer = new PresentationDrawer(controlPanel);
-            BorderPane.setMargin(controlPanel, new Insets(30));
-            setBottom(controlPanel);
-            setMinWidth(50);
-            setMinHeight(50);
-        }
+        applyPowerPointSetting();
         this.containerPanel = containerPanel;
         BorderPane mainPanel = new BorderPane();
         presentationPreview = new PresentationPreview();
@@ -109,9 +102,6 @@ public class PresentationPanel extends AbstractPanel {
             }
         });
         presentationPreview.select(0);
-        if (usePowerPoint) {
-            PowerPointService.get().addStateListener(this::powerPointStateChanged);
-        }
 
         presentationPreview.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
             if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN) || t.getCode().equals(KeyCode.RIGHT)) {
@@ -138,7 +128,8 @@ public class PresentationPanel extends AbstractPanel {
      * @param state the new PowerPoint state.
      */
     private void powerPointStateChanged(SlideState state) {
-        if (!live) {
+        // PowerPoint may have been turned off in the options since
+        if (!live || !usePowerPoint) {
             return;
         }
         LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
@@ -230,6 +221,36 @@ public class PresentationPanel extends AbstractPanel {
                     }
                 })
                 );
+    }
+
+    /**
+     * Switch between PowerPoint control and Quelea's own slide drawing to
+     * match the current setting, so changing it needs no restart.
+     */
+    public final void applyPowerPointSetting() {
+        usePowerPoint = QueleaProperties.get().getUsePP();
+        if (usePowerPoint && !listeningToPowerPoint) {
+            // Only once, and only when PowerPoint is used at all
+            PowerPointService.get().addStateListener(this::powerPointStateChanged);
+            listeningToPowerPoint = true;
+        }
+        if (usePowerPoint == (controlPanel != null)) {
+            return;
+        }
+        if (usePowerPoint) {
+            controlPanel = new PresentationControls();
+            drawer = new PresentationDrawer(controlPanel);
+            BorderPane.setMargin(controlPanel, new Insets(30));
+            setBottom(controlPanel);
+            setMinWidth(50);
+            setMinHeight(50);
+        } else {
+            setBottom(null);
+            controlPanel = null;
+            drawer = new ImageDrawer();
+            setMinWidth(USE_COMPUTED_SIZE);
+            setMinHeight(USE_COMPUTED_SIZE);
+        }
     }
 
     private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {

@@ -272,26 +272,14 @@ public class PreferenceStorageHandler implements StorageHandler {
                     QueleaProperties.get().setProperty(breadcrumb, pos);
                 }
                 break;
-            case QueleaPropertyKeys.mobLyricsPortKey:
-            case QueleaPropertyKeys.remoteControlPortKey:
             case QueleaPropertyKeys.remoteControlPasswordKey:
-            case QueleaPropertyKeys.useRemoteControlKey:
-            case QueleaPropertyKeys.useMobLyricsKey:
-                if (QueleaProperties.get().getProperty(breadcrumb) != null && !QueleaProperties.get().getProperty(breadcrumb).equals(object.toString())) {
-                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
-                }
+                // Servers are restarted to match by PreferencesDialog, no restart needed
                 if (breadcrumb.equals(QueleaPropertyKeys.remoteControlPasswordKey) && object.toString().trim().isEmpty()) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("password.empty.label"), LabelGrabber.INSTANCE.getLabel("password.empty.message"), QueleaApp.get().getMainWindow());
                     QueleaProperties.get().setProperty(breadcrumb, "quelea");
                 } else {
                     QueleaProperties.get().setProperty(breadcrumb, object.toString());
                 }
-                break;
-            case QueleaPropertyKeys.usePpKey:
-                if (QueleaProperties.get().getUsePP() != Boolean.parseBoolean(object.toString())) {
-                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
-                }
-                QueleaProperties.get().setProperty(breadcrumb, object.toString());
                 break;
             case QueleaPropertyKeys.dbSongPreviewKey:
                 if (object.toString().equals(LabelGrabber.INSTANCE.getLabel("db.song.preview.label.databasepreview"))) {
