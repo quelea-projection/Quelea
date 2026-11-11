@@ -41,7 +41,8 @@ public sealed interface RemoteEvent {
      * @param itemType the item type, see {@link ItemTypes}.
      * @param sectionCount the number of sections or slides.
      */
-    record LiveItemChanged(String itemId, String title, String itemType, int sectionCount) implements RemoteEvent {
+    record LiveItemChanged(String itemId, String title, String itemType, int sectionCount, boolean canClear)
+            implements RemoteEvent {
 
         @Override
         public String type() {

@@ -32,6 +32,7 @@ import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.server.v2.DeviceRegistry;
 import org.quelea.server.v2.PairingService;
+import org.quelea.windows.options.customprefs.RemotePairingRequestDialog;
 import org.quelea.server.v2.RemoteAnnouncer;
 import org.quelea.server.v2.LanAddress;
 import java.util.Optional;
@@ -364,15 +365,16 @@ public final class Main extends Application {
             try {
                 RemoteCore core = RemoteCore.install(window);
                 DeviceRegistry devices = new DeviceRegistry(QueleaProperties.get().getRemoteV2DevicesFile().toPath());
-                PairingService pairing = new PairingService(devices,
-                        () -> QueleaProperties.get().getRemoteControlPassword(),
-                        () -> QueleaProperties.get().getRemoteV2AllowPassword());
+                PairingService pairing = new PairingService(devices);
                 RemoteApiServer server = new RemoteApiServer(
                         new RemoteApiServer.Config(port, QueleaProperties.get().getUseMobLyrics(),
                                 QueleaProperties.VERSION.getVersionString(), java.nio.file.Path.of("server", "v2")),
                         core.control(), core.bus(), devices, pairing);
                 server.start();
                 QueleaApp.get().setRemoteV2Server(server);
+                // A device asking to pair: ask in Quelea.
+                pairing.addRequestListener(request -> Platform.runLater(
+                        () -> RemotePairingRequestDialog.ask(window, pairing, request)));
                 announceRemoteV2(server);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Couldn't start remote control v2 server", ex);

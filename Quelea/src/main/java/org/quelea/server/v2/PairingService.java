@@ -23,26 +23,34 @@ import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
- * Lets new devices pair, with a short code shown in Quelea or with the
- * remote control password.
+ * Lets new devices pair: with a short code shown in Quelea, or by asking and
+ * being allowed in Quelea. The remote control password does not pair: it is
+ * often widely known, and gives control without anyone at Quelea seeing who
+ * connects.
  * <p>
  * A code is six characters, works once and expires after
  * {@link #CODE_LIFETIME}. Five wrong codes in a row close pairing until it is
- * opened again in Quelea, so a code cannot be guessed. Five wrong passwords
- * block password pairing for {@link #PASSWORD_LOCKOUT}.
+ * opened again in Quelea, so a code cannot be guessed.
+ * <p>
+ * A request waits for an answer in Quelea for {@link #REQUEST_LIFETIME}.
+ * Only one request waits at a time, so a device cannot fill the screen
+ * with them, and an address whose request was denied must wait
+ * {@link #DENIED_LOCKOUT} before it asks again.
  */
 public final class PairingService {
 
     public static final Duration CODE_LIFETIME = Duration.ofMinutes(2);
-    public static final Duration PASSWORD_LOCKOUT = Duration.ofMinutes(1);
+    public static final Duration REQUEST_LIFETIME = Duration.ofMinutes(1);
+    public static final Duration DENIED_LOCKOUT = Duration.ofMinutes(2);
     static final int MAX_FAILURES = 5;
     /**
      * No 0/O, 1/I/L: the code is read off a screen and typed.
@@ -59,7 +67,7 @@ public final class PairingService {
          */
         CLOSED,
         /**
-         * The code or password is wrong.
+         * The code is wrong.
          */
         WRONG,
         /**
@@ -67,9 +75,9 @@ public final class PairingService {
          */
         LOCKED,
         /**
-         * Pairing with the password is turned off.
+         * Another device's request is already waiting for an answer.
          */
-        PASSWORD_DISABLED
+        BUSY
     }
 
     /**
@@ -99,33 +107,60 @@ public final class PairingService {
     public record OpenCode(String code, Scope scope, Instant expires) {
     }
 
+    /**
+     * A device asking to pair, waiting for an answer in Quelea.
+     *
+     * @param id the request's id; the device asks for the answer with it.
+     * @param name the device's name.
+     * @param platform the device's platform, may be null.
+     * @param address the address the request came from, may be null.
+     * @param expires when the request is dropped if nobody answers.
+     */
+    public record Request(String id, String name, String platform, String address, Instant expires) {
+    }
+
+    /**
+     * Where a request stands.
+     */
+    public enum RequestState {
+        PENDING, APPROVED, DENIED, EXPIRED
+    }
+
+    /**
+     * The answer to a request.
+     *
+     * @param state where it stands.
+     * @param paired the new device and its token, only when approved.
+     */
+    public record RequestStatus(RequestState state, DeviceRegistry.Paired paired) {
+    }
+
     private final DeviceRegistry registry;
     private final Clock clock;
     private final SecureRandom random;
-    private final Supplier<String> password;
-    private final BooleanSupplier passwordAllowed;
     private final List<Consumer<DeviceRegistry.Paired>> pairedListeners = new CopyOnWriteArrayList<>();
+    private final List<Consumer<Request>> requestListeners = new CopyOnWriteArrayList<>();
 
     // Guarded by this.
     private OpenCode open;
     private int codeFailures;
-    private int passwordFailures;
-    private Instant passwordLockedUntil = Instant.MIN;
+    private Request pending;
+    /**
+     * Answers not yet picked up by their device, by request id.
+     */
+    private final Map<String, RequestStatus> answers = new HashMap<>();
+    private final Map<String, Instant> answerExpiry = new HashMap<>();
+    private final Map<String, Instant> deniedUntil = new HashMap<>();
 
     /**
      * @param registry where paired devices are stored.
-     * @param password the current remote control password.
-     * @param passwordAllowed whether pairing with the password is on.
      */
-    public PairingService(DeviceRegistry registry, Supplier<String> password, BooleanSupplier passwordAllowed) {
-        this(registry, password, passwordAllowed, Clock.systemUTC(), new SecureRandom());
+    public PairingService(DeviceRegistry registry) {
+        this(registry, Clock.systemUTC(), new SecureRandom());
     }
 
-    PairingService(DeviceRegistry registry, Supplier<String> password, BooleanSupplier passwordAllowed, Clock clock,
-            SecureRandom random) {
+    PairingService(DeviceRegistry registry, Clock clock, SecureRandom random) {
         this.registry = registry;
-        this.password = password;
-        this.passwordAllowed = passwordAllowed;
         this.clock = clock;
         this.random = random;
     }
@@ -194,38 +229,156 @@ public final class PairingService {
     }
 
     /**
-     * Pair with the remote control password. Gives full control, like the
-     * password does in v1.
+     * Ask to pair. The request waits until it is allowed or denied in
+     * Quelea (see {@link #addRequestListener}) or expires; the device asks
+     * for the answer with {@link #requestStatus}.
      *
-     * @param given the password the user typed.
      * @param name the device's name.
      * @param platform the device's platform, may be null.
-     * @return the new device and its token.
-     * @throws PairingException if the password is wrong, password pairing
-     * is off or temporarily blocked.
+     * @param address the address the request came from, may be null.
+     * @return the request.
+     * @throws PairingException if another request is waiting, or this
+     * address was denied a moment ago.
      */
-    public DeviceRegistry.Paired pairWithPassword(String given, String name, String platform) {
+    public Request request(String name, String platform, String address) {
+        Request request;
         synchronized (this) {
-            if (!passwordAllowed.getAsBoolean()) {
-                throw new PairingException(Failure.PASSWORD_DISABLED, "Pairing with the password is turned off");
-            }
             Instant now = clock.instant();
-            if (now.isBefore(passwordLockedUntil)) {
-                throw new PairingException(Failure.LOCKED, "Too many wrong passwords; try again in a minute");
+            prune(now);
+            if (address != null && deniedUntil.containsKey(address)) {
+                throw new PairingException(Failure.LOCKED, "The request was denied; try again in a few minutes");
             }
-            String expected = password.get();
-            if (given == null || expected == null || expected.isEmpty() || !constantTimeEquals(given, expected)) {
-                passwordFailures++;
-                if (passwordFailures >= MAX_FAILURES) {
-                    passwordFailures = 0;
-                    passwordLockedUntil = now.plus(PASSWORD_LOCKOUT);
-                    throw new PairingException(Failure.LOCKED, "Too many wrong passwords; try again in a minute");
-                }
-                throw new PairingException(Failure.WRONG, "Wrong password");
+            if (pending != null) {
+                throw new PairingException(Failure.BUSY, "Another device is waiting for an answer; try again soon");
             }
-            passwordFailures = 0;
+            byte[] bytes = new byte[18];
+            random.nextBytes(bytes);
+            String id = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+            request = new Request(id, name, platform, address, now.plus(REQUEST_LIFETIME));
+            pending = request;
         }
-        return paired(registry.pair(name, platform, Scope.CONTROL));
+        requestListeners.forEach(listener -> listener.accept(request));
+        return request;
+    }
+
+    /**
+     * Allow a request: the device pairs.
+     *
+     * @param id the request's id.
+     * @param scope what the device may do.
+     * @return the new device, or null if the request is no longer waiting.
+     */
+    public DeviceRegistry.Paired approve(String id, Scope scope) {
+        Request request;
+        synchronized (this) {
+            request = take(id);
+            if (request == null) {
+                return null;
+            }
+        }
+        DeviceRegistry.Paired paired = paired(registry.pair(request.name(), request.platform(), scope));
+        synchronized (this) {
+            answer(id, new RequestStatus(RequestState.APPROVED, paired));
+        }
+        return paired;
+    }
+
+    /**
+     * Deny a request. The address it came from cannot ask again for
+     * {@link #DENIED_LOCKOUT}.
+     *
+     * @param id the request's id.
+     */
+    public synchronized void deny(String id) {
+        Request request = take(id);
+        if (request == null) {
+            return;
+        }
+        if (request.address() != null) {
+            deniedUntil.put(request.address(), clock.instant().plus(DENIED_LOCKOUT));
+        }
+        answer(id, new RequestStatus(RequestState.DENIED, null));
+    }
+
+    /**
+     * Withdraw a request, for example when the device stops waiting.
+     *
+     * @param id the request's id.
+     */
+    public synchronized void cancel(String id) {
+        take(id);
+        answers.remove(id);
+        answerExpiry.remove(id);
+    }
+
+    /**
+     * Where a request stands. An approval is handed out once: the token is
+     * not kept.
+     *
+     * @param id the request's id.
+     * @return the answer; unknown ids are {@link RequestState#EXPIRED}.
+     */
+    public synchronized RequestStatus requestStatus(String id) {
+        prune(clock.instant());
+        if (pending != null && pending.id().equals(id)) {
+            return new RequestStatus(RequestState.PENDING, null);
+        }
+        answerExpiry.remove(id);
+        RequestStatus answer = answers.remove(id);
+        return answer == null ? new RequestStatus(RequestState.EXPIRED, null) : answer;
+    }
+
+    /**
+     * @return the request waiting for an answer, or null.
+     */
+    public synchronized Request pendingRequest() {
+        prune(clock.instant());
+        return pending;
+    }
+
+    /**
+     * @param listener called, on the requesting thread, when a device asks
+     * to pair; Quelea shows the question.
+     */
+    public void addRequestListener(Consumer<Request> listener) {
+        requestListeners.add(listener);
+    }
+
+    /**
+     * @param listener a listener added with {@link #addRequestListener}.
+     */
+    public void removeRequestListener(Consumer<Request> listener) {
+        requestListeners.remove(listener);
+    }
+
+    private Request take(String id) {
+        prune(clock.instant());
+        if (pending == null || !pending.id().equals(id)) {
+            return null;
+        }
+        Request request = pending;
+        pending = null;
+        return request;
+    }
+
+    private void answer(String id, RequestStatus status) {
+        answers.put(id, status);
+        // The device asks every few seconds; an answer nobody picks up goes.
+        answerExpiry.put(id, clock.instant().plus(REQUEST_LIFETIME));
+    }
+
+    private void prune(Instant now) {
+        if (pending != null && !now.isBefore(pending.expires())) {
+            pending = null;
+        }
+        answerExpiry.entrySet().removeIf(entry -> {
+            boolean old = !now.isBefore(entry.getValue());
+            if (old) {
+                answers.remove(entry.getKey());
+            }
+            return old;
+        });
+        deniedUntil.values().removeIf(until -> !now.isBefore(until));
     }
 
     /**

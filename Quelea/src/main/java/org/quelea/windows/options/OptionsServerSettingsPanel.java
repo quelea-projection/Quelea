@@ -64,7 +64,6 @@ public class OptionsServerSettingsPanel {
     private BooleanProperty useRemoteV2Property;
     private StringProperty remoteV2PortProperty;
     private StringField remoteV2PortField;
-    private BooleanProperty remoteV2AllowPasswordProperty;
     private StringField remoteV2DevicesField;
 
     /**
@@ -98,7 +97,6 @@ public class OptionsServerSettingsPanel {
                 .render(new com.dlsc.preferencesfx.formsfx.view.controls.SimpleTextControl());
         remoteV2PortField.validate(this::validatePortNumber);
         bindings.put(remoteV2PortField, useRemoteV2Property.not());
-        remoteV2AllowPasswordProperty = new SimpleBooleanProperty(QueleaProperties.get().getRemoteV2AllowPassword());
         remoteV2DevicesField = Field.ofStringType("").render(new RemoteDevicesPreference());
     }
 
@@ -132,8 +130,6 @@ public class OptionsServerSettingsPanel {
                                 .customKey(useRemoteV2Key),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), remoteV2PortField, remoteV2PortProperty)
                                 .customKey(remoteV2PortKey),
-                        Setting.of(LabelGrabber.INSTANCE.getLabel("remote.v2.allow.password.label"), remoteV2AllowPasswordProperty)
-                                .customKey(remoteV2AllowPasswordKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("remote.v2.devices.label"), remoteV2DevicesField,
                                 new SimpleStringProperty(""))
                                 .customKey(remoteV2DevicesUiKey)

@@ -30,6 +30,8 @@ package org.quelea.server.v2;
  * @param logo true if the logo is showing.
  * @param black true if the screen is blacked out.
  * @param clear true if the text is cleared.
+ * @param canClear true if the live item has text to clear; Quelea disables
+ * its Clear button for presentations, images, videos and web pages.
  * @param recording true while audio is being recorded.
  * @param scheduleRevision the current schedule revision.
  * @param media the playback of a live video, audio file or timer, or null
@@ -44,6 +46,7 @@ public record LiveState(
         boolean logo,
         boolean black,
         boolean clear,
+        boolean canClear,
         boolean recording,
         long scheduleRevision,
         Media media) {

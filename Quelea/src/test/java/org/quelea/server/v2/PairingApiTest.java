@@ -46,7 +46,7 @@ class PairingApiTest {
     void setUp() throws Exception {
         dispatcher = Executors.newSingleThreadExecutor();
         registry = new DeviceRegistry(dir.resolve("devices.json"), new MutableClock(), new SecureRandom());
-        pairing = new PairingService(registry, () -> "quelea", () -> true);
+        pairing = new PairingService(registry);
         server = new RemoteApiServer(new RemoteApiServer.Config(0, false, "test", null), new FakeQueleaControl(),
                 new RemoteEventBus(dispatcher), registry, pairing);
         server.start();
@@ -130,11 +130,9 @@ class PairingApiTest {
     }
 
     @Test
-    void passwordPairing() throws Exception {
-        HttpResponse<String> paired = send("POST", "/api/v2/pair", null,
-                "{\"password\":\"quelea\",\"name\":\"Laptop\",\"platform\":\"web\"}");
-        assertEquals(200, paired.statusCode());
-        assertEquals(401, send("POST", "/api/v2/pair", null, "{\"password\":\"nope\",\"name\":\"x\"}").statusCode());
+    void passwordDoesNotPair() throws Exception {
+        assertEquals(400, send("POST", "/api/v2/pair", null,
+                "{\"password\":\"quelea\",\"name\":\"Laptop\",\"platform\":\"web\"}").statusCode());
     }
 
     @Test
@@ -177,5 +175,46 @@ class PairingApiTest {
         assertNotNull(revoked);
         assertEquals("device.revoked", revoked.get("type").getAsString());
         assertEquals(EventHub.CLOSE_UNAUTHORIZED, closed.get(5, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void requestPairsOnceAllowedInQuelea() throws Exception {
+        java.util.List<PairingService.Request> asked = new java.util.concurrent.CopyOnWriteArrayList<>();
+        pairing.addRequestListener(asked::add);
+        HttpResponse<String> created = send("POST", "/api/v2/pair/requests", null,
+                "{\"name\":\"Pixel\",\"platform\":\"android\"}");
+        assertEquals(200, created.statusCode(), created.body());
+        String id = json(created).get("id").getAsString();
+        assertEquals(1, asked.size());
+        assertEquals("Pixel", asked.get(0).name());
+        assertNotNull(asked.get(0).address());
+
+        assertEquals("pending", json(send("GET", "/api/v2/pair/requests/" + id, null, null)).get("status").getAsString());
+        assertEquals("busy", errorCode(send("POST", "/api/v2/pair/requests", null, "{\"name\":\"Other\"}")),
+                "one request at a time");
+
+        pairing.approve(id, Scope.CONTROL);
+        JsonObject approved = json(send("GET", "/api/v2/pair/requests/" + id, null, null));
+        assertEquals("approved", approved.get("status").getAsString());
+        String token = approved.getAsJsonObject("device").get("token").getAsString();
+        assertEquals(200, send("GET", "/api/v2/state", token, null).statusCode());
+        assertEquals("expired", json(send("GET", "/api/v2/pair/requests/" + id, null, null)).get("status").getAsString(),
+                "the token is handed out once");
+    }
+
+    @Test
+    void deniedRequestBlocksTheAddressForAWhile() throws Exception {
+        String id = json(send("POST", "/api/v2/pair/requests", null, "{\"name\":\"Pixel\"}")).get("id").getAsString();
+        pairing.deny(id);
+        assertEquals("denied", json(send("GET", "/api/v2/pair/requests/" + id, null, null)).get("status").getAsString());
+        assertEquals("locked", errorCode(send("POST", "/api/v2/pair/requests", null, "{\"name\":\"Pixel\"}")));
+    }
+
+    @Test
+    void cancelledRequestStopsWaiting() throws Exception {
+        String id = json(send("POST", "/api/v2/pair/requests", null, "{\"name\":\"Pixel\"}")).get("id").getAsString();
+        assertEquals(200, send("DELETE", "/api/v2/pair/requests/" + id, null, null).statusCode());
+        assertEquals(null, pairing.pendingRequest());
+        assertEquals(null, pairing.approve(id, Scope.CONTROL), "nothing left to allow");
     }
 }

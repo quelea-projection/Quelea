@@ -108,6 +108,22 @@ svg { width: 24px; height: 24px; fill: currentColor; flex: none; }
   flex: none;
 }
 @media (hover: hover) { .icon-button:hover:not(:disabled) { background: var(--control-hover); } }
+.icon-button { position: relative; }
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
 .conn {
   margin-left: 8px;
   width: 9px;
@@ -169,6 +185,12 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 @media (hover: hover) { button.primary:hover:not(:disabled) { background: var(--accent-hover); } }
 button.danger { color: var(--live); width: 100%; margin-top: 24px; }
 .pair button.primary { width: 100%; margin-top: 8px; }
+.pair button.ask { width: 100%; background: var(--accent-soft); border-color: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.pair-waiting { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); border: 1px solid var(--accent); }
+.pair-waiting[hidden] { display: none; }
+.pair-waiting span:nth-child(2) { flex: 1; }
+.spinner { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .row { display: flex; gap: 8px; }
 .row input { flex: 1; }

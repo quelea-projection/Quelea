@@ -17,10 +17,15 @@
  */
 package org.quelea.server.v2;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jmdns.JmDNS;
@@ -31,6 +36,12 @@ import org.quelea.services.utils.LoggerUtils;
  * Announces the v2 server on the local network with mDNS/DNS-SD as
  * {@value #SERVICE_TYPE}, so apps can find Quelea without typing an address.
  * The TXT record says which API version and ports to use.
+ * <p>
+ * On macOS the service is registered with the system's own Bonjour
+ * (through {@code dns-sd}): JmDNS binds its socket to the computer's address
+ * there, and macOS does not hand multicast to such a socket, so it never
+ * heard the apps' questions and they found Quelea only by luck. Elsewhere
+ * JmDNS announces.
  * <p>
  * Networks that block multicast (many guest networks) hide the
  * announcement; the pairing QR code still works there.
@@ -46,6 +57,7 @@ public final class RemoteAnnouncer implements AutoCloseable {
 
     private final Object lock = new Object();
     private JmDNS jmdns;
+    private Process bonjour;
     private boolean closed;
 
     /**
@@ -54,9 +66,10 @@ public final class RemoteAnnouncer implements AutoCloseable {
      * @param port the v2 HTTP port.
      * @param tlsPort the TLS port, or 0 if TLS is off.
      * @param queleaVersion the Quelea version.
+     * @param address the address announced on, or null.
      * @return the TXT properties, in a stable order.
      */
-    static Map<String, String> txt(int port, int tlsPort, String queleaVersion) {
+    static Map<String, String> txt(int port, int tlsPort, String queleaVersion, InetAddress address) {
         Map<String, String> txt = new LinkedHashMap<>();
         txt.put("v", "2");
         txt.put("path", ApiHandler.PREFIX);
@@ -65,6 +78,12 @@ public final class RemoteAnnouncer implements AutoCloseable {
             txt.put("tp", Integer.toString(tlsPort));
         }
         txt.put("quelea", queleaVersion);
+        // The IPv4 address, as in the pairing QR code: Android before 14
+        // sometimes resolves a service to its IPv6 link-local address only,
+        // which an app cannot put in a URL reliably.
+        if (address instanceof java.net.Inet4Address) {
+            txt.put("addr", address.getHostAddress());
+        }
         return txt;
     }
 
@@ -98,12 +117,75 @@ public final class RemoteAnnouncer implements AutoCloseable {
         starter.start();
     }
 
+    /**
+     * The macOS command that registers the service until it is stopped.
+     *
+     * @param name the instance name.
+     * @param port the v2 HTTP port.
+     * @param txt the TXT record.
+     * @return the command and its arguments.
+     */
+    static List<String> dnsSdCommand(String name, int port, Map<String, String> txt) {
+        List<String> command = new ArrayList<>(List.of(DNS_SD, "-R", name,
+                SERVICE_TYPE.replace(".local.", ""), "local", Integer.toString(port)));
+        txt.forEach((key, value) -> command.add(key + "=" + value));
+        return command;
+    }
+
+    private static final String DNS_SD = "/usr/bin/dns-sd";
+
+    private static boolean useBonjour() {
+        return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("mac")
+                && new File(DNS_SD).canExecute();
+    }
+
+    /**
+     * Register with macOS's Bonjour.
+     *
+     * @return true if the registration runs.
+     */
+    private boolean announceWithBonjour(InetAddress address, String hostName, int port, int tlsPort,
+            String queleaVersion) {
+        String name = instanceName(hostName);
+        try {
+            Process process = new ProcessBuilder(dnsSdCommand(name, port, txt(port, tlsPort, queleaVersion, address)))
+                    .redirectErrorStream(true)
+                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                    .start();
+            // dns-sd keeps running while the service is registered; one that
+            // ends at once could not register.
+            if (process.waitFor(1, TimeUnit.SECONDS)) {
+                LOGGER.log(Level.WARNING, "dns-sd ended with {0}; announcing with JmDNS instead",
+                        process.exitValue());
+                return false;
+            }
+            synchronized (lock) {
+                if (closed) {
+                    process.destroy();
+                    return true;
+                }
+                bonjour = process;
+            }
+            LOGGER.log(Level.INFO, "Announcing remote control v2 as \"{0}\" with Bonjour", name);
+            return true;
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Could not start dns-sd; announcing with JmDNS instead", ex);
+            return false;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            return true;
+        }
+    }
+
     private void announce(InetAddress address, String hostName, int port, int tlsPort, String queleaVersion) {
+        if (useBonjour() && announceWithBonjour(address, hostName, port, tlsPort, queleaVersion)) {
+            return;
+        }
         try {
             String local = PairingUri.localName(hostName);
             JmDNS created = JmDNS.create(address, local == null ? "quelea" : local.replace(".local", ""));
             ServiceInfo service = ServiceInfo.create(SERVICE_TYPE, instanceName(hostName), port, 0, 0,
-                    txt(port, tlsPort, queleaVersion));
+                    txt(port, tlsPort, queleaVersion, address));
             created.registerService(service);
             synchronized (lock) {
                 if (closed) {
@@ -126,10 +208,17 @@ public final class RemoteAnnouncer implements AutoCloseable {
     @Override
     public void close() {
         JmDNS toClose;
+        Process process;
         synchronized (lock) {
             closed = true;
             toClose = jmdns;
             jmdns = null;
+            process = bonjour;
+            bonjour = null;
+        }
+        if (process != null) {
+            // Ending dns-sd withdraws the service.
+            process.destroy();
         }
         if (toClose != null) {
             toClose.unregisterAllServices();

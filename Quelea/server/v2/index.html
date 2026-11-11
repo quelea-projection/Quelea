@@ -14,7 +14,7 @@
     <button id="back-button" class="icon-button" data-t-label="menu.back" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
     <span id="page-title" class="page-title">Quelea</span>
     <button id="search-button" class="icon-button app-only" data-page="add" data-t-label="page.add" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
-    <button id="notices-button" class="icon-button app-only" data-page="notices" data-t-label="page.notices" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg></button>
+    <button id="notices-button" class="icon-button app-only" data-page="notices" data-t-label="page.notices" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg><span id="notice-count" class="badge" hidden></span></button>
     <span id="conn" class="conn" data-state="offline" title=""></span>
   </header>
 
@@ -37,12 +37,15 @@
     <form id="pair-form" class="card pair">
       <h1 data-t="pair.title"></h1>
       <p data-t="pair.help" class="muted"></p>
+      <button type="button" id="pair-ask" class="ask" data-t="pair.ask"></button>
+      <div id="pair-waiting" class="pair-waiting" role="status" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="pair-waiting-text"></span>
+        <button type="button" id="pair-ask-cancel" class="text-button" data-t="pair.cancel"></button>
+      </div>
+      <p class="or" data-t="pair.orCode"></p>
       <label><span data-t="pair.code"></span>
         <input id="pair-code" autocomplete="one-time-code" autocapitalize="characters" maxlength="6" spellcheck="false">
-      </label>
-      <p class="or" data-t="pair.or"></p>
-      <label><span data-t="pair.password"></span>
-        <input id="pair-password" type="password" autocomplete="current-password">
       </label>
       <label><span data-t="pair.name"></span>
         <input id="pair-name" maxlength="64">

@@ -185,7 +185,8 @@ final class LiveStateWatcher {
                     ids.idFor(d),
                     ItemText.title(d),
                     ItemTypes.of(d),
-                    reader.sectionCount()));
+                    reader.sectionCount(),
+                    d != null && d.supportClear()));
             // The new item may play by itself (videos can start on going
             // live, timers always do); say so after live.item.
             scheduleMedia();

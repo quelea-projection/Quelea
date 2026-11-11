@@ -13,14 +13,20 @@ const TOKEN_KEY = 'quelea.v2.token';
 const TEXTS = {
   en: {
     'pair.title': 'Pair this browser',
-    'pair.help': 'In Quelea, open Settings → Server and choose “Pair new device”. Enter the code shown there, or the remote control password.',
+    'pair.help': 'Ask for access and allow it in Quelea, or enter the code from Settings → Server → “Pair new device”.',
+    'pair.ask': 'Ask Quelea for access',
+    'pair.waiting': 'Waiting for someone to allow this browser in Quelea… ($1 s)',
+    'pair.cancel': 'Cancel',
+    'pair.orCode': 'or enter the code',
+    'pair.denied': 'The request was denied in Quelea.',
+    'pair.expired': 'Nobody answered in Quelea in time. Ask again, or use the code.',
+    'pair.busy': 'Another device is waiting for an answer in Quelea. Try again in a moment.',
+    'pair.locked': 'The request was denied a moment ago. Wait a few minutes, or use the code.',
     'pair.code': 'Pairing code',
-    'pair.or': 'or',
-    'pair.password': 'Remote control password',
     'pair.name': 'Name of this device',
     'pair.button': 'Pair',
     'pair.defaultName': 'Web browser',
-    'pair.needSecret': 'Enter the code or the password.',
+    'pair.needSecret': 'Enter the code, or ask Quelea for access.',
     'app.title': 'Quelea Remote',
     'menu.open': 'Schedule',
     'menu.back': 'Back',
@@ -121,14 +127,20 @@ const TEXTS = {
   },
   sv: {
     'pair.title': 'Para den här webbläsaren',
-    'pair.help': 'Öppna Inställningar → Server i Quelea och välj ”Para ny enhet”. Skriv in koden som visas där, eller fjärrstyrningens lösenord.',
+    'pair.help': 'Be om åtkomst och tillåt den i Quelea, eller skriv in koden från Inställningar → Server → ”Para ny enhet”.',
+    'pair.ask': 'Be Quelea om åtkomst',
+    'pair.waiting': 'Väntar på att någon tillåter webbläsaren i Quelea… ($1 s)',
+    'pair.cancel': 'Avbryt',
+    'pair.orCode': 'eller skriv in koden',
+    'pair.denied': 'Förfrågan nekades i Quelea.',
+    'pair.expired': 'Ingen svarade i Quelea i tid. Fråga igen, eller använd koden.',
+    'pair.busy': 'En annan enhet väntar på svar i Quelea. Försök igen om en stund.',
+    'pair.locked': 'Förfrågan nekades nyss. Vänta några minuter, eller använd koden.',
     'pair.code': 'Parningskod',
-    'pair.or': 'eller',
-    'pair.password': 'Fjärrstyrningens lösenord',
     'pair.name': 'Namn på den här enheten',
     'pair.button': 'Para',
     'pair.defaultName': 'Webbläsare',
-    'pair.needSecret': 'Skriv in koden eller lösenordet.',
+    'pair.needSecret': 'Skriv in koden, eller be Quelea om åtkomst.',
     'app.title': 'Quelea Fjärrstyrning',
     'menu.open': 'Gudstjänstordning',
     'menu.back': 'Tillbaka',
@@ -369,6 +381,8 @@ function renderLive() {
   ['logo', 'black', 'clear'].forEach(name => {
     $('toggle-' + name).setAttribute('aria-pressed', live && live[name] ? 'true' : 'false');
   });
+  // As in Quelea: presentations, images, videos and web pages have no text to clear.
+  $('toggle-clear').disabled = !!live && live.canClear === false;
   const nothing = !live || !live.itemId;
   $('nothing-live').hidden = !nothing;
   ['prev', 'next'].forEach(id => { $(id).disabled = nothing; });
@@ -556,6 +570,9 @@ function setupAddTab() {
 let notices = [];
 
 function renderNotices() {
+  // The header icon shows how many notices are on screen.
+  $('notice-count').textContent = String(notices.length);
+  $('notice-count').hidden = notices.length === 0;
   const list = $('notices');
   list.replaceChildren();
   notices.forEach(notice => list.append(el('li', {},
@@ -872,6 +889,7 @@ function handleMessage(message) {
     live = null;
     applyState(message.data);
     loadSchedule();
+    loadNotices();
     loadedTabs.forEach(name => TAB_LOADERS[name]());
     return;
   }
@@ -886,6 +904,7 @@ function handleMessage(message) {
         live.itemId = data.itemId;
         live.title = data.title;
         live.itemType = data.itemType;
+        live.canClear = data.canClear !== false;
         // live.media follows for an item that plays.
         live.media = null;
       }
@@ -961,29 +980,87 @@ function setupPairing() {
   $('pair-form').onsubmit = async event => {
     event.preventDefault();
     const code = $('pair-code').value.trim();
-    const password = $('pair-password').value;
-    if (!code && !password) {
+    if (!code) {
       $('pair-error').textContent = t('pair.needSecret');
       return;
     }
-    const body = { name: $('pair-name').value.trim() || t('pair.defaultName'), platform: 'web' };
-    if (code) body.code = code; else body.password = password;
+    const body = { name: $('pair-name').value.trim() || t('pair.defaultName'), platform: 'web', code };
     try {
       const paired = await request('POST', '/pair', body);
       saveToken(paired.token);
       $('pair-code').value = '';
-      $('pair-password').value = '';
       showApp();
     } catch (e) {
       $('pair-error').textContent = e.message;
     }
   };
+  setupPairRequest();
   $('unpair').onclick = async () => {
     closeDrawer();
     if (!confirm(t('more.unpairConfirm'))) return;
     await run(() => api.del('/devices/me'));
     signedOut('');
   };
+}
+
+// Ask to pair; someone allows it in Quelea.
+let pairRequest = null;
+
+function setupPairRequest() {
+  const waiting = $('pair-waiting');
+  const stop = (message, cancel) => {
+    if (!pairRequest) return;
+    clearInterval(pairRequest.timer);
+    if (cancel) request('DELETE', '/pair/requests/' + encodeURIComponent(pairRequest.id)).catch(() => {});
+    pairRequest = null;
+    waiting.hidden = true;
+    $('pair-ask').hidden = false;
+    if (message !== undefined) $('pair-error').textContent = message;
+  };
+  const show = () => { $('pair-waiting-text').textContent = t('pair.waiting').replace('$1', pairRequest.left); };
+  $('pair-ask-cancel').onclick = () => stop('', true);
+  $('pair-ask').onclick = async () => {
+    $('pair-error').textContent = '';
+    const body = { name: $('pair-name').value.trim() || t('pair.defaultName'), platform: 'web' };
+    let created;
+    try {
+      created = await request('POST', '/pair/requests', body);
+    } catch (e) {
+      $('pair-error').textContent = e.code === 'busy' ? t('pair.busy') : e.code === 'locked' ? t('pair.locked') : e.message;
+      return;
+    }
+    pairRequest = { id: created.id, left: created.expiresIn, ticks: 0, checking: false };
+    $('pair-ask').hidden = true;
+    waiting.hidden = false;
+    show();
+    pairRequest.timer = setInterval(async () => {
+      const current = pairRequest;
+      if (!current) return;
+      current.left = Math.max(0, current.left - 1);
+      show();
+      // Ask every other second.
+      if (++current.ticks % 2 || current.checking) return;
+      current.checking = true;
+      try {
+        const answer = await request('GET', '/pair/requests/' + encodeURIComponent(current.id));
+        if (pairRequest !== current) return;
+        if (answer.status === 'approved' && answer.device) {
+          stop('');
+          saveToken(answer.device.token);
+          showApp();
+        } else if (answer.status === 'denied') {
+          stop(t('pair.denied'));
+        } else if (answer.status === 'expired') {
+          stop(t('pair.expired'));
+        }
+      } catch (e) {
+        // A dropped answer: ask again in a moment.
+      } finally {
+        current.checking = false;
+      }
+    }, 1000);
+  };
+  window.addEventListener('pagehide', () => stop(undefined, true));
 }
 
 // ---- Start -------------------------------------------------------------

@@ -206,6 +206,14 @@ public class MobileServerPreference extends SimpleControl<StringField, StackPane
     }
 
     private static String getIP() {
+        // The address on the network the default route uses, skipping
+        // virtual machine bridges and VPNs: the first up interface, which
+        // the code below falls back to, can be a VM bridge that phones
+        // cannot reach (remote control v2 picks its address the same way).
+        java.util.Optional<InetAddress> lan = org.quelea.server.v2.LanAddress.find();
+        if (lan.isPresent()) {
+            return lan.get().getHostAddress();
+        }
         String v6address = null;
         Enumeration<NetworkInterface> interfaces = null;
         try {

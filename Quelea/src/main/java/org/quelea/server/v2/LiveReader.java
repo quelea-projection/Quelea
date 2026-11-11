@@ -66,6 +66,7 @@ final class LiveReader {
                 lp.getLogoed(),
                 lp.getBlacked(),
                 lp.getCleared(),
+                d != null && d.supportClear(),
                 toolbar.recordingProperty().get(),
                 scheduleRevision.getAsLong(),
                 media());

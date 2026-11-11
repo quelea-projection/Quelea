@@ -61,6 +61,15 @@ final class ApiHandler extends Handler.Abstract {
         route("GET", "/info", null, call -> new Info(2, config.queleaVersion(), false,
                 pairing != null && pairing.isOpen(), config.publicEnabled()));
         route("POST", "/pair", null, call -> pair(pairing, call.body()));
+        // Ask to pair and wait for an answer in Quelea: no code needed.
+        route("POST", "/pair/requests", null, call -> pairRequest(pairing, call));
+        route("GET", "/pair/requests/" + REQUEST_ID, null, call -> requestStatus(pairing, call.match().group(1)));
+        route("DELETE", "/pair/requests/" + REQUEST_ID, null, call -> {
+            if (pairing != null) {
+                pairing.cancel(call.match().group(1));
+            }
+            return Map.of("cancelled", true);
+        });
         route("DELETE", "/devices/me", Scope.VIEW, call -> {
             auth.revoke(call.device().id());
             return Map.of("revoked", call.device().id());
@@ -203,6 +212,29 @@ final class ApiHandler extends Handler.Abstract {
      * same displayable.
      */
     private static final String ITEM_ID = "(it_[0-9]+(?:-[0-9]+)?)";
+
+    /**
+     * Pairing request ids: URL-safe Base64.
+     */
+    private static final String REQUEST_ID = "([A-Za-z0-9_-]{1,64})";
+
+    /**
+     * A new pairing request.
+     *
+     * @param id ask for the answer at /pair/requests/{id}.
+     * @param expiresIn seconds until the request is dropped.
+     */
+    record PairRequest(String id, long expiresIn) {
+    }
+
+    /**
+     * Where a pairing request stands.
+     *
+     * @param status "pending", "approved", "denied" or "expired".
+     * @param device the new device and its token, only when approved.
+     */
+    record PairRequestStatus(String status, DeviceRegistry.Paired device) {
+    }
 
     /**
      * A non-JSON answer, such as an image.
@@ -350,8 +382,8 @@ final class ApiHandler extends Handler.Abstract {
     }
 
     /**
-     * {"code":…} pairs with the code shown in Quelea, {"password":…} with
-     * the remote control password. "name" and "platform" describe the device.
+     * {"code":…} pairs with the code shown in Quelea. "name" and "platform"
+     * describe the device.
      */
     private static DeviceRegistry.Paired pair(PairingService pairing, JsonObject body) {
         if (pairing == null) {
@@ -366,11 +398,38 @@ final class ApiHandler extends Handler.Abstract {
         if (code != null) {
             return pairing.pairWithCode(code, name, platform);
         }
-        String password = Json.optionalString(body, "password");
-        if (password != null) {
-            return pairing.pairWithPassword(password, name, platform);
+        throw ApiException.badRequest("Give \"code\", or ask with /pair/requests");
+    }
+
+    private static PairRequest pairRequest(PairingService pairing, Call call) {
+        if (pairing == null) {
+            throw new PairingService.PairingException(PairingService.Failure.CLOSED, "Pairing is not available");
         }
-        throw ApiException.badRequest("Give \"code\" or \"password\"");
+        JsonObject body = call.body();
+        String name = Json.optionalString(body, "name");
+        String platform = Json.optionalString(body, "platform");
+        if (name == null || name.isBlank()) {
+            throw ApiException.badRequest("\"name\" is required");
+        }
+        // Shown in a dialog in Quelea: keep it short.
+        name = name.strip();
+        if (name.length() > 60) {
+            name = name.substring(0, 60);
+        }
+        if (platform != null && platform.length() > 20) {
+            platform = platform.substring(0, 20);
+        }
+        PairingService.Request request = pairing.request(name, platform, Request.getRemoteAddr(call.request()));
+        return new PairRequest(request.id(), Math.max(0,
+                java.time.Duration.between(java.time.Instant.now(), request.expires()).toSeconds()));
+    }
+
+    private static PairRequestStatus requestStatus(PairingService pairing, String id) {
+        if (pairing == null) {
+            return new PairRequestStatus("expired", null);
+        }
+        PairingService.RequestStatus status = pairing.requestStatus(id);
+        return new PairRequestStatus(status.state().name().toLowerCase(java.util.Locale.ROOT), status.paired());
     }
 
     private static ApiException pairingError(PairingService.PairingException ex) {
@@ -378,7 +437,7 @@ final class ApiHandler extends Handler.Abstract {
             case CLOSED -> new ApiException(403, "pairing_closed", ex.getMessage());
             case WRONG -> new ApiException(401, "wrong_secret", ex.getMessage());
             case LOCKED -> new ApiException(429, "locked", ex.getMessage());
-            case PASSWORD_DISABLED -> new ApiException(403, "password_disabled", ex.getMessage());
+            case BUSY -> new ApiException(429, "busy", ex.getMessage());
         };
     }
 

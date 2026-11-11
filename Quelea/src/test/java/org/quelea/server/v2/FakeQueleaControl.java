@@ -21,7 +21,7 @@ final class FakeQueleaControl implements QueleaControl {
     @Override
     public LiveState getState() {
         checkTimeout();
-        return new LiveState("it_1", "Amazing Grace", "song", section, 3, logo, black, clear, recording, 4, media);
+        return new LiveState("it_1", "Amazing Grace", "song", section, 3, logo, black, clear, true, recording, 4, media);
     }
 
     /**
