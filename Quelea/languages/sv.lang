@@ -677,6 +677,7 @@ bible.delete.error.text=Tyvärr, ett problem uppstod när bibeln skulle raderas 
 allow.item.theme.override.global=Tillåt individuella teman att gå före globala teman
 copy=Kopiera
 save.add.notice.button=Spara och lägg till
+save.notice.tooltip=Spara meddelandet till senare utan att visa det
 video.loop.tooltip=Starta/stanna loopning
 elevanto.loginerror.warning=Ett problem uppstod vid inloggning till Elevanto
 delete.bible.label=Ta bort vald bibel
