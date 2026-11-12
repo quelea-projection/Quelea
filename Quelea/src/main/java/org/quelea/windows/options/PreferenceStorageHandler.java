@@ -171,6 +171,12 @@ public class PreferenceStorageHandler implements StorageHandler {
         if (object == null) {
             object = "";
         }
+        if (LogoOptionsGroup.isLogoKey(breadcrumb)) {
+            // Saved by LogoOptionsGroup.apply() when OK is pressed, and only if
+            // changed, never from here: this is also called with old values
+            // when the window is closed without OK.
+            return;
+        }
         switch (breadcrumb) {
             case QueleaPropertyKeys.languageFileKey:
                 if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
@@ -321,6 +327,10 @@ public class PreferenceStorageHandler implements StorageHandler {
     public Object loadObject(String breadcrumb, Object defaultObject) {
         if (breadcrumb.equals(QueleaPropertyKeys.languageFileKey)) {
             return LanguageFileManager.INSTANCE.getCurrentFile();
+        }
+        if (LogoOptionsGroup.isLogoKey(breadcrumb)) {
+            // Always known (with defaults), and also changed from the logo button
+            return LogoOptionsGroup.loadValue(breadcrumb);
         }
         String property = QueleaProperties.get().getProperty(breadcrumb);
         if (property == null) {

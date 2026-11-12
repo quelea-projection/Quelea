@@ -5,6 +5,8 @@ quelea (2027.0) stable
   * Universal search box (Ctrl/Cmd+K) to find songs, bible passages, images, videos, timers and notices, with a preview, and add them to the schedule
   * Default translations now used when adding song via server
   * Support for bible book names in chapters in Zefania XML import
+  * SVG (vector) logos, drawn sharply at the projector's resolution
+  * Logo size, position and offset can be set, with a preview, from the logo button (right-click) or in the options
   * Fix UTF-8 filename issue with snap build
   * Fix issue with positions being wrong when dragging items in schedule
   * Fix memory use growing without limit (and Quelea hanging) when editing a theme with a video background
