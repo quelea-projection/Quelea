@@ -30,6 +30,16 @@ import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
+import org.quelea.server.v2.DeviceRegistry;
+import org.quelea.server.v2.PairingService;
+import org.quelea.windows.options.customprefs.RemotePairingRequestDialog;
+import org.quelea.server.v2.RemoteAnnouncer;
+import org.quelea.server.v2.LanAddress;
+import java.util.Optional;
+import java.net.UnknownHostException;
+import java.net.InetAddress;
+import org.quelea.server.v2.RemoteApiServer;
+import org.quelea.server.v2.RemoteCore;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.GStreamerInitState;
@@ -322,6 +332,9 @@ public final class Main extends Application {
                     }
                     mainWindow.show();
                     QueleaApp.get().doneLoading();
+                    if (QueleaProperties.get().getUseRemoteV2()) {
+                        startRemoteV2(mainWindow);
+                    }
                 });
             } catch (Throwable ex) {
                 LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
@@ -339,6 +352,59 @@ public final class Main extends Application {
      *
      * @param numMonitors the number of monitors.
      */
+    /**
+     * Start the v2 remote control server off the FX thread, once the main
+     * window exists.
+     *
+     * @param window the main window.
+     */
+    private void startRemoteV2(MainWindow window) {
+        Thread starter = new Thread(() -> {
+            int port = QueleaProperties.get().getRemoteV2Port();
+            LOGGER.log(Level.INFO, "Starting remote control v2 server on {0}", port);
+            try {
+                RemoteCore core = RemoteCore.install(window);
+                DeviceRegistry devices = new DeviceRegistry(QueleaProperties.get().getRemoteV2DevicesFile().toPath());
+                PairingService pairing = new PairingService(devices);
+                RemoteApiServer server = new RemoteApiServer(
+                        new RemoteApiServer.Config(port, QueleaProperties.get().getUseMobLyrics(),
+                                QueleaProperties.VERSION.getVersionString(), java.nio.file.Path.of("server", "v2")),
+                        core.control(), core.bus(), devices, pairing);
+                server.start();
+                QueleaApp.get().setRemoteV2Server(server);
+                // A device asking to pair: ask in Quelea.
+                pairing.addRequestListener(request -> Platform.runLater(
+                        () -> RemotePairingRequestDialog.ask(window, pairing, request)));
+                announceRemoteV2(server);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Couldn't start remote control v2 server", ex);
+            }
+        }, "remote-v2-start");
+        starter.setDaemon(true);
+        starter.start();
+    }
+
+    /**
+     * Announce the v2 server on the network (mDNS), on the address the
+     * pairing QR code uses.
+     */
+    private static void announceRemoteV2(RemoteApiServer server) {
+        Optional<InetAddress> address = LanAddress.find();
+        if (address.isEmpty()) {
+            LOGGER.log(Level.INFO, "No network address, not announcing remote control v2");
+            return;
+        }
+        String hostName;
+        try {
+            hostName = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            hostName = null;
+        }
+        RemoteAnnouncer announcer = new RemoteAnnouncer();
+        server.closeOnStop(announcer);
+        announcer.start(address.get(), hostName, server.getPort(), 0, QueleaProperties.VERSION.getVersionString());
+    }
+
     private void showMonitorWarning(int numMonitors) {
         if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));

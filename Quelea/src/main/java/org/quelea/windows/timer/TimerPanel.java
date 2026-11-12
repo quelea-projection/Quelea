@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.timer;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -107,6 +108,20 @@ public class TimerPanel extends AbstractPanel {
 
     public boolean status() {
         return controlPanel.status();
+    }
+
+    /**
+     * Stop the timer, as the stop button does.
+     */
+    public void stop() {
+        controlPanel.reset();
+    }
+
+    /**
+     * @return true while the timer counts.
+     */
+    public ReadOnlyBooleanProperty runningProperty() {
+        return controlPanel.runningProperty();
     }
 
     @Override

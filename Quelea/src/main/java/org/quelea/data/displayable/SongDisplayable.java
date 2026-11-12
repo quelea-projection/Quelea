@@ -410,8 +410,20 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * and section.
      */
     public String getCurrentTranslationSection(int index) {
-        String val = getCurrentTranslationLyrics();
-        if (val == null) {
+        return getTranslationSection(currentTranslation, index);
+    }
+
+    /**
+     * Get a translation's lyrics for a section, or null if the song has no
+     * such translation or it has fewer sections.
+     *
+     * @param language the translation's name, a key in the translations map.
+     * @param index the index of the section, in the order it is shown.
+     * @return the translated section.
+     */
+    public String getTranslationSection(String language, int index) {
+        String val = translations == null || language == null ? null : translations.get(language);
+        if (val == null || index < 0 || index >= getSections().length) {
             return null;
         }
         index = sectionsWithoutSequence.indexOf(sectionsInSequence.get(index));

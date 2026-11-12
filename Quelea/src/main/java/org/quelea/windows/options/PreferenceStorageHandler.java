@@ -302,6 +302,9 @@ public class PreferenceStorageHandler implements StorageHandler {
             case QueleaPropertyKeys.defaultSongDbUpdateKey:
                 QueleaProperties.get().setDefaultSongDBUpdate(!Boolean.parseBoolean(object.toString()));
                 break;
+            case QueleaPropertyKeys.remoteV2DevicesUiKey:
+                // The paired-devices list in the settings is not a setting.
+                break;
             default:
                 QueleaProperties.get().setProperty(breadcrumb, object.toString());
         }
@@ -329,6 +332,7 @@ public class PreferenceStorageHandler implements StorageHandler {
             switch (breadcrumb) {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
+                case QueleaPropertyKeys.remoteV2PortKey:
                     return property;
                 case QueleaPropertyKeys.uiThemeKey:
                     return UiTheme.current().getLabel();
