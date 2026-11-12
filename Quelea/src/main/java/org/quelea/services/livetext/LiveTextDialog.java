@@ -140,7 +140,10 @@ public class LiveTextDialog extends Stage {
             }
         }
         if (!dialog.isShowing()) {
-            QueleaApp.get().getMobileLyricsServer().setText("");
+            if (QueleaApp.get().getMobileLyricsServer() != null) {
+                QueleaApp.get().getMobileLyricsServer().setText("");
+            }
+            org.quelea.server.v2.LiveText.set("");
         }
         return dialog.textField.getText();
     }
@@ -166,7 +169,10 @@ public class LiveTextDialog extends Stage {
         if (text.length() > 200) {
             text = text.substring(text.indexOf(" ", text.length() - 200));
         }
-        QueleaApp.get().getMobileLyricsServer().setText(text);
+        if (QueleaApp.get().getMobileLyricsServer() != null) {
+            QueleaApp.get().getMobileLyricsServer().setText(text);
+        }
+        org.quelea.server.v2.LiveText.set(text);
     }
 
 }

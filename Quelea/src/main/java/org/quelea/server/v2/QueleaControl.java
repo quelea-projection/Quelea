@@ -18,6 +18,7 @@
 package org.quelea.server.v2;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -45,6 +46,37 @@ public interface QueleaControl {
      * @return the sections of the live item, with their text.
      */
     LiveSections getLiveSections();
+
+    /**
+     * @return the live song's translations of the live section, by
+     * translation name; empty when the live item is not a song with
+     * translations.
+     */
+    default Map<String, List<String>> getLiveTranslations() {
+        return Map.of();
+    }
+
+    /**
+     * @return the verses on the live slide of a Bible passage, or null when
+     * the live item is not one.
+     */
+    default PublicLive.BibleSlide getLiveBibleSlide() {
+        return null;
+    }
+
+    /**
+     * Read verses from a Bible by book number, so a passage can be shown in
+     * another translation whatever that Bible calls its books.
+     *
+     * @param translation the Bible's name.
+     * @param book the book's number, 1 to 66.
+     * @param verses the verses to read.
+     * @return the verses found; missing verses are left out.
+     * @throws java.util.NoSuchElementException if there is no such Bible.
+     */
+    default Catalog.Passage bibleVerses(String translation, int book, List<PublicLive.VerseRef> verses) {
+        throw new java.util.NoSuchElementException("No such Bible: " + translation);
+    }
 
     /**
      * Go to the next section, or the next item if the setting for that is on.

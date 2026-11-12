@@ -1,5 +1,7 @@
 package org.quelea.server.v2;
 
+import java.util.NoSuchElementException;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -87,6 +89,21 @@ final class FakeQueleaControl implements QueleaControl {
                 new LiveSections.Section("Verse 1", List.of("Amazing grace", "how sweet the sound"), null),
                 new LiveSections.Section("Verse 2", List.of("'Twas grace"), List.of("G  C", "'Twas grace")),
                 new LiveSections.Section("Verse 3", List.of("Through many dangers"), null)));
+    }
+
+    @Override
+    public Catalog.Passage bibleVerses(String translation, int book, List<PublicLive.VerseRef> verses) {
+        if (!"KJV".equals(translation)) {
+            throw new NoSuchElementException("No such Bible: " + translation);
+        }
+        return new Catalog.Passage("KJV", "John", verses.stream()
+                .map(v -> new Catalog.Verse(v.chapter(), v.verse(), "Verse " + v.chapter() + ":" + v.verse()))
+                .toList());
+    }
+
+    @Override
+    public java.util.Map<String, List<String>> getLiveTranslations() {
+        return section == 1 ? java.util.Map.of("Svenska", List.of("Det var nåd")) : java.util.Map.of();
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.TimerDisplayable;
@@ -158,6 +159,68 @@ final class LiveReader {
             }
         }
         return new LiveSections(ids.idFor(d), sectionIndex(), sections);
+    }
+
+    /**
+     * @return the live song's translations of the live section, by
+     * translation name; empty for anything else.
+     */
+    Map<String, List<String>> translations() {
+        LivePanel lp = mainPanel.getLivePanel();
+        if (!(lp.getDisplayable() instanceof SongDisplayable song) || song.getTranslations() == null) {
+            return Map.of();
+        }
+        int index = sectionIndex();
+        Map<String, List<String>> result = new java.util.TreeMap<>();
+        for (String language : song.getTranslations().keySet()) {
+            String section = song.getTranslationSection(language, index);
+            if (section != null) {
+                result.put(language, ItemText.lyricLines(section));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @return the verses on the live slide of a Bible passage, or null.
+     */
+    PublicLive.BibleSlide bibleSlide() {
+        LivePanel lp = mainPanel.getLivePanel();
+        if (!(lp.getDisplayable() instanceof org.quelea.data.displayable.BiblePassage passage)) {
+            return null;
+        }
+        org.quelea.data.bible.BibleVerse[] verses = passage.getVerses();
+        List<String> verseTexts = new ArrayList<>();
+        for (org.quelea.data.bible.BibleVerse verse : verses) {
+            verseTexts.add(verse == null ? "" : verse.getVerseText());
+        }
+        List<String> slides = new ArrayList<>();
+        for (TextSection section : lp.getLyricsPanel().getLyricsList().getItems()) {
+            slides.add(String.join(" ", section.getText(false, false)));
+        }
+        List<List<Integer>> perSlide = BibleSlides.versesPerSlide(slides, verseTexts);
+        int index = sectionIndex();
+        List<PublicLive.VerseRef> onSlide = new ArrayList<>();
+        int book = 0;
+        String translation = null;
+        if (index >= 0 && index < perSlide.size()) {
+            for (int i : perSlide.get(index)) {
+                org.quelea.data.bible.BibleVerse verse = verses[i];
+                if (verse != null) {
+                    onSlide.add(new PublicLive.VerseRef(verse.getChapterNum(), verse.getNum()));
+                }
+            }
+        }
+        for (org.quelea.data.bible.BibleVerse verse : verses) {
+            if (verse != null && verse.getChapter() != null && verse.getChapter().getBook() != null) {
+                book = verse.getChapter().getBook().getBookNumber();
+                if (verse.getChapter().getBook().getBible() != null) {
+                    translation = verse.getChapter().getBook().getBible().getBibleName();
+                }
+                break;
+            }
+        }
+        return new PublicLive.BibleSlide(translation, passage.getLocation(), book, onSlide);
     }
 
     private static List<String> lines(String[] text) {

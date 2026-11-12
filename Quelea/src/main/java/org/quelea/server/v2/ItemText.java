@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.services.utils.LineTypeChecker;
 
 /**
  * Turns Quelea's display text into plain text for API clients. Bible
@@ -85,5 +86,25 @@ final class ItemText {
                 .replace("&#39;", "'")
                 .replace("&amp;", "&");
         return SPACES.matcher(text).replaceAll(" ");
+    }
+
+    /**
+     * The lines to show of a block of lyrics typed in Quelea, such as one
+     * section of a song translation: without its section title, chord
+     * lines and blank lines.
+     *
+     * @param block the text, lines separated by newlines.
+     * @return the lyric lines.
+     */
+    static List<String> lyricLines(String block) {
+        List<String> lines = new ArrayList<>();
+        for (String line : block.split("\\R")) {
+            LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
+            if (line.isBlank() || type == LineTypeChecker.Type.TITLE || type == LineTypeChecker.Type.CHORDS) {
+                continue;
+            }
+            lines.add(plain(line.strip()));
+        }
+        return lines;
     }
 }

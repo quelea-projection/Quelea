@@ -41,7 +41,18 @@ public record LiveSections(String itemId, int sectionIndex, List<Section> sectio
      * @param lines the text lines without chords.
      * @param chordLines the lines with chord lines included, or null if the
      * section has no chords.
+     * @param chorded the lyric lines with their chords and where each falls,
+     * or null if the section has no chords.
      */
-    public record Section(String title, List<String> lines, List<String> chordLines) {
+    public record Section(String title, List<String> lines, List<String> chordLines,
+            List<ChordSheet.ChordedLine> chorded) {
+
+        /**
+         * A section whose {@code chorded} lines are worked out from its
+         * chord lines.
+         */
+        public Section(String title, List<String> lines, List<String> chordLines) {
+            this(title, lines, chordLines, ChordSheet.parse(chordLines));
+        }
     }
 }

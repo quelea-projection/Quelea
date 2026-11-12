@@ -61,7 +61,7 @@ public final class EventHub implements RemoteEventBus.Listener, AutoCloseable {
     static final int CLOSE_GOING_AWAY = 1001;
     static final int CLOSE_SERVER_ERROR = 1011;
 
-    private static final Set<String> PUBLIC_TYPES = Set.of("live.item", "live.section", "live.screen");
+    private static final Set<String> PUBLIC_TYPES = Set.of("live.item", "live.section", "live.screen", "live.text");
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     private final QueleaControl control;

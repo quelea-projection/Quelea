@@ -192,6 +192,11 @@ final class ApiHandler extends Handler.Abstract {
                 call -> control.removeNotice(call.match().group(1)));
         if (config.publicEnabled()) {
             route("GET", "/public/live", null, call -> PublicLive.from(control));
+            // The Bibles installed in Quelea, so the lyrics app can show a
+            // passage in the reader's own translation.
+            route("GET", "/public/bible/translations", null, call -> control.bibleTranslations());
+            route("GET", "/public/bible/verses", null, call -> control.bibleVerses(call.query("translation"),
+                    call.intQuery("book", 0, 0, 200), verseRefs(call.query("verses"))));
         }
     }
 
@@ -430,6 +435,31 @@ final class ApiHandler extends Handler.Abstract {
         }
         PairingService.RequestStatus status = pairing.requestStatus(id);
         return new PairRequestStatus(status.state().name().toLowerCase(java.util.Locale.ROOT), status.paired());
+    }
+
+    /**
+     * Parse "3:16,3:17" into verses.
+     */
+    static List<PublicLive.VerseRef> verseRefs(String text) {
+        List<PublicLive.VerseRef> refs = new ArrayList<>();
+        if (text == null || text.isBlank()) {
+            return refs;
+        }
+        for (String part : text.split(",")) {
+            String[] numbers = part.strip().split(":");
+            try {
+                if (numbers.length == 2) {
+                    refs.add(new PublicLive.VerseRef(Integer.parseInt(numbers[0].strip()),
+                            Integer.parseInt(numbers[1].strip())));
+                }
+            } catch (NumberFormatException ex) {
+                throw ApiException.badRequest("\"verses\" must look like 3:16,3:17");
+            }
+            if (refs.size() > 200) {
+                throw ApiException.badRequest("Too many verses");
+            }
+        }
+        return refs;
     }
 
     private static ApiException pairingError(PairingService.PairingException ex) {

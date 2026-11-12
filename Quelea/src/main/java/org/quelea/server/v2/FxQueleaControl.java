@@ -116,6 +116,45 @@ final class FxQueleaControl implements QueleaControl {
         return fx.call(reader::sections);
     }
 
+    @Override
+    public Map<String, List<String>> getLiveTranslations() {
+        return fx.call(reader::translations);
+    }
+
+    @Override
+    public PublicLive.BibleSlide getLiveBibleSlide() {
+        return fx.call(reader::bibleSlide);
+    }
+
+    @Override
+    public Catalog.Passage bibleVerses(String translation, int book, List<PublicLive.VerseRef> verses) {
+        Bible bible = requireBible(translation);
+        org.quelea.data.bible.BibleBook found = null;
+        for (org.quelea.data.bible.BibleBook b : bible.getBooks()) {
+            if (b.getBookNumber() == book) {
+                found = b;
+                break;
+            }
+        }
+        List<Catalog.Verse> result = new ArrayList<>();
+        if (found != null) {
+            for (PublicLive.VerseRef ref : verses) {
+                // By number, not position: some Bibles leave verses out.
+                for (org.quelea.data.bible.BibleChapter chapter : found.getChapters()) {
+                    if (chapter.getNum() != ref.chapter()) {
+                        continue;
+                    }
+                    for (org.quelea.data.bible.BibleVerse verse : chapter.getVerses()) {
+                        if (verse.getNum() == ref.verse()) {
+                            result.add(new Catalog.Verse(ref.chapter(), ref.verse(), verse.getVerseText()));
+                        }
+                    }
+                }
+            }
+        }
+        return new Catalog.Passage(bible.getBibleName(), found == null ? "" : found.getBookName(), result);
+    }
+
     // ---- Live commands ----
     @Override
     public LiveState next() {

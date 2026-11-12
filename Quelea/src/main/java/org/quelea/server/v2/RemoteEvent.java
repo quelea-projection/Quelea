@@ -132,6 +132,19 @@ public sealed interface RemoteEvent {
         }
     }
 
+    /**
+     * The live text typed in Quelea changed.
+     *
+     * @param text the text, empty when cleared.
+     */
+    record LiveTextChanged(String text) implements RemoteEvent {
+
+        @Override
+        public String type() {
+            return "live.text";
+        }
+    }
+
     record RecordingChanged(boolean recording) implements RemoteEvent {
 
         @Override

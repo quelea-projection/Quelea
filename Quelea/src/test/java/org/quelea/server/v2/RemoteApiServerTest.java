@@ -194,6 +194,35 @@ class RemoteApiServerTest {
         JsonObject live = json(send("GET", "/api/v2/public/live", null, null));
         assertEquals("Amazing Grace", live.get("title").getAsString());
         assertEquals("'Twas grace", live.getAsJsonArray("lines").get(0).getAsString());
+        // The chords come with where they fall, for apps to draw them.
+        JsonObject line = live.getAsJsonArray("chorded").get(0).getAsJsonObject();
+        assertEquals("'Twas grace", line.get("text").getAsString());
+        assertEquals("C", line.getAsJsonArray("chords").get(1).getAsJsonObject().get("chord").getAsString());
+        assertEquals(3, line.getAsJsonArray("chords").get(1).getAsJsonObject().get("at").getAsInt());
+        assertEquals("Det var nåd", live.getAsJsonObject("translations").getAsJsonArray("Svenska").get(0).getAsString());
+        assertEquals("", live.get("liveText").getAsString());
+    }
+
+    @Test
+    void publicBibleVersesByBookNumber() throws Exception {
+        JsonObject passage = json(send("GET", "/api/v2/public/bible/verses?translation=KJV&book=43&verses=3:16,3:17",
+                null, null));
+        assertEquals("Verse 3:17", passage.getAsJsonArray("verses").get(1).getAsJsonObject().get("text").getAsString());
+        assertEquals(400, send("GET", "/api/v2/public/bible/verses?translation=KJV&book=43&verses=x:y", null, null)
+                .statusCode());
+        assertEquals(404, send("GET", "/api/v2/public/bible/verses?translation=Nope&book=43&verses=3:16", null, null)
+                .statusCode());
+        assertEquals(200, send("GET", "/api/v2/public/bible/translations", null, null).statusCode());
+    }
+
+    @Test
+    void publicLiveCarriesTheLiveText() throws Exception {
+        LiveText.set("Welcome!");
+        try {
+            assertEquals("Welcome!", json(send("GET", "/api/v2/public/live", null, null)).get("liveText").getAsString());
+        } finally {
+            LiveText.set("");
+        }
     }
 
     @Test
@@ -645,6 +674,10 @@ class RemoteApiServerTest {
         bus.publish(new RemoteEvent.ScreenChanged(false, true, false));
         JsonObject event = c.recorder().next();
         assertEquals("live.screen", event.get("type").getAsString());
+        bus.publish(new RemoteEvent.LiveTextChanged("Welcome!"));
+        JsonObject text = c.recorder().next();
+        assertEquals("live.text", text.get("type").getAsString());
+        assertEquals("Welcome!", text.getAsJsonObject("data").get("text").getAsString());
         assertNull(c.recorder().messages.poll(200, TimeUnit.MILLISECONDS));
     }
 
