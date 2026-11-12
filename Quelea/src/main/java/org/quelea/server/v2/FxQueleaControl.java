@@ -122,6 +122,32 @@ final class FxQueleaControl implements QueleaControl {
     }
 
     @Override
+    public List<Catalog.SongLanguage> songLanguages() {
+        // The song list is cached in memory; names differing only in case
+        // or spaces count as one.
+        Map<String, String> names = new LinkedHashMap<>();
+        Map<String, Integer> counts = new java.util.HashMap<>();
+        for (SongDisplayable song : SongManager.get().getSongs()) {
+            if (song.getTranslations() == null) {
+                continue;
+            }
+            for (String name : song.getTranslations().keySet()) {
+                if (name == null || name.isBlank()) {
+                    continue;
+                }
+                String key = name.strip().toLowerCase(java.util.Locale.ROOT);
+                names.putIfAbsent(key, name.strip());
+                counts.merge(key, 1, Integer::sum);
+            }
+        }
+        return names.entrySet().stream()
+                .map(entry -> new Catalog.SongLanguage(entry.getValue(), counts.get(entry.getKey())))
+                .sorted(java.util.Comparator.comparingInt(Catalog.SongLanguage::songs).reversed()
+                        .thenComparing(Catalog.SongLanguage::name))
+                .toList();
+    }
+
+    @Override
     public PublicLive.BibleSlide getLiveBibleSlide() {
         return fx.call(reader::bibleSlide);
     }

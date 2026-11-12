@@ -195,6 +195,9 @@ final class ApiHandler extends Handler.Abstract {
             // The Bibles installed in Quelea, so the lyrics app can show a
             // passage in the reader's own translation.
             route("GET", "/public/bible/translations", null, call -> control.bibleTranslations());
+            // Song translation names, for the reader to pick a language that
+            // then shows whenever a song has it.
+            route("GET", "/public/song-languages", null, call -> control.songLanguages());
             route("GET", "/public/bible/verses", null, call -> control.bibleVerses(call.query("translation"),
                     call.intQuery("book", 0, 0, 200), verseRefs(call.query("verses"))));
         }

@@ -57,6 +57,14 @@ public interface QueleaControl {
     }
 
     /**
+     * @return the song translation names in the song database, the most
+     * used first.
+     */
+    default List<Catalog.SongLanguage> songLanguages() {
+        return List.of();
+    }
+
+    /**
      * @return the verses on the live slide of a Bible passage, or null when
      * the live item is not one.
      */

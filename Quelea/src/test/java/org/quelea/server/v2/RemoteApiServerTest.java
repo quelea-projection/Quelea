@@ -213,6 +213,9 @@ class RemoteApiServerTest {
         assertEquals(404, send("GET", "/api/v2/public/bible/verses?translation=Nope&book=43&verses=3:16", null, null)
                 .statusCode());
         assertEquals(200, send("GET", "/api/v2/public/bible/translations", null, null).statusCode());
+        HttpResponse<String> languages = send("GET", "/api/v2/public/song-languages", null, null);
+        assertEquals("Svenska", JsonParser.parseString(languages.body()).getAsJsonArray().get(0)
+                .getAsJsonObject().get("name").getAsString());
     }
 
     @Test

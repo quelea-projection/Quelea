@@ -121,10 +121,20 @@ public final class Catalog {
     }
 
     /**
-     * An installed bible.
+     * A song translation name used in the song database, such as
+     * "Svenska", for an app to offer as the reader's language.
      *
-     * @param name the bible's name, used to pick it in other requests.
-     * @param isDefault true if it is the default bible.
+     * @param name the name, as typed in Quelea.
+     * @param songs how many songs have a translation by that name.
+     */
+    public record SongLanguage(String name, int songs) {
+    }
+
+    /**
+     * A Bible translation.
+     *
+     * @param name the name.
+     * @param isDefault true for the Bible chosen as default in Quelea.
      */
     public record Translation(String name, boolean isDefault) {
     }

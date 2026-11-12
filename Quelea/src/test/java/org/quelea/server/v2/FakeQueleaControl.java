@@ -92,6 +92,11 @@ final class FakeQueleaControl implements QueleaControl {
     }
 
     @Override
+    public List<Catalog.SongLanguage> songLanguages() {
+        return List.of(new Catalog.SongLanguage("Svenska", 12), new Catalog.SongLanguage("English", 3));
+    }
+
+    @Override
     public Catalog.Passage bibleVerses(String translation, int book, List<PublicLive.VerseRef> verses) {
         if (!"KJV".equals(translation)) {
             throw new NoSuchElementException("No such Bible: " + translation);
