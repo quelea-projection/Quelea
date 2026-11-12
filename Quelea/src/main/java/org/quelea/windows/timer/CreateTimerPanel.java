@@ -19,9 +19,7 @@ package org.quelea.windows.timer;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Locale;
 import java.util.logging.Level;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,8 +30,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -70,6 +70,9 @@ public class CreateTimerPanel extends Stage {
     private ThemeDTO timerTheme = ThemeDTO.DEFAULT_THEME;
     private final CheckBox saveBox;
     private final Button tpConfirm;
+    private final RadioButton durationModeButton;
+    private final RadioButton timeModeButton;
+    private final Label durationLabel;
     private final TextField durationTextField;
     private final TextArea textTextArea;
     private final TextField nameTextField;
@@ -94,33 +97,43 @@ public class CreateTimerPanel extends Stage {
         GridPane.setConstraints(nameLabel, 0, rows);
         grid.getChildren().add(nameLabel);
         nameTextField = new TextField();
-        nameTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if (newValue.equals("")) {
-                confirmButton.setDisable(true);
-            } else {
-                confirmButton.setDisable(false);
-            }
-        });
+        nameTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> validate());
         nameLabel.setLabelFor(nameTextField);
         GridPane.setConstraints(nameTextField, 1, rows);
         grid.getChildren().add(nameTextField);
         rows++;
 
-        Label durationLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.duration.label"));
+        Label modeLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.mode.label"));
+        GridPane.setConstraints(modeLabel, 0, rows);
+        grid.getChildren().add(modeLabel);
+        ToggleGroup modeGroup = new ToggleGroup();
+        durationModeButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("timer.mode.duration"));
+        durationModeButton.setToggleGroup(modeGroup);
+        timeModeButton = new RadioButton(LabelGrabber.INSTANCE.getLabel("timer.mode.time"));
+        timeModeButton.setToggleGroup(modeGroup);
+        durationModeButton.setSelected(true);
+        HBox modeBox = new HBox(10, durationModeButton, timeModeButton);
+        modeBox.setAlignment(Pos.CENTER_LEFT);
+        modeLabel.setLabelFor(durationModeButton);
+        GridPane.setConstraints(modeBox, 1, rows);
+        grid.getChildren().add(modeBox);
+        rows++;
+
+        durationLabel = new Label();
         GridPane.setConstraints(durationLabel, 0, rows);
         grid.getChildren().add(durationLabel);
         durationTextField = new TextField();
-        durationTextField.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("duration.tooltip.label")));
-        durationTextField.setPromptText("5:00");
+        durationTextField.setTooltip(new Tooltip());
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if (parsable(newValue)) {
-                durationTextField.setStyle("");
-                confirmButton.setDisable(false);
-            } else {
-                durationTextField.setStyle("-fx-text-fill: -q-lyrics-error;");
-                confirmButton.setDisable(true);
+            // "9:30am" was the old way of asking for a time of day
+            if (durationModeButton.isSelected() && CountdownTimes.parseDuration(newValue) == -1
+                    && newValue.toLowerCase(Locale.ROOT).matches(".*[ap]\\.?m.*")
+                    && CountdownTimes.parseTimeOfDay(newValue) != null) {
+                timeModeButton.setSelected(true);
             }
+            validate();
         });
+        modeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> updateMode());
         durationLabel.setLabelFor(durationTextField);
         GridPane.setConstraints(durationTextField, 1, rows);
         grid.getChildren().add(durationTextField);
@@ -188,7 +201,7 @@ public class CreateTimerPanel extends Stage {
         // OK button lives in the dialog footer (see below)
 
         confirmButton.setOnAction((ActionEvent event) -> {
-            if (!durationTextField.getText().isEmpty() && parsable(durationTextField.getText())) {
+            if (isValid()) {
 
                 String pretext = "", posttext = "";
                 if (!textTextArea.getText().isEmpty() && textTextArea.getText().contains("#")) {
@@ -198,10 +211,10 @@ public class CreateTimerPanel extends Stage {
                 }
 
                 TimerDisplayable displayable;
-                if (durationTextField.getText().contains("am") || durationTextField.getText().contains("pm")) {
-                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parseTime(durationTextField.getText()), pretext, posttext, tp.getTheme());
+                if (timeModeButton.isSelected()) {
+                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), CountdownTimes.parseTimeOfDay(durationTextField.getText()), pretext, posttext, tp.getTheme());
                 } else {
-                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, tp.getTheme());
+                    displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), CountdownTimes.parseDuration(durationTextField.getText()), pretext, posttext, tp.getTheme());
                 }
 
                 if (saveBox.isSelected()) {
@@ -240,6 +253,7 @@ public class CreateTimerPanel extends Stage {
         if (td != null) {
             createEdit(td);
         }
+        updateMode();
         BorderPane root = new BorderPane(grid);
         root.setBottom(new HBox(confirmButton));
         Scene scene = new Scene(root);
@@ -247,61 +261,36 @@ public class CreateTimerPanel extends Stage {
         setScene(scene);
     }
 
-    private boolean parsable(String newValue) {
-        return (parse(newValue) != -1) || (parseTime(newValue) != null);   
+    /**
+     * Show the label, hint and validation for the chosen kind of countdown.
+     */
+    private void updateMode() {
+        boolean time = timeModeButton.isSelected();
+        durationLabel.setText(LabelGrabber.INSTANCE.getLabel(time ? "timer.time.label" : "timer.duration.label"));
+        durationTextField.setPromptText(time ? "09:30" : "5:00");
+        durationTextField.getTooltip().setText(LabelGrabber.INSTANCE.getLabel(time ? "time.tooltip.label" : "duration.tooltip.label"));
+        validate();
+        if (getScene() != null) {
+            sizeToScene(); // the labels differ in length
+        }
     }
 
-    private int parse(String newValue) {
-        newValue = newValue.replace(" ", "");
-        String[] ss;
-        if (newValue.contains(":")) {
-            ss = newValue.split(":");
-        } else if (newValue.contains(".")) {
-            ss = newValue.split(".");
-        } else if (newValue.contains(";")) {
-            ss = newValue.split(";");
-        } else if (newValue.contains(",")) {
-            ss = newValue.split(",");
+    private boolean isValid() {
+        String text = durationTextField.getText();
+        if (timeModeButton.isSelected()) {
+            return CountdownTimes.parseTimeOfDay(text) != null;
+        }
+        return CountdownTimes.parseDuration(text) != -1;
+    }
+
+    private void validate() {
+        boolean valid = isValid();
+        if (valid || durationTextField.getText().isEmpty()) {
+            durationTextField.setStyle("");
         } else {
-            ss = newValue.split("m");
-            try {
-                ss[1] = ss[1].replace("s", "");
-            } catch (Exception e) {
-                return -1;
-            }
+            durationTextField.setStyle("-fx-text-fill: -q-lyrics-error;");
         }
-        try {
-            int minutes = Integer.parseInt(ss[0]);
-            if (minutes > 60 || minutes < 0) {
-                return -1;
-            }
-            int seconds = Integer.parseInt(ss[1]);
-            if (seconds >= 60 || seconds < 0) {
-                return -1;
-            }
-            if (minutes * 60 + seconds > 3600) {
-                return -1;
-            } else {
-                return minutes * 60 + seconds;
-            }
-
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    private Calendar parseTime(String text) {
-        try {
-            SimpleDateFormat ft = new SimpleDateFormat("hh:mmaa");
-            Calendar now = Calendar.getInstance();
-            Calendar time = Calendar.getInstance();
-            time.setTime(ft.parse(text.toLowerCase().replace(" ", "")));
-            time.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
-            return time;
-        } catch (ParseException e) {
-            //Nothing
-        }
-        return null;
+        confirmButton.setDisable(!valid || nameTextField.getText().isEmpty());
     }
 
     private void setTimerTheme(ThemeDTO theme) {
@@ -309,12 +298,12 @@ public class CreateTimerPanel extends Stage {
     }
 
     private void createEdit(TimerDisplayable td) {
-        int seconds = td.getSeconds();
-        if (seconds < 0) {
-            durationTextField.setText(td.getTimeToFinish().get(Calendar.HOUR) + ":" + (td.getTimeToFinish().get(Calendar.MINUTE) > 9 ? "" : "0") + td.getTimeToFinish().get(Calendar.MINUTE) + (td.getTimeToFinish().get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm"));
+        if (td.isCountdownToTime()) {
+            timeModeButton.setSelected(true);
         } else {
-            durationTextField.setText(td.secondsToTime(td.getSeconds()));
+            durationModeButton.setSelected(true);
         }
+        durationTextField.setText(td.getTimeText());
         textTextArea.setText(td.getPretext() + "#" + td.getPosttext());
         nameTextField.setText(td.getName());
     }
