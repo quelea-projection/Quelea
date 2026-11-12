@@ -23,7 +23,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.Printer;
@@ -71,9 +70,7 @@ public class LibraryPopupMenu extends ContextMenu {
         print.setOnAction(t -> {
             final SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValues().get(0);
             if (song != null) {
-                if (song.hasChords()) {
-                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(t12 -> song.setPrintChords(true)).addNoButton(t1 -> song.setPrintChords(false)).build().showAndWait();
-                }
+                // Chords are chosen in the print preview
                 Printer.getInstance().print(song);
             }
         });

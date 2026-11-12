@@ -1524,6 +1524,24 @@
     -fx-background-color: transparent;
 }
 
+/* Print preview: the pages to print, shown as sheets of paper */
+.scroll-pane.print-preview-area {
+    -fx-background-color: -q-border, -q-backdrop;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 1;
+}
+
+.scroll-pane.print-preview-area > .viewport {
+    -fx-background-color: transparent;
+}
+
+.print-preview-page {
+    /* Always white: this is what the paper will look like */
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 10, 0, 0, 2);
+}
+
 /* 3x3 text position picker shown over theme previews on hover */
 .position-cell,
 .position-cell:focused {
