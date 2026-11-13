@@ -17,6 +17,7 @@
  */
 package org.quelea.data.imagegroup;
 
+import org.quelea.services.utils.ImageManager;
 import java.io.File;
 import java.io.IOException;
 import javafx.scene.image.Image;
@@ -38,7 +39,7 @@ public class ImageGroupSlide {
      * @param image the name of the file
      */
     public ImageGroupSlide(int numSlide, File image) throws IOException {
-        this.image = new Image(image.toURI().toURL().toString());
+        this.image = new Image(ImageManager.loadableUri(image));
     }
 
     /**

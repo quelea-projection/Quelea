@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import org.quelea.services.utils.ImageManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +52,7 @@ public class ImageDisplayable implements Displayable {
      */
     public ImageDisplayable(File file) {
         this.file = file;
-        image = new Image("file:" + file.getAbsolutePath());
+        image = new Image(ImageManager.loadableUri(file));
     }
 
     public ImageDisplayable(Image image) {
@@ -125,7 +126,7 @@ public class ImageDisplayable implements Displayable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        ImageView small = new ImageView(new Image("file:" + file.getAbsolutePath(), 30, 30, false, true));
+        ImageView small = new ImageView(new Image(ImageManager.loadableUri(file), 30, 30, false, true));
         return small;
     }
 
