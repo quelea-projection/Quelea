@@ -105,6 +105,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.phonehomeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.planningCenterRefreshToken;
 import static org.quelea.services.utils.QueleaPropertyKeys.planningCentrePrevDaysKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.ppPathKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.ppRenderKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.preliveDivposKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.previewDivposKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.previewOnImageChangeKey;
@@ -2016,6 +2017,26 @@ public final class QueleaProperties extends SortedProperties {
      */
     public void setUsePP(boolean val) {
         setProperty(usePpKey, Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * Get whether PowerPoint itself should render the slides of presentations
+     * (macOS), instead of Quelea's own rendering.
+     *
+     * @return true to let PowerPoint render the slides.
+     */
+    public boolean getPPRender() {
+        return Boolean.parseBoolean(getProperty(ppRenderKey, "false"));
+    }
+
+    /**
+     * Set whether PowerPoint itself should render the slides of presentations.
+     *
+     * @param val true to let PowerPoint render the slides.
+     */
+    public void setPPRender(boolean val) {
+        setProperty(ppRenderKey, Boolean.toString(val));
         write();
     }
 

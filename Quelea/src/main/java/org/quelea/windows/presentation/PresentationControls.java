@@ -24,9 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.LivePanel;
-import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.presentation.powerpoint.PowerPointService;
 import org.quelea.windows.style.MediaButton;
 import org.quelea.windows.style.QueleaIcon;
 
@@ -43,32 +41,10 @@ public class PresentationControls extends StackPane {
         setButtonParams(previousButton);
         previousButton.setTranslateX(-120);
         getChildren().add(previousButton);
-        previousButton.setOnMouseClicked((MouseEvent t) -> {
-            PowerPointHandler.gotoPrevious();
-            String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.equals("")) {
-                int i = Integer.parseInt(result);
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
-            }
-            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                lp.setBlacked(false);
-            }
-        });
+        previousButton.setOnMouseClicked((MouseEvent t) -> PowerPointService.get().previous());
 
         Button nextButton = new MediaButton(QueleaIcon.NEXT, 46, false);
-        nextButton.setOnMouseClicked((MouseEvent t) -> {
-            PowerPointHandler.gotoNext();
-            String result = PowerPointHandler.getCurrentSlide();
-            if (!result.contains("not running") && !result.equals("")) {
-                int i = Integer.parseInt(result);
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i, true);
-            }
-            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if (lp.getBlacked() && !PowerPointHandler.screenStatus().equals("3")) {
-                lp.setBlacked(false);
-            }
-        });
+        nextButton.setOnMouseClicked((MouseEvent t) -> PowerPointService.get().next());
 
         setButtonParams(nextButton);
         nextButton.setTranslateX(120);
