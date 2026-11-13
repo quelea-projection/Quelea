@@ -679,6 +679,7 @@ redo.label=Redo
 show.extra.live.panel.toolbar.options.label=Show extra live panel toolbar options
 link.preview.and.live.dividers.label=Link preview and live panel dividers
 save.add.notice.button=Save and add
+save.notice.tooltip=Save the notice for later without showing it
 saved.notices=Saved notices
 delete.notice.button=Delete
 schedule.items.skipped.text=Some schedule items don't have their media embedded, so they weren't added.
