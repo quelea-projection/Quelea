@@ -15,4 +15,5 @@ quelea (2027.0) stable
   * Much faster duplicate check when importing songs
   * Fix new songs sometimes being saved twice
   * Fix changes saved just before closing Quelea sometimes being lost
+  * Save notices without showing them live
   * Various minor bugfixes
