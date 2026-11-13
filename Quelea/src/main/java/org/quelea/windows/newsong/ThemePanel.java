@@ -47,6 +47,7 @@ import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
 import org.quelea.windows.stage.StageDrawer;
+import org.quelea.windows.style.ScreenFit;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -203,6 +204,7 @@ public class ThemePanel extends BorderPane {
             if (dialog.getWidth() < needed || (firstShow && dialog.getWidth() < comfortable)) {
                 dialog.setWidth(firstShow ? comfortable : needed);
             }
+            ScreenFit.fit(dialog);
         });
     }
 
