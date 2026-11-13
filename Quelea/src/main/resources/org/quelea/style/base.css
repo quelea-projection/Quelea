@@ -30,17 +30,20 @@
     -fx-padding: 0;
 }
 
+/* The dividers look like a 1px line, but stay 7px thick so they can still
+   be grabbed and dragged: the line is drawn with background insets and the
+   rest of the divider is transparent. SplitPaneSkin takes the thickness of
+   every divider from its left + right padding, also in vertical split
+   panes, so the padding must stay on the left and right in both
+   orientations (top/bottom padding makes a vertical divider 0px thick). */
 .split-pane > .split-pane-divider {
-    -fx-background-color: -q-border;
-    -fx-padding: 0 1 0 0;
-}
-
-.split-pane:horizontal > .split-pane-divider {
-    -fx-padding: 0 1 0 0;
+    -fx-background-color: transparent, -q-border;
+    -fx-background-insets: 0, 0 3 0 3;
+    -fx-padding: 0 3.5 0 3.5;
 }
 
 .split-pane:vertical > .split-pane-divider {
-    -fx-padding: 1 0 0 0;
+    -fx-background-insets: 0, 3 0 3 0;
 }
 
 /* ======================================================================
