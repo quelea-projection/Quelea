@@ -86,6 +86,7 @@ public class LyricDrawer extends WordDrawer {
     private Group oldTextGroup;
     private String[] oldText;
     private boolean newItem;
+    private boolean useFontSizeCache = true;
     /**
      * Player for video backgrounds. Created lazily the first time a video
      * theme is set and released again as soon as a non-video theme is set, so
@@ -603,6 +604,18 @@ public class LyricDrawer extends WordDrawer {
     }
 
     /**
+     * Set whether the uniform font size of a displayable may be cached in (and
+     * read from) the displayable. The cache isn't keyed by theme, so a drawer
+     * whose theme keeps changing, like the theme editor's preview, must not
+     * use it.
+     *
+     * @param useFontSizeCache false to work the size out on every draw.
+     */
+    public void setUseFontSizeCache(boolean useFontSizeCache) {
+        this.useFontSizeCache = useFontSizeCache;
+    }
+
+    /**
      * Determine the largest font size we can safely use for every section of a
      * text displayable.
      * <p>
@@ -628,7 +641,7 @@ public class LyricDrawer extends WordDrawer {
             height *= 1 - QueleaProperties.get().getSmallSongTextSize();
         }
 
-        Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
+        Double cachedSize = useFontSizeCache ? displayable.getCachedUniformFontSize(new Dimension(width, height)) : null;
         if (cachedSize != null) {
             return cachedSize;
         }
@@ -665,7 +678,9 @@ public class LyricDrawer extends WordDrawer {
         if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
-        displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
+        if (useFontSizeCache) {
+            displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
+        }
         return fontSize;
     }
 

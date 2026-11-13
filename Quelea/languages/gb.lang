@@ -468,6 +468,7 @@ ignored.fonts.label=Ignored fonts
 chosen.fonts.label=Chosen fonts
 font.selection.dialog.title=Font Selection
 hover.for.position.label=Hover over the canvas to set text position
+theme.sample.translation=Translated line
 test.patterns.text=Test Patterns
 test.patterns.explanation=The test patterns available here should help you calibrate your display's focus and colour settings properly. Click on a test image to show it on both the main and stage views.
 youtube.url.label=Youtube video URL

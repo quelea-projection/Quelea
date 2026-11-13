@@ -130,6 +130,12 @@ public class SongEntryWindow extends Stage {
         themeTab.setContent(themePanel);
         themeTab.setClosable(false);
         tabPane.getTabs().add(themeTab);
+        // Translations may have changed on their tab since the last update
+        themeTab.setOnSelectionChanged(e -> {
+            if (themeTab.isSelected()) {
+                themePanel.updateTheme(false);
+            }
+        });
 
         mainPane.setCenter(tabPane);
 
@@ -219,6 +225,7 @@ public class SongEntryWindow extends Stage {
      */
     private void setupThemePanel() {
         themePanel = new ThemePanel(basicSongPanel.getLyricsField().getTextArea(), confirmButton, true);
+        themePanel.setPreviewSource(this::getPreviewSong);
     }
 
     /**
@@ -357,6 +364,24 @@ public class SongEntryWindow extends Stage {
         }
         updateDBOnHide = true;
         resetChange();
+    }
+
+    /**
+     * A copy of the song as it stands in the editor, for the theme preview.
+     * It shows the translation that is shown with the song live, if any.
+     *
+     * @return a new song with the editor's lyrics and translations.
+     */
+    private SongDisplayable getPreviewSong() {
+        SongDisplayable preview = new SongDisplayable("", "");
+        preview.setLyrics(getBasicSongPanel().getLyricsField().getTextArea().getText());
+        if (translatePanel != null) {
+            preview.setTranslations(translatePanel.getTranslations());
+        }
+        if (song != null) {
+            preview.setCurrentTranslationLyrics(song.getCurrentTranslationName());
+        }
+        return preview;
     }
 
     /**
