@@ -785,5 +785,6 @@ universal.search.prompt=Sök sånger, bibelställen, bilder, videor och timers
 universal.search.no.results=Inga träffar
 always.use.multi.bible=Visa alltid nya bibelställen i flera översättningar
 select.multi.bible.label=Översättningar att visa
+bible.version.separator.label=Rita en linje mellan bibelversioner på samma bild
 select.bible.versions.hint=Bocka för de översättningar som ska visas. De visas i den ordning du bockar för dem.
 select.bible.versions.button=Välj...

@@ -866,5 +866,6 @@ universal.search.prompt=Search songs, bible passages, images, videos and timers
 universal.search.no.results=No results
 always.use.multi.bible=Always show new passages in several versions
 select.multi.bible.label=Versions to show
+bible.version.separator.label=Draw a line between bible versions on the same slide
 select.bible.versions.hint=Tick the versions to show. They appear in the order you tick them.
 select.bible.versions.button=Select...

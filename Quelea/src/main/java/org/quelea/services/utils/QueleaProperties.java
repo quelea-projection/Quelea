@@ -40,6 +40,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.additionalLineSpacing
 import static org.quelea.services.utils.QueleaPropertyKeys.advanceOnLiveKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.alwaysUseMultiBibleKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoDetectPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.bibleVersionSeparatorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoTranslateKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoplayVidKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.blackFadeDurationKey;
@@ -2524,6 +2525,16 @@ public final class QueleaProperties extends SortedProperties {
     public List<String> getMultiBibleVersions() {
         String versions = getProperty(multiBibleVersionsKey, "");
         return versions.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(versions.split("\n")));
+    }
+
+    /**
+     * Determine whether a line should be drawn between bible versions shown
+     * on the same slide (with a smaller gap than the empty line otherwise.)
+     *
+     * @return true if it should, false otherwise.
+     */
+    public boolean getBibleVersionSeparator() {
+        return Boolean.parseBoolean(getProperty(bibleVersionSeparatorKey, "true"));
     }
 
     public boolean getBibleSplitVerses() {

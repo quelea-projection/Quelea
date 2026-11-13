@@ -59,6 +59,7 @@ public class OptionsBiblePanel {
     private Setting alwaysUseMultiBibleSetting;
     private SimpleBooleanProperty alwaysUseMultiBibleProperty;
     private Setting multiBibleVersionsSetting;
+    private Setting versionSeparatorSetting;
 
     /**
      * Create the options bible panel.
@@ -102,6 +103,9 @@ public class OptionsBiblePanel {
         StringField multiBibleVersionsField = Field.ofStringType(multiBibleVersionsProperty).render(new BibleVersionsSelector());
         multiBibleVersionsSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("select.multi.bible.label"),
                 multiBibleVersionsField, multiBibleVersionsProperty).customKey(multiBibleVersionsKey);
+
+        versionSeparatorSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("bible.version.separator.label"),
+                new SimpleBooleanProperty(QueleaProperties.get().getBibleVersionSeparator())).customKey(bibleVersionSeparatorKey);
     }
 
     public Category getBiblesTab() {
@@ -115,7 +119,8 @@ public class OptionsBiblePanel {
                 useMaxVersesSetting,
                 maxVersesSetting,
                 alwaysUseMultiBibleSetting,
-                multiBibleVersionsSetting
+                multiBibleVersionsSetting,
+                versionSeparatorSetting
         );
     }
 }

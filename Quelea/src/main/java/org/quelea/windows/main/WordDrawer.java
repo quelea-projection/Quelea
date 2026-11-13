@@ -68,6 +68,13 @@ public abstract class WordDrawer extends DisplayableDrawer {
         lastClearedState.put(getCanvas(), val);
     }
     
+    /**
+     * The height of the gap between bible versions when a line is drawn
+     * between them, as a part of a line of the version below. Without the
+     * line, the gap is a whole empty line.
+     */
+    protected static final double VERSION_SEPARATOR_GAP = 0.5;
+
     private WrapTextResult getWrapTextProps(Font font, Font translateFont, String[] paragraphs, double width) {
         List<LyricLine> lines = new ArrayList<>();
         double height = 0;
@@ -75,8 +82,13 @@ public abstract class WordDrawer extends DisplayableDrawer {
             boolean translation = i > 0 && translateFont != null;
             FXFontMetrics metrics = new FXFontMetrics(translation ? translateFont : font);
             if (i > 0) {
-                lines.add(new LyricLine(""));
-                height += metrics.getLineHeight();
+                if (QueleaProperties.get().getBibleVersionSeparator()) {
+                    lines.add(LyricLine.separator());
+                    height += metrics.getLineHeight() * VERSION_SEPARATOR_GAP;
+                } else {
+                    lines.add(new LyricLine(""));
+                    height += metrics.getLineHeight();
+                }
             }
             List<LyricLine> paragraphLines = wrapParagraph(metrics, paragraphs[i], width, translation);
             lines.addAll(paragraphLines);

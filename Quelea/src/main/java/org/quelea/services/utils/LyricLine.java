@@ -27,6 +27,7 @@ public class LyricLine {
 
     private final boolean isTranslateLine;
     private final String line;
+    private final boolean separator;
 
     /**
      * Create a new lyric line.
@@ -34,8 +35,22 @@ public class LyricLine {
      * @param line 
      */
     public LyricLine(boolean isTranslateLine, String line) {
+        this(isTranslateLine, line, false);
+    }
+
+    private LyricLine(boolean isTranslateLine, String line, boolean separator) {
         this.isTranslateLine = isTranslateLine;
         this.line = line;
+        this.separator = separator;
+    }
+
+    /**
+     * Create the gap between two bible versions on one slide, which is drawn
+     * as a line where it can be (and as an empty line elsewhere.)
+     * @return the separator.
+     */
+    public static LyricLine separator() {
+        return new LyricLine(false, "", true);
     }
 
     /**
@@ -43,8 +58,15 @@ public class LyricLine {
      * @param line the text for the non-translated line.
      */
     public LyricLine(String line) {
-        this.isTranslateLine = false;
-        this.line = line;
+        this(false, line, false);
+    }
+
+    /**
+     * Determine if this is the gap between two bible versions.
+     * @return true if it is, false if it's a line of text.
+     */
+    public boolean isSeparator() {
+        return separator;
     }
 
     /**
