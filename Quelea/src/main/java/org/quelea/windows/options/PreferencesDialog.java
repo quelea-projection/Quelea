@@ -118,11 +118,14 @@ public class PreferencesDialog extends Stage {
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
             preferencesFx.saveSettings();
+            displayPanel.getLogoGroup().apply();
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
+            // Show any changed logo settings straight away
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refreshLogo();
 
             // If the option has changed for linking the preview and live dividers, update the current UI to respect
             // the options now
@@ -165,6 +168,9 @@ public class PreferencesDialog extends Stage {
 
     private void callBeforeShowing() {
         fitToScreen();
+        // The logo settings may have been changed from the logo button since
+        // this dialog was last open
+        displayPanel.getLogoGroup().reload();
         getDisplaySetupPanel().setDisplayChange(false);
 
         // Before showing the preferences dialog we save the current state of the link preview and live dividers so

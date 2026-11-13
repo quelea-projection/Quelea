@@ -65,6 +65,11 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter IMAGE_VIDEOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.image.video.files"), Utils.getFileExtensions(Utils.getImageAndVideoExtensions()));
     /**
+     * Accept anything that can be used as a logo: images (including SVG) and
+     * videos.
+     */
+    public static final FileChooser.ExtensionFilter LOGO = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.logo.files"), logoExtensions());
+    /**
      * Accept audio files.
      */
     public static final FileChooser.ExtensionFilter AUDIOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.audio.files"), Utils.getFileExtensions(Utils.getAudioExtensions()));
@@ -167,5 +172,11 @@ public final class FileFilters {
      */
     private FileFilters() {
         throw new AssertionError();
+    }
+
+    private static java.util.List<String> logoExtensions() {
+        java.util.List<String> ret = Utils.getFileExtensions(Utils.getImageAndVideoExtensions());
+        ret.addAll(java.util.List.of("*.svg", "*.SVG", "*.svgz", "*.SVGZ"));
+        return ret;
     }
 }

@@ -22,6 +22,8 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
+import org.quelea.data.logo.LogoPosition;
+import org.quelea.data.logo.LogoSettings;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.notice.NoticeDrawer.NoticePosition;
@@ -80,6 +82,10 @@ import static org.quelea.services.utils.QueleaPropertyKeys.libraryDivposKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.linkPreviewAndLiveDividers;
 import static org.quelea.services.utils.QueleaPropertyKeys.logoFadeDurationKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.logoImageLocationKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.logoOffsetXKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.logoOffsetYKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.logoPositionKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.logoSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.lyricHeightBoundKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.lyricWidthBoundKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.lyricsTextBackgroundColor;
@@ -178,6 +184,10 @@ import static org.quelea.services.utils.QueleaPropertyKeys.wikiPageKey;
 public final class QueleaProperties extends SortedProperties {
 
     public static final Version VERSION = new Version("2027.0", VersionType.CI);
+    /**
+     * The logo shown when the user hasn't chosen one.
+     */
+    public static final String DEFAULT_LOGO_LOCATION = "icons/logo default.png";
     private static QueleaProperties INSTANCE;
     private String userHome;
 
@@ -2134,7 +2144,77 @@ public final class QueleaProperties extends SortedProperties {
      * @return the logo image
      */
     public String getLogoImageURI() {
-        return new File(getProperty(logoImageLocationKey, "icons/logo default.png")).toURI().toString();
+        return new File(getLogoImageLocation()).toURI().toString();
+    }
+
+    /**
+     * Return the location (file path) of the logo image, which may be relative
+     * to the Quelea directory.
+     * <p>
+     *
+     * @return the path of the logo image, never empty.
+     */
+    public String getLogoImageLocation() {
+        String location = getProperty(logoImageLocationKey, "");
+        if (location.trim().isEmpty()) {
+            return DEFAULT_LOGO_LOCATION;
+        }
+        return location;
+    }
+
+    /**
+     * Get how the logo is placed on the screen (size, position and offset).
+     * Anything that isn't set yet gives the original behaviour: the logo
+     * fills as much of the screen as it can, centred.
+     * <p>
+     *
+     * @return the logo settings.
+     */
+    public LogoSettings getLogoSettings() {
+        return new LogoSettings(
+                parseDouble(getProperty(logoSizeKey), LogoSettings.DEFAULT.size()),
+                LogoPosition.parse(getProperty(logoPositionKey)),
+                parseDouble(getProperty(logoOffsetXKey), 0),
+                parseDouble(getProperty(logoOffsetYKey), 0));
+    }
+
+    /**
+     * Set how the logo is placed on the screen, and save it.
+     * <p>
+     *
+     * @param settings the new logo settings.
+     */
+    public void setLogoSettings(LogoSettings settings) {
+        setLogoSettings(settings, true);
+    }
+
+    /**
+     * Set how the logo is placed on the screen.
+     * <p>
+     *
+     * @param settings the new logo settings.
+     * @param save     true to also write the properties file, false to only
+     *                 change them in memory (e.g. while a slider is dragged).
+     */
+    public void setLogoSettings(LogoSettings settings, boolean save) {
+        setProperty(logoSizeKey, Double.toString(settings.size()));
+        setProperty(logoPositionKey, settings.position().name());
+        setProperty(logoOffsetXKey, Double.toString(settings.offsetX()));
+        setProperty(logoOffsetYKey, Double.toString(settings.offsetY()));
+        if (save) {
+            write();
+        }
+    }
+
+    private static double parseDouble(String value, double fallback) {
+        if (value == null) {
+            return fallback;
+        }
+        try {
+            return Double.parseDouble(value.trim());
+        } catch (NumberFormatException ex) {
+            return fallback;
+        }
     }
 
     /**
