@@ -148,13 +148,13 @@ public class CreateTimerPanel extends Stage {
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(durationTextField.getText());
         tp = new ThemePanel(wordsArea, tpConfirm, true);
-        tp.setPrefSize(500, 500);
         if (td == null) {
             tp.setTheme(timerTheme);
         } else {
             tp.setTheme(td.getTheme());
         }
         Stage tpStage = new Stage();
+        tp.sizeDialog(tpStage);
         tpStage.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
         Utils.addIconsToStage(tpStage);
         BorderPane bp = new BorderPane();
