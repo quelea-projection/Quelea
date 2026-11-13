@@ -77,7 +77,7 @@ ext.mainClass = 'org.quelea.windows.main.MainStub'
 
 application {
     mainClass = 'org.quelea.windows.main.MainStub'
-    applicationDefaultJvmArgs = ["--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED"]
+    applicationDefaultJvmArgs = ["--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED"]
 }
 
 tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
@@ -87,7 +87,7 @@ tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTa
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "--add-opens java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens java.base/java.lang=ALL-UNNAMED", "--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
+    jvmOptions = ["-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "--add-opens java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens java.base/java.lang=ALL-UNNAMED", "--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
     outfile = "Quelea64.exe"
     jreMinVersion = "1.5" //Hack to bypass launch4j
 }

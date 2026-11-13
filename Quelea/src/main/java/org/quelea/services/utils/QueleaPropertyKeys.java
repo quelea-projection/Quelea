@@ -145,5 +145,7 @@ public class QueleaPropertyKeys {
     public static final String useDefaultTranslation = "use.default.translation";
     public static final String defaultTranslationName = "default.translation.name";
     public static final String disableDirectShowForWVC1Key = "disable.directshow.for.wvc1";
+    public static final String schedulePrintContentKey = "schedule.print.content";
+    public static final String songPrintChordsKey = "song.print.chords";
 
 }

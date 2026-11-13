@@ -84,11 +84,10 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
-        s.resizableProperty().setValue(false);
         s.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
-        tp.setPrefSize(500, 500);
+        tp.sizeDialog(s);
         tp.setTheme(selectedDisplayable.getTheme());
         confirmButton.setOnAction((ActionEvent event) -> {
             if (tp.getTheme() != null) {
@@ -113,8 +112,6 @@ public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
         Scene scene = new Scene(bp);
         StyleManager.apply(scene);
         s.setScene(scene);
-        s.setMinHeight(600);
-        s.setMinWidth(250);
         s.showAndWait();
     }
 

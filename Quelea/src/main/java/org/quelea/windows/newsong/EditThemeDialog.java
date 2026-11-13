@@ -64,7 +64,6 @@ public class EditThemeDialog extends Stage {
         initModality(Modality.WINDOW_MODAL);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.heading"));
-        setResizable(false);
 
         BorderPane mainPane = new BorderPane();
         mainPane.getStyleClass().add("preview-backdrop");
@@ -92,7 +91,7 @@ public class EditThemeDialog extends Stage {
         themeNamePanel.getChildren().add(nameField);
         HBox.setHgrow(nameField, javafx.scene.layout.Priority.ALWAYS);
         panel = new ThemePanel();
-        panel.setPrefSize(500, 500);
+        panel.sizeDialog(this);
         mainPane.setCenter(panel);
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
         StyleManager.markPrimaryButton(confirmButton);

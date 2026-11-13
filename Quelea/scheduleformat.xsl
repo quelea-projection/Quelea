@@ -113,6 +113,25 @@
             </xsl:with-param>
         </xsl:call-template>
     </xsl:template>
+    <xsl:template match="lyricspages">
+        <xsl:apply-templates select="songlyrics"/>
+    </xsl:template>
+    <xsl:template match="songlyrics">
+        <fo:block break-before="page" keep-with-next.within-page="always">
+            <fo:block font-size="16pt" font-weight="bold">
+                <xsl:value-of select="title"/>
+            </fo:block>
+            <xsl:if test="author != ''">
+                <fo:block font-size="11pt" font-style="italic">
+                    <xsl:value-of select="author"/>
+                </fo:block>
+            </xsl:if>
+        </fo:block>
+        <fo:block space-before="12pt" linefeed-treatment="preserve" font-size="11pt"
+                  font-family="Roboto Mono, Ubuntu Mono, Courier">
+            <xsl:value-of select="lyrics"/>
+        </fo:block>
+    </xsl:template>
     <xsl:template match="fileimagegroup">
         <xsl:call-template name="file">
             <xsl:with-param name="filetype">
