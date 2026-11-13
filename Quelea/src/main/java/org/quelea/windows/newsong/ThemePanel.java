@@ -63,6 +63,8 @@ public class ThemePanel extends BorderPane {
     /** Extra width for the font lists when the labels of a language are long. */
     private static final double DIALOG_FONT_ROOM = 60;
     private static final String DIALOG_SIZED_KEY = "quelea.theme.dialog.sized";
+    /** Preferred height of the preview below the theme controls. */
+    private static final double PREVIEW_PREF_HEIGHT = 220;
 
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
@@ -104,8 +106,13 @@ public class ThemePanel extends BorderPane {
     public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton, boolean showThemeCopyPanel) {
         this.confirmButton = confirmButton;
         positionSelector = new DisplayPositionSelector(this);
-        positionSelector.prefWidthProperty().bind(widthProperty());
-        positionSelector.prefHeightProperty().bind(heightProperty());
+        // The selector and the preview fill the space left below the
+        // toolbar. Their own sizes must not feed back into that space: the
+        // selector used to ask for the whole panel's size, so the preview
+        // started out too big (covering the dialog's buttons) and only fitted
+        // once the window was resized.
+        positionSelector.setMinSize(0, 0);
+        positionSelector.setPrefSize(0, 0);
         DisplayCanvas canvas = new DisplayCanvas(false, () -> updateTheme(true), Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
@@ -117,6 +124,11 @@ public class ThemePanel extends BorderPane {
         themePreviewPane.getStyleClass().add("text-area");
         themePreviewPane.getChildren().add(preview);
         themePreviewPane.getChildren().add(positionSelector);
+        themePreviewPane.setMinSize(0, 0);
+        // A fixed preferred height (not one taken from the preview's current
+        // size), so windows sized to their content get a usable preview
+        themePreviewPane.setPrefHeight(PREVIEW_PREF_HEIGHT);
+        VBox.setVgrow(themePreviewPane, javafx.scene.layout.Priority.ALWAYS);
         centrePane.getChildren().add(themePreviewPane);
         setCenter(centrePane);
         if (canvas.isStageView()) {

@@ -83,6 +83,32 @@ public class DisplayPreview extends StackPane {
         }
     }
 
+    /*
+     * The preview takes whatever room its parent gives it. Its margins are
+     * worked out from its current size, so letting them count towards its
+     * minimum / preferred size would stop it from ever shrinking (and make it
+     * start out at the wrong size in layouts that ask for the preferred size.)
+     */
+    @Override
+    protected double computeMinWidth(double height) {
+        return 0;
+    }
+
+    @Override
+    protected double computeMinHeight(double width) {
+        return 0;
+    }
+
+    @Override
+    protected double computePrefWidth(double height) {
+        return 0;
+    }
+
+    @Override
+    protected double computePrefHeight(double width) {
+        return 0;
+    }
+
     private double getRatio() {
         if (QueleaApp.get().getProjectionWindow() == null) {
             return DEFAULT_RATIO;
