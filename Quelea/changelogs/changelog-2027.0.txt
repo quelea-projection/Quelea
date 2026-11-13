@@ -3,6 +3,8 @@ quelea (2027.0) stable
   * Upgrade to Java25 and OpenJFX 25
   * New modern, clean theme
   * Universal search box (Ctrl/Cmd+K) to find songs, bible passages, images, videos, timers and notices, with a preview, and add them to the schedule
+  * Printing now shows a preview of the pages first, and nothing is sent to the printer until it is approved
+  * The printed schedule can include the song lyrics, with or without chords
   * Default translations now used when adding song via server
   * Support for bible book names in chapters in Zefania XML import
   * Fix UTF-8 filename issue with snap build

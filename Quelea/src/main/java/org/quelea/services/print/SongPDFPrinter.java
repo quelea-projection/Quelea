@@ -34,7 +34,18 @@ public class SongPDFPrinter extends PDFPrinter {
     }
 
     public void print(SongDisplayable song, File pdfFile, boolean includeTranslations) throws IOException {
-        print(song.getPrintXML(includeTranslations), new File("songformat.xsl"), pdfFile);
+        printXML(song.getPrintXML(includeTranslations), pdfFile);
+    }
+
+    /**
+     * Write song print XML (see SongDisplayable.getPrintXML()) to a PDF file.
+     *
+     * @param printXML the print XML of the song.
+     * @param pdfFile the file to write.
+     * @throws IOException if the PDF couldn't be generated.
+     */
+    public void printXML(String printXML, File pdfFile) throws IOException {
+        print(printXML, new File("songformat.xsl"), pdfFile);
     }
 
 }

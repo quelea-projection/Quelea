@@ -53,6 +53,11 @@ public class PDFPrinter {
     private static FopFactoryBuilder builder;
     private static FOUserAgent foUserAgent;
     private static TransformerFactory tranFactory;
+    /**
+     * FOP is set up lazily and shared, and print previews are generated on a
+     * background thread, so only one PDF is generated at a time.
+     */
+    private static final Object LOCK = new Object();
 
     /**
      * Print a PDF file.
@@ -64,6 +69,12 @@ public class PDFPrinter {
      */
     @SuppressWarnings("unchecked")
     public void print(String xml, File xsltfile, File pdfFile) throws IOException {
+        synchronized (LOCK) {
+            generate(xml, xsltfile, pdfFile);
+        }
+    }
+
+    private void generate(String xml, File xsltfile, File pdfFile) throws IOException {
         try {
             InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             StreamSource source = new StreamSource(stream);

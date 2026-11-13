@@ -25,6 +25,7 @@ import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.notice.NoticeDrawer.NoticePosition;
+import org.quelea.services.print.SchedulePrintContent;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -142,6 +143,8 @@ import static org.quelea.services.utils.QueleaPropertyKeys.stageLyricsColorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.stageModeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.stageScreenKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.stageShowChordsKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.schedulePrintContentKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.songPrintChordsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.stageShowClockKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.stageTextAlignmentKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.textShadowKey;
@@ -2729,5 +2732,43 @@ public final class QueleaProperties extends SortedProperties {
 
     public boolean getDisableDirectShowForWVC1() {
         return Boolean.parseBoolean(getProperty(disableDirectShowForWVC1Key, "true"));
+    }
+
+    /**
+     * Get what was last chosen to be printed with a schedule.
+     *
+     * @return what to print with a schedule (the overview by default.)
+     */
+    public SchedulePrintContent getSchedulePrintContent() {
+        return SchedulePrintContent.fromName(getProperty(schedulePrintContentKey));
+    }
+
+    /**
+     * Set what should be printed with a schedule.
+     *
+     * @param content what to print with a schedule.
+     */
+    public void setSchedulePrintContent(SchedulePrintContent content) {
+        setProperty(schedulePrintContentKey, content.name());
+        write();
+    }
+
+    /**
+     * Get whether chords were last chosen to be printed with a song.
+     *
+     * @return true if chords should be printed with a song.
+     */
+    public boolean getPrintSongChords() {
+        return Boolean.parseBoolean(getProperty(songPrintChordsKey, "false"));
+    }
+
+    /**
+     * Set whether chords should be printed with a song.
+     *
+     * @param printChords true if chords should be printed with a song.
+     */
+    public void setPrintSongChords(boolean printChords) {
+        setProperty(songPrintChordsKey, Boolean.toString(printChords));
+        write();
     }
 }
