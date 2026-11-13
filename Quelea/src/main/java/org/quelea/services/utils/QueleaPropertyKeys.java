@@ -143,5 +143,8 @@ public class QueleaPropertyKeys {
     public static final String useDefaultTranslation = "use.default.translation";
     public static final String defaultTranslationName = "default.translation.name";
     public static final String disableDirectShowForWVC1Key = "disable.directshow.for.wvc1";
+    public static final String ndiOutputEnabledKey = "ndi.output.enabled";
+    public static final String ndiSourceNameKey = "ndi.source.name";
+    public static final String ndiFrameRateKey = "ndi.frame.rate";
 
 }

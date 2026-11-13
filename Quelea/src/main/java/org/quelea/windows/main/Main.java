@@ -30,6 +30,7 @@ import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
+import org.quelea.services.ndi.NdiOutput;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.GStreamerInitState;
@@ -262,6 +263,7 @@ public final class Main extends Application {
                     } else {
                         stageWindow.show();
                     }
+                    NdiOutput.INSTANCE.applySettings();
                 });
 
                 LOGGER.log(Level.INFO, "Adding shortcuts.");
