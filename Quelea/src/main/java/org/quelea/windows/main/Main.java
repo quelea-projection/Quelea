@@ -250,6 +250,7 @@ public final class Main extends Application {
                     mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
                     mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
                     mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
+                    mainWindow.getMainPanel().getLivePanel().mirrorNotices(fullScreenWindow.getCanvas().getNoticeDrawer());
                     if (lyricsHidden) {
                         fullScreenWindow.hide();
                     } else {

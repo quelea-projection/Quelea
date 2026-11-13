@@ -28,6 +28,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.IndexedDisplayable;
@@ -486,6 +487,24 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
         for (AbstractPanel panel : cardPanel.getPanels()) {
             panel.registerDisplayCanvas(canvas);
+        }
+    }
+
+    /**
+     * Show the notices drawn by the given drawer on the previews in this
+     * panel as well, whichever kind of item is shown.
+     * <p/>
+     *
+     * @param source the notice drawer of the projection canvas.
+     */
+    public final void mirrorNotices(final NoticeDrawer source) {
+        for (AbstractPanel panel : cardPanel.getPanels()) {
+            for (DisplayCanvas canvas : panel.getCanvases()) {
+                // The panels' own previews (not the registered display windows)
+                if (canvas.getDrawingPriority() == DisplayCanvas.Priority.LOW) {
+                    source.addMirror(canvas.getNoticeDrawer());
+                }
+            }
         }
     }
 
