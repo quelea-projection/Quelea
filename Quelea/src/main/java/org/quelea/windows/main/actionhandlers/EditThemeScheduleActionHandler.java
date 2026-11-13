@@ -84,11 +84,10 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
-        s.resizableProperty().setValue(false);
         s.setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.text"));
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
-        tp.setPrefSize(500, 500);
+        tp.sizeDialog(s);
         if (firstSelected.getSections().length > 0) {
             tp.setTheme(firstSelected.getSections()[0].getTheme());
         }
@@ -133,8 +132,6 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         Scene scene = new Scene(bp);
         StyleManager.apply(scene);
         s.setScene(scene);
-        s.setMinHeight(600);
-        s.setMinWidth(250);
         s.showAndWait();
     }
 
