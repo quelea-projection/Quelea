@@ -20,16 +20,19 @@ package org.quelea.windows.newsong;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
@@ -51,6 +54,15 @@ import org.quelea.windows.stage.StageDrawer;
  * @author Michael
  */
 public class ThemePanel extends BorderPane {
+
+    /** Standard and smallest size of the dialogs that show this panel. */
+    private static final double DIALOG_WIDTH = 640;
+    private static final double DIALOG_HEIGHT = 500;
+    private static final double DIALOG_MIN_WIDTH = 560;
+    private static final double DIALOG_MIN_HEIGHT = 500;
+    /** Extra width for the font lists when the labels of a language are long. */
+    private static final double DIALOG_FONT_ROOM = 60;
+    private static final String DIALOG_SIZED_KEY = "quelea.theme.dialog.sized";
 
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
@@ -97,8 +109,8 @@ public class ThemePanel extends BorderPane {
         DisplayCanvas canvas = new DisplayCanvas(false, () -> updateTheme(true), Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
-        Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
-        label.getStyleClass().add("muted-label");
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel("hover.for.position.label"));
+        label.getStyleClass().addAll("muted-label", "theme-position-hint");
         centrePane.getStyleClass().add("preview-backdrop");
         centrePane.getChildren().add(label);
         StackPane themePreviewPane = new StackPane();
@@ -143,9 +155,10 @@ public class ThemePanel extends BorderPane {
 
         VBox northBox = new VBox();
         HBox themeSelectPanel = new HBox();
-        themeSelectPanel.setPadding(new Insets(5));
-        Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.copy.label") + ": ");
-        themeSelectLabel.setPadding(new Insets(3,0,0,0));
+        themeSelectPanel.getStyleClass().add("theme-copy-row");
+        themeSelectPanel.setAlignment(Pos.CENTER_LEFT);
+        Label themeSelectLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.copy.label") + ":");
+        themeSelectLabel.setMinWidth(Region.USE_PREF_SIZE);
         themeCombo = new ComboBox<>();
         themeCombo.setItems(ThemeUtils.getThemes());
 
@@ -153,7 +166,7 @@ public class ThemePanel extends BorderPane {
         copyButton.setOnAction(event -> {
             setTheme(themeCombo.getValue());
         });
-        themeSelectPanel.setSpacing(5);
+        themeSelectPanel.setSpacing(8);
         themeSelectPanel.getChildren().addAll(themeSelectLabel, themeCombo, copyButton);
 
         themeToolbar = new ThemeToolbar(this);
@@ -164,7 +177,33 @@ public class ThemePanel extends BorderPane {
 
         setTop(northBox);
         updateTheme(false);
-        setMaxSize(800, 600);
+    }
+
+    /**
+     * Give a dialog that holds this panel the standard size: room for the
+     * editor's font lists, resizable (the preview grows with the window),
+     * and not smaller than the editor needs. That depends on the language
+     * (long labels need more room), so the minimum width is worked out from
+     * the content when the dialog is shown.
+     *
+     * @param dialog the dialog window.
+     */
+    public void sizeDialog(Stage dialog) {
+        setPrefSize(DIALOG_WIDTH, DIALOG_HEIGHT);
+        dialog.setResizable(true);
+        dialog.setMinWidth(DIALOG_MIN_WIDTH);
+        dialog.setMinHeight(DIALOG_MIN_HEIGHT);
+        dialog.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
+            double frame = dialog.getWidth() - dialog.getScene().getWidth();
+            double needed = Math.ceil(dialog.getScene().getRoot().minWidth(-1) + frame);
+            dialog.setMinWidth(Math.max(DIALOG_MIN_WIDTH, needed));
+            // The first time, also leave the font lists some room
+            boolean firstShow = dialog.getProperties().putIfAbsent(DIALOG_SIZED_KEY, Boolean.TRUE) == null;
+            double comfortable = needed + DIALOG_FONT_ROOM;
+            if (dialog.getWidth() < needed || (firstShow && dialog.getWidth() < comfortable)) {
+                dialog.setWidth(firstShow ? comfortable : needed);
+            }
+        });
     }
 
     private boolean isEmpty(String[] text) {

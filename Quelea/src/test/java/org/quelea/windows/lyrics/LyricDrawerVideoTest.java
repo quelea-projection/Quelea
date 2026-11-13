@@ -9,7 +9,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.VideoBackground;
 import org.quelea.windows.main.DisplayCanvas;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,6 +26,7 @@ import static org.quelea.testutil.VideoTestSupport.colourTheme;
 import static org.quelea.testutil.VideoTestSupport.onFx;
 import static org.quelea.testutil.VideoTestSupport.videoTheme;
 import static org.quelea.testutil.VideoTestSupport.waitFor;
+import static org.quelea.testutil.VideoTestSupport.TEST_VIDEO;
 
 /**
  * Video backgrounds in theme previews. Editing a video theme used to create a
@@ -64,6 +72,56 @@ public class LyricDrawerVideoTest {
             onFx(() -> drawer.setTheme(videoTheme(radius)));
             assertEquals(baseline + 1, activePipelines(),
                     "Only one video player should exist, after " + (tick + 1) + " updates");
+        }
+    }
+
+    @Test
+    @DisplayName("Switching between three video themes keeps current and retired images renderable")
+    public void switchingBetweenVideoThemes(@TempDir Path videos) throws Exception {
+        ThemeDTO[] themes = new ThemeDTO[3];
+        ThemeDTO defaults = ThemeDTO.DEFAULT_THEME;
+        for (int i = 0; i < themes.length; i++) {
+            // Different files force the same stop/change URI/play path as
+            // switching motion backgrounds in the theme chooser.
+            Path video = Files.copy(TEST_VIDEO.toPath(), videos.resolve("theme-" + i + ".mp4"));
+            themes[i] = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                    defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                    new VideoBackground(video.toString(), 0, false), defaults.getShadow(),
+                    false, false, false, false, -1, 0);
+        }
+        try {
+            for (int i = 0; i < 30; i++) {
+                Image previous = i == 0 ? null : onFx(this::backgroundImage);
+                ThemeDTO next = themes[i % themes.length];
+                onFx(() -> drawer.setTheme(next));
+                assertTrue(waitFor(() -> backgroundImage() != null && backgroundImage().getWidth() > 1, 10_000),
+                        "The selected theme should produce a video frame");
+                onFx(() -> {
+                    assertTrue(hasColour(new ImageView(backgroundImage()).snapshot(null, null)),
+                            "The current background should render video pixels");
+                    if (previous != null) {
+                        // The render thread may still hold the old image after
+                        // stopping its video. Upload it after the switch as well.
+                        assertTrue(hasColour(new ImageView(previous).snapshot(null, null)),
+                                "The retired background should still render video pixels");
+                    }
+                });
+                assertEquals(baseline + 1, activePipelines());
+            }
+        } finally {
+            // Native pipeline cleanup is asynchronous. Wait for it to release
+            // the files before JUnit removes this method's temporary directory.
+            onFx(() -> drawer.setPlayVideo(false));
+            assertTrue(waitFor(() -> {
+                try {
+                    for (int i = 0; i < themes.length; i++) {
+                        Files.deleteIfExists(videos.resolve("theme-" + i + ".mp4"));
+                    }
+                    return true;
+                } catch (IOException stillInUse) {
+                    return false;
+                }
+            }, 5_000), "Stopped video pipelines should release the temporary files");
         }
     }
 

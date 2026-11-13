@@ -19,364 +19,416 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
-import java.util.logging.Logger;
+import java.util.List;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import javafx.geometry.HPos;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.util.converter.NumberStringConverter;
 import org.quelea.data.Background;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.CardPane;
-
 import org.quelea.windows.style.QueleaIcon;
+
 /**
- * The toolbar that sits atop of the theme dialog, and gives the user control
- * over the theme currently in use.
+ * The theme editor above the theme preview: the background, the text (main
+ * and translation, alignment) and the text shadow, each under its own
+ * heading, all visible at once.
  * <p>
+ * The background type is chosen with segmented buttons. They drive a combo
+ * box that isn't shown, because the background classes fill in the form
+ * through it (see {@link Background#setThemeForm}).
  *
  * @author Michael
  */
-public class ThemeToolbar extends HBox {
+public class ThemeToolbar extends VBox {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final ComboBox<String> fontSelection;
-    private final Button fontExpandButton;
-    private final Button moreOptionsButton;
-    private final FontOptionsDialog moreFontOptionsDialog;
-    private final ToggleButton boldButton;
-    private final ToggleButton italicButton;
+    private static FontSelectionDialog fontSelectionDialog;
+
+    private final ThemePanel themePanel;
+    private final TextStyleRow mainText;
+    private final TextStyleRow translationText;
     private final ToggleButton leftAlignButton;
     private final ToggleButton centreAlignButton;
     private final ToggleButton rightAlignButton;
-    private final ColorPicker fontColor;
-    private final ComboBox<String> backTypeSelection;
+    private final ComboBox<String> backTypeSelection = new ComboBox<>();
+    private final ToggleGroup backTypeGroup = new ToggleGroup();
     private final TextField backgroundImageLocation;
     private final TextField backgroundVidLocation;
     private final ColorPicker backgroundColorPicker;
     private final Slider vidHueSlider;
     private final CheckBox vidStretchCheckbox;
-    private final ThemePanel themePanel;
-    private static FontSelectionDialog fontSelectionDialog;
+    private final ToggleButton useShadowSwitch;
+    private final ColorPicker shadowColor;
+    private final Slider shadowOffsetSlider;
+    private final Slider shadowRadiusSlider;
+    private final Slider shadowSpreadSlider;
 
     /**
-     * Create a new theme toolbar.
-     * <p>
+     * Create the theme editor.
      *
-     * @param themePanel the theme panel that this toolbar sits on.
+     * @param themePanel the theme panel that this editor sits on.
      */
     public ThemeToolbar(final ThemePanel themePanel) {
         Utils.checkFXThread();
         this.themePanel = themePanel;
-        moreFontOptionsDialog = new FontOptionsDialog(themePanel);
-        setPadding(new Insets(5));
-        getStyleClass().add("preview-backdrop");
-        VBox topLevelFontBox = new VBox(10);
-        topLevelFontBox.getStyleClass().add("theme-option-box");
-        topLevelFontBox.setPadding(new Insets(10));
-        getChildren().add(topLevelFontBox);
-
-        HBox fontTop = new HBox(3);
         if (fontSelectionDialog == null) {
             fontSelectionDialog = new FontSelectionDialog();
         }
-        fontSelection = new ComboBox<>();
-        fontSelection.setMaxWidth(Integer.MAX_VALUE);
-        fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
-        Collections.sort(fontSelection.getItems());
-        HBox.setHgrow(fontSelection, Priority.ALWAYS);
-        fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false);
-            }
-        });
-        fontExpandButton = new Button("", QueleaIcon.ADD.create());
-        Utils.setToolbarButtonStyle(fontExpandButton);
-        fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
-        Utils.setToolbarButtonStyle(fontExpandButton);
-        fontExpandButton.setOnAction(new EventHandler<ActionEvent>() {
+        getStyleClass().add("theme-editor");
 
-            @Override
-            public void handle(ActionEvent t) {
-                fontSelectionDialog.showAndWait();
-                String selected = fontSelection.getSelectionModel().getSelectedItem();
-                fontSelection.getItems().clear();
-                fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
-                Collections.sort(fontSelection.getItems());
-                fontSelection.getSelectionModel().select(selected);
+        // ---- Background ---------------------------------------------------
+        String colourLabel = LabelGrabber.INSTANCE.getLabel("color.theme.label");
+        String imageLabel = LabelGrabber.INSTANCE.getLabel("image.theme.label");
+        String videoLabel = LabelGrabber.INSTANCE.getLabel("video.theme.label");
+        backTypeSelection.getItems().addAll(colourLabel, imageLabel, videoLabel);
+        HBox backTypeButtons = segmented(
+                typeButton(colourLabel, QueleaIcon.THEME),
+                typeButton(imageLabel, QueleaIcon.IMAGES),
+                typeButton(videoLabel, QueleaIcon.VIDEO));
+        keepOneSelected(backTypeGroup);
+        backTypeGroup.selectedToggleProperty().addListener((ov, oldToggle, toggle) -> {
+            if (toggle != null) {
+                backTypeSelection.getSelectionModel().select((String) toggle.getUserData());
             }
         });
-        fontTop.getChildren().add(fontSelection);
-        fontTop.getChildren().add(fontExpandButton);
-        topLevelFontBox.getChildren().add(fontTop);
 
-        HBox fontMid = new HBox();
-        boldButton = new ToggleButton("", QueleaIcon.BOLD.create());
-        Utils.setToolbarButtonStyle(boldButton);
-        boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        italicButton = new ToggleButton("", QueleaIcon.ITALIC.create());
-        Utils.setToolbarButtonStyle(italicButton);
-        italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        ToggleGroup alignGroup = new ToggleGroup();
-        leftAlignButton = new ToggleButton("", QueleaIcon.ALIGN_LEFT.create());
-        Utils.setToolbarButtonStyle(leftAlignButton);
-        leftAlignButton.setToggleGroup(alignGroup);
-        leftAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        centreAlignButton = new ToggleButton("", QueleaIcon.ALIGN_CENTER.create());
-        Utils.setToolbarButtonStyle(centreAlignButton);
-        centreAlignButton.setToggleGroup(alignGroup);
-        centreAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        rightAlignButton = new ToggleButton("", QueleaIcon.ALIGN_RIGHT.create());
-        Utils.setToolbarButtonStyle(rightAlignButton);
-        rightAlignButton.setToggleGroup(alignGroup);
-        rightAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        centreAlignButton.setSelected(true);
-        fontColor = new ColorPicker(Color.WHITE);
-        fontColor.setStyle("-fx-color-label-visible: false ;");
-        fontColor.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                themePanel.updateTheme(false);
-            }
-        });
-        fontMid.getChildren().add(boldButton);
-        fontMid.getChildren().add(italicButton);
-        fontMid.getChildren().add(leftAlignButton);
-        fontMid.getChildren().add(centreAlignButton);
-        fontMid.getChildren().add(rightAlignButton);
-        fontMid.getChildren().add(fontColor);
-        topLevelFontBox.getChildren().add(fontMid);
-
-        StackPane fontBottom = new StackPane();
-        Text fontText = new Text(LabelGrabber.INSTANCE.getLabel("font.theme.label"));
-        fontText.getStyleClass().add("muted-text");
-        fontBottom.getChildren().add(fontText);
-        moreOptionsButton = new Button("", QueleaIcon.GENERAL.create());
-        Utils.setToolbarButtonStyle(moreOptionsButton);
-        Utils.setToolbarButtonStyle(moreOptionsButton);
-        moreOptionsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.font.options.label") + "..."));
-        moreOptionsButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                moreFontOptionsDialog.showAndWait();
-                themePanel.updateTheme(false);
-            }
-        });
-        StackPane.setAlignment(moreOptionsButton, Pos.BOTTOM_RIGHT);
-        fontBottom.getChildren().add(moreOptionsButton);
-        topLevelFontBox.getChildren().add(fontBottom);
-
-        //-------
-        Region spacer = new Region();
-        spacer.setMaxWidth(20);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        getChildren().add(spacer);
-        //-------
-
-        VBox topLevelBackBox = new VBox(10);
-        topLevelBackBox.getStyleClass().add("theme-option-box");
-        topLevelBackBox.setPadding(new Insets(10));
-        getChildren().add(topLevelBackBox);
-
-        HBox backTop = new HBox(15);
-        backTypeSelection = new ComboBox<>();
-        backTypeSelection.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false);
-                checkConfirmButton();
-            }
-        });
-        backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-        backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-        backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
-        backTop.getChildren().add(backTypeSelection);
-
-        vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
-        vidStretchCheckbox.getStyleClass().add("muted-label");
-        HBox.setMargin(vidStretchCheckbox, new Insets(2, 0, 0, 0));
-        vidStretchCheckbox.setAlignment(Pos.CENTER_RIGHT);
-        vidStretchCheckbox.setVisible(false);
-        Region stretchSpacer = new Region();
-        stretchSpacer.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(stretchSpacer, Priority.ALWAYS);
-        backTop.getChildren().add(stretchSpacer);
-        backTop.getChildren().add(vidStretchCheckbox);
-        topLevelBackBox.getChildren().add(backTop);
-
-        final CardPane<Node> backgroundCentre = new CardPane<>();
-        final HBox colourPanel = new HBox();
+        CardPane<Node> backgroundCentre = new CardPane<>();
         backgroundColorPicker = new ColorPicker(Color.BLACK);
-        backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-            @Override
-            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                themePanel.updateTheme(true);
-            }
-        });
-        colourPanel.getChildren().add(backgroundColorPicker);
-        backgroundCentre.add(colourPanel, "colour");
-        final HBox imagePanel = new HBox();
+        backgroundColorPicker.getStyleClass().add("theme-colour");
+        backgroundColorPicker.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("background.colour.label")));
+        backgroundColorPicker.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(true));
+        backgroundCentre.add(row(backgroundColorPicker), "colour");
+
         backgroundImageLocation = new TextField();
         backgroundImageLocation.setEditable(false);
-        backgroundImageLocation.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false);
-                checkConfirmButton();
-            }
+        backgroundImageLocation.setPrefColumnCount(16);
+        backgroundImageLocation.textProperty().addListener((ov, t, t1) -> {
+            themePanel.updateTheme(false);
+            checkConfirmButton();
         });
-        Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation);
-        imagePanel.getChildren().add(backgroundImageLocation);
-        imagePanel.getChildren().add(backgroundImageSelectButton);
-        backgroundCentre.add(imagePanel, "image");
-        final VBox vidPanel = new VBox(5);
-        final HBox vidLocationPanel = new HBox(5);
+        backgroundCentre.add(row(backgroundImageLocation, new ImageButton(backgroundImageLocation)), "image");
+
         backgroundVidLocation = new TextField();
-        backgroundVidLocation.setMaxWidth(130);
         backgroundVidLocation.setEditable(false);
-        backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false);
-                checkConfirmButton();
-            }
+        backgroundVidLocation.setPrefColumnCount(12);
+        backgroundVidLocation.textProperty().addListener((ov, t, t1) -> {
+            themePanel.updateTheme(false);
+            checkConfirmButton();
         });
-        Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation);
-        vidLocationPanel.getChildren().add(backgroundVidLocation);
-        vidLocationPanel.getChildren().add(backgroundVidSelectButton);
-        vidPanel.getChildren().add(vidLocationPanel);
-        Region spacer2 = new Region();
-        spacer2.setPrefWidth(5);
-        vidLocationPanel.getChildren().add(spacer2);
-        Label vidHueLabel = new Label(LabelGrabber.INSTANCE.getLabel("video.hue.label"));
-        vidHueLabel.getStyleClass().add("muted-label");
-        vidHueLabel.setMaxHeight(Double.MAX_VALUE);
-        vidHueLabel.setAlignment(Pos.CENTER);
-        vidLocationPanel.getChildren().add(vidHueLabel);
+        Label vidHueLabel = fixedLabel("video.hue.label");
         vidHueSlider = new Slider(0, 1, 0);
         vidHueSlider.setMajorTickUnit(0.001);
-        vidHueSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(false);
-            }
-        });
-        vidHueSlider.setPrefWidth(70);
-        StackPane sliderStack = new StackPane();
-        sliderStack.setAlignment(Pos.CENTER);
-        sliderStack.getChildren().add(vidHueSlider);
+        vidHueSlider.setPrefWidth(90);
+        vidHueSlider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
         vidHueLabel.setLabelFor(vidHueSlider);
-        vidLocationPanel.getChildren().add(sliderStack);
-        backgroundCentre.add(vidPanel, "video");
+        vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
+        vidStretchCheckbox.selectedProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+        backgroundCentre.add(row(backgroundVidLocation, new VideoButton(backgroundVidLocation), gap(), vidHueLabel, vidHueSlider, gap(), vidStretchCheckbox), "video");
 
-        backTypeSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-                    backgroundCentre.show("colour");
-                    vidStretchCheckbox.setVisible(false);
-                } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-                    backgroundCentre.show("image");
-                    vidStretchCheckbox.setVisible(false);
-                } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-                    backgroundCentre.show("video");
-                    vidStretchCheckbox.setVisible(true);
-                } else {
-                    throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
+        backTypeSelection.getSelectionModel().selectedItemProperty().addListener((ov, oldType, type) -> {
+            if (type == null) {
+                return;
+            }
+            backgroundCentre.show(type.equals(imageLabel) ? "image" : type.equals(videoLabel) ? "video" : "colour");
+            for (var toggle : backTypeGroup.getToggles()) {
+                if (type.equals(toggle.getUserData())) {
+                    backTypeGroup.selectToggle(toggle);
                 }
             }
+            themePanel.updateTheme(false);
+            checkConfirmButton();
         });
-        topLevelBackBox.getChildren().add(backgroundCentre);
 
-        StackPane backBottom = new StackPane();
-        Text backText = new Text(LabelGrabber.INSTANCE.getLabel("background.text"));
-        backText.getStyleClass().add("muted-text");
-        backBottom.getChildren().add(backText);
-        topLevelBackBox.getChildren().add(backBottom);
+        HBox backgroundRow = new HBox(12, backTypeButtons, backgroundCentre);
+        backgroundRow.setAlignment(Pos.CENTER_LEFT);
+        VBox backgroundSection = new VBox(6, heading("background.text"), backgroundRow);
+
+        // ---- Text: alignment, main text, translation ----------------------
+        ToggleGroup alignGroup = new ToggleGroup();
+        leftAlignButton = iconToggle(QueleaIcon.ALIGN_LEFT, "theme.align.left.tooltip");
+        centreAlignButton = iconToggle(QueleaIcon.ALIGN_CENTER, "theme.align.centre.tooltip");
+        rightAlignButton = iconToggle(QueleaIcon.ALIGN_RIGHT, "theme.align.right.tooltip");
+        for (ToggleButton button : List.of(leftAlignButton, centreAlignButton, rightAlignButton)) {
+            button.setToggleGroup(alignGroup);
+            button.setOnAction(e -> themePanel.updateTheme(false));
+        }
+        keepOneSelected(alignGroup);
+        centreAlignButton.setSelected(true);
+
+        mainText = new TextStyleRow("font.colour.label");
+        translationText = new TextStyleRow("translation.font.colour.label");
+
+        GridPane textGrid = new GridPane();
+        textGrid.getStyleClass().add("theme-grid");
+        textGrid.getColumnConstraints().addAll(growColumn(), new ColumnConstraints(), new ColumnConstraints());
+        Label alignLabel = heading("stage.line.alignment");
+        textGrid.add(alignLabel, 0, 0);
+        HBox alignButtons = segmented(leftAlignButton, centreAlignButton, rightAlignButton);
+        textGrid.add(alignButtons, 1, 0, 2, 1);
+        GridPane.setHalignment(alignButtons, HPos.RIGHT);
+        textGrid.add(heading("theme.main.text.label"), 0, 1);
+        textGrid.add(caption("color.theme.label"), 1, 1);
+        mainText.addTo(textGrid, 2);
+        textGrid.add(heading("translation.font.text"), 0, 3);
+        textGrid.add(caption("color.theme.label"), 1, 3);
+        translationText.addTo(textGrid, 4);
+
+        // ---- Text shadow ----------------------------------------------------
+        useShadowSwitch = new ToggleButton();
+        useShadowSwitch.getStyleClass().add("theme-switch");
+        Region thumb = new Region();
+        thumb.getStyleClass().add("theme-switch-thumb");
+        useShadowSwitch.setGraphic(thumb);
+        useShadowSwitch.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        useShadowSwitch.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("use.shadow.label")));
+        useShadowSwitch.setSelected(true);
+        useShadowSwitch.selectedProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+
+        shadowColor = new ColorPicker(Color.GRAY);
+        shadowColor.getStyleClass().add("theme-colour");
+        shadowColor.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("shadow.color.label")));
+        shadowColor.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+        shadowOffsetSlider = new Slider(0, 60, 0);
+        shadowRadiusSlider = new Slider(0, 1000, 0);
+        shadowSpreadSlider = new Slider(0, 1, 0);
+
+        GridPane shadowGrid = new GridPane();
+        shadowGrid.getStyleClass().add("theme-grid");
+        shadowGrid.getColumnConstraints().addAll(new ColumnConstraints(), growColumn(), new ColumnConstraints());
+        shadowGrid.add(heading("shadow.text"), 0, 0, 2, 1);
+        shadowGrid.add(useShadowSwitch, 2, 0);
+        GridPane.setHalignment(useShadowSwitch, HPos.RIGHT);
+        Label shadowColourLabel = fixedLabel("shadow.color.label");
+        shadowColourLabel.setLabelFor(shadowColor);
+        shadowGrid.add(shadowColourLabel, 0, 1);
+        shadowGrid.add(shadowColor, 1, 1);
+        addSliderRow(shadowGrid, 2, "shadow.offset.label", shadowOffsetSlider);
+        addSliderRow(shadowGrid, 3, "shadow.radius.label", shadowRadiusSlider);
+        addSliderRow(shadowGrid, 4, "shadow.spread.label", shadowSpreadSlider);
+        for (Node node : shadowGrid.getChildren()) {
+            if (node != useShadowSwitch && GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0) {
+                node.disableProperty().bind(useShadowSwitch.selectedProperty().not());
+            }
+        }
+
+        Separator columnSeparator = new Separator(Orientation.VERTICAL);
+        HBox textAndShadow = new HBox(16, textGrid, columnSeparator, shadowGrid);
+        HBox.setHgrow(textGrid, Priority.ALWAYS);
+        HBox.setHgrow(shadowGrid, Priority.ALWAYS);
+        textGrid.setMaxWidth(Double.MAX_VALUE);
+        shadowGrid.setMaxWidth(Double.MAX_VALUE);
+
+        getChildren().addAll(backgroundSection, new Separator(), textAndShadow);
     }
+
+    /** One line of text settings: font (+ more fonts), colour, bold, italic. */
+    private final class TextStyleRow {
+
+        private final ComboBox<String> font = new ComboBox<>();
+        private final ColorPicker colour = new ColorPicker(Color.WHITE);
+        private final ToggleButton bold = iconToggle(QueleaIcon.BOLD, "theme.bold.tooltip");
+        private final ToggleButton italic = iconToggle(QueleaIcon.ITALIC, "theme.italic.tooltip");
+        private final HBox fontBox;
+
+        TextStyleRow(String colourTooltipKey) {
+            font.setMaxWidth(Double.MAX_VALUE);
+            font.setPrefWidth(150);
+            font.setMinWidth(80);
+            font.getItems().setAll(fontSelectionDialog.getChosenFonts());
+            Collections.sort(font.getItems());
+            font.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+            Button moreFonts = new Button("", QueleaIcon.ADD.create());
+            Utils.setToolbarButtonStyle(moreFonts);
+            moreFonts.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
+            moreFonts.setOnAction(e -> {
+                fontSelectionDialog.showAndWait();
+                mainText.refreshFonts();
+                translationText.refreshFonts();
+            });
+            fontBox = new HBox(2, font, moreFonts);
+            fontBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(font, Priority.ALWAYS);
+            colour.getStyleClass().add("theme-colour");
+            colour.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(colourTooltipKey)));
+            colour.setOnAction(e -> themePanel.updateTheme(false));
+            bold.setOnAction(e -> themePanel.updateTheme(false));
+            italic.setOnAction(e -> themePanel.updateTheme(false));
+        }
+
+        void addTo(GridPane grid, int row) {
+            grid.add(fontBox, 0, row);
+            grid.add(colour, 1, row);
+            grid.add(segmented(bold, italic), 2, row);
+        }
+
+        void refreshFonts() {
+            String selected = font.getSelectionModel().getSelectedItem();
+            font.getItems().setAll(fontSelectionDialog.getChosenFonts());
+            Collections.sort(font.getItems());
+            font.getSelectionModel().select(selected);
+        }
+
+        void set(String family, Color paint, boolean isBold, boolean isItalic) {
+            font.getSelectionModel().select(family);
+            colour.setValue(paint);
+            colour.fireEvent(new ActionEvent());
+            bold.setSelected(isBold);
+            italic.setSelected(isItalic);
+        }
+
+        Font toFont() {
+            return Font.font(font.getSelectionModel().getSelectedItem(),
+                    bold.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    italic.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    QueleaProperties.get().getMaxFontSize());
+        }
+    }
+
+    // ---- Small building blocks ------------------------------------------------
+
+    private static Label heading(String labelKey) {
+        Label label = fixedLabel(labelKey);
+        label.getStyleClass().add("theme-heading");
+        return label;
+    }
+
+    private static Label caption(String labelKey) {
+        Label label = fixedLabel(labelKey);
+        label.getStyleClass().add("muted-label");
+        return label;
+    }
+
+    /** A label that is never cut short; the font lists and sliders shrink instead. */
+    private static Label fixedLabel(String labelKey) {
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel(labelKey));
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        return label;
+    }
+
+    private static HBox row(Node... nodes) {
+        HBox box = new HBox(6, nodes);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
+
+    private static Region gap() {
+        Region gap = new Region();
+        gap.setMinWidth(6);
+        return gap;
+    }
+
+    private static ColumnConstraints growColumn() {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setHgrow(Priority.ALWAYS);
+        return column;
+    }
+
+    /** Buttons joined into one control, e.g. [Colour | Image | Video]. */
+    private static HBox segmented(ToggleButton... buttons) {
+        HBox box = new HBox();
+        box.getStyleClass().add("segmented");
+        box.setAlignment(Pos.CENTER_LEFT);
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setMinWidth(Region.USE_PREF_SIZE);
+            buttons[i].getStyleClass().add(buttons.length == 1 ? "only-pill"
+                    : i == 0 ? "left-pill" : i == buttons.length - 1 ? "right-pill" : "center-pill");
+            box.getChildren().add(buttons[i]);
+        }
+        return box;
+    }
+
+    private ToggleButton typeButton(String label, QueleaIcon icon) {
+        ToggleButton button = new ToggleButton(label, icon.create());
+        button.setUserData(label);
+        button.setToggleGroup(backTypeGroup);
+        return button;
+    }
+
+    private static ToggleButton iconToggle(QueleaIcon icon, String tooltipKey) {
+        ToggleButton button = new ToggleButton("", icon.create());
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(tooltipKey)));
+        return button;
+    }
+
+    /** Clicking the selected button of a group must not leave none selected. */
+    private static void keepOneSelected(ToggleGroup group) {
+        group.selectedToggleProperty().addListener((ov, oldToggle, toggle) -> {
+            if (toggle == null && oldToggle != null) {
+                group.selectToggle(oldToggle);
+            }
+        });
+    }
+
+    private void addSliderRow(GridPane grid, int row, String labelKey, Slider slider) {
+        Label label = fixedLabel(labelKey);
+        label.setLabelFor(slider);
+        slider.setMaxWidth(Double.MAX_VALUE);
+        slider.setMinWidth(60);
+        slider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+        NumberTextField value = new NumberTextField();
+        value.getStyleClass().add("theme-number");
+        Bindings.bindBidirectional(value.textProperty(), slider.valueProperty(), new NumberStringConverter());
+        grid.add(label, 0, row);
+        grid.add(slider, 1, row);
+        grid.add(value, 2, row);
+    }
+
+    // ---- State ----------------------------------------------------------------
 
     /**
      * Enable / disable the confirm button on the dialog based on the state of
      * the background field.
      */
     private void checkConfirmButton() {
-        if (themePanel.getConfirmButton() != null) {
-            if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-                themePanel.getConfirmButton().setDisable(false);
-            } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-                themePanel.getConfirmButton().setDisable(backgroundImageLocation.getText().trim().isEmpty());
-            } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-                themePanel.getConfirmButton().setDisable(backgroundVidLocation.getText().trim().isEmpty());
-            }
+        if (themePanel.getConfirmButton() == null || backTypeSelection.getValue() == null) {
+            return;
+        }
+        String type = backTypeSelection.getValue();
+        if (type.equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+            themePanel.getConfirmButton().setDisable(backgroundImageLocation.getText().trim().isEmpty());
+        } else if (type.equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+            themePanel.getConfirmButton().setDisable(backgroundVidLocation.getText().trim().isEmpty());
+        } else {
+            themePanel.getConfirmButton().setDisable(false);
         }
     }
 
     /**
-     * Set the theme represented by this toolbar.
-     * <p>
+     * Set the theme represented by this editor.
      *
      * @param theme the theme to represent.
      */
@@ -385,12 +437,8 @@ public class ThemeToolbar extends HBox {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        Font font = theme.getFont();
-        fontSelection.getSelectionModel().select(font.getFamily());
-        fontColor.setValue(theme.getFontPaint());
-        fontColor.fireEvent(new ActionEvent());
-        boldButton.setSelected(theme.isBold());
-        italicButton.setSelected(theme.isItalic());
+        mainText.set(theme.getFont().getFamily(), theme.getFontPaint(), theme.isBold(), theme.isItalic());
+        translationText.set(theme.getTranslateFont().getFamily(), theme.getTranslateFontPaint(), theme.isTranslateBold(), theme.isTranslateItalic());
         int align = theme.getTextAlignment();
         if (align == -1) {
             leftAlignButton.setSelected(true);
@@ -399,60 +447,52 @@ public class ThemeToolbar extends HBox {
         } else {
             centreAlignButton.setSelected(true);
         }
-        moreFontOptionsDialog.setTheme(theme);
-        Background background = theme.getBackground();
-        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider, vidStretchCheckbox);
+        SerializableDropShadow shadow = theme.getShadow();
+        shadowColor.setValue(shadow.getColor());
+        shadowOffsetSlider.setValue(shadow.getOffsetX());
+        shadowRadiusSlider.setValue(shadow.getRadius());
+        shadowSpreadSlider.setValue(shadow.getSpread());
+        useShadowSwitch.setSelected(shadow.getUse());
+        theme.getBackground().setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider, vidStretchCheckbox);
     }
 
     private int getAlignmentVal() {
-        int alignment = 0;
         if (leftAlignButton.isSelected()) {
-            alignment = -1;
-        } else if (rightAlignButton.isSelected()) {
-            alignment = 1;
+            return -1;
         }
-        return alignment;
+        return rightAlignButton.isSelected() ? 1 : 0;
     }
 
     /**
-     * Get the theme represented by this toolbar.
-     * <p>
+     * Get the theme represented by this editor.
      *
      * @return the theme.
      */
     public ThemeDTO getTheme() {
         Utils.checkFXThread();
-        Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
-                boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
-                italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize());
-
-        //Overly spammy
-        //LOGGER.log(Level.INFO, "Selected font theme \"{0}\", font family is \"{1}\"", new Object[]{fontSelection.getSelectionModel().getSelectedItem(), font.getFamily()});
-
-        Background background = new ColourBackground(Color.BLACK);
-        if (backTypeSelection.getSelectionModel().getSelectedItem() == null) {
+        String type = backTypeSelection.getValue();
+        if (type == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
-        if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+        Background background = new ColourBackground(Color.BLACK);
+        if (type.equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
             background = new ColourBackground(backgroundColorPicker.getValue());
-        } else if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+        } else if (type.equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             String text = backgroundImageLocation.getText();
             if (!text.isEmpty()) {
                 background = new ImageBackground(text);
             }
-        } else if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+        } else if (type.equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             String text = backgroundVidLocation.getText();
             if (!text.isEmpty()) {
                 background = new VideoBackground(text, vidHueSlider.getValue(), vidStretchCheckbox.isSelected());
             }
-        } else {
-            throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-        final SerializableDropShadow shadow = moreFontOptionsDialog.getShadow();
-        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), moreFontOptionsDialog.getTranslateFont(), moreFontOptionsDialog.getTranslateColour(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
-        return resultTheme;
+        SerializableDropShadow shadow = new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(),
+                shadowOffsetSlider.getValue(), shadowRadiusSlider.getValue(), shadowSpreadSlider.getValue(), useShadowSwitch.isSelected());
+        return new ThemeDTO(new SerializableFont(mainText.toFont()), mainText.colour.getValue(),
+                new SerializableFont(translationText.toFont()), translationText.colour.getValue(),
+                background, shadow, mainText.bold.isSelected(), mainText.italic.isSelected(),
+                translationText.bold.isSelected(), translationText.italic.isSelected(), -1, getAlignmentVal());
     }
-
 }

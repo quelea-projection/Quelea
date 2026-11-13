@@ -18,13 +18,10 @@
  */
 package org.quelea.windows.video;
 
-import com.sun.jna.Pointer;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelBuffer;
-import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import org.freedesktop.gstreamer.Buffer;
 import org.freedesktop.gstreamer.Caps;
@@ -33,31 +30,20 @@ import org.freedesktop.gstreamer.Sample;
 import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
- * A wrapper connecting a GStreamer AppSink and a JavaFX Image, making use of
- * {@link PixelBuffer} to directly access the native GStreamer pixel data.
+ * A wrapper connecting a GStreamer AppSink and a JavaFX Image, displaying
+ * native frames without copying their pixels during playback.
  * <p>
  * Use {@link #imageProperty()} to access the JavaFX image. The Image should
- * only be used on the JavaFX application thread, and is only valid while it is
- * the current property value. Using the Image when it is no longer the current
- * property value may cause errors or crashes.
+ * only be used on the JavaFX application thread. Its pixels are updated while
+ * video dimensions stay the same. On a stop or resize the final frame is copied
+ * to owned storage, so replaced images remain valid after native cleanup.
  */
 public class FXImageSink {
 
     private final static String DEFAULT_CAPS;
-    private final static int OLD_SAMPLE_BUFFER_SIZE = 2;
-
-    private static final Field mapInfoBufferField;
-    private static final Field pointerPeerField;
-    private static final Field bufferAddress;
-    private static final Field bufferCapacity;
 
     static {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
@@ -65,28 +51,11 @@ public class FXImageSink {
         } else {
             DEFAULT_CAPS = "video/x-raw, format=xRGB";
         }
-
-        try {
-            mapInfoBufferField = Buffer.class.getDeclaredField("mapInfo");
-            mapInfoBufferField.setAccessible(true);
-            pointerPeerField = Pointer.class.getDeclaredField("peer");
-            pointerPeerField.setAccessible(true);
-            bufferAddress = java.nio.Buffer.class.getDeclaredField("address");
-            bufferAddress.setAccessible(true);
-            bufferCapacity = java.nio.Buffer.class.getDeclaredField("capacity");
-            bufferCapacity.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private final AppSink sink;
     private final ReadOnlyObjectWrapper<WritableImage> image;
-    private IntBuffer imageBuffer;
-    private PixelBuffer<IntBuffer> pixelBuffer;
-    private Sample activeSample;
-    private Buffer activeBuffer;
-    private final Queue<Sample> oldSamples;
+    private NativeVideoImage nativeImage;
     /**
      * Passes decoded samples to the FX thread. Only the latest frame is kept:
      * if the FX thread falls behind, superseded frames are dropped instead of
@@ -111,7 +80,6 @@ public class FXImageSink {
      */
     public FXImageSink(AppSink sink) {
         this.sink = sink;
-        oldSamples = new ArrayBlockingQueue<>(OLD_SAMPLE_BUFFER_SIZE + 1);
         sink.set("emit-signals", true);
         sink.connect((AppSink.NEW_SAMPLE) elem -> {
             Sample s = elem.pullSample();
@@ -127,16 +95,13 @@ public class FXImageSink {
         });
         sink.setCaps(Caps.fromString(DEFAULT_CAPS));
 
-        imageBuffer = ByteBuffer.allocateDirect(4).asIntBuffer();
-        pixelBuffer = new PixelBuffer<>(1, 1, imageBuffer, PixelFormat.getIntArgbPreInstance());
-        image = new ReadOnlyObjectWrapper<>(new WritableImage(pixelBuffer));
+        image = new ReadOnlyObjectWrapper<>(new WritableImage(1, 1));
     }
 
     /**
      * Property wrapping the current video frame as a JavaFX {@link Image}. The
-     * Image should only be accessed on the JavaFX application thread. Use of
-     * the Image when it is no longer the current value of this property may
-     * cause errors or crashes.
+     * Image should only be accessed on the JavaFX application thread. Replaced
+     * images keep their own pixel storage and remain safe to render.
      *
      * @return image property for current video frame
      */
@@ -153,93 +118,53 @@ public class FXImageSink {
         return sink;
     }
 
-    long lastTs = 0;
-    int frames = 0;
-
     private void updateImage(Sample newSample) {
-        long ts = System.currentTimeMillis();
-        if(ts-lastTs>1000) {
-//            System.out.println(frames);
-            frames = 1;
-            lastTs= ts;
-        }
-        else {
-            frames++;
-        }
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalStateException("Not on FX application thread");
         }
-        if (newSample == null) {
-            throw new RuntimeException();
-        }
-        Sample oldSample = activeSample;
-        Buffer oldBuffer = activeBuffer;
-
-        activeSample = newSample;
-        Structure capsStruct = newSample.getCaps().getStructure(0);
-        int width = capsStruct.getInteger("width");
-        int height = capsStruct.getInteger("height");
-        activeBuffer = newSample.getBuffer();
-
-        if (image.get().getWidth() != width || image.get().getHeight() != height) {
-            imageBuffer = ByteBuffer.allocateDirect(width*height*4).asIntBuffer();
-            pixelBuffer = new PixelBuffer<>(width, height, imageBuffer, PixelFormat.getIntArgbPreInstance());
-            image.set(new WritableImage(pixelBuffer));
-        }
-
-        IntBuffer gBuffer = activeBuffer.map(false).asIntBuffer();
-
         try {
-//            GstBufferAPI.MapInfoStruct mapInfo = (GstBufferAPI.MapInfoStruct) mapInfoBufferField.get(activeBuffer);
-//            long baseAddress = (long)pointerPeerField.get(mapInfo.data);
-//            long size = mapInfo.size.longValue();
-
-            long baseAddress = bufferAddress.getLong(gBuffer);
-            long size = bufferCapacity.getInt(gBuffer);
-
-//            System.out.println(baseAddress + "  "+ size);
-
-//            imageBuffer.rewind();
-
-            bufferAddress.setLong(imageBuffer, baseAddress);
-            bufferCapacity.setInt(imageBuffer, (int)size);
-            imageBuffer.position(0);
-            imageBuffer.limit((int)size);
-//            System.out.println(imageBuffer.get(4140000));
-//            System.out.println(gBuffer.get(4140000));
-//            System.out.println(gBuffer.getClass());
-//            System.out.println(imageBuffer.getClass());
-//            imageBuffer.put(gBuffer);
-
-//            imageBuffer.flip();
-
-            pixelBuffer.updateBuffer(b -> null);
-
-
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        }
-
-//        image.get().getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getByteBgraPreInstance(), activeBuffer.map(false), width * 4);
-
-        if (oldSample != null) oldSamples.add(oldSample);
-        if (oldBuffer != null) {
-            oldBuffer.unmap();
-        }
-        while (oldSamples.size() > OLD_SAMPLE_BUFFER_SIZE) {
-            oldSamples.remove().dispose();
+            Structure capsStruct = newSample.getCaps().getStructure(0);
+            int width = capsStruct.getInteger("width");
+            int height = capsStruct.getInteger("height");
+            if (width <= 0 || height <= 0) {
+                return;
+            }
+            Buffer buffer = newSample.getBuffer();
+            if (buffer == null) {
+                return;
+            }
+            int byteCount = Math.multiplyExact(Math.multiplyExact(width, height), Integer.BYTES);
+            NativeVideoImage.MappedFrame frame = NativeVideoImage.MappedFrame.map(buffer, byteCount);
+            if (frame == null) {
+                return;
+            }
+            try {
+                boolean resized = nativeImage == null || !nativeImage.hasSize(width, height);
+                if (resized) {
+                    detachImage();
+                    nativeImage = new NativeVideoImage(width, height);
+                }
+                nativeImage.setFrame(frame);
+                frame = null; // ownership transferred to the image
+                nativeImage.markDirty();
+                if (resized) {
+                    image.set(nativeImage.image());
+                }
+            } finally {
+                if (frame != null) {
+                    frame.close();
+                }
+            }
+        } finally {
+            newSample.dispose();
         }
         if (onFrame != null) {
             onFrame.run();
         }
-
-//        long dur = System.nanoTime() - val;
-//        System.out.println("REFRESH TIME: " + dur / 1000);
-
     }
 
     /**
-     * Clear any image and dispose of underlying native buffers. Can be called
+     * Clear the image and release pending samples. Can be called
      * from any thread, but clearing will happen asynchronously if not called on
      * JavaFX application thread.
      */
@@ -253,8 +178,7 @@ public class FXImageSink {
 
     /**
      * Set a callback run on the FX thread each time a new frame has been
-     * written to the image. The image is only valid during the callback and
-     * until the next frame arrives.
+     * written to the image. Its pixels can change when the next frame arrives.
      */
     void setOnFrame(Runnable onFrame) {
         this.onFrame = onFrame;
@@ -274,17 +198,14 @@ public class FXImageSink {
             throw new IllegalStateException("Not on FX application thread");
         }
         handoff.clear();
+        detachImage();
         image.set(new WritableImage(1, 1));
-        if (activeBuffer != null) {
-            activeBuffer.unmap();
-            activeBuffer = null;
-        }
-        if (activeSample != null) {
-            activeSample.dispose();
-            activeSample = null;
-        }
-        while (!oldSamples.isEmpty()) {
-            oldSamples.remove().dispose();
+    }
+
+    private void detachImage() {
+        if (nativeImage != null) {
+            nativeImage.detach();
+            nativeImage = null;
         }
     }
 }

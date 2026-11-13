@@ -25,7 +25,6 @@ import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * Responsible for drawing an image onto the DisplayCanvas.
@@ -53,10 +52,7 @@ public class ImageDrawer extends DisplayableDrawer {
         imageView.setImage(image);
         StackPane imageBox = new StackPane();
         imageBox.getChildren().add(imageView);
-        if(getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
-                && getCanvas() != QueleaApp.get().getStageWindow().getCanvas()) {
-            imageBox.getStyleClass().add("preview-backdrop");
-        }
+        setPictureBackdrop(imageBox, isPreviewCanvas());
         imageBox.setVisible(false);
         getCanvas().getChildren().add(imageBox);
         getCanvas().pushLogoNoticeToFront();

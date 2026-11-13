@@ -21,6 +21,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.css.PseudoClass;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -181,6 +182,10 @@ public class ScheduleList extends StackPane {
                         } else {
                             Displayable item = indexedDisplayable.displayable();
                             ScheduleListNode scheduleListNode = new ScheduleListNode(item);
+                            // As wide as the cell, so the theme button stays at its right edge
+                            scheduleListNode.prefWidthProperty().bind(Bindings.createDoubleBinding(
+                                    () -> Math.max(0, getWidth() - snappedLeftInset() - snappedRightInset()),
+                                    widthProperty(), paddingProperty()));
                             setGraphic(scheduleListNode);
                             setText(null);
                             scheduleListNode.setLive(item.equals(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable()));
