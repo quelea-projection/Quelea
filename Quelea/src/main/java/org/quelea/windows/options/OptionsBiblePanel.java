@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
+import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.beans.property.*;
@@ -32,6 +33,7 @@ import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.options.customprefs.BibleVersionsSelector;
 import org.quelea.windows.options.customprefs.DefaultBibleSelector;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
@@ -54,6 +56,9 @@ public class OptionsBiblePanel {
     private SimpleBooleanProperty useMaxVersesProperty;
     private Setting maxVersesSetting;
     private SimpleIntegerProperty maxVersesProperty;
+    private Setting alwaysUseMultiBibleSetting;
+    private SimpleBooleanProperty alwaysUseMultiBibleProperty;
+    private Setting multiBibleVersionsSetting;
 
     /**
      * Create the options bible panel.
@@ -88,17 +93,29 @@ public class OptionsBiblePanel {
 
         maxVersesSetting = Setting.of("",
                 maxVersesProperty).customKey(maxBibleVersesKey);
+
+        alwaysUseMultiBibleProperty = new SimpleBooleanProperty(QueleaProperties.get().getAlwaysUseMultiBible());
+        alwaysUseMultiBibleSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("always.use.multi.bible"),
+                alwaysUseMultiBibleProperty).customKey(alwaysUseMultiBibleKey);
+
+        StringProperty multiBibleVersionsProperty = new SimpleStringProperty(String.join("\n", QueleaProperties.get().getMultiBibleVersions()));
+        StringField multiBibleVersionsField = Field.ofStringType(multiBibleVersionsProperty).render(new BibleVersionsSelector());
+        multiBibleVersionsSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("select.multi.bible.label"),
+                multiBibleVersionsField, multiBibleVersionsProperty).customKey(multiBibleVersionsKey);
     }
 
     public Category getBiblesTab() {
         bindings.put((Field) maxVersesSetting.getElement(), useMaxVersesProperty.not());
+        bindings.put((Field) multiBibleVersionsSetting.getElement(), alwaysUseMultiBibleProperty.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), QueleaIcon.BIBLE.create(),
                 defaultBibleSetting,
                 showVerseNumSetting,
                 splitVersesSetting,
                 useMaxVersesSetting,
-                maxVersesSetting
+                maxVersesSetting,
+                alwaysUseMultiBibleSetting,
+                multiBibleVersionsSetting
         );
     }
 }

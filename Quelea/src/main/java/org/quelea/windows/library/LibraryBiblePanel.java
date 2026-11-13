@@ -43,6 +43,7 @@ import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
@@ -136,7 +137,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         bottomPane.setCenter(preview);
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), QueleaIcon.CHECK.create());
         addToSchedule.setOnAction((ActionEvent t) -> {
-            BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
+            Bible bible = bibleSelector.getSelectionModel().getSelectedItem();
+            BiblePassage passage = new BiblePassage(bible.getName(), getBibleLocation(), getVerses(), multi);
+            passage = SelectBibleVersionActionHandler.applyDefaultVersions(passage, bible);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             passageSelector.setText("");
         });

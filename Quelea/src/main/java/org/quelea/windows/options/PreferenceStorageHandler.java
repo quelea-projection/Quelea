@@ -329,6 +329,7 @@ public class PreferenceStorageHandler implements StorageHandler {
             switch (breadcrumb) {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
+                case QueleaPropertyKeys.multiBibleVersionsKey:
                     return property;
                 case QueleaPropertyKeys.uiThemeKey:
                     return UiTheme.current().getLabel();

@@ -17,6 +17,8 @@ quelea (2027.0) stable
   * Much faster duplicate check when importing songs
   * Fix new songs sometimes being saved twice
   * Fix changes saved just before closing Quelea sometimes being lost
+  * Bible passages can be shown in several versions at once, in the order you choose
+  * Fix switching bible version picking verses from the wrong book when the bibles contain different books
   * Save notices without showing them live
   * Images, PDF pages and presentation slides that don't fill the projector screen now have black bars around them instead of see-through ones
   * Various minor bugfixes

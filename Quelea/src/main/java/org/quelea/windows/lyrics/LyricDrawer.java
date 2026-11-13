@@ -131,14 +131,7 @@ public class LyricDrawer extends WordDrawer {
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 defaultFontSize);
-        String translateFamily = theme.getFont().getFamily();
-        if (theme.getTranslateFont() != null) {
-            translateFamily = theme.getTranslateFont().getFamily();
-        }
-        Font translateFont = Font.font(translateFamily,
-                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                defaultFontSize);
+        Font translateFont = getTranslateFont(defaultFontSize);
 
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
@@ -158,7 +151,7 @@ public class LyricDrawer extends WordDrawer {
                 fontSize = 1;
                 newText = new ArrayList<>();
             } else {
-                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                WrapTextResult result = normalWrapText(font, translateFont, text, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
                 newText = result.getNewText();
                 fontSize = result.getFontSize();
             }
@@ -615,6 +608,17 @@ public class LyricDrawer extends WordDrawer {
      * @param displayable the displayable to check.
      * @return the font size to use
      */
+    private Font getTranslateFont(double fontSize) {
+        String translateFamily = theme.getFont().getFamily();
+        if (theme.getTranslateFont() != null) {
+            translateFamily = theme.getTranslateFont().getFamily();
+        }
+        return Font.font(translateFamily,
+                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                fontSize);
+    }
+
     private double getUniformFontSize(TextDisplayable displayable) {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
@@ -650,7 +654,7 @@ public class LyricDrawer extends WordDrawer {
             List<LyricLine> processedText;
             double newSize;
             if (displayable instanceof BiblePassage) {
-                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
+                WrapTextResult result = normalWrapText(font, getTranslateFont(maxFontSizeForCanvas), textArr, width, height);
                 if (result.getFontSize() < fontSize) {
                     fontSize = result.getFontSize();
                 }

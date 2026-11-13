@@ -44,6 +44,7 @@ import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.main.widgets.LoadingPane;
 
 import org.quelea.windows.style.StyleManager;
@@ -126,6 +127,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                 BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
                 Bible bib = (Bible) chap.getParent().getParent();
                 BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false);
+                passage = SelectBibleVersionActionHandler.applyDefaultVersions(passage, bib);
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });

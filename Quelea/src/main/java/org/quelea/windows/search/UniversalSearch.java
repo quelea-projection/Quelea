@@ -46,6 +46,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.style.QueleaIcon;
 
 /**
@@ -169,8 +170,8 @@ public class UniversalSearch {
                 .limit(MAX_REFERENCES)
                 .map(reference -> new Result(Kind.BIBLE, reference.getLocation(), reference.verses().getFirst().getText(),
                         previewVerses(reference.verses()), 0, null,
-                        () -> addToSchedule(new BiblePassage(bible.getName(), reference.getLocation(),
-                                reference.verses().toArray(new BibleVerse[0]), reference.multi()))))
+                        () -> addToSchedule(SelectBibleVersionActionHandler.applyDefaultVersions(new BiblePassage(bible.getName(), reference.getLocation(),
+                                reference.verses().toArray(new BibleVerse[0]), reference.multi()), bible))))
                 .toList();
     }
 
@@ -267,8 +268,8 @@ public class UniversalSearch {
             for (BibleVerse verse : chapter.getVerses()) {
                 if (containsWords(verse.getText(), query)) {
                     String location = chapter.getBook() + " " + chapter.getNum() + ":" + verse.getNum();
-                    ret.add(new Result(Kind.BIBLE, location, verse.getText(), previewVerses(List.of(verse)), 0, null, () -> addToSchedule(
-                            new BiblePassage(bible.getName(), location, new BibleVerse[]{verse}, false))));
+                    ret.add(new Result(Kind.BIBLE, location, verse.getText(), previewVerses(List.of(verse)), 0, null, () -> addToSchedule(SelectBibleVersionActionHandler.applyDefaultVersions(
+                            new BiblePassage(bible.getName(), location, new BibleVerse[]{verse}, false), bible))));
                     if (ret.size() == max) {
                         return ret;
                     }
