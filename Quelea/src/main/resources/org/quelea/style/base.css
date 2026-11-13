@@ -601,6 +601,26 @@
     -fx-cursor: hand;
 }
 
+/* The song editor's slide preview, floating over the lyrics */
+.slide-preview {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 8;
+    -fx-padding: 6 8 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 14, 0, 0, 3);
+    -fx-opacity: 0.94;
+}
+
+.slide-preview:empty {
+    -fx-opacity: 0;
+}
+
+.slide-preview-caption {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.85em;
+}
+
 /* Grey area behind slide, image and theme previews */
 .preview-backdrop {
     -fx-background-color: -q-backdrop;

@@ -159,6 +159,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.thumbnailSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.translateClientIdKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.translateClientSecretKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.translationFontSizeOffsetKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.songEditorPreviewKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.uniformFontSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.use24hClockKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.useAutoExtendKey;
@@ -525,6 +526,25 @@ public final class QueleaProperties extends SortedProperties {
      */
     public void setUseUniformFontSize(boolean val) {
         setProperty(uniformFontSizeKey, Boolean.toString(val));
+    }
+
+    /**
+     * Whether the song editor shows a preview of the slides beside the lyrics.
+     *
+     * @return true to show the preview (the default.)
+     */
+    public boolean getShowSongEditorPreview() {
+        return Boolean.parseBoolean(getProperty(songEditorPreviewKey, "true"));
+    }
+
+    /**
+     * Set whether the song editor shows a preview of the slides beside the
+     * lyrics.
+     *
+     * @param val true to show the preview.
+     */
+    public void setShowSongEditorPreview(boolean val) {
+        setProperty(songEditorPreviewKey, Boolean.toString(val));
     }
 
     /**

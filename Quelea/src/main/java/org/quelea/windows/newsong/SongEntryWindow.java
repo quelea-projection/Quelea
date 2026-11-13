@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.newsong;
 
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -36,6 +37,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
@@ -75,6 +78,10 @@ public class SongEntryWindow extends Stage {
     private final CheckBox addToSchedCBox;
     private SongDisplayable song;
     private boolean disableTextAreaListeners;
+    /** How long typing / moving the caret must pause before the slide preview updates. */
+    private static final double SLIDE_PREVIEW_DELAY_MS = 150;
+    private SlidePreviewPane slidePreview;
+    private PauseTransition previewDelay;
 
     /**
      * Create and initialise the new song window.
@@ -97,6 +104,12 @@ public class SongEntryWindow extends Stage {
         basicTab.setContent(basicSongPanel);
         basicTab.setClosable(false);
         tabPane.getTabs().add(basicTab);
+        // The theme or translations may have changed on the other tabs
+        basicTab.setOnSelectionChanged(e -> {
+            if (basicTab.isSelected()) {
+                updateSlidePreview();
+            }
+        });
 
         setupDetailedSongPanel();
         Tab detailedTab = new Tab(LabelGrabber.INSTANCE.getLabel("detailed.info.heading"));
@@ -126,6 +139,7 @@ public class SongEntryWindow extends Stage {
         });
 
         setupThemePanel();
+        setupSlidePreview();
         Tab themeTab = new Tab(LabelGrabber.INSTANCE.getLabel("theme.heading"));
         themeTab.setContent(themePanel);
         themeTab.setClosable(false);
@@ -226,6 +240,35 @@ public class SongEntryWindow extends Stage {
     private void setupThemePanel() {
         themePanel = new ThemePanel(basicSongPanel.getLyricsField().getTextArea(), confirmButton, true);
         themePanel.setPreviewSource(this::getPreviewSong);
+    }
+
+    /**
+     * Called by the constructor to set up the slide preview beside the lyrics.
+     * It shows the slide the caret is in, as it will look live.
+     */
+    private void setupSlidePreview() {
+        slidePreview = new SlidePreviewPane();
+        basicSongPanel.setSlidePreview(slidePreview);
+        previewDelay = new PauseTransition(Duration.millis(SLIDE_PREVIEW_DELAY_MS));
+        previewDelay.setOnFinished(e -> updateSlidePreview());
+        InlineCssTextArea lyrics = basicSongPanel.getLyricsField().getTextArea();
+        lyrics.textProperty().addListener((ov, oldText, newText) -> previewDelay.playFromStart());
+        lyrics.caretPositionProperty().addListener((ov, oldPos, newPos) -> previewDelay.playFromStart());
+        basicSongPanel.getTitleField().textProperty().addListener((ov, oldText, newText) -> previewDelay.playFromStart());
+        basicSongPanel.getAuthorField().textProperty().addListener((ov, oldText, newText) -> previewDelay.playFromStart());
+    }
+
+    /**
+     * Show the slide the caret is in, drawn with the theme and translation
+     * the song will be shown with.
+     */
+    private void updateSlidePreview() {
+        if (slidePreview == null || !basicSongPanel.isSlidePreviewShown()) {
+            return;
+        }
+        InlineCssTextArea lyrics = basicSongPanel.getLyricsField().getTextArea();
+        int index = SlidePreviewPane.sectionAt(lyrics.getText(), lyrics.getCaretPosition());
+        slidePreview.show(getPreviewSong(), themePanel.getTheme(), index);
     }
 
     /**
@@ -373,7 +416,8 @@ public class SongEntryWindow extends Stage {
      * @return a new song with the editor's lyrics and translations.
      */
     private SongDisplayable getPreviewSong() {
-        SongDisplayable preview = new SongDisplayable("", "");
+        SongDisplayable preview = new SongDisplayable(getBasicSongPanel().getTitleField().getText(),
+                getBasicSongPanel().getAuthorField().getText());
         preview.setLyrics(getBasicSongPanel().getLyricsField().getTextArea().getText());
         if (translatePanel != null) {
             preview.setTranslations(translatePanel.getTranslations());

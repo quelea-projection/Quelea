@@ -13,6 +13,7 @@ public class QueleaPropertyKeys {
     public static final String previewDivposKey = "preview.divpos";
     public static final String chosenFontsKey = "chosen.fonts";
     public static final String uniformFontSizeKey = "uniform.font.size";
+    public static final String songEditorPreviewKey = "song.editor.preview";
     public static final String showVerseNumbersKey = "show.verse.numbers";
     public static final String noticeBackgroundColourKey = "notice.background.colour";
     public static final String noticePositionKey = "notice.position";
