@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.quelea.data.displayable.SongDisplayable;
@@ -42,7 +43,7 @@ public class SurvivorSongbookParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        PDDocument document = PDDocument.load(location);
+        PDDocument document = Loader.loadPDF(location);
         List<SongDisplayable> pdfSongs = new ArrayList<>();
         PDFTextStripper stripper = new PDFTextStripper();
         List<String> songParts = new ArrayList<>();
