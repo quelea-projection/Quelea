@@ -294,6 +294,9 @@ test {
     failOnNoDiscoveredTests = false
     // Same JVM options as the application, so video code under test behaves as it does at runtime.
     jvmArgs application.applicationDefaultJvmArgs
+    // Schedule drop tests use JavaFX's in-memory dragboard instead of the system clipboard.
+    jvmArgs '--add-exports=javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+            '--add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED'
     testLogging {
         events 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
