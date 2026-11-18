@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +41,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -233,6 +233,27 @@ public class ScheduleDropTest {
     }
 
     @Test
+    @DisplayName("Moving several schedule items preserves their order and the remaining items")
+    public void moveSeveralScheduleItems() throws Exception {
+        onFx(() -> {
+            SongDisplayable a = song("A");
+            SongDisplayable b = song("B");
+            SongDisplayable c = song("C");
+            SongDisplayable d = song("D");
+            SongDisplayable e = song("E");
+            add(a, b, c, d, e);
+            ClipboardContent content = new ClipboardContent();
+            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT,
+                    new SongDisplayableList(List.of(list.getItems().get(1), list.getItems().get(3))));
+            dropAt(content, 4, 0.75);
+            assertOrder(a, c, e, b, d);
+            assertSelected(4, d);
+            assertScheduleOrder(a, c, e, b, d);
+        });
+        onFx(() -> { });
+    }
+
+    @Test
     @DisplayName("Dropping a song back on itself neither removes nor duplicates it")
     public void dropSongOnItself() throws Exception {
         onFx(() -> {
@@ -362,13 +383,9 @@ public class ScheduleDropTest {
     }
 
     @Test
-    @Disabled("Multiple songs are inserted at the same index in reverse order")
     @DisplayName("Multiple library songs retain their order at every insertion position")
     public void multipleLibrarySongsKeepOrder() {
-        // The library can drag several selected songs at once. For a populated
-        // schedule each is inserted at the same index, reversing X/Y/Z to Z/Y/X
-        // and changing the intended service order. Advance the insertion index
-        // after each inserted item, accounting for any source items removed.
+        // A multi-song selection must keep its order at every insertion position.
         Assertions.assertAll(
                 () -> assertMultipleSongsAt(0, false),
                 () -> assertMultipleSongsAt(1, false),
@@ -398,14 +415,9 @@ public class ScheduleDropTest {
     }
 
     @Test
-    @Disabled("Moving a non-song item throws when the image directory is absent")
     @DisplayName("Moving a non-song item does not depend on the image-library directory")
     public void moveNonSongWithoutImageDirectory(@TempDir Path directory) throws Exception {
-        // An internal move uses the "tempdisp" marker and should not need to
-        // inspect image files. The handler nevertheless calls isInDir first;
-        // listFiles() returns null when the image folder is missing, causing an
-        // exception and preventing the move. Check the marker before inspecting
-        // files and handle missing/unreadable directories in the helper.
+        // An internal move does not need an image-library directory.
         Path video = Files.createFile(directory.resolve("clip.mp4"));
         Path homeWithoutImages = Files.createDirectory(directory.resolve("empty-home"));
         onFx(() -> {
@@ -441,7 +453,8 @@ public class ScheduleDropTest {
             list.add(existing);
             ClipboardContent content = new ClipboardContent();
             content.putFiles(List.of(image.toFile(), unsupported.toFile(), video.toFile()));
-            drop(content, 10, 10);
+            DragEvent event = drop(content, 10, 10);
+            Assertions.assertTrue(event.isDropCompleted());
             Assertions.assertEquals(3, list.getItems().size());
             Assertions.assertSame(existing, list.getItems().get(0).displayable());
             ImageDisplayable picture = Assertions.assertInstanceOf(ImageDisplayable.class,
@@ -469,6 +482,12 @@ public class ScheduleDropTest {
             ClipboardContent unsupportedContent = new ClipboardContent();
             unsupportedContent.putFiles(List.of(unsupported.toFile()));
             Assertions.assertFalse(dragOver(unsupportedContent).isAccepted());
+            Assertions.assertFalse(drop(unsupportedContent, 10, 10).isDropCompleted());
+            ClipboardContent unsupportedString = new ClipboardContent();
+            unsupportedString.putString(unsupported.toString());
+            Assertions.assertFalse(dragOver(unsupportedString).isAccepted());
+            Assertions.assertFalse(drop(unsupportedString, 10, 10).isDropCompleted());
+            Assertions.assertTrue(list.isEmpty());
         });
     }
 
@@ -533,15 +552,13 @@ public class ScheduleDropTest {
     }
 
     @Test
-    @Disabled("Video backgrounds from other folders are copied to the image library")
     @DisplayName("A video dragged from another folder remains available as a text background")
     public void videoFromAnotherFolderRemainsAvailable(@TempDir Path directory) throws Exception {
-        // The video library can browse other folders. On a text drop the handler
-        // copies that video into the image directory, then stores only its name
-        // in VideoBackground, which searches the video directory. The background
-        // consequently points to a missing file. Keep a valid video path or copy
-        // it into the video library before storing the background reference.
-        Path video = Files.createFile(directory.resolve("outside-background.mp4"));
+        // The video library can browse folders outside the video-library root.
+        byte[] contents = {1, 2, 3};
+        Path video = Files.write(directory.resolve("outside-background.mp4"), contents);
+        AtomicReference<Path> stored = new AtomicReference<>();
+        AtomicReference<String> savedTheme = new AtomicReference<>();
         onFx(() -> {
             TestText text = new TestText();
             list.add(text);
@@ -551,36 +568,122 @@ public class ScheduleDropTest {
             assertOrder(text);
             VideoBackground background = Assertions.assertInstanceOf(VideoBackground.class, text.getTheme().getBackground());
             Assertions.assertTrue(background.getVideoFile().isFile(), "The background must resolve to a real video file");
+            stored.set(background.getVideoFile().toPath());
+            savedTheme.set(text.getTheme().asString());
             Assertions.assertSame(text.getTheme(), text.getSections()[0].getTheme());
+        });
+        Files.delete(video);
+        Assertions.assertArrayEquals(contents, Files.readAllBytes(stored.get()));
+        onFx(() -> {
+            ThemeDTO restored = ThemeDTO.fromString(savedTheme.get(), Map.of());
+            VideoBackground background = Assertions.assertInstanceOf(VideoBackground.class, restored.getBackground());
+            Assertions.assertEquals(stored.get().toFile(), background.getVideoFile());
+            Assertions.assertTrue(background.getVideoFile().isFile());
         });
     }
 
     @Test
-    @Disabled("Directories are currently accepted and added as image items")
+    @DisplayName("An imported video does not overwrite a different video with the same name")
+    public void videoBackgroundNameCollision(@TempDir Path directory) throws Exception {
+        Path existing = QueleaProperties.get().getVidDir().toPath().resolve("collision-video.mp4");
+        byte[] existingContents = {1, 2};
+        byte[] incomingContents = {3, 4, 5};
+        Files.write(existing, existingContents);
+        Path incoming = Files.write(directory.resolve("collision-video.mp4"), incomingContents);
+        onFx(() -> {
+            TestText text = new TestText();
+            list.add(text);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(incoming.toString());
+            Assertions.assertTrue(dropAt(content, 0, 0.5).isDropCompleted());
+            VideoBackground first = Assertions.assertInstanceOf(VideoBackground.class, text.getTheme().getBackground());
+            Path stored = first.getVideoFile().toPath();
+            Assertions.assertNotEquals(existing, stored);
+            Assertions.assertArrayEquals(existingContents, Files.readAllBytes(existing));
+            Assertions.assertArrayEquals(incomingContents, Files.readAllBytes(stored));
+            Assertions.assertTrue(dropAt(content, 0, 0.5).isDropCompleted());
+            VideoBackground second = Assertions.assertInstanceOf(VideoBackground.class, text.getTheme().getBackground());
+            Assertions.assertEquals(stored, second.getVideoFile().toPath(), "Repeated drops should reuse identical media");
+        });
+    }
+
+    @Test
+    @DisplayName("An imported image does not overwrite a different image with the same name")
+    public void imageBackgroundNameCollision(@TempDir Path directory) throws Exception {
+        Path existing = QueleaProperties.get().getImageDir().toPath().resolve("collision-image.png");
+        ImageIO.write(new BufferedImage(3, 3, BufferedImage.TYPE_INT_RGB), "png", existing.toFile());
+        byte[] existingContents = Files.readAllBytes(existing);
+        Path incoming = directory.resolve("collision-image.png");
+        ImageIO.write(new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB), "png", incoming.toFile());
+        byte[] incomingContents = Files.readAllBytes(incoming);
+        onFx(() -> {
+            TestText text = new TestText();
+            list.add(text);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(incoming.toString());
+            Assertions.assertTrue(dropAt(content, 0, 0.5).isDropCompleted());
+            ImageBackground background = Assertions.assertInstanceOf(ImageBackground.class, text.getTheme().getBackground());
+            Path stored = background.getImageFile().toPath();
+            Assertions.assertNotEquals(existing, stored);
+            Assertions.assertArrayEquals(existingContents, Files.readAllBytes(existing));
+            Assertions.assertArrayEquals(incomingContents, Files.readAllBytes(stored));
+        });
+    }
+
+    @Test
+    @DisplayName("A failed background copy leaves the theme unchanged and reports failure")
+    public void failedBackgroundCopy(@TempDir Path directory) throws Exception {
+        Path home = Files.createDirectory(directory.resolve("home"));
+        Path quelea = Files.createDirectory(home.resolve(".quelea"));
+        Files.write(quelea.resolve("vid"), new byte[]{1}); // A file cannot be a video-library directory.
+        Path video = Files.createFile(directory.resolve("cannot-copy.mp4"));
+        onFx(() -> {
+            try {
+                QueleaProperties.init(home.toString());
+                TestText text = new TestText();
+                ThemeDTO original = text.getTheme();
+                list.add(text);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(video.toString());
+                Assertions.assertFalse(dropAt(content, 0, 0.5).isDropCompleted());
+                Assertions.assertSame(original, text.getTheme());
+                assertOrder(text);
+            } finally {
+                QueleaProperties.init(testHome.toString());
+            }
+        });
+    }
+
+    @Test
     @DisplayName("Dropping a directory does not add it as an image")
     public void externalDirectoryIsIgnored(@TempDir Path directory) throws Exception {
-        // The file filter helper accepts directories for navigation in file
-        // choosers, but a directory is not a renderable schedule image. The drop
-        // handler currently adds one as an ImageDisplayable, leaving a broken
-        // item in the service. Exclude directories in both drag acceptance and
-        // drop handling, or explicitly import supported files from the folder.
+        // File chooser filters allow directories for navigation; a schedule drop
+        // must not mistake one for a renderable image.
         onFx(() -> {
             ClipboardContent content = new ClipboardContent();
             content.putFiles(List.of(directory.toFile()));
-            drop(content, 10, 10);
+            Assertions.assertFalse(dragOver(content).isAccepted());
+            Assertions.assertFalse(drop(content, 10, 10).isDropCompleted());
             Assertions.assertTrue(list.isEmpty(), "A directory is not a displayable image");
         });
     }
 
     @Test
-    @Disabled("Successful drops do not call DragEvent.setDropCompleted")
+    @DisplayName("An internal move without a source is rejected")
+    public void staleInternalMoveIsRejected() throws Exception {
+        onFx(() -> {
+            ClipboardContent content = new ClipboardContent();
+            content.putString("tempdisp");
+            Assertions.assertFalse(dragOver(content).isAccepted());
+            Assertions.assertFalse(drop(content, 10, 10).isDropCompleted());
+            Assertions.assertTrue(list.isEmpty());
+        });
+    }
+
+    @Test
     @DisplayName("A successful drop is reported to the drag source")
     public void successfulDropIsReported() throws Exception {
-        // JavaFX uses this flag to notify the source whether a transfer finished.
-        // Leaving it false after inserting an item makes a successful drop look
-        // cancelled to the drag source and can break source-side cleanup or UI
-        // feedback. Set it true for successfully handled drops and false for
-        // unsupported or failed ones before consuming the event.
+        // The source needs to distinguish a successful drop from a cancellation.
         onFx(() -> {
             DragEvent event = drop(songContent(song("Song")), 10, 10);
             Assertions.assertTrue(event.isDropCompleted(), "The source should be told that the drop succeeded");

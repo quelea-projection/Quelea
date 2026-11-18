@@ -75,13 +75,16 @@ import org.quelea.windows.stage.StageDrawer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
@@ -201,13 +204,15 @@ public class ScheduleList extends StackPane {
         };
         listView.setCellFactory(DisplayableListCell.forListView(null, callback, d -> d.displayable() instanceof SongDisplayable || d.displayable() instanceof BiblePassage || d.displayable() instanceof TimerDisplayable));
         listView.setOnDragOver(event -> {
-            if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+            Dragboard db = event.getDragboard();
+            String location = db.getString();
+            boolean canDrop = db.hasFiles()
+                    ? db.getFiles().stream().anyMatch(ScheduleList::isSupportedFile)
+                    : db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)
+                    || ("tempdisp".equals(location) && tempDisp != null)
+                    || (location != null && isSupportedMediaFile(new File(location)));
+            if (canDrop) {
                 event.acceptTransferModes(TransferMode.ANY);
-            }
-            if (event.getDragboard().hasFiles()) {
-                event.getDragboard().getFiles().stream().filter((file) -> (Utils.fileIsImage(file) || Utils.fileIsVideo(file) || file.getPath().matches("(.*)(pdf|ppt|pptx)") && !file.isDirectory())).forEach((file) -> {
-                    event.acceptTransferModes(TransferMode.ANY);
-                });
             }
             updateDropTarget(event);
         });
@@ -268,7 +273,10 @@ public class ScheduleList extends StackPane {
                 .filter(cell -> cell.isVisible() && cell.getParent() != null)
                 .sorted(Comparator.comparingInt(ListCell::getIndex))
                 .toList();
-        boolean canInsert = db.getString() != null || db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+        String location = db.getString();
+        boolean canInsert = db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)
+                || ("tempdisp".equals(location) && tempDisp != null)
+                || (location != null && isSupportedMediaFile(new File(location)));
         if (db.hasFiles() || !canInsert || shown.isEmpty()) {
             clearDropTarget(true);
             return;
@@ -291,7 +299,7 @@ public class ScheduleList extends StackPane {
             }
             afterLast = cell.getIndex() + 1;
         }
-        boolean isMedia = db.getString() != null && !db.getString().equals("tempdisp");
+        boolean isMedia = location != null && !location.equals("tempdisp");
         if (isMedia && over != null && over.getItem().displayable() instanceof TextDisplayable) {
             closeDropGap(true);
             setDropOntoCell(over);
@@ -387,134 +395,176 @@ public class ScheduleList extends StackPane {
         clearDropTarget(false);
 
         Dragboard db = event.getDragboard();
+        boolean completed = false;
         if (db.hasFiles()) {
-            db.getFiles().forEach((file) -> {
+            for (File file : db.getFiles()) {
+                if (!isSupportedFile(file)) {
+                    continue;
+                }
                 if (Utils.fileIsImage(file)) {
                     add(new ImageDisplayable(file));
                 } else if (Utils.fileIsVideo(file)) {
                     add(new VideoDisplayable(file.getPath()));
-                } else if (file.getPath().matches("(.*)(ppt|pptx)")) {
-                    List<File> presentation = new ArrayList<>();
-                    presentation.add(file);
-                    new AddPowerpointActionHandler().addPresentation(presentation);
-                } else if (file.getPath().contains(".pdf")) {
-                    List<File> pdf = new ArrayList<>();
-                    pdf.add(file);
-                    new AddPdfActionHandler().addPDF(pdf);
+                } else if (isPresentation(file)) {
+                    new AddPowerpointActionHandler().addPresentation(List.of(file));
+                } else {
+                    new AddPdfActionHandler().addPDF(List.of(file));
                 }
-            });
+                completed = true;
+            }
         } else {
             String dbLocation = db.getString();
-            boolean useTempDisp = false;
-            if (dbLocation != null) {
-                boolean isVideo = Utils.fileIsVideo(new File(dbLocation));
-                useTempDisp = dbLocation.equals("tempdisp");
-                if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(dbLocation)) && !useTempDisp) {
-                    try {
-                        Utils.copyFile(new File(dbLocation), new File(QueleaProperties.get().getImageDir(), new File(dbLocation).getName()));
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
+            Object content = db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+            if (content instanceof SongDisplayableList songs) {
+                List<IndexedDisplayable> displayables = songs.getSongDisplayables();
+                for (IndexedDisplayable indexedDisplayable : displayables) {
+                    SongDisplayable song = (SongDisplayable) indexedDisplayable.displayable();
+                    if (!QueleaProperties.get().getDefaultSongDBUpdate()) {
+                        song.setID(-1);
+                        song.setNoDBUpdate();
                     }
-                }
-                boolean isSong = dropOnto != null;
-                if (!isSong && !useTempDisp) {
-                    Displayable visualDisplayable;
-                    if (isVideo) {
-                        visualDisplayable = new VideoDisplayable(dbLocation);
-                    } else {
-                        visualDisplayable = new ImageDisplayable(new File(dbLocation));
-                    }
-                    useTempDisp = true;
-                    tempDisp = new IndexedDisplayable(visualDisplayable, -1);
-                } else {
-                    if (useTempDisp) {
-
-                        //potentially check if the displayable is an image and then add it to theme of song.
-                        //Was not added due to the thought that it could get confusing if someone added image to
-                        //schedule and then it all of a sudden disappeared if they were trying to rearrange the schedule.
-                    } else {
-                        IndexedDisplayable d = dropOnto;
-                        if (d.displayable() instanceof TextDisplayable textDisplayable) {
-                            ThemeDTO theme = textDisplayable.getTheme();
-                            SerializableDropShadow dropShadow = theme.getShadow();
-                            if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
-                                dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
-                            }
-                            Background background;
-                            if (isVideo) {
-                                background = new VideoBackground(new File(dbLocation).getName(), 0, true);
-                            } else {
-                                background = new ImageBackground(new File(dbLocation).getName());
-                            }
-
-                            ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), background, dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
-                            for (TextSection section : textDisplayable.getSections()) {
-                                section.setTheme(newTheme);
-                            }
-                            textDisplayable.setTheme(newTheme);
-                            if (d.displayable() instanceof SongDisplayable sd) {
-                                if (QueleaProperties.get().getUseDefaultTranslation()) {
-                                    String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
-                                    if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
-                                        sd.setCurrentTranslationLyrics(defaultTranslation);
-                                    }
-                                }
-                                Utils.updateSongInBackground(sd, true, false);
-                            }
-                            if (QueleaProperties.get().getPreviewOnImageUpdate()) {
-                                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().clearSelection();
-                                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().select(d);
-                            }
-                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+                    if (QueleaProperties.get().getUseDefaultTranslation()) {
+                        String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                        if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                            song.setCurrentTranslationLyrics(defaultTranslation);
                         }
                     }
                 }
-            }
-            if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList || useTempDisp) {
-                List<IndexedDisplayable> displayables;
-                if (db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList) {
-                    List<IndexedDisplayable> songDisplayables = ((SongDisplayableList) db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
-                    displayables = songDisplayables;
-                    for (IndexedDisplayable indexedDisplayable : songDisplayables) {
-                        SongDisplayable song = (SongDisplayable) indexedDisplayable.displayable();
-                        if (!QueleaProperties.get().getDefaultSongDBUpdate()) {
-                            song.setID(-1);
-                            song.setNoDBUpdate();
-                        }
-                        if (QueleaProperties.get().getUseDefaultTranslation()) {
-                            String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
-                            if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
-                                song.setCurrentTranslationLyrics(defaultTranslation);
-                            }
-                        }
-                    }
-                } else {
-                    displayables = List.of(tempDisp);
+                completed = insertDisplayables(displayables, insertAt);
+            } else if ("tempdisp".equals(dbLocation)) {
+                if (tempDisp != null) {
+                    completed = insertDisplayables(List.of(tempDisp), insertAt);
                     tempDisp = null;
                 }
-                for (IndexedDisplayable d : displayables) {
-                    int newIndex;
-                    newIndex = insertAt < 0 ? listView.getItems().size() : insertAt;
-                    if (newIndex > listView.getItems().size()) {
-                        newIndex = listView.getItems().size();
+            } else if (dbLocation != null && isSupportedMediaFile(new File(dbLocation))) {
+                File file = new File(dbLocation);
+                boolean isVideo = Utils.fileIsVideo(file);
+                if (dropOnto != null && dropOnto.displayable() instanceof TextDisplayable textDisplayable) {
+                    try {
+                        applyBackground(dropOnto, textDisplayable, file, isVideo);
+                        completed = true;
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't copy background file", ex);
                     }
-                    IndexedDisplayable toAdd = new IndexedDisplayable(d.displayable(), newIndex);
-                    listView.itemsProperty().get().add(newIndex, toAdd);
-                    Optional<IndexedDisplayable> toRemove = listView.itemsProperty().get().stream().filter(x->x.index()==d.index()).findFirst();
-                    toRemove.ifPresent(old -> listView.itemsProperty().get().remove(old));
-                    listView.getSelectionModel().clearSelection();
-                    listView.getSelectionModel().select(toAdd);
-                    listView.requestFocus();
-                    Platform.runLater(() -> {
-                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(toAdd.displayable(), 0);
-                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                    });
+                } else {
+                    Displayable displayable = isVideo ? new VideoDisplayable(dbLocation) : new ImageDisplayable(file);
+                    completed = insertDisplayables(List.of(new IndexedDisplayable(displayable, -1)), insertAt);
                 }
             }
         }
         recalculateDisplayableIndexes();
+        event.setDropCompleted(completed);
         event.consume();
+    }
+
+    private static boolean isSupportedMediaFile(File file) {
+        return file.isFile() && (Utils.fileIsImage(file) || Utils.fileIsVideo(file));
+    }
+
+    private static boolean isPresentation(File file) {
+        String name = file.getName().toLowerCase(Locale.ROOT);
+        return name.endsWith(".ppt") || name.endsWith(".pptx");
+    }
+
+    private static boolean isSupportedFile(File file) {
+        return file.isFile() && (isSupportedMediaFile(file) || isPresentation(file)
+                || file.getName().toLowerCase(Locale.ROOT).endsWith(".pdf"));
+    }
+
+    private boolean insertDisplayables(List<IndexedDisplayable> displayables, int insertAt) {
+        if (displayables.isEmpty()) {
+            return false;
+        }
+        ObservableList<IndexedDisplayable> items = listView.getItems();
+        // Keep the original occurrences: insertions and removals change positions,
+        // and equal songs may appear more than once in a schedule.
+        Map<Integer, IndexedDisplayable> originals = new HashMap<>();
+        for (IndexedDisplayable item : items) {
+            originals.put(item.index(), item);
+        }
+        int position = insertAt < 0 ? items.size() : Math.min(insertAt, items.size());
+        IndexedDisplayable lastAdded = null;
+        for (IndexedDisplayable dragged : displayables) {
+            IndexedDisplayable original = originals.remove(dragged.index());
+            if (original != null) {
+                for (int i = 0; i < items.size(); i++) {
+                    if (items.get(i) == original) {
+                        items.remove(i);
+                        if (i < position) {
+                            position--;
+                        }
+                        break;
+                    }
+                }
+            }
+            lastAdded = new IndexedDisplayable(dragged.displayable(), position);
+            items.add(position++, lastAdded);
+        }
+        recalculateDisplayableIndexes();
+        listView.getSelectionModel().clearSelection();
+        listView.getSelectionModel().select(position - 1);
+        listView.requestFocus();
+        IndexedDisplayable selected = lastAdded;
+        Platform.runLater(() -> {
+            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(selected.displayable(), 0);
+            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+        });
+        return true;
+    }
+
+    private void applyBackground(IndexedDisplayable item, TextDisplayable textDisplayable, File source, boolean video) throws IOException {
+        File directory = video ? QueleaProperties.get().getVidDir() : QueleaProperties.get().getImageDir();
+        File stored = copyBackgroundToLibrary(source, directory);
+        ThemeDTO theme = textDisplayable.getTheme();
+        SerializableDropShadow dropShadow = theme.getShadow();
+        if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
+            dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
+        }
+        Background background = video ? new VideoBackground(stored.getName(), 0, true) : new ImageBackground(stored.getName());
+        ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), background, dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+        for (TextSection section : textDisplayable.getSections()) {
+            section.setTheme(newTheme);
+        }
+        textDisplayable.setTheme(newTheme);
+        if (item.displayable() instanceof SongDisplayable song) {
+            if (QueleaProperties.get().getUseDefaultTranslation()) {
+                String defaultTranslation = QueleaProperties.get().getDefaultTranslationName();
+                if (defaultTranslation != null && !defaultTranslation.trim().isEmpty()) {
+                    song.setCurrentTranslationLyrics(defaultTranslation);
+                }
+            }
+            Utils.updateSongInBackground(song, true, false);
+        }
+        if (QueleaProperties.get().getPreviewOnImageUpdate()) {
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().clearSelection();
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().select(item);
+        }
+        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+    }
+
+    private static File copyBackgroundToLibrary(File source, File directory) throws IOException {
+        Path sourcePath = source.toPath();
+        Path library = Files.createDirectories(directory.toPath());
+        String name = source.getName();
+        int dot = name.lastIndexOf('.');
+        String stem = dot > 0 ? name.substring(0, dot) : name;
+        String extension = dot > 0 ? name.substring(dot) : "";
+        // Reuse identical media, but never overwrite a different library file.
+        for (int suffix = 1; ; suffix++) {
+            Path target = library.resolve(suffix == 1 ? name : stem + " (" + suffix + ")" + extension);
+            if (Files.exists(target)) {
+                if (Files.isRegularFile(target) && (Files.isSameFile(sourcePath, target) || Files.mismatch(sourcePath, target) == -1)) {
+                    return target.toFile();
+                }
+                continue;
+            }
+            try {
+                return Files.copy(sourcePath, target).toFile();
+            } catch (FileAlreadyExistsException ex) {
+                // Another import claimed this name; try the next one.
+            }
+        }
     }
 
     /**
@@ -528,7 +578,8 @@ public class ScheduleList extends StackPane {
         if (listView.itemsProperty().get().size() == schedule.getSize()) {
             for (int i = 0; i < listView.itemsProperty().get().size(); i++) {
                 Displayable displayable = listView.itemsProperty().get().get(i).displayable();
-                if (displayable != null && !displayable.equals(schedule.getDisplayable(i))) {
+                // Song equality omits metadata that still needs to be saved.
+                if (displayable != schedule.getDisplayable(i)) {
                     equal = false;
                 }
             }

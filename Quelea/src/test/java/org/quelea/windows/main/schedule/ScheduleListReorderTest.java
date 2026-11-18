@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.quelea.data.Schedule;
@@ -182,15 +181,10 @@ public class ScheduleListReorderTest {
     }
 
     @Test
-    @Disabled("The saved schedule does not detect reordering songs that compare equal")
     @DisplayName("A reordered schedule preserves distinct songs that compare equal")
     public void schedulePreservesEqualSongsWithDifferentMetadata() throws Exception {
-        // SongDisplayable.equals ignores metadata such as copyright. getSchedule()
-        // uses equals to decide whether the visible order changed, so swapping two
-        // otherwise identical songs leaves the underlying schedule in its old order.
-        // Saving or printing can then use the wrong occurrence's metadata. Compare
-        // ordered item identity (or a complete persisted representation), rather
-        // than the current partial equality, when synchronizing the schedule.
+        // SongDisplayable.equals ignores copyright, but the schedule must retain
+        // the order of the distinct occurrences and their persisted metadata.
         onFx(() -> {
             SongDisplayable first = song("First copyright");
             SongDisplayable second = song("Second copyright");
