@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.library;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
@@ -50,6 +51,7 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.SongDisplayableList;
+import org.quelea.utils.SongDragboard;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.widgets.AddSongPromptOverlay;
@@ -140,6 +142,7 @@ public class LibrarySongList extends StackPane {
                     }
                 }
             };
+            ClipboardContent[] activeDrag = new ClipboardContent[1];
             cell.setOnDragDetected((event) -> {
                 SongDisplayable draggedDisplayable = cell.getItem();
                 List<SongDisplayable> selectedDisplayables = getSelectedValues();
@@ -155,12 +158,27 @@ public class LibrarySongList extends StackPane {
                 }
                 
                 if (!toDrag.isEmpty()) {
-                    Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-                    ClipboardContent content = new ClipboardContent();
-                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(toDrag.stream().map(x->new IndexedDisplayable(x, -1)).toList()));
-                    db.setContent(content);
+                    try {
+                        SongDisplayableList snapshot = SongDragboard.snapshot(new SongDisplayableList(toDrag.stream().map(x -> new IndexedDisplayable(x, -1)).toList()));
+                        Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        SongDragboard.put(content, snapshot);
+                        activeDrag[0] = content;
+                        if (!db.setContent(content)) {
+                            SongDragboard.clear(content);
+                            activeDrag[0] = null;
+                        }
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't copy dragged songs", ex);
+                    }
                 }
                 event.consume();
+            });
+            cell.setOnDragDone(event -> {
+                if (activeDrag[0] != null) {
+                    SongDragboard.clear(activeDrag[0]);
+                    activeDrag[0] = null;
+                }
             });
             return cell;
         };

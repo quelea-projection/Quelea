@@ -1,3 +1,7 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
 buildscript {
     dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:4.0.0'
@@ -33,7 +37,7 @@ repositories {
 }
 
 javafx {
-    version = "25.0.5.1"
+    version = "27.0.1.1"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
 
@@ -98,27 +102,56 @@ tasks.register('downloadGStreamer') {
     }
 }
 
+// BellSoft's 27.0.1.1+5 full JRE reports JavaFX 27.0.1+1, but its
+// release notes include JDK-8392009, the fix in OpenJFX 27.0.1.1:
+// https://docs.bell-sw.com/liberica-jdk/27.0.1.1b5/general/release-notes/
+def runtimeCacheDir = layout.buildDirectory.dir('runtime-bundles')
+def runtimeBundles = [
+    [name: 'bellsoft-jre27.0.1.1+5-macos-amd64-full.zip', sha256: 'c6b89c3274af6685c0f3899e5804423d894a3ec35dd44096b24b71efa7d6c854'],
+    [name: 'bellsoft-jre27.0.1.1+5-windows-amd64-full.zip', sha256: '831f72c64a4d85fe784fa9a0936275ce9dd0ce5155c6cec5312c100a6c7f5973']
+]
+def windowsRuntimeArchive = runtimeCacheDir.map { it.file(runtimeBundles[1].name) }
+
 tasks.register('downloadJres') {
-    def mf = new File('macjre.zip')
-    if (!mf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-macosx_x64.zip').withInputStream { i -> mf.withOutputStream { it << i } }
-    }
-
-    def wf = new File('winjre64.zip')
-    if (!wf.exists()) {
-        new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-win_x64.zip').withInputStream { i -> wf.withOutputStream { it << i } }
-    }
-
     doLast {
-        ant.move file: "macjre.zip",
-                todir: "bundlejre"
-        ant.move file: "winjre64.zip",
-                todir: "bundlejre"
+        def cacheDir = runtimeCacheDir.get().asFile
+        cacheDir.mkdirs()
+        runtimeBundles.each { bundle ->
+            def archive = new File(cacheDir, bundle.name)
+            if (!archive.exists()) {
+                def partial = new File(cacheDir, bundle.name + '.part')
+                new URL("https://download.bell-sw.com/java/27.0.1.1+5/${bundle.name}").withInputStream { input ->
+                    partial.withOutputStream { output -> output << input }
+                }
+                Files.move(partial.toPath(), archive.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+            def digest = MessageDigest.getInstance('SHA-256')
+            archive.withInputStream { input ->
+                byte[] buffer = new byte[65536]
+                for (int count; (count = input.read(buffer)) != -1;) {
+                    digest.update(buffer, 0, count)
+                }
+            }
+            def actualHash = digest.digest().collect { String.format('%02x', it & 0xff) }.join()
+            if (actualHash != bundle.sha256) {
+                throw new GradleException("Runtime archive checksum mismatch: ${archive}. Remove or replace it before retrying.")
+            }
+        }
     }
 }
 
 tasks.register('copyToDist') {
+    dependsOn tasks.named('downloadJres')
     doLast {
+        def runtimeDir = file("${project.distdir}/winjre64")
+        if (runtimeDir.exists()) {
+            def release = new File(runtimeDir, 'release')
+            def fxVersion = new File(runtimeDir, 'lib/javafx.properties')
+            if (!release.isFile() || !release.getText('UTF-8').contains('JAVA_VERSION="27.0.1.1"') ||
+                    !fxVersion.isFile() || !fxVersion.getText('UTF-8').contains('javafx.version=27.0.1+1')) {
+                throw new GradleException("Existing ${runtimeDir} does not match the bundled runtime. Move it aside before building the distribution.")
+            }
+        }
         copy { from configurations.runtimeClasspath into project.distdir + "/libjfx" include "javafx*" }
         // all JavaFX libraries
         copy { from configurations.runtimeClasspath into project.distdir + "/lib" exclude "javafx*" }
@@ -135,10 +168,12 @@ tasks.register('copyToDist') {
         copy { from "img" into project.distdir + "/img" }
         copy { from "timer" into project.distdir + "/timer" }
         copy { from "src" into project.distdir + "/src" }
-        def wf = new File('bundlejre/winjre64.zip')
-        if (wf.exists()) {
-            copy { from zipTree("bundlejre/winjre64.zip") into project.distdir }
-            file("dist/zulu25.38.109-ca-fx-jre25.0.5.0.3-win_x64").renameTo(file("dist/winjre64"))
+        copy {
+            from(zipTree(windowsRuntimeArchive.get().asFile)) {
+                eachFile { path = path.substring(path.indexOf('/') + 1) }
+                includeEmptyDirs = false
+            }
+            into runtimeDir
         }
         copy { from file("build/libs/Quelea.jar") into file(project.distdir) }
         copy { from file("README.TXT") into file(project.distdir) }
@@ -158,6 +193,7 @@ tasks.register('copyToDist') {
 }
 
 tasks.register('grabNative') {
+    onlyIf { tasks.named('copyToDist').get().state.failure == null }
     doLast {
         copy {
             from file(project.file('osx/libAVPlayerJava.jnilib'))
@@ -196,6 +232,7 @@ tasks.register('labelcheck', JavaExec) {
 }
 
 tasks.register('runPackr', JavaExec) {
+    dependsOn tasks.named('downloadJres')
     classpath = files('packr.jar')
     mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
@@ -279,6 +316,9 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
+    runtimeOnly "org.openjfx:javafx-media:$javafx.version:win"
+    runtimeOnly "org.openjfx:javafx-media:$javafx.version:linux"
+    runtimeOnly "org.openjfx:javafx-media:$javafx.version:mac"
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:win"
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
@@ -313,12 +353,12 @@ jar {
 
 tasks.register('tar', Tar) {
     archiveFileName = JavaAppName
-    destinationDirectory = file("dist/standalone/")
+    destinationDirectory = file("${project.distdir}/standalone/")
     compression = Compression.GZIP
 
-    from 'dist/'
     into "Quelea-${versionsuffix}-java-app"
-    include "lib/",
+    from(project.distdir) {
+        include "lib/",
             "bibles/",
             "dictionaries/",
             "icons/",
@@ -333,6 +373,12 @@ tasks.register('tar', Tar) {
             "scheduleformat.xsl",
             "songformat.xsl",
             "Quelea.jar"
+    }
+    // The installer also merges these jars into lib.  The tarball must do so
+    // too, because the jar manifest refers to lib/<javafx-jar>.
+    from("${project.distdir}/libjfx") {
+        into 'lib'
+    }
 }
 
 tasks.register('releaseSummary', JavaExec) {

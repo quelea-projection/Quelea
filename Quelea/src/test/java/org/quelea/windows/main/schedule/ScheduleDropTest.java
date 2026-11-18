@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -56,6 +57,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.utils.SongDisplayableList;
+import org.quelea.utils.SongDragboard;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.MainWindow;
@@ -130,6 +132,54 @@ public class ScheduleDropTest {
     }
 
     @Test
+    @DisplayName("Song drags use a local token and release their snapshot when finished")
+    public void songDragUsesTokenAndReleasesPayload() throws Exception {
+        onFx(() -> {
+            SongDisplayable source = song("Library song");
+            source.setID(123);
+            SongDisplayableList snapshot = SongDragboard.snapshot(new SongDisplayableList(new IndexedDisplayable(source, -1)));
+            SongDisplayable copy = (SongDisplayable) snapshot.getSongDisplayables().getFirst().displayable();
+            Assertions.assertNotSame(source, copy);
+            Assertions.assertEquals(source.getID(), copy.getID());
+            copy.setID(-1);
+            Assertions.assertEquals(123, source.getID(), "Changing the dropped song must not change the library copy");
+            ClipboardContent content = new ClipboardContent();
+            SongDragboard.put(content, snapshot);
+            Dragboard board = DragboardHelper.createDragboard(new TestClipboard());
+            Assertions.assertTrue(board.setContent(content));
+            Assertions.assertInstanceOf(String.class, board.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT));
+            Assertions.assertSame(snapshot, SongDragboard.get(board));
+            SongDragboard.clear(board);
+            Assertions.assertNull(SongDragboard.get(board));
+        });
+    }
+
+    @Test
+    @DisplayName("A stale or external drag payload cannot be used as a song")
+    public void staleAndForeignPayloadsAreRejected() throws Exception {
+        onFx(() -> {
+            ClipboardContent oldContent = songContent(song("Old"));
+            Dragboard oldBoard = DragboardHelper.createDragboard(new TestClipboard());
+            Assertions.assertTrue(oldBoard.setContent(oldContent));
+            ClipboardContent currentContent = songContent(song("Current"));
+            Dragboard currentBoard = DragboardHelper.createDragboard(new TestClipboard());
+            Assertions.assertTrue(currentBoard.setContent(currentContent));
+            Assertions.assertNull(SongDragboard.get(oldBoard));
+            // The dragboard can be invalid by DRAG_DONE; the source keeps its
+            // token independently and must not clear a newer gesture.
+            SongDragboard.clear(oldContent);
+            Assertions.assertNotNull(SongDragboard.get(currentBoard), "An old drag must not clear the current drag");
+            ClipboardContent foreign = new ClipboardContent();
+            foreign.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, ByteBuffer.wrap(new byte[]{(byte) 0xac, (byte) 0xed, 0, 5}));
+            Assertions.assertFalse(dragOver(foreign).isAccepted());
+            Assertions.assertFalse(drop(foreign, 10, 10).isDropCompleted());
+            Assertions.assertTrue(list.isEmpty());
+            SongDragboard.clear(currentContent);
+            Assertions.assertNull(SongDragboard.get(currentBoard));
+        });
+    }
+
+    @Test
     @DisplayName("A library song can be dropped into an empty schedule")
     public void songIntoEmptySchedule() throws Exception {
         AtomicReference<SongDisplayable> added = new AtomicReference<>();
@@ -137,7 +187,7 @@ public class ScheduleDropTest {
             SongDisplayable song = song("Song");
             added.set(song);
             ClipboardContent content = new ClipboardContent();
-            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT,
+            SongDragboard.put(content,
                     new SongDisplayableList(new IndexedDisplayable(song, -1)));
             drop(content, 10, 10);
             Assertions.assertEquals(1, list.getItems().size());
@@ -243,7 +293,7 @@ public class ScheduleDropTest {
             SongDisplayable e = song("E");
             add(a, b, c, d, e);
             ClipboardContent content = new ClipboardContent();
-            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT,
+            SongDragboard.put(content,
                     new SongDisplayableList(List.of(list.getItems().get(1), list.getItems().get(3))));
             dropAt(content, 4, 0.75);
             assertOrder(a, c, e, b, d);
@@ -325,7 +375,7 @@ public class ScheduleDropTest {
             SongDisplayable transferred = (SongDisplayable) payload.getSongDisplayables().getFirst().displayable();
             Assertions.assertNotSame(source, transferred);
             ClipboardContent content = new ClipboardContent();
-            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, payload);
+            SongDragboard.put(content, payload);
             drop(content, 10, 10);
             assertOrder(transferred);
             Assertions.assertEquals("Café", transferred.getTitle());
@@ -345,7 +395,7 @@ public class ScheduleDropTest {
             SongDisplayableList payload = roundTrip(new SongDisplayableList(list.getItems().get(2)));
             SongDisplayable transferred = (SongDisplayable) payload.getSongDisplayables().getFirst().displayable();
             ClipboardContent content = new ClipboardContent();
-            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, payload);
+            SongDragboard.put(content, payload);
             dropAt(content, 0, 0.25);
             assertOrder(transferred, a, b);
             assertSelected(0, transferred);
@@ -355,7 +405,7 @@ public class ScheduleDropTest {
     }
 
     @Test
-    @DisplayName("Moving a song works when each dragboard read deserializes a fresh copy")
+    @DisplayName("Moving a copied drag snapshot moves the original occurrence")
     public void moveSongWithFreshDragboardCopies() throws Exception {
         onFx(() -> {
             SongDisplayable a = song("A");
@@ -363,7 +413,9 @@ public class ScheduleDropTest {
             SongDisplayable c = song("C");
             add(a, b, c);
             Point2D target = pointOnCell(0, 0.25);
-            drop(scheduleSongContent(2), target.getX(), target.getY(), true);
+            ClipboardContent content = new ClipboardContent();
+            SongDragboard.put(content, SongDragboard.snapshot(new SongDisplayableList(list.getItems().get(2))));
+            drop(content, target.getX(), target.getY());
             Assertions.assertEquals(3, list.getItems().size());
             SongDisplayable moved = Assertions.assertInstanceOf(SongDisplayable.class,
                     list.getItems().get(0).displayable());
@@ -704,7 +756,7 @@ public class ScheduleDropTest {
                     add(a, b);
                 }
                 ClipboardContent content = new ClipboardContent();
-                content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(List.of(
+                SongDragboard.put(content, new SongDisplayableList(List.of(
                         new IndexedDisplayable(x, -1), new IndexedDisplayable(y, -1), new IndexedDisplayable(z, -1))));
                 if (initiallyEmpty) {
                     drop(content, 10, 10);
@@ -737,14 +789,14 @@ public class ScheduleDropTest {
 
     private static ClipboardContent songContent(SongDisplayable song) {
         ClipboardContent content = new ClipboardContent();
-        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT,
+        SongDragboard.put(content,
                 new SongDisplayableList(new IndexedDisplayable(song, -1)));
         return content;
     }
 
     private ClipboardContent scheduleSongContent(int index) {
         ClipboardContent content = new ClipboardContent();
-        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(list.getItems().get(index)));
+        SongDragboard.put(content, new SongDisplayableList(list.getItems().get(index)));
         return content;
     }
 
@@ -794,11 +846,7 @@ public class ScheduleDropTest {
     }
 
     private DragEvent drop(ClipboardContent content, double x, double y) {
-        return drop(content, x, y, false);
-    }
-
-    private DragEvent drop(ClipboardContent content, double x, double y, boolean copySongOnRead) {
-        Dragboard dragboard = DragboardHelper.createDragboard(new TestClipboard(copySongOnRead));
+        Dragboard dragboard = DragboardHelper.createDragboard(new TestClipboard());
         Assertions.assertTrue(dragboard.setContent(content));
         DragEvent event = new DragEvent(list.getListView(), list.getListView(), DragEvent.DRAG_DROPPED,
                 dragboard, x, y, x, y, TransferMode.COPY, new Object(), list.getListView(),
@@ -808,7 +856,7 @@ public class ScheduleDropTest {
     }
 
     private DragEvent dragOver(ClipboardContent content) {
-        Dragboard dragboard = DragboardHelper.createDragboard(new TestClipboard(false));
+        Dragboard dragboard = DragboardHelper.createDragboard(new TestClipboard());
         Assertions.assertTrue(dragboard.setContent(content));
         DragEvent event = new DragEvent(list.getListView(), list.getListView(), DragEvent.DRAG_OVER,
                 dragboard, 10, 10, 10, 10, TransferMode.COPY, new Object(), list.getListView(),
@@ -842,23 +890,13 @@ public class ScheduleDropTest {
     /** Local clipboard data plus the transfer modes a real drag source offers. */
     private static final class TestClipboard implements TKClipboard {
         private final TKClipboard delegate = Toolkit.getToolkit().createLocalClipboard();
-        private final boolean copySongOnRead;
-        private TestClipboard(boolean copySongOnRead) { this.copySongOnRead = copySongOnRead; }
         @Override public Set<DataFormat> getContentTypes() { return delegate.getContentTypes(); }
         @SafeVarargs
         @Override public final boolean putContent(Pair<DataFormat, Object>... content) { return delegate.putContent(content); }
         @Override public Object getContent(DataFormat format) {
             Object value = delegate.getContent(format);
-            if (copySongOnRead && value instanceof SongDisplayableList songs) {
-                try {
-                    // Native JavaFX clipboards may deserialize the custom format
-                    // afresh for each read, rather than returning the same object.
-                    return roundTrip(songs);
-                } catch (Exception ex) {
-                    throw new IllegalStateException("Could not copy drag payload", ex);
-                }
-            }
-            return value;
+            // Native clipboard reads may decode a new String on each access.
+            return value instanceof String string ? new String(string) : value;
         }
         @Override public boolean hasContent(DataFormat format) { return delegate.hasContent(format); }
         @Override public Set<TransferMode> getTransferModes() { return Set.of(TransferMode.COPY, TransferMode.MOVE); }

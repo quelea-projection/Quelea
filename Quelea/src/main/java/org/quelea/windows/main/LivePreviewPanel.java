@@ -43,6 +43,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.utils.SongDisplayableList;
+import org.quelea.utils.SongDragboard;
 import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.imagegroup.ImageGroupPanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
@@ -117,13 +118,14 @@ public abstract class LivePreviewPanel extends BorderPane {
         });
         presentationPanel.buildLoopTimeline();
         setOnDragOver(event -> {
-            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+            if (SongDragboard.get(event.getDragboard()) != null) {
                 event.acceptTransferModes(TransferMode.ANY);
             }
         });
         setOnDragDropped(event -> {
-            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayableList) {
-                final List<IndexedDisplayable> displayables = ((SongDisplayableList) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)).getSongDisplayables();
+            SongDisplayableList songs = SongDragboard.get(event.getDragboard());
+            if (songs != null) {
+                final List<IndexedDisplayable> displayables = songs.getSongDisplayables();
                 if (!displayables.isEmpty()) {
                     setDisplayable(displayables.get(0).displayable(), 0);
                 }

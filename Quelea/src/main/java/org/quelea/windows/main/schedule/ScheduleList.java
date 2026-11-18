@@ -64,6 +64,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.Utils;
 import org.quelea.utils.SongDisplayableList;
+import org.quelea.utils.SongDragboard;
 import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
@@ -146,6 +147,8 @@ public class ScheduleList extends StackPane {
             public ListCell<IndexedDisplayable> call(ListView<IndexedDisplayable> p) {
 
                 ListCell<IndexedDisplayable> cell = new ListCell<>() {
+                    private ClipboardContent activeSongDrag;
+
                     @Override
                     public void updateItem(IndexedDisplayable indexedDisplayable, boolean empty) {
                         super.updateItem(indexedDisplayable, empty);
@@ -156,16 +159,29 @@ public class ScheduleList extends StackPane {
                         setOnDragDetected(event -> {
                             recalculateDisplayableIndexes();
                             if (displayableThatSeesMouse != null) {
+                                SongDisplayableList snapshot = null;
+                                if (displayableThatSeesMouse.displayable() instanceof SongDisplayable) {
+                                    try {
+                                        snapshot = SongDragboard.snapshot(new SongDisplayableList(displayableThatSeesMouse));
+                                    } catch (IOException ex) {
+                                        LOGGER.log(Level.WARNING, "Couldn't copy dragged song", ex);
+                                        return;
+                                    }
+                                }
                                 Dragboard db = startDragAndDrop(TransferMode.ANY);
                                 ClipboardContent content = new ClipboardContent();
-                                if (displayableThatSeesMouse.displayable() instanceof SongDisplayable) {
-                                    content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, new SongDisplayableList(displayableThatSeesMouse));
+                                if (snapshot != null) {
+                                    SongDragboard.put(content, snapshot);
+                                    activeSongDrag = content;
                                 } else {
                                     content.putString("tempdisp");
                                     tempDisp = displayableThatSeesMouse;
                                 }
 
-                                db.setContent(content);
+                                if (!db.setContent(content)) {
+                                    SongDragboard.clear(content);
+                                    activeSongDrag = null;
+                                }
                                 event.consume();
                                 ScheduleListNode preview = new ScheduleListNode(displayableThatSeesMouse.displayable());
 
@@ -175,6 +191,10 @@ public class ScheduleList extends StackPane {
                             }
                         });
                         setOnDragDone(e -> {
+                            if (activeSongDrag != null) {
+                                SongDragboard.clear(activeSongDrag);
+                                activeSongDrag = null;
+                            }
                             clearDropTarget(false);
                             e.consume();
                         });
@@ -208,7 +228,7 @@ public class ScheduleList extends StackPane {
             String location = db.getString();
             boolean canDrop = db.hasFiles()
                     ? db.getFiles().stream().anyMatch(ScheduleList::isSupportedFile)
-                    : db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)
+                    : SongDragboard.get(db) != null
                     || ("tempdisp".equals(location) && tempDisp != null)
                     || (location != null && isSupportedMediaFile(new File(location)));
             if (canDrop) {
@@ -274,7 +294,7 @@ public class ScheduleList extends StackPane {
                 .sorted(Comparator.comparingInt(ListCell::getIndex))
                 .toList();
         String location = db.getString();
-        boolean canInsert = db.hasContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT)
+        boolean canInsert = SongDragboard.get(db) != null
                 || ("tempdisp".equals(location) && tempDisp != null)
                 || (location != null && isSupportedMediaFile(new File(location)));
         if (db.hasFiles() || !canInsert || shown.isEmpty()) {
@@ -414,8 +434,8 @@ public class ScheduleList extends StackPane {
             }
         } else {
             String dbLocation = db.getString();
-            Object content = db.getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-            if (content instanceof SongDisplayableList songs) {
+            SongDisplayableList songs = SongDragboard.get(db);
+            if (songs != null) {
                 List<IndexedDisplayable> displayables = songs.getSongDisplayables();
                 for (IndexedDisplayable indexedDisplayable : displayables) {
                     SongDisplayable song = (SongDisplayable) indexedDisplayable.displayable();

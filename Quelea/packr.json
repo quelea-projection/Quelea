@@ -1,6 +1,6 @@
 {
     "platform": "mac",
-    "jdk": "bundlejre/macjre.zip",
+    "jdk": "build/runtime-bundles/bellsoft-jre27.0.1.1+5-macos-amd64-full.zip",
     "executable": "Quelea",
     "classpath": [
         "dist/Quelea.jar"
