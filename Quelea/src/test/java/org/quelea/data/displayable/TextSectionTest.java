@@ -4,7 +4,6 @@ import java.io.StringReader;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -28,16 +27,23 @@ public class TextSectionTest {
     }
 
     @Test
-    @Disabled("Case-insensitive markers currently fail during comment removal")
     @DisplayName("Removes comment markers regardless of their letter case")
     public void removesUpperCaseMarkers() {
-        // LineTypeChecker accepts markers without regard to case, so displaying
-        // or exporting such a lyric without comments should not throw. Currently
-        // removeComments detects the lowercased suffix but searches the original
-        // string for lowercase text and passes -1 to substring. Remove the known
-        // suffix by length or use the matching case-insensitive index instead.
-        TextSection section = new TextSection("Verse", new String[]{"Amazing grace//LYRICS"}, null, false);
-        Assertions.assertArrayEquals(new String[]{"Amazing grace"}, section.getText(true, false));
+        String[] lines = {"C G//CHORDS", "Ama_zing grace//LyRiCs", "A heading//TITLE"};
+        TextSection section = new TextSection("Verse", lines, null, false);
+        Assertions.assertArrayEquals(new String[]{"C G", "Ama_zing grace", "A heading"}, section.getText(true, false));
+        Assertions.assertArrayEquals(new String[]{"Amazing grace", "A heading"}, section.getText(false, false));
+        Assertions.assertArrayEquals(lines, section.getText(true, true));
+    }
+
+    @Test
+    @DisplayName("Removes only a trailing marker, preserving earlier marker text")
+    public void removesOnlyTheTrailingMarker() {
+        TextSection section = new TextSection("Verse", new String[]{
+            "Keep //lyrics here//LYRICS  ", "Keep //chords here//ChOrDs", "Keep //title here//title"
+        }, null, false);
+        Assertions.assertArrayEquals(new String[]{"Keep //lyrics here", "Keep //chords here", "Keep //title here"},
+                section.getText(true, false));
     }
 
     @Test
