@@ -13,7 +13,7 @@ environment:
     JAVA_HOME: $SNAP/app/jvm
     PATH: $SNAP/app/jvm/bin:$PATH
     
-architectures:
+platforms:
   - build-on: [amd64]
 
 apps:
