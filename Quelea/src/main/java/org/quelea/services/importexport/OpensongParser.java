@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -60,6 +61,11 @@ public class OpensongParser implements SongParser {
                     final ZipEntry entry = entries.nextElement();
                     fileName = entry.getName();
                     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                    dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                     Document doc = dBuilder.parse(new InputSource(new UnicodeReader(file.getInputStream(entry), "UTF-8")));
                     NodeList list = doc.getChildNodes();
@@ -132,6 +138,10 @@ public class OpensongParser implements SongParser {
             line = line.trim();
             if (line.startsWith("[") && line.endsWith("]") && line.length() > 2) {
                 ignoreVerse = false;
+                int length = ret.length();
+                if (length > 0 && (length < 2 || ret.charAt(length - 2) != '\n')) {
+                    ret.append('\n');
+                }
                 String sectionTitle = line.substring(1, line.length() - 1);
                 if (sectionTitle.startsWith("V")) {
                     if (sectionTitle.length() > 1) {

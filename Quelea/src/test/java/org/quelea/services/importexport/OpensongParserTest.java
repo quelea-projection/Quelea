@@ -9,7 +9,6 @@ import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -49,11 +48,7 @@ public class OpensongParserTest {
     }
 
     @Test
-    @Disabled("OpenSong section markers do not begin new Quelea sections")
     public void keepsAdjacentVerseAndChorusAsSeparateSections() throws Exception {
-        // Section boundaries control slide navigation and song sequences. Emit
-        // a blank separator before each new OpenSong section marker so adjacent
-        // verse and chorus blocks remain separate after SongDisplayable parses them.
         Path zip = directory.resolve("sections.zip");
         try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
             entry(out, "song.xml", "<song><title>Test</title><lyrics>[V1]\nAmazing grace\n[C]\nSing with joy</lyrics></song>");
@@ -75,19 +70,19 @@ public class OpensongParserTest {
     }
 
     @Test
-    @Disabled("OpenSong XML currently resolves external entities")
     public void rejectsExternalXmlEntitiesInImportedSongs() throws Exception {
-        // An untrusted song can read local files into imported song text or
-        // reference external resources. Disable DTDs and external entities on
-        // the XML parser, and verify normal OpenSong files still import.
         Path secret = Files.writeString(directory.resolve("local-data.txt"), "SENTINEL-PRIVATE-DATA");
         String xml = "<!DOCTYPE song [<!ENTITY data SYSTEM \"" + secret.toUri().toASCIIString() + "\">]>"
                 + "<song><title>&data;</title><lyrics>Words</lyrics></song>";
         Path zip = directory.resolve("untrusted.zip");
         try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
             entry(out, "song.xml", xml);
+            entry(out, "good.xml", "<song><title>Good</title><lyrics>Grace &amp; peace</lyrics></song>");
         }
-        Assertions.assertTrue(new OpensongParser().getSongs(zip.toFile(), null).isEmpty());
+        List<SongDisplayable> songs = new OpensongParser().getSongs(zip.toFile(), null);
+        Assertions.assertEquals(1, songs.size());
+        Assertions.assertEquals("Good", songs.get(0).getTitle());
+        Assertions.assertEquals("Grace & peace", songs.get(0).getLyrics(false, false, false));
     }
 
     private void entry(ZipOutputStream out, String name, String text) throws Exception {
