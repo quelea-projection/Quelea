@@ -99,7 +99,7 @@ public class TimerControls extends StackPane {
     }
 
     public void play(boolean pause) {
-        playpause = !playpause;
+        playpause = !pause;
         if (pause) {
             playButton.setIcon(QueleaIcon.PLAY);
             timers.forEach(Timer::pause);

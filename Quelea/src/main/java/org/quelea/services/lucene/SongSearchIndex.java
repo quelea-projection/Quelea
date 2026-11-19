@@ -36,6 +36,7 @@ import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
@@ -113,7 +114,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     public synchronized void addAll(Collection<? extends SongDisplayable> songList) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
             for (SongDisplayable song : songList) {
-                writer.addDocument(createDocument(song));
+                writer.updateDocument(idTerm(song), createDocument(song));
                 songs.put(song.getID(), song);
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
             }
@@ -134,7 +135,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         if (lyrics != null) {
             doc.add(new TextField("lyrics", PUNCTUATION.matcher(lyrics).replaceAll(""), Field.Store.NO));
         }
-        doc.add(new TextField("number", Long.toString(song.getID()), Field.Store.YES));
+        doc.add(new StringField("number", Long.toString(song.getID()), Field.Store.YES));
         return doc;
     }
 

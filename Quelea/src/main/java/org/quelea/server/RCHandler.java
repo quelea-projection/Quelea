@@ -191,7 +191,7 @@ public class RCHandler {
     }
 
     public static void logout(String ip) {
-        devices.remove(ip);
+        devices.removeIf(device -> java.util.Objects.equals(device, ip));
     }
 
     public static void logAllOut() {

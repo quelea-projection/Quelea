@@ -117,7 +117,7 @@ public class PreferencesDialog extends Stage {
         StyleManager.markPrimaryButton(okButton);
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
-            preferencesFx.saveSettings();
+            savePreferences(preferencesFx);
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
@@ -170,6 +170,11 @@ public class PreferencesDialog extends Stage {
         // Before showing the preferences dialog we save the current state of the link preview and live dividers so
         // that we can tell if it has been changed and whether we need to action anything
         previousLinkPreviewLiveDividers = QueleaProperties.get().getLinkPreviewAndLiveDividers();
+    }
+
+    static void savePreferences(PreferencesFx preferencesFx) {
+        preferencesFx.saveSettings();
+        QueleaProperties.get().save();
     }
 
     /**

@@ -4,14 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.UnicodeReader;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
@@ -94,7 +95,7 @@ public class PlainTextParser implements SongParser {
     }
 
     private static boolean startsWithIgnoreCase(String str, String startsWith) {
-        return str.toLowerCase().startsWith(startsWith.toLowerCase());
+        return str.toLowerCase(Locale.ROOT).startsWith(startsWith.toLowerCase(Locale.ROOT));
     }
     
     private void addSectionToLyrics(List<String> section, StringBuilder lyrics) {
@@ -148,7 +149,7 @@ public class PlainTextParser implements SongParser {
         for (int i = 0; i < listOfSongs.length; i++) {
             if (listOfSongs[i].isFile()) {
                 final String fileName = listOfSongs[i].getName();
-                if (fileName.endsWith(".txt")) {
+                if (fileName.toLowerCase(Locale.ROOT).endsWith(".txt")) {
                     List<String> section = new ArrayList<>();
                     StringBuilder lyrics = new StringBuilder();
                     String defaultSongTitle = fileName.substring(0,fileName.length()-4);
@@ -156,7 +157,7 @@ public class PlainTextParser implements SongParser {
                         defaultSongTitle = DEFAULT_TITLE;
                     }
                     SongDisplayable song = new SongDisplayable(defaultSongTitle, "");
-                    try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(listOfSongs[i]), Utils.getEncoding(listOfSongs[i])))) {
+                    try (BufferedReader bfr = new BufferedReader(new UnicodeReader(new FileInputStream(listOfSongs[i]), Utils.getEncoding(listOfSongs[i])))) {
                         String line;
                         while ((line = bfr.readLine()) != null) {
                             line = line.replace('\f', '\n');

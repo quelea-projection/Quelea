@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +65,7 @@ import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.print.SchedulePrintContent;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -105,6 +107,11 @@ public class Schedule implements Iterable<Displayable> {
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
+                ZipEntry scheduleEntry = zipFile.getEntry("schedule.xml");
+                if (scheduleEntry == null) {
+                    LOGGER.log(Level.WARNING, "Schedule archive has no schedule.xml: {0}", file);
+                    return null;
+                }
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
                 Map<String, String> fileChanges = new HashMap<>();
                 while (enumeration.hasMoreElements()) {
@@ -148,7 +155,7 @@ public class Schedule implements Iterable<Displayable> {
                         LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
-                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
+                Schedule ret = parseXML(zipFile.getInputStream(scheduleEntry), fileChanges);
                 if (ret == null) {
                     return null;
                 }
@@ -361,18 +368,46 @@ public class Schedule implements Iterable<Displayable> {
     }
 
     /**
-     * Get this schedule as XML.
+     * Get the XML used to print the order of service (will be transferred via
+     * XSLT.)
      *
-     * @return XML describing this schedule.
+     * @return the XML used to print the schedule overview.
      */
     public String getPrintXML() {
+        return getPrintXML(SchedulePrintContent.OVERVIEW);
+    }
+
+    /**
+     * Get the XML used to print this schedule (will be transferred via XSLT.)
+     * The order of service always comes first; if lyrics are requested, the
+     * lyrics of every song follow it in a "lyricspages" element.
+     *
+     * @param content what should be printed.
+     * @return the XML used to print the schedule.
+     */
+    public String getPrintXML(SchedulePrintContent content) {
         StringBuilder xml = new StringBuilder();
         xml.append("<schedule>");
         xml.append("<title>");
         xml.append(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
         xml.append("</title>");
         for (Displayable displayable : displayables) {
-            xml.append(displayable.getXML());
+            if (displayable != null) {
+                xml.append(displayable.getXML());
+            }
+        }
+        if (content.includesLyrics()) {
+            xml.append("<lyricspages>");
+            for (Displayable displayable : displayables) {
+                if (displayable instanceof SongDisplayable song) {
+                    xml.append("<songlyrics>");
+                    xml.append("<title>").append(Utils.escapeXML(Objects.toString(song.getTitle(), ""))).append("</title>");
+                    xml.append("<author>").append(Utils.escapeXML(Objects.toString(song.getAuthor(), ""))).append("</author>");
+                    xml.append("<lyrics>").append(song.getPrintLyrics(content.includesChords())).append("</lyrics>");
+                    xml.append("</songlyrics>");
+                }
+            }
+            xml.append("</lyricspages>");
         }
         xml.append("</schedule>");
         return xml.toString();

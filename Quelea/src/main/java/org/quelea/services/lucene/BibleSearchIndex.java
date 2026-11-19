@@ -130,6 +130,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
     public void remove(BibleChapter chapter) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
             writer.deleteDocuments(new Term("number", Integer.toString(chapter.getID())));
+            chapters.remove(chapter.getID());
         }
         catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
@@ -189,5 +190,6 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
     @Override
     public void clear() {
         SearchIndexUtils.clearIndex(index);
+        chapters.clear();
     }
 }

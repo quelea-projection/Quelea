@@ -128,8 +128,8 @@ public class SongBeamerParser implements SongParser {
             author = "";
         }
         SongDisplayable song = new SongDisplayable(title, author);
-        if (songProps.get("#(c)") != null) {
-            song.setCopyright(songProps.get("#(c)"));
+        if (songProps.get("(c)") != null) {
+            song.setCopyright(songProps.get("(c)"));
         }
         if (songProps.get("key") != null) {
             song.setKey(songProps.get("key"));

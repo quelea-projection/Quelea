@@ -19,7 +19,7 @@ package org.quelea.utils;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -93,11 +93,16 @@ public class BigDecimalTextField extends TextField {
             if (input == null || input.length() == 0) {
                 return;
             }
-            Number parsedNumber = nf.parse(input);
+            ParsePosition position = new ParsePosition(0);
+            Number parsedNumber = nf.parse(input, position);
+            if (parsedNumber == null || position.getIndex() != input.length()) {
+                setText(nf.format(number.get()));
+                return;
+            }
             BigDecimal newValue = new BigDecimal(parsedNumber.toString());
             setNumber(newValue);
             selectAll();
-        } catch (ParseException ex) {
+        } catch (NumberFormatException ex) {
             // If parsing fails keep old number
             setText(nf.format(number.get()));
         }

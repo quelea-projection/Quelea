@@ -234,7 +234,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             ret.append(verse.toXML());
         }
         ret.append("<theme>");
-        ret.append(theme.asString());
+        ret.append(theme.asXMLString());
         ret.append("</theme>");
         ret.append("</passage>");
         return ret.toString();

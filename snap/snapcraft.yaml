@@ -1,6 +1,6 @@
 name: quelea
 version: '2027.0'
-base: core20
+base: core26
 summary: Church projection software
 description: |
   Quelea is a free and open source software application that projects
@@ -12,9 +12,11 @@ license: GPL-3.0
 environment:
     JAVA_HOME: $SNAP/app/jvm
     PATH: $SNAP/app/jvm/bin:$PATH
-    
-architectures:
-  - build-on: [amd64]
+
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
 
 apps:
   quelea:
@@ -33,18 +35,15 @@ parts:
       - libgtk-3-dev
     stage-packages:
       - libxkbcommon0  # XKB_CONFIG_ROOT
-      - ttf-ubuntu-font-family
+      - fonts-ubuntu
       - dmz-cursor-theme
-      - light-themes
       - adwaita-icon-theme
-      - gnome-themes-standard
       - shared-mime-info
       - libgtk-3-0
       - libgdk-pixbuf2.0-0
       - libglib2.0-bin
       - libgtk-3-bin
-      - unity-gtk3-module
-      - libappindicator3-1
+      - libayatana-appindicator3-1
       - locales-all
       - xdg-user-dirs
       - ibus-gtk3
@@ -52,8 +51,8 @@ parts:
   quelea:
     plugin: nil
     source: Quelea
-    build-packages: [unzip, wget]
-    stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
+    build-packages: [unzip, wget, zlib1g-dev]
+    stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-pulseaudio, zlib1g]
     override-build: |
       wget -O jdk.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jdk25.0.0-linux_x64.tar.gz
       mkdir jdk
@@ -68,15 +67,15 @@ parts:
       gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
 
       wget -O jre.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
-      mkdir jre 
+      mkdir jre
       tar -xf jre.tar.gz -C jre --strip-components 1
 
-      mkdir -p $SNAPCRAFT_STAGE/app/jvm
-      cp -a dist/. $SNAPCRAFT_STAGE/app
-      cp -a jre/. $SNAPCRAFT_STAGE/app/jvm
+      mkdir -p $CRAFT_STAGE/app/jvm
+      cp -a dist/. $CRAFT_STAGE/app
+      cp -a jre/. $CRAFT_STAGE/app/jvm
     override-prime: |
-      snapcraftctl prime
-      mkdir app
-      cp -a $SNAPCRAFT_STAGE/app/. app/.
-      chmod +x $SNAPCRAFT_PRIME/app/launch.sh
+      craftctl default
+      mkdir -p app
+      cp -a $CRAFT_STAGE/app/. app/.
+      chmod +x $CRAFT_PRIME/app/launch.sh
       glib-compile-schemas usr/share/glib-2.0/schemas/

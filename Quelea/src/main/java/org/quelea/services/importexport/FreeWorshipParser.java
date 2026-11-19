@@ -119,11 +119,14 @@ public class FreeWorshipParser implements SongParser {
         NodeList childNodes = node.getChildNodes();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < childNodes.getLength(); i++) {
-            String str = lsSerializer.writeToString(childNodes.item(i));
-            if (str.endsWith("<br/>")) {
-                str = "\n";
+            Node child = childNodes.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE) {
+                sb.append(child.getNodeValue());
+            } else if (child.getNodeType() == Node.ELEMENT_NODE && "br".equals(child.getNodeName())) {
+                sb.append('\n');
+            } else {
+                sb.append(lsSerializer.writeToString(child));
             }
-            sb.append(str);
         }
         return sb.toString().replaceAll("<\\?xml.*\\?>", "");
     }
