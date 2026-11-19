@@ -9,7 +9,6 @@ import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.testutil.FxTestSupport;
@@ -36,12 +35,7 @@ public class PptxPresentationTest {
     }
 
     @Test
-    @Disabled("PowerPoint previews reuse scale factors from an earlier presentation")
     public void previewOfNative1080HeightDoesNotReuseScaleFromPreviousPresentation() throws Exception {
-        // A previously opened file can make a later native-height presentation
-        // render with the wrong size or crop. Track scale per presentation (and
-        // initialize it to 1 when no scaling is needed), rather than sharing
-        // mutable static factors between unrelated files.
         FxTestSupport.assumeAvailable();
         Path smaller = createPresentation("small.pptx", 960, 540);
         Path nativeSize = createPresentation("native.pptx", 1920, 1080);
@@ -51,6 +45,29 @@ public class PptxPresentationTest {
         var outside = image.getPixelReader().getColor((int) (image.getWidth() * 0.4), 100);
         Assertions.assertTrue(inside.getRed() > 0.8 && inside.getGreen() < 0.2, "The rectangle should be red");
         Assertions.assertFalse(outside.getRed() > 0.8 && outside.getGreen() < 0.2, "The rectangle must not extend beyond its original width");
+    }
+
+    @Test
+    public void renderingMultipleSlidesDoesNotChangePageSize() throws Exception {
+        FxTestSupport.assumeAvailable();
+        try (XMLSlideShow slideshow = new XMLSlideShow()) {
+            slideshow.setPageSize(new Dimension(960, 540));
+            for (int i = 0; i < 2; i++) {
+                var shape = slideshow.createSlide().createAutoShape();
+                shape.setShapeType(ShapeType.RECT);
+                shape.setAnchor(new Rectangle2D.Double(0, 0, 240, 135));
+                shape.setFillColor(Color.RED);
+            }
+            for (var slide : slideshow.getSlides()) {
+                var image = new PresentationSlide(slide, 1).getImage();
+                Assertions.assertEquals(1920, image.getWidth());
+                var inside = image.getPixelReader().getColor(400, 100);
+                var outside = image.getPixelReader().getColor(800, 100);
+                Assertions.assertTrue(inside.getRed() > 0.8 && inside.getGreen() < 0.2);
+                Assertions.assertFalse(outside.getRed() > 0.8 && outside.getGreen() < 0.2);
+                Assertions.assertEquals(new Dimension(960, 540), slideshow.getPageSize());
+            }
+        }
     }
 
     private Path createPresentation(String name, int width, int height) throws Exception {
