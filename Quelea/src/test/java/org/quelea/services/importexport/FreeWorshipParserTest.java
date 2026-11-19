@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -39,14 +38,17 @@ public class FreeWorshipParserTest {
     }
 
     @Test
-    @Disabled("FreeWorship lyric text is serialized back into XML entities")
     public void decodesXmlEntitiesInLyrics() throws Exception {
-        // Literal entity names such as &amp; appear in projected lyrics. Read
-        // text nodes as text and handle line-break elements explicitly, while
-        // preserving any supported inline formatting.
         SongDisplayable song = parse("<song><properties><titles><title>Song</title></titles></properties>"
                 + "<lyrics><verse><lines>Grace &amp; peace &lt;forever&gt;</lines></verse></lyrics></song>");
         Assertions.assertEquals("Grace & peace <forever>", song.getLyrics(false, false, false));
+    }
+
+    @Test
+    public void readsCdataAndLineBreaksAlongsideEscapedText() throws Exception {
+        SongDisplayable song = parse("<song><properties><titles><title>Song</title></titles></properties>"
+                + "<lyrics><verse><lines><![CDATA[Grace & peace]]><br/>Forever &amp; ever</lines></verse></lyrics></song>");
+        Assertions.assertEquals("Grace & peace\nForever & ever", song.getLyrics(false, false, false));
     }
 
     private SongDisplayable parse(String xml) throws Exception {
