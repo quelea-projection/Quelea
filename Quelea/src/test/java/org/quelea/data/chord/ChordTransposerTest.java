@@ -1,7 +1,6 @@
 package org.quelea.data.chord;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -51,14 +50,25 @@ public class ChordTransposerTest {
     }
 
     @Test
-    @Disabled("Transposing currently drops the explicit chord marker")
     @DisplayName("Preserves the explicit chord marker when transposing a line")
     public void preservesChordMarker() {
-        // The song editor replaces its text with the returned line, so dropping
-        // this marker permanently changes the user's input and can affect later
-        // chord classification. The method restores the marker on its internal
-        // line but not the result; append it to the returned text as well.
         Assertions.assertEquals("D A //chords", new ChordLineTransposer("C G //chords").transpose(2, null));
+    }
+
+    @Test
+    @DisplayName("Preserves marker case and surrounding spacing")
+    public void preservesMarkerCaseAndSpacing() {
+        Assertions.assertEquals("  D\t A/C#  //ChOrDs", new ChordLineTransposer("  C\t G/B  //ChOrDs").transpose(2, null));
+        Assertions.assertEquals("D//chords", new ChordLineTransposer("C//chords").transpose(2, null));
+        Assertions.assertEquals("  //CHORDS", new ChordLineTransposer("  //CHORDS").transpose(2, null));
+    }
+
+    @Test
+    @DisplayName("Repeated transpositions use the original chord line")
+    public void repeatedTranspositionsKeepTheOriginalLine() {
+        ChordLineTransposer transposer = new ChordLineTransposer("C G //chords");
+        Assertions.assertEquals("D A //chords", transposer.transpose(2, null));
+        Assertions.assertEquals("B F# //chords", transposer.transpose(-1, null));
     }
 
     private static String transpose(String chord, int semitones, String key) {
