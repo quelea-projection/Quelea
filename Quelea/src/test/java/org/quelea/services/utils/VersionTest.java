@@ -2,7 +2,6 @@ package org.quelea.services.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Version")
@@ -37,11 +36,10 @@ public class VersionTest {
     }
 
     @Test
-    @Disabled("Numeric components with leading zeroes are compared by string length")
     public void leadingZerosDoNotChangeNumericOrdering() {
-        // Update checks should not treat the same numeric release as newer merely
-        // because it uses leading zeroes. Compare component values and decide how
-        // equality and hashCode should normalize equivalent version strings.
         Assertions.assertEquals(0, version("2025.01").compareTo(version("2025.1")));
+        Assertions.assertNotEquals(version("2025.01"), version("2025.1"));
+        Assertions.assertTrue(version("2025.1.0").compareTo(version("2025.01")) > 0);
+        Assertions.assertTrue(version("2025.01").compareTo(version("2025.1.0")) < 0);
     }
 }
