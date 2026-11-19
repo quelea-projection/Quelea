@@ -10,8 +10,8 @@ issues: https://github.com/quelea-projection/Quelea/issues
 license: GPL-3.0
 
 environment:
-    JAVA_HOME: $SNAP/app/jvm
-    PATH: $SNAP/app/jvm/bin:$PATH
+  JAVA_HOME: $SNAP/app/jvm
+  PATH: $SNAP/app/jvm/bin:$PATH
 
 platforms:
   amd64:
@@ -39,8 +39,8 @@ parts:
       - dmz-cursor-theme
       - adwaita-icon-theme
       - shared-mime-info
-      - libgtk-3-0
-      - libgdk-pixbuf2.0-0
+      - libgtk-3-0t64
+      - libgdk-pixbuf-2.0-0
       - libglib2.0-bin
       - libgtk-3-bin
       - libayatana-appindicator3-1
