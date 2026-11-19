@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -66,17 +65,46 @@ public class SpellerTest {
     }
 
     @Test
-    @Disabled("A failed dictionary load leaves an empty entry in the shared cache")
     public void failedDictionaryLoadCanBeRetriedAfterFileAppears() throws Exception {
-        // A dictionary that becomes available after an initial read failure
-        // must be loadable without restarting the application. Only publish a
-        // dictionary to the shared cache after reading it successfully, while
-        // preserving correct behavior for concurrent users of the cache.
         Path missing = directory.resolve("later.txt");
         Dictionary dictionary = new Dictionary("Test", missing.toFile());
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Speller(dictionary));
         Files.writeString(missing, "grace\n", StandardCharsets.UTF_8);
         Assertions.assertTrue(new Speller(dictionary).checkWord("grace"));
+    }
+
+    @Test
+    public void failedDictionarySwitchKeepsPreviousDictionary() throws Exception {
+        Speller speller = new Speller(new Dictionary("Current", dictionary().toFile()));
+        Dictionary missing = new Dictionary("Missing", directory.resolve("missing.txt").toFile());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> speller.setDictionary(missing));
+        Assertions.assertTrue(speller.checkWord("grace"));
+        speller.addWord("hope");
+        Assertions.assertTrue(Files.readString(directory.resolve("dictionary.txt")).contains("hope"));
+    }
+
+    @Test
+    public void concurrentDictionaryLoadsSeeCompleteSharedWords() throws Exception {
+        Path dictionary = Files.writeString(directory.resolve("concurrent.txt"),
+                "grace\nfaith\nhope\n", StandardCharsets.UTF_8);
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(8);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var tasks = new java.util.ArrayList<java.util.concurrent.Future<Boolean>>();
+            for (int i = 0; i < 8; i++) {
+                tasks.add(pool.submit(() -> {
+                    start.await();
+                    Speller speller = new Speller(new Dictionary("Shared", dictionary.toFile()));
+                    return speller.checkWord("grace") && speller.checkWord("faith") && speller.checkWord("hope");
+                }));
+            }
+            start.countDown();
+            for (var task : tasks) {
+                Assertions.assertTrue(task.get(10, java.util.concurrent.TimeUnit.SECONDS));
+            }
+        } finally {
+            pool.shutdownNow();
+        }
     }
 
     @Test
