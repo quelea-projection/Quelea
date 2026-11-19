@@ -10,7 +10,6 @@ import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -56,14 +55,25 @@ public class GZipOutputStreamExTest {
     }
 
     @Test
-    @Disabled("Compressing to the input file truncates the original data")
     public void doesNotDestroyInputWhenOutputIsTheSameFile() throws IOException {
-        // The output stream truncates the source before it can be read. Detect
-        // identical files (including aliases such as links) before opening the
-        // output, or write to a temporary file and atomically replace afterwards.
         byte[] content = "Important song data".getBytes(java.nio.charset.StandardCharsets.UTF_8);
         Path source = Files.write(directory.resolve("important.txt"), content);
         Assertions.assertFalse(new GZMaxFileCompressor().compress(source.toFile(), source.toFile()));
         Assertions.assertArrayEquals(content, Files.readAllBytes(source));
+    }
+
+    @Test
+    public void doesNotDestroyInputWhenOutputIsAHardLink() throws IOException {
+        byte[] content = "Important song data".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        Path source = Files.write(directory.resolve("input.txt"), content);
+        Path alias = directory.resolve("alias.gz");
+        try {
+            Files.createLink(alias, source);
+        } catch (UnsupportedOperationException | IOException | SecurityException ex) {
+            org.junit.jupiter.api.Assumptions.abort("Hard links unavailable: " + ex);
+        }
+        Assertions.assertFalse(new GZMaxFileCompressor().compress(source.toFile(), alias.toFile()));
+        Assertions.assertArrayEquals(content, Files.readAllBytes(source));
+        Assertions.assertArrayEquals(content, Files.readAllBytes(alias));
     }
 }
