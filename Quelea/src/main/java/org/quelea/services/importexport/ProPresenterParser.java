@@ -41,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -156,7 +157,7 @@ public class ProPresenterParser implements SongParser {
 			NodeList lines = (NodeList) expr.evaluate(slideNode, XPathConstants.NODESET);
 			for (int j = 0; j < lines.getLength(); j++) {
 				Node lineNode = lines.item(j);
-				String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), Charset.forName(encoding));
+				String line = new String(Base64.getDecoder().decode(lineNode.getTextContent()), StandardCharsets.UTF_8);
 				ret.append(line).append('\n');
 			}
 			return Optional.of(ret.toString());

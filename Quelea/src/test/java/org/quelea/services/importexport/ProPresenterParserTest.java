@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -61,17 +60,23 @@ public class ProPresenterParserTest {
     }
 
     @Test
-    @Disabled("Version 6 uses the ASCII XML encoding to decode UTF-8 Base64 lyrics")
     public void versionSixImportsUnicodeLyricsFromBase64() throws Exception {
-        // Base64 keeps the surrounding XML ASCII even when decoded lyrics are
-        // Unicode, so detecting the XML file encoding corrupts the song text.
-        // Decode the payload using the format's specified encoding and verify
-        // compatibility with legacy ProPresenter 4/5 RTF data separately.
         String xml = "<RVPresentationDocument CCLISongTitle=\"Song\">"
                 + slide("Café — 日本語") + "</RVPresentationDocument>";
         Path file = Files.writeString(directory.resolve("unicode.pro6"), xml, StandardCharsets.UTF_8);
         SongDisplayable song = new ProPresenterParser().getSongs(file.toFile(), null).get(0);
         Assertions.assertEquals("Café — 日本語", song.getLyrics(false, false, false));
+    }
+
+    @Test
+    public void versionSixPayloadUsesUtf8EvenWhenXmlUsesAnotherEncoding() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+                + "<RVPresentationDocument CCLISongTitle=\"Café\">"
+                + slide("日本語 & café") + "</RVPresentationDocument>";
+        Path file = Files.writeString(directory.resolve("latin.pro6"), xml, StandardCharsets.ISO_8859_1);
+        SongDisplayable song = new ProPresenterParser().getSongs(file.toFile(), null).get(0);
+        Assertions.assertEquals("Café", song.getTitle());
+        Assertions.assertEquals("日本語 & café", song.getLyrics(false, false, false));
     }
 
     @Test
