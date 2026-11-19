@@ -6,7 +6,6 @@ import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -67,11 +66,7 @@ public class FileUtilityTest {
     }
 
     @Test
-    @Disabled("Copying a file onto itself truncates its contents")
     public void copyingAFileOntoItselfDoesNotDestroyTheSource() throws Exception {
-        // A caller can select a source already at its destination, and opening
-        // the destination currently destroys the original. Detect identical
-        // files including links, or copy to a temporary file before replacement.
         byte[] content = {0, 1, 2, (byte) 255};
         Path source = Files.write(directory.resolve("important.dat"), content);
         Utils.copyFile(source.toFile(), source.toFile());
@@ -79,14 +74,47 @@ public class FileUtilityTest {
     }
 
     @Test
-    @Disabled("A missing source leaves an empty destination behind")
     public void failedCopyDoesNotCreateAnEmptyDestination() throws Exception {
-        // An empty partial file can be mistaken for a successful copy. Open or
-        // validate the source first, and consider temporary-file replacement so
-        // failures during a copy do not leave partial destination files either.
         Path source = directory.resolve("missing.dat");
         Path destination = directory.resolve("destination.dat");
         Assertions.assertThrows(java.io.IOException.class, () -> Utils.copyFile(source.toFile(), destination.toFile()));
         Assertions.assertFalse(Files.exists(destination));
+    }
+
+    @Test
+    public void failedCopyDoesNotReplaceExistingDestination() throws Exception {
+        Path destination = Files.writeString(directory.resolve("existing.dat"), "keep me");
+        Assertions.assertThrows(java.io.IOException.class,
+                () -> Utils.copyFile(directory.resolve("missing.dat").toFile(), destination.toFile()));
+        Assertions.assertEquals("keep me", Files.readString(destination));
+    }
+
+    @Test
+    public void copyingToHardLinkDoesNotDestroySource() throws Exception {
+        Path source = Files.writeString(directory.resolve("original.dat"), "keep me");
+        Path alias = directory.resolve("alias.dat");
+        try {
+            Files.createLink(alias, source);
+        } catch (UnsupportedOperationException | java.io.IOException | SecurityException ex) {
+            org.junit.jupiter.api.Assumptions.abort("Hard links unavailable: " + ex);
+        }
+        Utils.copyFile(source.toFile(), alias.toFile());
+        Assertions.assertEquals("keep me", Files.readString(source));
+        Assertions.assertEquals("keep me", Files.readString(alias));
+    }
+
+    @Test
+    public void copyingToSymbolicLinkUpdatesItsTarget() throws Exception {
+        Path source = Files.writeString(directory.resolve("source.dat"), "new contents");
+        Path target = Files.writeString(directory.resolve("target.dat"), "old contents");
+        Path link = directory.resolve("link.dat");
+        try {
+            Files.createSymbolicLink(link, target);
+        } catch (UnsupportedOperationException | java.io.IOException | SecurityException ex) {
+            org.junit.jupiter.api.Assumptions.abort("Symbolic links unavailable: " + ex);
+        }
+        Utils.copyFile(source.toFile(), link.toFile());
+        Assertions.assertTrue(Files.isSymbolicLink(link));
+        Assertions.assertEquals("new contents", Files.readString(target));
     }
 }

@@ -35,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -498,6 +497,9 @@ public final class Utils {
 	 * @throws IOException if something goes wrong.
 	 */
 	public static void copyFile(File sourceFile, File destFile) throws IOException {
+		if (destFile.exists() && Files.isSameFile(sourceFile.toPath(), destFile.toPath())) {
+			return;
+		}
 		if (sourceFile.isDirectory()) {
 			if (sourceFile.getName().equals(".svn")) {
 				return;
@@ -508,23 +510,12 @@ public final class Utils {
 			}
 			return;
 		}
-		if (!destFile.exists()) {
-			destFile.createNewFile();
-		}
-
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
+		// Open the source first so a missing source cannot create or truncate the
+		// destination. FileOutputStream preserves the existing behavior of
+		// following a destination symbolic link.
+		try (FileInputStream source = new FileInputStream(sourceFile);
+			 FileOutputStream destination = new FileOutputStream(destFile)) {
+			source.transferTo(destination);
 		}
 	}
 
