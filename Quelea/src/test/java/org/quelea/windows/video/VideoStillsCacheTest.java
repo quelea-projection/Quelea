@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -87,16 +86,24 @@ public class VideoStillsCacheTest {
     }
 
     @Test
-    @Disabled("Still extraction times out for a non-ASCII filename on Windows")
     @DisplayName("A video filename containing non-ASCII characters can be opened")
     public void filenameWithNonAsciiCharacters() throws Exception {
-        // On the tested Windows/GStreamer setup this same video opens with
-        // spaces or # in its name, but a filename containing é times out and
-        // caches an empty result. Video themes with international filenames
-        // can consequently show blank previews. Investigate UTF-8 and URI/path
-        // encoding at the Java-to-GStreamer boundary and pass a correctly
-        // encoded file location to the native player on every platform.
         video = Files.move(video, video.resolveSibling("video café.mp4"));
+        Assertions.assertTrue(onFx(() -> VideoStills.load(video.toFile())).get(20, TimeUnit.SECONDS).isPresent());
+    }
+
+    @Test
+    @DisplayName("A video in a Unicode directory with reserved filename characters can be opened")
+    public void unicodeDirectoryAndReservedCharacters() throws Exception {
+        Path directory = Files.createDirectory(video.getParent().resolve("\u5a92\u4f53 \uD83D\uDCF9"));
+        video = Files.move(video, directory.resolve("\u6b4c caf\u00e9 #100%.mp4"));
+        Assertions.assertTrue(onFx(() -> VideoStills.load(video.toFile())).get(20, TimeUnit.SECONDS).isPresent());
+    }
+
+    @Test
+    @DisplayName("A video filename with decomposed Unicode can be opened")
+    public void filenameWithDecomposedUnicode() throws Exception {
+        video = Files.move(video, video.resolveSibling("video cafe\u0301.mp4"));
         Assertions.assertTrue(onFx(() -> VideoStills.load(video.toFile())).get(20, TimeUnit.SECONDS).isPresent());
     }
 }
