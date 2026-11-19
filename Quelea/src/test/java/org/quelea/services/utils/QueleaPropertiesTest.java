@@ -3,7 +3,6 @@ package org.quelea.services.utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -72,14 +71,15 @@ public class QueleaPropertiesTest {
     }
 
     @Test
-    @Disabled("Changing verse-number visibility does not write the properties file")
     public void verseNumberSettingSurvivesReload() {
-        // Users expect this option to survive a restart. The setter only changes
-        // the in-memory Properties object. Establish a consistent persistence
-        // boundary for settings changes, including this setter, before reloading.
         QueleaProperties.get().setShowVerseNumbers(false);
+        QueleaProperties.get().save();
         QueleaProperties.init(directory.toString());
         Assertions.assertFalse(QueleaProperties.get().getShowVerseNumbers());
+        QueleaProperties.get().setShowVerseNumbers(true);
+        QueleaProperties.get().save();
+        QueleaProperties.init(directory.toString());
+        Assertions.assertTrue(QueleaProperties.get().getShowVerseNumbers());
     }
 
     @Test
