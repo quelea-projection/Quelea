@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -71,18 +70,16 @@ public class OpenLPParserTest {
     }
 
     @Test
-    @Disabled("OpenLP import treats the first whitespace node as the lyrics element")
     public void importsPrettyPrintedXml() throws Exception {
-        // Whitespace is legal in XML; formatted song data must not disappear
-        // from the import. Find the lyrics element by name and iterate verse
-        // elements rather than relying on the first child and all child nodes.
         Path db = directory.resolve("pretty.sqlite");
         try (Connection connection = createDatabase(db)) {
-            insert(connection, "Pretty", "<song>\n  <lyrics>\n    <verse>Words</verse>\n  </lyrics>\n</song>");
+            insert(connection, "Pretty", "<song>\n  <metadata>Ignore</metadata>\n  <lyrics>\n"
+                    + "    <verse>First &amp; last</verse>\n    <!-- comment -->\n"
+                    + "    <verse>Second verse</verse>\n  </lyrics>\n</song>");
         }
         List<SongDisplayable> songs = new OpenLPParser().getSongs(db.toFile(), null);
         Assertions.assertEquals(1, songs.size());
-        Assertions.assertEquals("Words", songs.get(0).getLyrics(false, false, false));
+        Assertions.assertEquals("First & last\n\nSecond verse", songs.get(0).getLyrics(false, false, false));
     }
 
     private Connection createDatabase(Path path) throws Exception {

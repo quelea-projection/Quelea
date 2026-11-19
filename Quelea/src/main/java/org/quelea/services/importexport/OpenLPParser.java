@@ -98,14 +98,28 @@ public class OpenLPParser implements SongParser {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes("UTF8")));
             Node song = doc.getElementsByTagName("song").item(0);
-            if (song == null || song.getFirstChild() == null) {
+            if (song == null) {
                 return null;
             }
-            Node root = song.getFirstChild();
+            Node root = null;
+            NodeList children = song.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE && "lyrics".equals(child.getNodeName())) {
+                    root = child;
+                    break;
+                }
+            }
+            if (root == null) {
+                return null;
+            }
             StringBuilder lyrics = new StringBuilder();
             NodeList verses = root.getChildNodes();
             for(int j = 0; j < verses.getLength(); j++) {
-                lyrics.append(verses.item(j).getTextContent()).append("\n\n");
+                Node verse = verses.item(j);
+                if (verse.getNodeType() == Node.ELEMENT_NODE && "verse".equals(verse.getNodeName())) {
+                    lyrics.append(verse.getTextContent()).append("\n\n");
+                }
             }
             return lyrics.toString().trim();
         }
