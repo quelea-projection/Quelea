@@ -22,10 +22,17 @@ Quelea/dist/*
 Quelea/nbproject/*
 Quelea/.idea/*
 Quelea/output/*
+Quelea/jvm
 Quelea/.gradle/*
 Quelea/.nb-gradle/*
 Quelea/bin/*
 Quelea/private/*
+
+Quelea/winjre64.zip
+Quelea/macjre.zip
+Quelea/jre.tar.gz
+
+Quelea/*_PROGRESS.md
 
 flatpak/**/builddir
 flatpak/**/.flatpak-builder
