@@ -33,7 +33,6 @@ public class Theme {
     private Boolean fontItalic;
     private Boolean translateFontBold;
     private Boolean translateFontItalic;
-    private Double videoHue;
     private Boolean videoStretch;
     private Integer textPosition;
     private Integer textAlignment;
@@ -44,7 +43,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, boolean videoStretch, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -58,7 +57,6 @@ public class Theme {
         this.fontItalic = isFontitalic;
         this.translateFontBold = isTranslateFontBold;
         this.translateFontItalic = isTranslateFontitalic;
-        this.videoHue = videoHue;
         this.videoStretch = videoStretch;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
@@ -79,7 +77,6 @@ public class Theme {
         this.fontItalic = theme.fontItalic;
         this.translateFontBold = theme.translateFontBold;
         this.translateFontItalic = theme.translateFontItalic;
-        this.videoHue = theme.videoHue;
         this.videoStretch = theme.videoStretch;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
@@ -115,18 +112,6 @@ public class Theme {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Column(name = "videoHue")
-    public Double getVideoHue() {
-        if(videoHue == null) {
-            return 0.0;
-        }
-        return videoHue;
-    }
-
-    public void setVideoHue(Double videoHue) {
-        this.videoHue = videoHue;
     }
 
     @Column(name = "videoStretch")

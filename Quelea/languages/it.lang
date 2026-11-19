@@ -443,7 +443,6 @@ chosen.fonts.explanation=Quelea mostra solo una selezione di font nella finestra
 ignored.fonts.label=Font Ignorati
 chosen.fonts.label=Font Scelti
 font.selection.dialog.title=Selezione Font
-video.hue.label=Tinta
 hover.for.position.label=Passa il mouse sul pannello per impostare la posizione del testo
 test.patterns.text=Pattern di Test
 test.patterns.explanation=I Pattern di test disponibili qui dovrebbero aiutarti a impostare correttamente il fuoco e il colore del tuo proiettore. Clicca su un'immagine per mostrarla nella vista principale e di palco.

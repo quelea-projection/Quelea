@@ -89,7 +89,6 @@ public class ThemeToolbar extends VBox {
     private final TextField backgroundImageLocation;
     private final TextField backgroundVidLocation;
     private final ColorPicker backgroundColorPicker;
-    private final Slider vidHueSlider;
     private final CheckBox vidStretchCheckbox;
     private final ToggleButton useShadowSwitch;
     private final ColorPicker shadowColor;
@@ -149,15 +148,9 @@ public class ThemeToolbar extends VBox {
             themePanel.updateTheme(false);
             checkConfirmButton();
         });
-        Label vidHueLabel = fixedLabel("video.hue.label");
-        vidHueSlider = new Slider(0, 1, 0);
-        vidHueSlider.setMajorTickUnit(0.001);
-        vidHueSlider.setPrefWidth(90);
-        vidHueSlider.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
-        vidHueLabel.setLabelFor(vidHueSlider);
         vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
         vidStretchCheckbox.selectedProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
-        backgroundCentre.add(row(backgroundVidLocation, new VideoButton(backgroundVidLocation), gap(), vidHueLabel, vidHueSlider, gap(), vidStretchCheckbox), "video");
+        backgroundCentre.add(row(backgroundVidLocation, new VideoButton(backgroundVidLocation), gap(), vidStretchCheckbox), "video");
 
         backTypeSelection.getSelectionModel().selectedItemProperty().addListener((ov, oldType, type) -> {
             if (type == null) {
@@ -453,7 +446,7 @@ public class ThemeToolbar extends VBox {
         shadowRadiusSlider.setValue(shadow.getRadius());
         shadowSpreadSlider.setValue(shadow.getSpread());
         useShadowSwitch.setSelected(shadow.getUse());
-        theme.getBackground().setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider, vidStretchCheckbox);
+        theme.getBackground().setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidStretchCheckbox);
     }
 
     private int getAlignmentVal() {
@@ -485,7 +478,7 @@ public class ThemeToolbar extends VBox {
         } else if (type.equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             String text = backgroundVidLocation.getText();
             if (!text.isEmpty()) {
-                background = new VideoBackground(text, vidHueSlider.getValue(), vidStretchCheckbox.isSelected());
+                background = new VideoBackground(text, vidStretchCheckbox.isSelected());
             }
         }
         SerializableDropShadow shadow = new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(),

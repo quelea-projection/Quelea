@@ -2,6 +2,8 @@ package org.quelea.data;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.Assertions;
@@ -117,6 +119,35 @@ public class SchedulePersistenceTest {
         } finally {
             QueleaProperties.get().setEmbedMediaInScheduleFile(original);
         }
+    }
+
+    @Test
+    public void opensScheduleWithLegacyVideoHueTheme() throws Exception {
+        ThemeDTO defaults = ThemeDTO.DEFAULT_THEME;
+        ThemeDTO videoTheme = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                new VideoBackground("background.mp4", true), defaults.getShadow(),
+                false, false, false, false, -1, 0);
+        SongDisplayable song = song("Legacy", "Words");
+        song.getSectionsWithoutSequence()[0].setTheme(videoTheme);
+        Schedule schedule = new Schedule();
+        schedule.add(song);
+        String legacyXml = schedule.getXML().replace("$vidstretch:", "$vidhue:0.35$vidstretch:");
+        Assertions.assertTrue(legacyXml.contains("$vidhue:0.35"));
+        Path file = directory.resolve("legacy-theme.quelea");
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(file))) {
+            zip.putNextEntry(new ZipEntry("schedule.xml"));
+            zip.write(legacyXml.getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        Schedule restored = Schedule.fromFile(file.toFile());
+        Assertions.assertNotNull(restored);
+        SongDisplayable restoredSong = (SongDisplayable) restored.getDisplayable(0);
+        VideoBackground background = Assertions.assertInstanceOf(VideoBackground.class,
+                restoredSong.getSectionsWithoutSequence()[0].getTheme().getBackground());
+        Assertions.assertEquals("background.mp4", background.getString());
+        Assertions.assertTrue(background.getStretch());
+        Assertions.assertFalse(restored.getXML().contains("$vidhue:"));
     }
 
     private SongDisplayable song(String title, String lyrics) {

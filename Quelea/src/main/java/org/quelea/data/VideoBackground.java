@@ -28,7 +28,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.quelea.services.languages.LabelGrabber;
@@ -43,30 +42,18 @@ import org.quelea.services.utils.Utils;
 public class VideoBackground implements Background, Serializable {
 
     private String vidLocation;
-    private final double hue;
     private final boolean stretch;
 
     /**
      * Create a new video background.
      *
      * @param vidLocation the location of the video to use.
-     * @param hue the hue adjustment of the video.
      * @param stretch true if the video should be stretched to fill the screen,
      * false otherwise.
      */
-    public VideoBackground(String vidLocation, double hue, boolean stretch) {
+    public VideoBackground(String vidLocation, boolean stretch) {
         this.vidLocation = vidLocation;
-        this.hue = hue;
         this.stretch = stretch;
-    }
-
-    /**
-     * Get the hue adjustment, a double between 0-1.
-     *
-     * @return the hue adjustment.
-     */
-    public double getHue() {
-        return hue;
     }
 
     /**
@@ -110,10 +97,9 @@ public class VideoBackground implements Background, Serializable {
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider, CheckBox vidStretchCheckbox) {
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, CheckBox vidStretchCheckbox) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backgroundVidLocation.setText(getVideoFile().getName());
-        vidHueSlider.setValue(hue);
         vidStretchCheckbox.setSelected(stretch);
         backgroundColorPicker.setValue(Color.BLACK);
         backgroundColorPicker.fireEvent(new ActionEvent());

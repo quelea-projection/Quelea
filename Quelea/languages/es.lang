@@ -405,7 +405,6 @@ chosen.fonts.explanation=Quelea sólo muestra una selección de fuentes en la ve
 ignored.fonts.label=Fuentes ignoradas
 chosen.fonts.label=Fuentes elegidas
 font.selection.dialog.title=Fuentes seleccionadas
-video.hue.label=Matiz
 hover.for.position.label=Pase el ratón sobre el lienzo para ajustar la posición del texto
 test.patterns.text=Patrones de prueba
 test.patterns.explanation=Los patrones de prueba aquí disponibles le ayudarán a calibrar el enfoque y color de su pantalla. Haga "click" en la imagen de prueba para mostrarla en las vistas principal y de escenario.

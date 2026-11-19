@@ -387,7 +387,6 @@ olp.button=OpenLP
 filefilters.description.sqlite.files=SQLite-filer
 sp.button=Sunday Plus
 font.selection.dialog.title=Typsnittsurval
-video.hue.label=Färgton
 chosen.fonts.explanation=Quelea visar bara ett urval av typsnitt i temafönstret. Dra de typsnitt som du vill använda från den vänstra panelen till den högra panelen, dra dem du inte vill använda från höger till vänster.
 test.patterns.text=Testmönster
 chosen.fonts.label=Valda typsnitt

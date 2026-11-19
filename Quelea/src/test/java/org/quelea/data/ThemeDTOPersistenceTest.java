@@ -56,29 +56,45 @@ public class ThemeDTOPersistenceTest {
     }
 
     @Test
-    public void videoBackgroundHueAndStretchSurviveThemeSerialization() {
+    public void videoBackgroundStretchSurvivesThemeSerialization() {
         SerializableFont font = new SerializableFont(Font.font("System", 24));
         ThemeDTO original = new ThemeDTO(font, Color.WHITE, font, Color.WHITE,
-                new VideoBackground("background.mp4", 0.35, true),
+                new VideoBackground("background.mp4", true),
                 new SerializableDropShadow(Color.BLACK, 0, 0, 2, 0, true),
                 false, false, false, false, 0, 0);
         ThemeDTO restored = ThemeDTO.fromString(original.asString(), Map.of());
         Assertions.assertInstanceOf(VideoBackground.class, restored.getBackground());
         VideoBackground video = (VideoBackground) restored.getBackground();
         Assertions.assertEquals("background.mp4", video.getString());
-        Assertions.assertEquals(0.35, video.getHue(), 0.0001);
         Assertions.assertTrue(video.getStretch());
+        Assertions.assertFalse(original.asString().contains("$vidhue:"));
     }
 
     @Test
-    @Disabled("Video background equality ignores hue and stretch")
+    public void legacyVideoHueIsIgnoredWhenReadingThemes() {
+        SerializableFont font = new SerializableFont(Font.font("System", 24));
+        ThemeDTO original = new ThemeDTO(font, Color.WHITE, font, Color.WHITE,
+                new VideoBackground("background.mp4", true),
+                new SerializableDropShadow(Color.BLACK, 0, 0, 2, 0, true),
+                false, false, false, false, 0, 0);
+        for (String hue : new String[]{"0.35", "not-a-number"}) {
+            String legacy = original.asString().replace("$vidstretch:", "$vidhue:" + hue + "$vidstretch:");
+            ThemeDTO restored = ThemeDTO.fromString(legacy, Map.of());
+            VideoBackground video = Assertions.assertInstanceOf(VideoBackground.class, restored.getBackground());
+            Assertions.assertEquals("background.mp4", video.getString());
+            Assertions.assertTrue(video.getStretch());
+            Assertions.assertFalse(restored.asString().contains("$vidhue:"));
+        }
+    }
+
+    @Test
+    @Disabled("Video background equality ignores stretch")
     public void videoBackgroundEqualityDistinguishesDisplaySettings() {
-        // Theme-change detection uses background equality, so changing only hue
-        // or stretch can be missed. Include these values in equality and hashCode
+        // Theme-change detection uses background equality, so changing stretch
+        // can be missed. Include it in equality and hashCode
         // together, after checking callers that depend on location-only equality.
-        VideoBackground first = new VideoBackground("background.mp4", 0, false);
-        Assertions.assertNotEquals(first, new VideoBackground("background.mp4", 0.35, false));
-        Assertions.assertNotEquals(first, new VideoBackground("background.mp4", 0, true));
+        VideoBackground first = new VideoBackground("background.mp4", false);
+        Assertions.assertNotEquals(first, new VideoBackground("background.mp4", true));
     }
 
     @Test

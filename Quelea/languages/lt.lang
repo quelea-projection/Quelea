@@ -56,7 +56,6 @@ olp.import.line1=Žemiau pasirinkite OpenLP duomenų bazės vietą.
 download.vlc=Atsisiųsti VLC
 loading.text=Įkeliama
 refresh.images.panel=Iš naujo įkelti paveikslus
-video.hue.label=Atspalvis
 save.as.schedule.text=Išsaugoti tvarkaraštį kaip
 select.export.songs.line2=Pasirinkite tas, kurias norite eksportuoti ir spustelėkite "Pridėti".
 default.translation.label=Numatytasis vertimas

@@ -400,7 +400,6 @@ chosen.fonts.explanation=O Quelea só mostra uma selecção de fontes na janela 
 ignored.fonts.label=Ignorar letra
 chosen.fonts.label=Letras escolhidas
 font.selection.dialog.title=Letras seleccionadas
-video.hue.label=Tom
 hover.for.position.label=Passe o mouse sobre a tela para definir a posição do texto
 test.patterns.text=Padrões de Teste
 test.patterns.explanation=Os padrões de teste disponíveis aqui devem ajudar a calibrar o foco e a cor das configurações do seu monitor correctamente. Clique na imagem de um teste para calibrar a Tela de Projecção e a Tela de púlpito.

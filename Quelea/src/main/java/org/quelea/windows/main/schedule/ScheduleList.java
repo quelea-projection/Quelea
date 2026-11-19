@@ -520,7 +520,7 @@ public class ScheduleList extends StackPane {
         if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
             dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
         }
-        Background background = video ? new VideoBackground(stored.getName(), 0, true) : new ImageBackground(stored.getName());
+        Background background = video ? new VideoBackground(stored.getName(), true) : new ImageBackground(stored.getName());
         ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), background, dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
         for (TextSection section : textDisplayable.getSections()) {
             section.setTheme(newTheme);

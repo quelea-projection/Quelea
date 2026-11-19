@@ -740,7 +740,6 @@ video.error=無法初始化視訊庫- 視訊無法顯示。 請在討論群組�
 video.error.general=抱歉，你選擇的視訊檔有錯誤。
 video.error.title=視訊錯誤
 video.error.unsupported=抱歉，你選擇的視訊檔不被支援。
-video.hue.label=色調
 video.loop.tooltip=切換循環 開 / 關
 video.theme.label=視訊
 videopsalm.button=VideoPsalm

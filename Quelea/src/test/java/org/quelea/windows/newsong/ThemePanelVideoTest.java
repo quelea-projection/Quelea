@@ -6,8 +6,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.VideoBackground;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.quelea.testutil.VideoTestSupport.activePipelines;
 import static org.quelea.testutil.VideoTestSupport.assumeVideoAvailable;
 import static org.quelea.testutil.VideoTestSupport.ensureProjectionWindow;
@@ -72,5 +76,22 @@ public class ThemePanelVideoTest {
         onFx(() -> stage.hide());
         assertTrue(waitFor(() -> activePipelines() == baseline, 5_000),
                 "No preview player should keep running once the editor is closed");
+    }
+
+    @Test
+    @DisplayName("Editing a video theme preserves its stretch setting")
+    public void videoStretchSurvivesEditing() throws Exception {
+        ThemeDTO defaults = ThemeDTO.DEFAULT_THEME;
+        for (boolean stretch : new boolean[]{false, true}) {
+            ThemeDTO theme = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                    defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                    new VideoBackground(videoTheme(2).getBackground().getString(), stretch), defaults.getShadow(),
+                    false, false, false, false, -1, 0);
+            onFx(() -> {
+                panel.setTheme(theme);
+                VideoBackground background = assertInstanceOf(VideoBackground.class, panel.getTheme().getBackground());
+                assertEquals(stretch, background.getStretch());
+            });
+        }
     }
 }

@@ -446,7 +446,6 @@ chosen.fonts.explanation=Quelea hanya menampilkan seleksi font di jendela tema. 
 ignored.fonts.label=Font yang diabaikan
 chosen.fonts.label=Font yang dipilih
 font.selection.dialog.title=Pilihan Font
-video.hue.label=Warna Dominan
 hover.for.position.label=Arahkan ke canvas untuk mengatur posisi teks
 test.patterns.text=Uji Pola
 test.patterns.explanation=Pola uji yang tersedia di sini seharusnya membantu Anda menyesuaikan pengaturan fokus dan warna layar dengan benar. Klik pada gambar uji untuk menampilkannya di kedua tampilan utama dan panggung.
