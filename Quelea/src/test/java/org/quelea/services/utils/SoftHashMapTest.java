@@ -6,7 +6,6 @@ import java.util.AbstractMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Soft-reference cache")
@@ -24,11 +23,7 @@ public class SoftHashMapTest {
     }
 
     @Test
-    @Disabled("A removed reference can evict a later value for the same key")
     public void removedReferenceCannotEvictAReplacement() throws Exception {
-        // Once a key is removed and reused, a delayed reference-queue event for
-        // the old value must not remove the replacement. Remove the reverse
-        // lookup on removal and only expunge a reference if it is still current.
         SoftHashMap<String, String> map = new SoftHashMap<>();
         map.put("key", "old");
         Reference<?> removed = referenceFor(map, "key");
@@ -39,11 +34,7 @@ public class SoftHashMapTest {
     }
 
     @Test
-    @Disabled("An entry update leaves the old reference in the reverse lookup")
     public void updatedEntryCannotBeEvictedWhenOldValueIsCollected() throws Exception {
-        // Caches can lose a freshly updated value after the previous value is
-        // collected. Route entry.setValue through put or update both reference
-        // maps atomically, and check reference identity during queue cleanup.
         SoftHashMap<String, String> map = new SoftHashMap<>();
         map.put("key", "old");
         Reference<?> old = referenceFor(map, "key");
@@ -53,13 +44,47 @@ public class SoftHashMapTest {
     }
 
     @Test
-    @Disabled("Cache entries do not implement Map.Entry equality")
     public void entriesCanBeComparedLikeOrdinaryMapEntries() {
-        // Map consumers expect entry equality based on key and value. Implement
-        // equals and hashCode on the entry wrapper while preserving setValue.
         SoftHashMap<String, String> map = new SoftHashMap<>();
         map.put("key", "value");
         Assertions.assertTrue(map.entrySet().contains(new AbstractMap.SimpleEntry<>("key", "value")));
+    }
+
+    @Test
+    public void staleReferenceDoesNotRemoveNullKey() throws Exception {
+        SoftHashMap<String, String> map = new SoftHashMap<>();
+        map.put("old", "discarded");
+        Reference<?> old = referenceFor(map, "old");
+        map.remove("old");
+        map.put(null, "kept");
+        old.enqueue();
+        Assertions.assertEquals("kept", map.get(null));
+        Assertions.assertEquals(1, map.size());
+    }
+
+    @Test
+    public void currentEnqueuedReferenceIsRemoved() throws Exception {
+        SoftHashMap<String, String> map = new SoftHashMap<>();
+        map.put(null, "discarded");
+        Reference<?> current = referenceFor(map, null);
+        current.clear();
+        current.enqueue();
+        Assertions.assertTrue(map.isEmpty());
+    }
+
+    @Test
+    public void entryUpdatesKeepTheirValueAndPreviousValue() throws Exception {
+        SoftHashMap<String, String> map = new SoftHashMap<>();
+        map.put("key", "first");
+        Map.Entry<String, String> entry = map.entrySet().iterator().next();
+        Assertions.assertEquals("first", entry.setValue("second"));
+        Reference<?> second = referenceFor(map, "key");
+        Assertions.assertEquals("second", entry.setValue("third"));
+        Assertions.assertEquals("third", entry.getValue());
+        Assertions.assertEquals(new AbstractMap.SimpleEntry<>("key", "third"), entry);
+        second.clear();
+        second.enqueue();
+        Assertions.assertEquals("third", map.get("key"));
     }
 
     private Reference<?> referenceFor(SoftHashMap<?, ?> map, Object key) throws Exception {
