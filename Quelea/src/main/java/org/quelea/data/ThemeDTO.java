@@ -19,6 +19,10 @@ package org.quelea.data;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -338,7 +342,18 @@ public class ThemeDTO implements Serializable {
         ret.append("$fontcolour:").append(fontColor.toString());
         ret.append("$translatefontcolour:").append(translateFontColor.toString());
         if (!themeName.isEmpty()) {
-            ret.append("$themename:").append(themeName);
+            int dollar = themeName.indexOf('$');
+            if (dollar < 0) {
+                ret.append("$themename:").append(themeName);
+            } else {
+                // Older readers ignore the encoded field and can still show
+                // the part of the name before the first delimiter.
+                if (dollar > 0) {
+                    ret.append("$themename:").append(themeName, 0, dollar);
+                }
+                ret.append("$themename64:").append(Base64.getEncoder()
+                        .encodeToString(themeName.getBytes(StandardCharsets.UTF_8)));
+            }
         }
         ret.append("$isFontBold:").append(isFontBold);
         ret.append("$isFontItalic:").append(isFontItalic);
@@ -389,6 +404,7 @@ public class ThemeDTO implements Serializable {
         String backgroundvid = "";
         String backgroundimage = "";
         String themeName = "";
+        String encodedThemeName = null;
         String shadowColor = "";
         String shadowRadius = "2";
         String shadowSpread = "0";
@@ -437,6 +453,8 @@ public class ThemeDTO implements Serializable {
                 }
             } else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
+            } else if (parts[0].equalsIgnoreCase("themename64")) {
+                encodedThemeName = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowradius")) {
@@ -455,6 +473,14 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
+            }
+        }
+        if (encodedThemeName != null) {
+            try {
+                byte[] bytes = Base64.getDecoder().decode(encodedThemeName);
+                themeName = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes)).toString();
+            } catch (IllegalArgumentException | CharacterCodingException ex) {
+                LOGGER.log(Level.WARNING, "Invalid encoded theme name; using legacy name", ex);
             }
         }
         Font sysFont = Font.font(fontname,

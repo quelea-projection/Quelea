@@ -13,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.AudioDisplayable;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.utils.QueleaProperties;
 
 @DisplayName("Schedule persistence")
@@ -148,6 +150,37 @@ public class SchedulePersistenceTest {
         Assertions.assertEquals("background.mp4", background.getString());
         Assertions.assertTrue(background.getStretch());
         Assertions.assertFalse(restored.getXML().contains("$vidhue:"));
+    }
+
+    @Test
+    public void dollarNamesSurviveScheduleRoundTripForSongsTimersAndBiblePassages() throws Exception {
+        ThemeDTO defaults = ThemeDTO.DEFAULT_THEME;
+        ThemeDTO custom = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                defaults.getBackground(), defaults.getShadow(), false, false, false, false, -1, 0);
+        String name = "Café & praise $5 <Sunday>";
+        custom.setThemeName(name);
+        SongDisplayable song = song("Opening", "Words");
+        song.getSectionsWithoutSequence()[0].setTheme(custom);
+        Schedule schedule = new Schedule();
+        schedule.add(song);
+        schedule.add(new TimerDisplayable("Countdown", 90, "Starts", "Go", custom));
+        schedule.add(new BiblePassage("John 3:16\nTest Bible", new BibleVerse[0], custom, false));
+        ThemeDTO ordinary = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                defaults.getBackground(), defaults.getShadow(), false, false, false, false, -1, 0);
+        ordinary.setThemeName("Grace & <praise>");
+        schedule.add(new BiblePassage("Psalm 1:1\nTest Bible", new BibleVerse[0], ordinary, false));
+        schedule.setFile(directory.resolve("named-themes.quelea").toFile());
+        Assertions.assertTrue(schedule.writeToFile());
+
+        Schedule restored = Schedule.fromFile(schedule.getFile());
+        Assertions.assertNotNull(restored);
+        SongDisplayable restoredSong = (SongDisplayable) restored.getDisplayable(0);
+        Assertions.assertEquals(name, restoredSong.getSectionsWithoutSequence()[0].getTheme().getThemeName());
+        Assertions.assertEquals(name, ((TimerDisplayable) restored.getDisplayable(1)).getTheme().getThemeName());
+        Assertions.assertEquals(name, ((BiblePassage) restored.getDisplayable(2)).getTheme().getThemeName());
+        Assertions.assertEquals("Grace & <praise>", ((BiblePassage) restored.getDisplayable(3)).getTheme().getThemeName());
     }
 
     private SongDisplayable song(String title, String lyrics) {

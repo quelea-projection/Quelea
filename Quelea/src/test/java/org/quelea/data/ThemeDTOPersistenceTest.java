@@ -1,6 +1,8 @@
 package org.quelea.data;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -9,12 +11,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
+import org.quelea.utils.ThemeUtils;
 
 @DisplayName("Theme persistence")
 public class ThemeDTOPersistenceTest {
+    @TempDir Path directory;
     @BeforeAll
     public static void initializeProperties() throws Exception {
         if (QueleaProperties.get() == null) {
@@ -45,14 +50,73 @@ public class ThemeDTOPersistenceTest {
     }
 
     @Test
-    @Disabled("Theme names containing the field separator are truncated")
     public void themeNamesCanContainDollarSigns() {
-        // A user-supplied name should survive saving and reloading. The legacy
-        // format uses '$' as a field separator without escaping; introduce a
-        // backward-compatible encoding or versioned format before changing it.
-        ThemeDTO original = theme("Offering $5");
-        ThemeDTO restored = ThemeDTO.fromString(original.asString(), Map.of());
-        Assertions.assertEquals("Offering $5", restored.getThemeName());
+        for (String name : new String[]{"Offering $5", "$", "$first", "last$", "one$$two",
+                "Café 日本語 $5 & <friends>", "Offering $fontcolour:0xff0000ff"}) {
+            ThemeDTO original = theme(name);
+            String saved = original.asString();
+            ThemeDTO restored = ThemeDTO.fromString(saved, Map.of());
+            Assertions.assertEquals(name, restored.getThemeName());
+            Assertions.assertEquals(original.getFontPaint(), restored.getFontPaint(), name);
+            Assertions.assertEquals(original.getTextAlignment(), restored.getTextAlignment(), name);
+            Assertions.assertEquals(name, ThemeDTO.fromString(original.getTheme().toString(), Map.of()).getThemeName());
+            Assertions.assertTrue(saved.contains("$themename64:"));
+            Assertions.assertEquals(name.substring(0, name.indexOf('$')), legacyThemeName(saved), name);
+        }
+    }
+
+    @Test
+    public void namesWithoutDollarSignsKeepTheExistingFormat() {
+        String unnamed = theme("").asString();
+        for (String name : new String[]{"Sunday theme", "Café 日本語", "Name %24 & <friends>", "Communion: Easter"}) {
+            String saved = theme(name).asString();
+            Assertions.assertEquals(unnamed.replace("$isFontBold:", "$themename:" + name + "$isFontBold:"), saved);
+            Assertions.assertFalse(saved.contains("$themename64:"));
+            Assertions.assertEquals(name, ThemeDTO.fromString(saved, Map.of()).getThemeName());
+            if (!name.contains(":")) {
+                Assertions.assertEquals(name, legacyThemeName(saved));
+            }
+        }
+        Assertions.assertEquals("", legacyThemeName(unnamed));
+    }
+
+    @Test
+    public void invalidEncodedNameFallsBackToLegacyName() {
+        String legacy = theme("Fallback").asString();
+        for (String invalid : new String[]{"%invalid%", "/w=="}) {
+            ThemeDTO restored = ThemeDTO.fromString(legacy + "$themename64:" + invalid, Map.of());
+            Assertions.assertEquals("Fallback", restored.getThemeName());
+        }
+    }
+
+    @Test
+    public void savedThemeFilePreservesDollarName() throws Exception {
+        QueleaProperties previous = QueleaProperties.get();
+        try {
+            QueleaProperties.init(directory.toString());
+            Path themes = Files.createDirectories(QueleaProperties.get().getQueleaUserHome().toPath().resolve("themes"));
+            String name = "Café & friends $5";
+            Files.writeString(themes.resolve("theme.th"), theme(name).getTheme().toString() + "\n", StandardCharsets.UTF_8);
+            var loaded = ThemeUtils.getThemes();
+            Assertions.assertEquals(1, loaded.size());
+            Assertions.assertEquals(name, loaded.getFirst().getThemeName());
+        } finally {
+            var instance = QueleaProperties.class.getDeclaredField("INSTANCE");
+            instance.setAccessible(true);
+            instance.set(null, previous);
+        }
+    }
+
+    // The theme-name handling used by releases before the colon parsing fix.
+    private String legacyThemeName(String saved) {
+        String name = "";
+        for (String part : saved.split("\\$")) {
+            String[] fields = part.split(":");
+            if (fields.length > 1 && fields[0].equalsIgnoreCase("themename")) {
+                name = fields[1];
+            }
+        }
+        return name;
     }
 
     @Test
