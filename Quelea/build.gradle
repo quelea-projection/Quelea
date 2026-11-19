@@ -1,3 +1,11 @@
+import edu.sc.seis.launch4j.Launch4jPlugin
+import edu.sc.seis.launch4j.Launch4jPluginExtension
+import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
+import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.internal.file.FileOperations
+import javax.inject.Inject
+
 buildscript {
     dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:4.0.0'
@@ -8,7 +16,6 @@ buildscript {
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'edu.sc.seis.launch4j' version '4.0.0'
     id 'io.github.ben-manes.versions' version '0.67.0'
     id 'com.bmuschko.izpack' version '3.2'
 }
@@ -31,6 +38,10 @@ repositories {
         }
     }
 }
+
+// Launch4j 4.0.0 uses the deprecated Configuration.setVisible API when applied.
+// Keep its task implementation but configure it without that obsolete call.
+apply plugin: QueleaLaunch4jPlugin
 
 javafx {
     version = "25.0.5.1"
@@ -348,4 +359,55 @@ tasks.register('releaseSummary', JavaExec) {
 tasks.named("izPackCreateInstaller") {
     dependsOn(tasks.named("zipMacPackr"))
     dependsOn(tasks.named('tar'))
+}
+
+/*
+ * Compatibility adaptation of gradle-launch4j's plugin setup.
+ * Copyright (c) 2025 Sebastian Boegl
+ * Licensed under the Apache License, Version 2.0:
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * Remove this when upstream stops calling Configuration.setVisible.
+ * Executable and XML generation remain upstream's.
+ */
+class QueleaLaunch4jPlugin implements Plugin<Project> {
+    private final FileOperations fileOperations
+
+    @Inject
+    QueleaLaunch4jPlugin(FileOperations fileOperations) {
+        this.fileOperations = fileOperations
+    }
+
+    void apply(Project project) {
+        project.extensions.create('launch4j', Launch4jPluginExtension, project,
+                fileOperations, project.objects, project.providers)
+        def binaries = project.configurations.create('launch4jBin') {
+            transitive = false
+            canBeConsumed = false
+            canBeResolved = true
+            description = 'The launch4j binary configuration for this project.'
+            defaultDependencies {
+                it.add(project.dependencies.create("net.sf.launch4j:launch4j:${Launch4jPlugin.ARTIFACT_VERSION}:${Launch4jPlugin.workdir()}"))
+            }
+            resolutionStrategy.dependencySubstitution {
+                all { dependency ->
+                    if (dependency.requested instanceof ModuleComponentSelector &&
+                            dependency.requested.group == 'net.sf.launch4j' && dependency.requested.module == 'launch4j') {
+                        dependency.useTarget "net.sf.launch4j:launch4j:${dependency.requested.version}:${Launch4jPlugin.workdir()}"
+                    }
+                }
+            }
+        }
+        project.tasks.register('createExe', Launch4jLibraryTask) {
+            group = 'launch4j'
+            description = 'Runs the launch4j jar to generate an .exe file'
+        }
+        project.tasks.register('createAllExecutables') {
+            group = 'launch4j'
+            description = 'Runs all tasks that implement DefaultLaunch4jTask'
+            dependsOn project.tasks.withType(DefaultLaunch4jTask)
+        }
+        project.tasks.withType(DefaultLaunch4jTask).configureEach {
+            launch4jBinaryFiles.from(binaries)
+        }
+    }
 }
