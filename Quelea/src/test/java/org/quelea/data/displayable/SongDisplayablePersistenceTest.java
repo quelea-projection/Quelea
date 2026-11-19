@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -53,28 +52,32 @@ public class SongDisplayablePersistenceTest {
     }
 
     @Test
-    @Disabled("Copying a song increments the original song's hash component")
     public void copyingASongDoesNotChangeTheOriginalHash() {
-        // Copying an object used as a hash-map or hash-set key must not make
-        // that key unreachable. Revisit count in the copy constructor and
-        // hashCode together, preserving any required duplicate-song behavior.
         SongDisplayable original = new SongDisplayable("Song", "Author");
         original.setLyrics("A verse");
+        var songs = new java.util.HashSet<SongDisplayable>();
+        songs.add(original);
         int hash = original.hashCode();
-        new SongDisplayable(original);
+        SongDisplayable copy = new SongDisplayable(original);
         Assertions.assertEquals(hash, original.hashCode());
+        Assertions.assertTrue(songs.contains(original));
+        Assertions.assertEquals(original, copy);
+        Assertions.assertEquals(original.hashCode(), copy.hashCode());
+        Assertions.assertTrue(songs.contains(copy));
     }
 
     @Test
-    @Disabled("Changing the sequence does not refresh the cached section order")
     public void changingSequenceReordersExistingSections() {
-        // Existing songs should follow an edited sequence immediately. Invalidate
-        // and rebuild the sequence whenever it changes, including before direct
-        // getLyrics calls, and account for missing or malformed sequence labels.
         SongDisplayable song = new SongDisplayable("Song", "Author");
         song.setLyrics("Verse 1\nFirst verse\n\nChorus\nSing along");
         song.setSequence("C V1 C");
         Assertions.assertEquals("Chorus\nSing along\n\nVerse 1\nFirst verse\n\nChorus\nSing along",
                 song.getLyrics(false, false, true));
+        SongDisplayable copy = new SongDisplayable(song);
+        Assertions.assertEquals(song.getLyrics(false, false, true), copy.getLyrics(false, false, true));
+        song.setSequence("  V1   C  ");
+        Assertions.assertEquals("Verse 1\nFirst verse\n\nChorus\nSing along", song.getLyrics(false, false, true));
+        song.setSequence(null);
+        Assertions.assertEquals(song.getLyrics(false, false, false), song.getLyrics(false, false, true));
     }
 }

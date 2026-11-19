@@ -316,6 +316,24 @@ public class ScheduleDropTest {
     }
 
     @Test
+    @DisplayName("A copied song can be moved independently of its equal original")
+    public void moveCopiedDuplicateSong() throws Exception {
+        onFx(() -> {
+            SongDisplayable first = song("Repeated");
+            SongDisplayable middle = song("Middle");
+            SongDisplayable copy = new SongDisplayable(first);
+            Assertions.assertEquals(first, copy);
+            Assertions.assertEquals(first.hashCode(), copy.hashCode());
+            add(first, middle, copy);
+            dropAt(scheduleSongContent(2), 0, 0.25);
+            assertOrder(copy, first, middle);
+            assertSelected(0, copy);
+            assertScheduleOrder(copy, first, middle);
+        });
+        onFx(() -> { });
+    }
+
+    @Test
     @DisplayName("A serialized library payload still adds the correct song")
     public void serializedSongPayload() throws Exception {
         onFx(() -> {

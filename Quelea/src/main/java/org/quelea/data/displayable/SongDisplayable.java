@@ -320,8 +320,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.capo = song.capo;
         this.lastSearch = song.lastSearch;
         this.translations = song.translations;
-        this.count = song.count++;
+        this.count = song.count;
         this.sequence = song.sequence;
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -742,6 +743,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setSequence(String sequence) {
         this.sequence = sequence;
+        fontSizeCache.clear();
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -876,14 +879,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
     private void setSectionsInSequence(List<TextSection> sectionsWithoutSequence) {
         sectionsInSequence.clear();
-        if (sequence != null && !sequence.equals("")) {
-            for (String s : sequence.split(" ")) {
+        if (sequence != null && !sequence.isBlank()) {
+            for (String s : sequence.trim().split("\\s+")) {
                 for (TextSection ts : sectionsWithoutSequence) {
                     if (ts.getTitle() != null && !ts.getTitle().equals("")) {
-                        String[] title = ts.getTitle().split(" ");
+                        String[] title = ts.getTitle().trim().split("\\s+");
                         StringBuilder sb = new StringBuilder();
                         for (String t : title) {
-                            sb.append(t.charAt(0));
+                            if (!t.isEmpty()) {
+                                sb.append(t.charAt(0));
+                            }
                         }
                         if (sb.toString().equals(s)) {
                             sectionsInSequence.add(ts);
@@ -1352,7 +1357,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         hash = 29 * hash + (this.author != null ? this.author.hashCode() : 0);
         hash = 29 * hash + (this.sectionsWithoutSequence != null ? this.sectionsWithoutSequence.hashCode() : 0);
         hash = 29 * hash + (this.theme != null ? this.theme.hashCode() : 0);
-        hash = hash + count;
         return hash;
     }
 
