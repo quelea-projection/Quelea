@@ -142,7 +142,7 @@ public class ProPresenterParser implements SongParser {
 				ret.append(line).append('\n');
 			}
 			return Optional.of(ret.toString());
-		} catch (XPathExpressionException | DOMException ex) {
+		} catch (XPathExpressionException | DOMException | IllegalArgumentException ex) {
 			LOGGER.log(Level.SEVERE, "Error with import legacy", ex);
 			return Optional.empty();
 		}
@@ -160,7 +160,7 @@ public class ProPresenterParser implements SongParser {
 				ret.append(line).append('\n');
 			}
 			return Optional.of(ret.toString());
-		} catch (XPathExpressionException | DOMException ex) {
+		} catch (XPathExpressionException | DOMException | IllegalArgumentException ex) {
 			LOGGER.log(Level.SEVERE, "Error with import v6", ex);
 			return Optional.empty();
 		}

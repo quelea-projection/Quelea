@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -161,7 +162,10 @@ public final class Utils {
 	 * otherwise.
 	 */
 	public static boolean isInDir(File dir, File file) {
-		File[] files = QueleaProperties.get().getImageDir().listFiles();
+		File[] files = dir.listFiles();
+		if (files == null) {
+			return false;
+		}
 		for (File listFile : files) {
 			if (file.equals(listFile)) {
 				return true;
@@ -642,7 +646,7 @@ public final class Utils {
 		if (file.isDirectory() && !file.isHidden()) {
 			return true;
 		} else {
-			if (hasExtension(file, "*.cdt")) {
+			if (hasExtension(file, "cdt")) {
 				return true;
 			}
 			return false;
@@ -772,13 +776,13 @@ public final class Utils {
 	 * @return true if it has the given extension, false otherwise.
 	 */
 	public static boolean hasExtension(File file, String ext) {
-		String name = file.getName().toLowerCase();
-		if (!name.contains(".")) {
+		String name = file.getName().toLowerCase(Locale.ROOT);
+		int dot = name.lastIndexOf('.');
+		if (dot < 0 || dot == name.length() - 1) {
 			return false;
 		}
-		String[] parts = name.split("\\.");
-		String suffix = parts[parts.length - 1].toLowerCase().trim();
-		return suffix.equals(ext.trim().toLowerCase());
+		String suffix = name.substring(dot + 1).trim();
+		return suffix.equals(ext.trim().toLowerCase(Locale.ROOT));
 	}
 
 	/**

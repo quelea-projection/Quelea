@@ -107,6 +107,11 @@ public class Schedule implements Iterable<Displayable> {
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
+                ZipEntry scheduleEntry = zipFile.getEntry("schedule.xml");
+                if (scheduleEntry == null) {
+                    LOGGER.log(Level.WARNING, "Schedule archive has no schedule.xml: {0}", file);
+                    return null;
+                }
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
                 Map<String, String> fileChanges = new HashMap<>();
                 while (enumeration.hasMoreElements()) {
@@ -150,7 +155,7 @@ public class Schedule implements Iterable<Displayable> {
                         LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
-                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
+                Schedule ret = parseXML(zipFile.getInputStream(scheduleEntry), fileChanges);
                 if (ret == null) {
                     return null;
                 }

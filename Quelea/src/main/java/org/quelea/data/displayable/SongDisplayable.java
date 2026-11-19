@@ -1067,7 +1067,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("<translation>");
         if (getCurrentTranslationLyrics() != null) {
             xml.append("<name>");
-            xml.append(currentTranslation);
+            xml.append(Utils.escapeXML(currentTranslation));
             xml.append("</name>");
             xml.append("<tlyrics>");
             xml.append(Utils.escapeXML(translations.get(currentTranslation)));

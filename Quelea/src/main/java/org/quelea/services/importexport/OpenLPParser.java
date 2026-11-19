@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -56,27 +57,29 @@ public class OpenLPParser implements SongParser {
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + location.getAbsolutePath());
-            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM songs");
-            while(rs.next()) {
-                String lyrics = getLyricsFromXML(rs.getString("lyrics"));
-                String title = rs.getString("title");
-                String ccli = rs.getString("ccli_number");
-                String comments = rs.getString("comments");
-                String copyright = rs.getString("copyright");
-                if(title != null && lyrics != null && !title.isEmpty() && !lyrics.isEmpty()) {
-                    SongDisplayable displayable = new SongDisplayable(title, "");
-                    displayable.setLyrics(lyrics);
-                    if(ccli != null) {
-                        displayable.setCcli(ccli.trim());
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + location.getAbsolutePath());
+                    Statement statement = conn.createStatement();
+                    ResultSet rs = statement.executeQuery("SELECT * FROM songs")) {
+                while(rs.next()) {
+                    String lyrics = getLyricsFromXML(rs.getString("lyrics"));
+                    String title = rs.getString("title");
+                    String ccli = rs.getString("ccli_number");
+                    String comments = rs.getString("comments");
+                    String copyright = rs.getString("copyright");
+                    if(title != null && lyrics != null && !title.isEmpty() && !lyrics.isEmpty()) {
+                        SongDisplayable displayable = new SongDisplayable(title, "");
+                        displayable.setLyrics(lyrics);
+                        if(ccli != null) {
+                            displayable.setCcli(ccli.trim());
+                        }
+                        if(comments != null) {
+                            displayable.setInfo(comments.trim());
+                        }
+                        if(copyright != null) {
+                            displayable.setCopyright(copyright.trim());
+                        }
+                        ret.add(displayable);
                     }
-                    if(comments != null) {
-                        displayable.setInfo(comments.trim());
-                    }
-                    if(copyright != null) {
-                        displayable.setCopyright(copyright.trim());
-                    }
-                    ret.add(displayable);
                 }
             }
             return ret;
@@ -87,11 +90,18 @@ public class OpenLPParser implements SongParser {
     }
 
     private String getLyricsFromXML(String lyricsXML) {
+        if (lyricsXML == null) {
+            return null;
+        }
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes("UTF8")));
-            Node root = doc.getElementsByTagName("song").item(0).getFirstChild();
+            Node song = doc.getElementsByTagName("song").item(0);
+            if (song == null || song.getFirstChild() == null) {
+                return null;
+            }
+            Node root = song.getFirstChild();
             StringBuilder lyrics = new StringBuilder();
             NodeList verses = root.getChildNodes();
             for(int j = 0; j < verses.getLength(); j++) {

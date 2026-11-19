@@ -406,7 +406,7 @@ public class ThemeDTO implements Serializable {
             if (!part.contains(":")) {
                 continue;
             }
-            String[] parts = part.split(":");
+            String[] parts = part.split(":", 2);
             if (parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
             } else if (parts[0].equalsIgnoreCase("fontcolour")) {

@@ -148,11 +148,11 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public String getName() {
-        if (name != null || !name.equals("")) {
+        if (name != null && !name.equals("")) {
             return name;
         } else {
             if (seconds < 0) {
-                return timeToFinish.get(Calendar.HOUR) + ":" + (timeToFinish.get(Calendar.MINUTE) > 9 ? "" : "0") + timeToFinish.get(Calendar.AM_PM) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
+                return timeToFinish.get(Calendar.HOUR_OF_DAY) + ":" + (timeToFinish.get(Calendar.MINUTE) > 9 ? "" : "0") + timeToFinish.get(Calendar.MINUTE) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
             } else {
                 return secondsToTime(seconds) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
             }

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -170,7 +169,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
         }
         ret.append(">");
         for (BibleVerse verse : verses.values()) {
-            ret.append(Utils.escapeXML(verse.toXML()));
+            ret.append(verse.toXML());
         }
         ret.append("</chapter>");
         return ret.toString();

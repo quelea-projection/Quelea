@@ -120,13 +120,13 @@ public class SourceParser implements SongParser {
      * @return the author.
      */
     private String getAuthor(String contents) {
-        int beginIndex = contents.indexOf(START_PARSE_AUTHOR) + START_PARSE_AUTHOR.length();
+        int beginIndex = contents.indexOf(START_PARSE_AUTHOR);
         if (beginIndex == -1) {
             return "";
         }
-        contents = contents.substring(beginIndex);
-        contents = contents.substring(0, contents.indexOf(END_PARSE));
-        return contents.trim();
+        beginIndex += START_PARSE_AUTHOR.length();
+        int endIndex = contents.indexOf(END_PARSE, beginIndex);
+        return endIndex == -1 ? "" : contents.substring(beginIndex, endIndex).trim();
     }
     
     /**
@@ -135,12 +135,16 @@ public class SourceParser implements SongParser {
      * @return the lyrics.
      */
     private String getLyrics(String contents) {
-        int beginIndex = contents.indexOf(START_PARSE_LYRICS) + START_PARSE_LYRICS.length();
+        int beginIndex = contents.indexOf(START_PARSE_LYRICS);
         if (beginIndex == -1) {
             return null;
         }
-        contents = contents.substring(beginIndex);
-        contents = contents.substring(0, contents.indexOf(END_PARSE));
+        beginIndex += START_PARSE_LYRICS.length();
+        int endIndex = contents.indexOf(END_PARSE, beginIndex);
+        if (endIndex == -1) {
+            return null;
+        }
+        contents = contents.substring(beginIndex, endIndex);
         contents = contents.replace("\n", "");
         StringBuilder lyrics = new StringBuilder();
         Pattern pattern = Pattern.compile("\\<p\\>(.+?)\\</p\\>", Pattern.DOTALL);

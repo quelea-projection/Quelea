@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -74,8 +75,7 @@ public class Speller {
         else {
             words = new HashSet<>();
             dictionaries.put(dict.getDictFile(), words);
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), "UTF-8"));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), "UTF-8"))) {
                 String line;
                 while((line = reader.readLine()) != null) {
                     line = sanitiseWord(line);
@@ -98,7 +98,7 @@ public class Speller {
      */
     public boolean checkWord(String word) {
         word = sanitiseWord(word);
-        if(ignoreWords == null || words == null || word.length()==1) {
+        if(ignoreWords == null || words == null || word.length() <= 1) {
             return true;
         }
         return words.contains(word) || ignoreWords.contains(word);
@@ -156,12 +156,10 @@ public class Speller {
         }
         List<String> ret = new ArrayList<>();
         int count = 0;
-        for(Suggestion word : list) {
+        while (!list.isEmpty() && count < 6) {
+            Suggestion word = list.poll();
             ret.add(word.getWord());
             count++;
-            if(count == 6) {
-                break;
-            }
         }
         return ret;
     }
@@ -211,7 +209,7 @@ public class Speller {
     }
 
     private String sanitiseWord(String word) {
-        word = word.trim().toLowerCase();
+        word = word.trim().toLowerCase(Locale.ROOT);
         word = Pattern.compile("[^\\p{Alnum}'\\- ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(word).replaceAll("");
         return word;
     }
