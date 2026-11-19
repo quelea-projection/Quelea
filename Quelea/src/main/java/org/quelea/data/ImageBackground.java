@@ -141,7 +141,6 @@ public class ImageBackground implements Background, Serializable {
     public int hashCode() {
         int hash = 5;
         hash = 71 * hash + Objects.hashCode(this.imageName);
-        hash = 71 * hash + Objects.hashCode(this.originalImage);
         return hash;
     }
 
@@ -155,9 +154,6 @@ public class ImageBackground implements Background, Serializable {
         }
         final ImageBackground other = (ImageBackground) obj;
         if(!Objects.equals(this.imageName, other.imageName)) {
-            return false;
-        }
-        if(!Objects.equals(this.originalImage, other.originalImage)) {
             return false;
         }
         return true;

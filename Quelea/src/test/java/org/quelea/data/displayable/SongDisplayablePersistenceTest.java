@@ -67,6 +67,20 @@ public class SongDisplayablePersistenceTest {
     }
 
     @Test
+    public void changingTheThemeLayoutDoesNotChangeTheContainingSongHash() {
+        SongDisplayable song = new SongDisplayable("Song", "Author");
+        song.setLyrics("A verse");
+        var songs = new java.util.HashSet<SongDisplayable>();
+        songs.add(song);
+        int hash = song.hashCode();
+        song.getTheme().setThemeName("Renamed");
+        song.getTheme().setTextAlignment(1);
+        song.getTheme().setTextPosition(2);
+        Assertions.assertEquals(hash, song.hashCode());
+        Assertions.assertTrue(songs.contains(song));
+    }
+
+    @Test
     public void changingSequenceReordersExistingSections() {
         SongDisplayable song = new SongDisplayable("Song", "Author");
         song.setLyrics("Verse 1\nFirst verse\n\nChorus\nSing along");

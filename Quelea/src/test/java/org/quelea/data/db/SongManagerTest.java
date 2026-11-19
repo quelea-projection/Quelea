@@ -210,4 +210,23 @@ public class SongManagerTest {
         Assertions.assertFalse(titles.contains("Corrupt"));
         Assertions.assertTrue(titles.contains("Mango song"));
     }
+
+    @Test
+    @Order(11)
+    @DisplayName("Songs with the same words but different themes are still listed once")
+    public void duplicateSongsWithDifferentThemes() throws Exception {
+        SongDisplayable first = song("Theme twins", "Verse 1\nsame words");
+        SongDisplayable second = song("Theme twins", "Verse 1\nsame words");
+        second.getTheme().setTextAlignment(1);
+        first.getSections()[0].setTheme(first.getTheme());
+        second.getSections()[0].setTheme(second.getTheme());
+        Assertions.assertNotEquals(first, second);
+        Assertions.assertEquals(0, first.compareTo(second));
+        Assertions.assertTrue(manager.addSong(first, false));
+        Assertions.assertTrue(manager.addSong(second, false));
+        Assertions.assertEquals(2, rows("Theme twins"));
+        Assertions.assertEquals(1, titles().stream().filter("Theme twins"::equals).count());
+        reload();
+        Assertions.assertEquals(1, titles().stream().filter("Theme twins"::equals).count());
+    }
 }

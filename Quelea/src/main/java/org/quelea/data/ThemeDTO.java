@@ -24,6 +24,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
@@ -234,21 +235,25 @@ public class ThemeDTO implements Serializable {
             return false;
         }
         final ThemeDTO other = (ThemeDTO) obj;
-        if (this.font != other.font && (this.font == null || !this.font.equals(other.font, ignoreFontSize))) {
-            return false;
-        }
-        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
-            return false;
-        }
-        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
-            return false;
-        }
-        if (!ignoreName) {
-            if (this.themeName != other.themeName && (this.themeName == null || !this.themeName.equals(other.themeName))) {
-                return false;
-            }
-        }
-        return true;
+        return fontsEqual(font, other.font, ignoreFontSize)
+                && Objects.equals(fontColor, other.fontColor)
+                && fontsEqual(translateFont, other.translateFont, ignoreFontSize)
+                && Objects.equals(translateFontColor, other.translateFontColor)
+                && Objects.equals(background, other.background)
+                && Objects.equals(textShadow, other.textShadow)
+                && Objects.equals(isFontBold, other.isFontBold)
+                && Objects.equals(isFontItalic, other.isFontItalic)
+                && Objects.equals(isTranslateFontBold, other.isTranslateFontBold)
+                && Objects.equals(isTranslateFontItalic, other.isTranslateFontItalic)
+                && textPosition == other.textPosition
+                && textAlignment == other.textAlignment
+                && (ignoreName || Objects.equals(themeName, other.themeName));
+    }
+
+    private static boolean fontsEqual(SerializableFont first, SerializableFont second, boolean ignoreSize) {
+        // SerializableFont compares family and size; the explicit bold and
+        // italic flags above determine how both the editor and renderer draw it.
+        return first == second || (first != null && first.equals(second, ignoreSize));
     }
 
     @Override
@@ -267,11 +272,10 @@ public class ThemeDTO implements Serializable {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.font != null ? this.font.hashCode() : 0);
-        hash = 67 * hash + (this.fontColor != null ? this.fontColor.hashCode() : 0);
-        hash = 67 * hash + (this.background != null ? this.background.hashCode() : 0);
-        return hash;
+        // Name and layout are mutable; exclude them so editing a theme does
+        // not change the hash of a song that already contains that theme.
+        return Objects.hash(font, fontColor, translateFont, translateFontColor, background,
+                textShadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic);
     }
 
     /**

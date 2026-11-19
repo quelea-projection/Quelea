@@ -80,7 +80,7 @@ public class ThemePanel extends BorderPane {
     private final ObservableValue<Boolean> showing;
     private final ThemeToolbar themeToolbar;
     private DisplayPositionSelector positionSelector;
-    private String saveHash = "";
+    private ThemeDTO savedTheme;
     private final Button confirmButton;
     private ComboBox<ThemeDTO> themeCombo;
 
@@ -216,29 +216,19 @@ public class ThemePanel extends BorderPane {
     }
 
     /**
-     * Determine if the save hash has changed since resetSaveHash() was last
-     * called.
+     * Determine if the theme has changed since resetSaveHash() was last called.
      * <p>
-     * @return true if the hash has changed, false otherwise.
+     * @return true if the theme has changed, false otherwise.
      */
     public boolean hashChanged() {
-        return !getSaveHash().equals(saveHash);
+        return savedTheme == null || !savedTheme.equals(getTheme());
     }
 
     /**
      * Reset the save hash to the current state of the panel.
      */
     public void resetSaveHash() {
-        saveHash = getSaveHash();
-    }
-
-    /**
-     * Get the current save hash.
-     *
-     * @return the current save hash.
-     */
-    private String getSaveHash() {
-        return Integer.toString(getTheme().hashCode());
+        savedTheme = getTheme();
     }
 
     /**

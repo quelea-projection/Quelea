@@ -9,7 +9,6 @@ import javafx.scene.text.Font;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.services.utils.QueleaProperties;
@@ -152,22 +151,13 @@ public class ThemeDTOPersistenceTest {
     }
 
     @Test
-    @Disabled("Video background equality ignores stretch")
     public void videoBackgroundEqualityDistinguishesDisplaySettings() {
-        // Theme-change detection uses background equality, so changing stretch
-        // can be missed. Include it in equality and hashCode
-        // together, after checking callers that depend on location-only equality.
         VideoBackground first = new VideoBackground("background.mp4", false);
         Assertions.assertNotEquals(first, new VideoBackground("background.mp4", true));
     }
 
     @Test
-    @Disabled("Theme equality ignores text alignment")
     public void themeEqualityDistinguishesTextAlignment() {
-        // Theme-change detection compares themes for equality. Ignoring layout
-        // makes a visible change appear unchanged. Review all visual fields in
-        // equals and hashCode together and distinguish callers that deliberately
-        // want a looser default-theme comparison.
         ThemeDTO first = theme("Same name");
         ThemeDTO second = theme("Same name");
         first.setTextAlignment(0);

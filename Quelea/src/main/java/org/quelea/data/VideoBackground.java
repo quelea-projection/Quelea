@@ -110,6 +110,7 @@ public class VideoBackground implements Background, Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 17 * hash + Objects.hashCode(this.vidLocation);
+        hash = 17 * hash + Boolean.hashCode(this.stretch);
         return hash;
     }
 
@@ -122,10 +123,7 @@ public class VideoBackground implements Background, Serializable {
             return false;
         }
         final VideoBackground other = (VideoBackground) obj;
-        if (!Objects.equals(this.vidLocation, other.vidLocation)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.vidLocation, other.vidLocation) && this.stretch == other.stretch;
     }
 
 }
