@@ -81,6 +81,7 @@ public class QueleaPropertyKeys {
     public static final String ooPathKey = "oo.path";
     public static final String usePpKey = "use.pp";
     public static final String ppPathKey = "pp.path";
+    public static final String ppRenderKey = "pp.render";
     public static final String recPathKey = "rec.path";
     public static final String downloadPathKey = "download.path";
     public static final String convertMp3Key = "convert.mp3";

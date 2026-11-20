@@ -1,4 +1,4 @@
-' Script to toggle black screen of the current presentation.
+' Script to get the state of the current slide show.
 ' Returns warning if PowerPoint is not running.
 ' @author Arvid
 
@@ -10,9 +10,9 @@ If Err.Number <> 0 Then
     WScript.Echo "PowerPoint is not running"
     Err.Clear             ' Clear the Error
 else
-        dim state
-        state = pptAppl.ActivePresentation.View.State
-	WScript.Echo state 'Returns 2 for normal and 3 for black, blank if not started
+    If pptAppl.SlideShowWindows.Count > 0 Then
+        WScript.Echo pptAppl.SlideShowWindows(1).View.State ' 3 = black; blank if no show is running
+    End If
 End If
 On Error Goto 0           ' Don't resume on Error
 

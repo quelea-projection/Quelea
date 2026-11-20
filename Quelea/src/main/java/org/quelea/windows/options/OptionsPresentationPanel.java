@@ -51,6 +51,7 @@ public class OptionsPresentationPanel {
     private StringProperty directoryChooserOOProperty;
     private BooleanProperty usePPProperty;
     private StringProperty directoryChooserPPProperty;
+    private BooleanProperty ppRenderProperty;
 
     /**
      * Create the options presentation panel.
@@ -64,6 +65,7 @@ public class OptionsPresentationPanel {
 
         usePPProperty = new SimpleBooleanProperty(QueleaProperties.get().getUsePP());
         directoryChooserPPProperty = new SimpleStringProperty(QueleaProperties.get().getPPPath());
+        ppRenderProperty = new SimpleBooleanProperty(QueleaProperties.get().getPPRender());
     }
 
     public Category getPresentationsTab() {
@@ -71,7 +73,19 @@ public class OptionsPresentationPanel {
                 new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
         bindings.put(directoryFieldOOField, useOOProperty.not());
 
-        if (!Utils.isLinux()) {
+        if (Utils.isMac()) {
+            StringField directoryFieldPPField = Field.ofStringType(directoryChooserPPProperty).render(
+                    new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
+            bindings.put(directoryFieldPPField, usePPProperty.not());
+
+            return Category.of(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"), QueleaIcon.PRESENTATION.create(),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("use.oo.label"), useOOProperty).customKey(useOoKey),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("oo.path"), directoryFieldOOField, directoryChooserOOProperty).customKey(ooPathKey),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("use.pp.label"), usePPProperty).customKey(usePpKey),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("pp.path"), directoryFieldPPField, directoryChooserPPProperty).customKey(ppPathKey),
+                    Setting.of(LabelGrabber.INSTANCE.getLabel("pp.render.label"), ppRenderProperty).customKey(ppRenderKey)
+            );
+        } else if (!Utils.isLinux()) {
             StringField directoryFieldPPField = Field.ofStringType(directoryChooserPPProperty).render(
                     new DirectorySelectorPreference(LabelGrabber.INSTANCE.getLabel("browse"), null));
             bindings.put(directoryFieldPPField, usePPProperty.not());
