@@ -23,6 +23,13 @@ public class CountdownTimesTest {
     }
 
     @Test
+    @DisplayName("Enormous durations are rejected without integer overflow")
+    public void excessiveDurationDoesNotOverflow() {
+        Assertions.assertEquals(-1, CountdownTimes.parseDuration("2147483647:00"));
+        Assertions.assertEquals(-1, CountdownTimes.parseDuration("71582789:00"));
+    }
+
+    @Test
     @DisplayName("Times of day are read in 24 and 12 hour form")
     public void timesOfDay() {
         Assertions.assertEquals(LocalTime.of(9, 30), CountdownTimes.parseTimeOfDay("09:30"));
@@ -58,6 +65,14 @@ public class CountdownTimesTest {
         Assertions.assertEquals(0, CountdownTimes.secondsUntil(target, target));
         Assertions.assertEquals(0, CountdownTimes.secondsUntil(target, LocalTime.of(10, 0)));
         Assertions.assertEquals(9000, CountdownTimes.secondsUntil(target, LocalTime.of(7, 0)));
+    }
+
+    @Test
+    @DisplayName("Any positive fraction of a second is rounded up")
+    public void secondsUntilRoundsSubMillisecondDurationsUp() {
+        LocalTime target = LocalTime.of(9, 30);
+        Assertions.assertEquals(1, CountdownTimes.secondsUntil(target, target.minusNanos(1)));
+        Assertions.assertEquals(2, CountdownTimes.secondsUntil(target, target.minusSeconds(1).minusNanos(1)));
     }
 
     @Test

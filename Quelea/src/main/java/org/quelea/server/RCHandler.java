@@ -317,7 +317,7 @@ public class RCHandler {
             response.append("<head><meta charset=\"UTF-8\"></head>");
             for (SongDisplayable sd : songs) {
                 response.append("<a href=\"/song/").append(sd.getID()).append("\">");
-                response.append(sd.getTitle()).append(" - ").append(sd.getAuthor());
+                response.append(Utils.escapeXML(sd.getTitle())).append(" - ").append(Utils.escapeXML(sd.getAuthor()));
                 response.append("</a>").append("<br/>");
             }
             response.append("</html>");

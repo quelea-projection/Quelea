@@ -81,8 +81,8 @@ public class SurvivorSongbookParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     private String getPageText(PDDocument document, PDFTextStripper stripper, int page) throws IOException {
-        stripper.setStartPage(page);
-        stripper.setEndPage(page);
+        stripper.setStartPage(page + 1);
+        stripper.setEndPage(page + 1);
         StringWriter textWriter = new StringWriter();
         stripper.writeText(document, textWriter);
         return textWriter.toString().replace("’", "'").replace("`", "'");

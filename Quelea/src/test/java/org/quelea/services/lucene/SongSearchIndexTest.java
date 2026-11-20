@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.QueleaProperties;
@@ -29,6 +30,40 @@ public class SongSearchIndexTest {
         Assertions.assertArrayEquals(new SongDisplayable[]{second}, index.filter("peace on", SearchIndex.FilterType.BODY));
         Assertions.assertEquals(2, index.filter("", SearchIndex.FilterType.TITLE).length);
         Assertions.assertEquals(0, index.filter("no-such-song", SearchIndex.FilterType.TITLE).length);
+    }
+
+    @Test
+    public void searchesSafelyWithPunctuationAndAccents() {
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable song = song(21, "Caf\u00e9 (Morning)", "Author", "Words");
+        index.add(song);
+        Assertions.assertArrayEquals(new SongDisplayable[]{song}, index.filter("Caf\u00e9 (Morning)", SearchIndex.FilterType.TITLE));
+        Assertions.assertEquals(1, index.filter("***", SearchIndex.FilterType.TITLE).length);
+    }
+
+    @Test
+    @Disabled("Decomposed Unicode accents are not matched consistently by the search analyzer")
+    public void searchesCanonicalUnicodeVariantsEqually() {
+        // Pasting visually identical titles in composed and decomposed Unicode
+        // form must find the same song, particularly on macOS. Normalize both
+        // indexed text and query to a consistent form before analysis.
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable song = song(21, "Caf\u00e9", "Author", "Words");
+        index.add(song);
+        Assertions.assertArrayEquals(new SongDisplayable[]{song}, index.filter("cafe\u0301", SearchIndex.FilterType.TITLE));
+    }
+
+    @Test
+    @Disabled("Tabs and newlines are removed instead of separating search words")
+    public void pastedWhitespaceBetweenWordsActsLikeASpace() {
+        // Pasted multi-line song titles and tabs should search for separate
+        // words, not join them into a new word. Normalize whitespace to spaces
+        // before stripping Lucene-special punctuation.
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable song = song(22, "Amazing Grace", "Author", "Words");
+        index.add(song);
+        Assertions.assertArrayEquals(new SongDisplayable[]{song}, index.filter("Amazing\nGrace", SearchIndex.FilterType.TITLE));
+        Assertions.assertArrayEquals(new SongDisplayable[]{song}, index.filter("Amazing\tGrace", SearchIndex.FilterType.TITLE));
     }
 
     @Test

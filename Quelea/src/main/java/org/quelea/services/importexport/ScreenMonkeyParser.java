@@ -65,6 +65,9 @@ public class ScreenMonkeyParser implements SongParser {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes(encoding)));
             Node root = doc.getElementsByTagName("Song").item(0);
+            if (root == null) {
+                return null;
+            }
             StringBuilder lyrics = new StringBuilder();
             String title = "Screen Money Song";
             String author = "";

@@ -9,6 +9,7 @@ import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -70,6 +71,39 @@ public class SchedulePersistenceTest {
             // Empty but structurally valid ZIP, as a truncated export might be.
         }
         Assertions.assertNull(Schedule.fromFile(broken.toFile()));
+    }
+
+    @Test
+    public void malformedScheduleXmlIsRejectedGracefully() throws Exception {
+        Path broken = directory.resolve("bad-xml.quelea");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(broken))) {
+            out.putNextEntry(new ZipEntry("schedule.xml"));
+            out.write("<schedule><song>".getBytes(StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        Assertions.assertNull(Schedule.fromFile(broken.toFile()));
+    }
+
+    @Test
+    @Disabled("A leading XML comment is mistaken for the schedule document element")
+    public void commentsBeforeScheduleRootDoNotHideItems() throws Exception {
+        // XML comments before the document element are legal. Parsing the
+        // first child instead of the document element silently loads an empty
+        // schedule, which users could then save over their original work.
+        // Use the document element after securing this parser against external
+        // entities, so an existing XXE issue is not exposed more broadly.
+        Path file = directory.resolve("commented.quelea");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(file))) {
+            out.putNextEntry(new ZipEntry("schedule.xml"));
+            String xml = "<?xml version=\"1.0\"?><!-- comment --><schedule>"
+                    + song("Included", "Words").getXML() + "</schedule>";
+            out.write(xml.getBytes(StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        Schedule loaded = Schedule.fromFile(file.toFile());
+        Assertions.assertNotNull(loaded);
+        Assertions.assertEquals(1, loaded.getSize());
+        Assertions.assertEquals("Included", ((SongDisplayable) loaded.getDisplayable(0)).getTitle());
     }
 
     @Test

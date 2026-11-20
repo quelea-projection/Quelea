@@ -27,4 +27,24 @@ class VideoUriTest {
         Assertions.assertEquals(stream.toString(), VideoUri.forGStreamer(stream).toString());
         Assertions.assertNull(VideoUri.forGStreamer(null));
     }
+
+    @Test
+    void fileUriConversionPreservesNetworkShareAndSupplementaryCharacters() {
+        URI original = URI.create("file://server/share/\u97f3\u697d/\ud83c\udfb5%20clip.mp4");
+        URI converted = VideoUri.forGStreamer(original);
+        Assertions.assertEquals("server", converted.getHost());
+        Assertions.assertEquals("/share/%E9%9F%B3%E6%A5%BD/%F0%9F%8E%B5%20clip.mp4", converted.getRawPath());
+        Assertions.assertEquals(original.getPath(), converted.getPath());
+        Assertions.assertEquals(converted, VideoUri.forGStreamer(converted));
+    }
+
+    @Test
+    void fileUriConversionPreservesQueryFragmentAndEscapedPercentSigns() {
+        URI original = URI.create("FILE:///tmp/r\u00e9sum\u00e9%25.mp4?x=%23#part");
+        URI converted = VideoUri.forGStreamer(original);
+        Assertions.assertEquals("/tmp/r%C3%A9sum%C3%A9%25.mp4", converted.getRawPath());
+        Assertions.assertEquals("x=%23", converted.getRawQuery());
+        Assertions.assertEquals("part", converted.getRawFragment());
+        Assertions.assertEquals(original.getPath(), converted.getPath());
+    }
 }

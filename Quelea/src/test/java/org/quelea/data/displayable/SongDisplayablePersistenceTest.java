@@ -1,9 +1,12 @@
 package org.quelea.data.displayable;
 
 import java.nio.file.Files;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -64,6 +67,23 @@ public class SongDisplayablePersistenceTest {
         Assertions.assertEquals(original, copy);
         Assertions.assertEquals(original.hashCode(), copy.hashCode());
         Assertions.assertTrue(songs.contains(copy));
+    }
+
+    @Test
+    @Disabled("Both song XML entry points mistake a leading comment for the root element")
+    public void xmlCommentBeforeRootDoesNotHideSongData() {
+        // Use the document element in both parseXML overloads, after disabling
+        // external XML entities. Otherwise song packs with comments can import
+        // blank songs, and changing the root alone can expose existing XXE.
+        SongDisplayable song = new SongDisplayable("Commented song", "Author");
+        song.setLyrics("Words");
+        String xml = "<?xml version=\"1.0\"?><!-- comment -->" + song.getXML();
+        SongDisplayable fromString = SongDisplayable.parseXML(xml);
+        SongDisplayable fromStream = SongDisplayable.parseXML(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertNotNull(fromString);
+        Assertions.assertNotNull(fromStream);
+        Assertions.assertEquals("Commented song", fromString.getTitle());
+        Assertions.assertEquals("Commented song", fromStream.getTitle());
     }
 
     @Test

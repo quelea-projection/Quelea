@@ -18,12 +18,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SearchIndex;
+import org.quelea.services.importexport.SongListExporter;
 import org.quelea.server.RCHandler;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.search.UniversalSearch;
@@ -321,5 +323,65 @@ public class SongManagerTest {
         SongDisplayable[] matches = manager.getIndex().filter(query, SearchIndex.FilterType.CCLI);
         Assertions.assertEquals(1, matches.length, query);
         Assertions.assertEquals(expectedId, matches[0].getID(), query);
+    }
+
+    @Test
+    @Order(13)
+    @Disabled("CSV exporter backslash-escapes quotes instead of doubling them")
+    @DisplayName("CSV song list exports quoted song names and authors correctly")
+    public void songListExportEscapesQuotes() throws Exception {
+        // A CSV reader interprets an embedded quote as the end of the field.
+        // CSV escapes quotes by doubling them, not with a backslash; without
+        // this, song titles/authors can be corrupted or split into columns.
+        SongDisplayable entry = new SongDisplayable.Builder("A \"quoted\" song", "Jane, Writer")
+                .lyrics("Verse 1\nWords").get();
+        Assertions.assertTrue(manager.addSong(entry, false));
+        var file = Files.createTempFile("quelea-song-list", ".csv");
+        new SongListExporter().exportToFile(file.toFile());
+        Assertions.assertTrue(Files.readString(file).contains("\"A \"\"quoted\"\" song\",\"Jane, Writer\""));
+    }
+
+    @Test
+    @Order(14)
+    @Disabled("CSV exporter does not quote CCLI numbers containing commas")
+    @DisplayName("CSV song list keeps a formatted CCLI number in one field")
+    public void songListExportQuotesCcliWithCommas() throws Exception {
+        // CCLI numbers can be stored with separators. Without CSV quoting a
+        // comma becomes an extra column and the number cannot be imported as
+        // one value. Apply the same CSV escaping to this field as the others.
+        SongDisplayable entry = song("Formatted CCLI", "Verse 1\nWords");
+        entry.setCcli("1,234,567");
+        Assertions.assertTrue(manager.addSong(entry, false));
+        var file = Files.createTempFile("quelea-song-list", ".csv");
+        new SongListExporter().exportToFile(file.toFile());
+        Assertions.assertTrue(Files.readString(file).contains("\"Formatted CCLI\",\"Some Author\",\"1,234,567\""));
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("Remote song results escape HTML in titles and authors")
+    public void remoteSongSearchEscapesHtml() throws Exception {
+        SongDisplayable entry = new SongDisplayable.Builder("Markup <b> & more", "Writer <tag>")
+                .lyrics("Verse 1\nWords").get();
+        Assertions.assertTrue(manager.addSong(entry, false));
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/search/", exchange -> {
+            byte[] response = RCHandler.databaseSearch(exchange).getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, response.length);
+            try (var body = exchange.getResponseBody()) {
+                body.write(response);
+            }
+        });
+        server.start();
+        try {
+            URI uri = URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/search/Markup");
+            String response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(uri).build(),
+                    HttpResponse.BodyHandlers.ofString()).body();
+            Assertions.assertTrue(response.contains("Markup &lt;b&gt; &amp; more"));
+            Assertions.assertTrue(response.contains("Writer &lt;tag&gt;"));
+            Assertions.assertFalse(response.contains("Markup <b>"));
+        } finally {
+            server.stop(0);
+        }
     }
 }

@@ -79,7 +79,7 @@ public final class CountdownTimes {
         try {
             int minutes = Integer.parseInt(parts[0]);
             int seconds = Integer.parseInt(parts[1]);
-            if (minutes < 0 || seconds < 0 || seconds >= 60) {
+            if (minutes < 0 || minutes > MAX_DURATION / 60 || seconds < 0 || seconds >= 60) {
                 return -1;
             }
             int total = minutes * 60 + seconds;
@@ -150,8 +150,7 @@ public final class CountdownTimes {
         if (left.isNegative() || left.isZero()) {
             return 0;
         }
-        long millis = left.toMillis();
-        return (int) ((millis + 999) / 1000);
+        return (int) (left.getSeconds() + (left.getNano() == 0 ? 0 : 1));
     }
 
     /**

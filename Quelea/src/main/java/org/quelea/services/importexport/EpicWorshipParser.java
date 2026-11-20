@@ -48,6 +48,9 @@ public class EpicWorshipParser implements SongParser {
         try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), Utils.getEncoding(location)))){
             String fullContents = bfr.readLine();
             String songsWhole = fullContents.substring(10, fullContents.length() - 2);
+            if (songsWhole.isBlank()) {
+                return ret;
+            }
             String[] songInfoList = songsWhole.split("\\},\\{");
             for (String songInfo : songInfoList) {
                 songInfo = songInfo.replace("{", "").replace("{", "");
