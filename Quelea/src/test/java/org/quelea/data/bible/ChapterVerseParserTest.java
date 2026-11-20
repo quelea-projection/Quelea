@@ -2,7 +2,6 @@ package org.quelea.data.bible;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Bible library chapter and verse input")
@@ -30,12 +29,14 @@ class ChapterVerseParserTest {
     }
 
     @Test
-    @Disabled("A malformed verse leaves a partially parsed chapter selected")
     void invalidVerseDoesNotSilentlySelectWholeChapter() {
-        // If part of an input cannot be parsed, the library must not display a
-        // whole chapter as if it were the user's intended verse. Parse into
-        // temporary values and publish them only after validating the full input.
-        Assertions.assertTrue(new ChapterVerseParser("3:abc").getFromChapter() < 0);
+        for (String input : new String[]{"3:abc", "3:16-4:bad", "bad-5", "3::2"}) {
+            ChapterVerseParser parser = new ChapterVerseParser(input);
+            Assertions.assertTrue(parser.getFromChapter() < 0, input);
+            Assertions.assertTrue(parser.getToChapter() < 0, input);
+            Assertions.assertEquals(0, parser.getFromVerse(), input);
+            Assertions.assertEquals(-1, parser.getToVerse(), input);
+        }
     }
 
     private void assertRange(String input, int chapter, int verse, int endChapter, int endVerse) {
