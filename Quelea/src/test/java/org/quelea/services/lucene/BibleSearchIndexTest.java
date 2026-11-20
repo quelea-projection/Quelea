@@ -38,6 +38,15 @@ public class BibleSearchIndexTest {
         Assertions.assertEquals(0, index.filter("", null).length);
     }
 
+    @Test
+    public void searchesComposedAndDecomposedTextWithPastedWhitespace() throws Exception {
+        BibleChapter chapter = chapter(1, "Cafe\u0301 and peace");
+        BibleSearchIndex index = new BibleSearchIndex();
+        index.add(chapter);
+        Assertions.assertArrayEquals(new BibleChapter[]{chapter}, index.filter("Caf\u00e9\nand", null));
+        Assertions.assertArrayEquals(new BibleChapter[]{chapter}, index.filter("Cafe\u0301\tand", null));
+    }
+
     private BibleChapter chapter(int number, String text) throws Exception {
         String xml = "<chapter cnumber=\"" + number + "\"><verse vnumber=\"1\">" + text + "</verse></chapter>";
         var document = DocumentBuilderFactory.newInstance().newDocumentBuilder()

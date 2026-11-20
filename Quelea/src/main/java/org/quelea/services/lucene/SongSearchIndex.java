@@ -133,14 +133,14 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     private Document createDocument(SongDisplayable song) {
         Document doc = createCcliDocument(song);
         if (song.getTitle() != null) {
-            doc.add(new TextField("title", PUNCTUATION.matcher(song.getTitle()).replaceAll(""), Field.Store.NO));
+            doc.add(new TextField("title", PUNCTUATION.matcher(SearchIndexUtils.normalize(song.getTitle())).replaceAll(""), Field.Store.NO));
         }
         if (song.getAuthor() != null) {
-            doc.add(new TextField("author", PUNCTUATION.matcher(song.getAuthor()).replaceAll(""), Field.Store.NO));
+            doc.add(new TextField("author", PUNCTUATION.matcher(SearchIndexUtils.normalize(song.getAuthor())).replaceAll(""), Field.Store.NO));
         }
         String lyrics = song.getLyrics(false, false, false);
         if (lyrics != null) {
-            doc.add(new TextField("lyrics", PUNCTUATION.matcher(lyrics).replaceAll(""), Field.Store.NO));
+            doc.add(new TextField("lyrics", PUNCTUATION.matcher(SearchIndexUtils.normalize(lyrics)).replaceAll(""), Field.Store.NO));
         }
         return doc;
     }
