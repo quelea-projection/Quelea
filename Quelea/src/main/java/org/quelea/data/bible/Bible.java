@@ -275,6 +275,22 @@ public final class Bible implements BibleInterface, Serializable {
         return books.toArray(new BibleBook[books.size()]);
     }
 
+    /**
+     * Get a book by its number. Bibles don't all hold the same books, so the
+     * same book can sit at different positions in different bibles.
+     * <p/>
+     * @param number the number of the book.
+     * @return the book, or null if this bible doesn't contain it.
+     */
+    public BibleBook getBookByNumber(int number) {
+        for (BibleBook book : books) {
+            if (book.getBookNumber() == number) {
+                return book;
+            }
+        }
+        return null;
+    }
+
     @Override
     public int getNum() {
         return -1;

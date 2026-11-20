@@ -117,6 +117,8 @@ public class QueleaPropertyKeys {
     public static final String stageShowClockKey = "stage.show.clock";
     public static final String use24hClockKey = "use.24h.clock";
     public static final String splitBibleVersesKey = "split.bible.verses";
+    public static final String alwaysUseMultiBibleKey = "always.use.multi.bible";
+    public static final String multiBibleVersionsKey = "multi.bible.versions";
     public static final String lyricWidthBoundKey = "lyric.width.bound";
     public static final String lyricHeightBoundKey = "lyric.height.bound";
     public static final String defaultSongDbUpdateKey = "default.song.db.update";

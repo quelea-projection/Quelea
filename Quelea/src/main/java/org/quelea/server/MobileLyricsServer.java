@@ -455,7 +455,7 @@ public class MobileLyricsServer {
                             break;
                         }
                     }
-                    String bible = response.substring(response.indexOf("\n") + 1);
+                    String bible = ((BiblePassage) lp.getDisplayable()).getPrimaryBibleName();
                     String book = response.substring(0, chapterPos);
                     int bookNumber = 0;
                     int bibleNumber = 0;
