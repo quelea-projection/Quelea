@@ -45,7 +45,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.layout.BackgroundFill;
@@ -60,6 +59,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SecureXml;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -320,8 +320,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.capo = song.capo;
         this.lastSearch = song.lastSearch;
         this.translations = song.translations;
-        this.count = song.count++;
+        this.count = song.count;
         this.sequence = song.sequence;
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -742,6 +743,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setSequence(String sequence) {
         this.sequence = sequence;
+        fontSizeCache.clear();
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -876,14 +879,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
     private void setSectionsInSequence(List<TextSection> sectionsWithoutSequence) {
         sectionsInSequence.clear();
-        if (sequence != null && !sequence.equals("")) {
-            for (String s : sequence.split(" ")) {
+        if (sequence != null && !sequence.isBlank()) {
+            for (String s : sequence.trim().split("\\s+")) {
                 for (TextSection ts : sectionsWithoutSequence) {
                     if (ts.getTitle() != null && !ts.getTitle().equals("")) {
-                        String[] title = ts.getTitle().split(" ");
+                        String[] title = ts.getTitle().trim().split("\\s+");
                         StringBuilder sb = new StringBuilder();
                         for (String t : title) {
-                            sb.append(t.charAt(0));
+                            if (!t.isEmpty()) {
+                                sb.append(t.charAt(0));
+                            }
                         }
                         if (sb.toString().equals(s)) {
                             sectionsInSequence.add(ts);
@@ -1067,7 +1072,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("<translation>");
         if (getCurrentTranslationLyrics() != null) {
             xml.append("<name>");
-            xml.append(currentTranslation);
+            xml.append(Utils.escapeXML(currentTranslation));
             xml.append("</name>");
             xml.append("<tlyrics>");
             xml.append(Utils.escapeXML(translations.get(currentTranslation)));
@@ -1098,12 +1103,26 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
     /**
      * Get the XML used to print the song (will be transferred via XSLT.)
+     * Chords are included if they were requested with setPrintChords().
      *
      * @param includeTranslations true if translations should be included in the
      *                            export, false otherwise.
      * @return the XML used to print the song.
      */
     public String getPrintXML(boolean includeTranslations) {
+        return getPrintXML(includeTranslations, printChords);
+    }
+
+    /**
+     * Get the XML used to print the song (will be transferred via XSLT.)
+     *
+     * @param includeTranslations true if translations should be included in the
+     *                            export, false otherwise.
+     * @param includeChords       true if the lines of chords should be
+     *                            printed, false otherwise.
+     * @return the XML used to print the song.
+     */
+    public String getPrintXML(boolean includeTranslations, boolean includeChords) {
         StringBuilder xml = new StringBuilder();
         Map<String, String> lyricsMap = new TreeMap<>((String o1, String o2) -> { //Ensure "Default" translation is first
             if (o1.equals("Default")) {
@@ -1114,17 +1133,11 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             return o1.compareTo(o2);
         });
-        StringBuilder mainLyrics = new StringBuilder();
-        for (TextSection section : sectionsInSequence) {
-            mainLyrics.append(section.getTitle()).append("\n");
-            for (String line : section.getText(printChords, false)) {
-                mainLyrics.append(Utils.escapeXML(line)).append("\n");
-            }
-            mainLyrics.append("\n");
-        }
-        lyricsMap.put("Default", mainLyrics.toString().trim());
+        lyricsMap.put("Default", getPrintLyrics(includeChords));
         if (includeTranslations) {
-            lyricsMap.putAll(getTranslations());
+            for (Entry<String, String> translation : getTranslations().entrySet()) {
+                lyricsMap.put(translation.getKey(), toPrintText(Utils.escapeXML(translation.getValue())));
+            }
         }
         xml.append("<songs>");
         for (Entry<String, String> lyricsEntry : lyricsMap.entrySet()) {
@@ -1132,19 +1145,46 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             xml.append("<title>");
             xml.append(Utils.escapeXML(title));
             if (!lyricsEntry.getKey().equals("Default")) {
-                xml.append(" (").append(lyricsEntry.getKey()).append(")");
+                xml.append(" (").append(Utils.escapeXML(lyricsEntry.getKey())).append(")");
             }
             xml.append("</title>");
             xml.append("<author>");
             xml.append(Utils.escapeXML(author));
             xml.append("</author>");
             xml.append("<lyrics>");
-            xml.append(lyricsEntry.getValue().replace(" ", Character.toString((char) 160)));
+            xml.append(lyricsEntry.getValue());
             xml.append("</lyrics>");
             xml.append("</song>");
         }
         xml.append("</songs>");
         return xml.toString();
+    }
+
+    /**
+     * Get the lyrics of this song (in sequence order, with section titles)
+     * ready to be placed in print XML: escaped, and with non-breaking spaces
+     * so chords stay above the right words.
+     *
+     * @param includeChords true if the lines of chords should be included.
+     * @return the lyrics as escaped XML text.
+     */
+    public String getPrintLyrics(boolean includeChords) {
+        StringBuilder lyrics = new StringBuilder();
+        for (TextSection section : sectionsInSequence) {
+            if (section.getTitle() != null) {
+                lyrics.append(Utils.escapeXML(section.getTitle()));
+            }
+            lyrics.append("\n");
+            for (String line : section.getText(includeChords, false)) {
+                lyrics.append(Utils.escapeXML(line)).append("\n");
+            }
+            lyrics.append("\n");
+        }
+        return toPrintText(lyrics.toString().trim());
+    }
+
+    private static String toPrintText(String text) {
+        return text.replace(" ", Character.toString((char) 160));
     }
 
     /**
@@ -1157,10 +1197,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public static SongDisplayable parseXML(String xml) {
         try {
             InputStream inputStream = new ByteArrayInputStream(xml.getBytes("UTF8"));
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getFirstChild(), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
@@ -1175,10 +1214,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public static SongDisplayable parseXML(InputStream inputStream) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getChildNodes().item(0), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't parse the schedule", ex);
             return null;
@@ -1317,7 +1355,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         hash = 29 * hash + (this.author != null ? this.author.hashCode() : 0);
         hash = 29 * hash + (this.sectionsWithoutSequence != null ? this.sectionsWithoutSequence.hashCode() : 0);
         hash = 29 * hash + (this.theme != null ? this.theme.hashCode() : 0);
-        hash = hash + count;
         return hash;
     }
 

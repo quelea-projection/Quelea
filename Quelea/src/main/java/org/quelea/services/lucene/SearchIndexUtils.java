@@ -40,6 +40,8 @@ public class SearchIndexUtils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Pattern ACCENTS = Pattern.compile("\\p{M}");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern QUERY_PUNCTUATION = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS);
 
     /**
      * Don't make me...
@@ -74,6 +76,10 @@ public class SearchIndexUtils {
         return ACCENTS.matcher(Normalizer.normalize(text, Normalizer.Form.NFD)).replaceAll("").toLowerCase(Locale.ROOT);
     }
 
+    static String normalize(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFC);
+    }
+
     /**
      * Sanitise the given query so it's "lucene-safe". Make sure it's what we
      * want as well - treat as a phrase with a partial match for the last word.
@@ -82,7 +88,8 @@ public class SearchIndexUtils {
      * @return the sanitised query.
      */
     public static String makeLuceneQuery(String query) {
-        query = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(query).replaceAll("");
+        query = WHITESPACE.matcher(normalize(query)).replaceAll(" ");
+        query = QUERY_PUNCTUATION.matcher(query).replaceAll("");
 //        query = QueryParserUtil.escape(query);
         query = query.trim();
         if(query.isEmpty()) {

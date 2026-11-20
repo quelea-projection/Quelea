@@ -67,6 +67,7 @@ public class Notice {
     public void copyAttributes(Notice other) {
         this.text = other.text;
         this.times = other.times;
+        this.originalDuration = other.originalDuration;
         this.color = other.color;
         this.font = other.font;
     }

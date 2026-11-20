@@ -19,7 +19,12 @@ package org.quelea.data;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
@@ -230,21 +235,25 @@ public class ThemeDTO implements Serializable {
             return false;
         }
         final ThemeDTO other = (ThemeDTO) obj;
-        if (this.font != other.font && (this.font == null || !this.font.equals(other.font, ignoreFontSize))) {
-            return false;
-        }
-        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
-            return false;
-        }
-        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
-            return false;
-        }
-        if (!ignoreName) {
-            if (this.themeName != other.themeName && (this.themeName == null || !this.themeName.equals(other.themeName))) {
-                return false;
-            }
-        }
-        return true;
+        return fontsEqual(font, other.font, ignoreFontSize)
+                && Objects.equals(fontColor, other.fontColor)
+                && fontsEqual(translateFont, other.translateFont, ignoreFontSize)
+                && Objects.equals(translateFontColor, other.translateFontColor)
+                && Objects.equals(background, other.background)
+                && Objects.equals(textShadow, other.textShadow)
+                && Objects.equals(isFontBold, other.isFontBold)
+                && Objects.equals(isFontItalic, other.isFontItalic)
+                && Objects.equals(isTranslateFontBold, other.isTranslateFontBold)
+                && Objects.equals(isTranslateFontItalic, other.isTranslateFontItalic)
+                && textPosition == other.textPosition
+                && textAlignment == other.textAlignment
+                && (ignoreName || Objects.equals(themeName, other.themeName));
+    }
+
+    private static boolean fontsEqual(SerializableFont first, SerializableFont second, boolean ignoreSize) {
+        // SerializableFont compares family and size; the explicit bold and
+        // italic flags above determine how both the editor and renderer draw it.
+        return first == second || (first != null && first.equals(second, ignoreSize));
     }
 
     @Override
@@ -263,11 +272,10 @@ public class ThemeDTO implements Serializable {
      */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.font != null ? this.font.hashCode() : 0);
-        hash = 67 * hash + (this.fontColor != null ? this.fontColor.hashCode() : 0);
-        hash = 67 * hash + (this.background != null ? this.background.hashCode() : 0);
-        return hash;
+        // Name and layout are mutable; exclude them so editing a theme does
+        // not change the hash of a song that already contains that theme.
+        return Objects.hash(font, fontColor, translateFont, translateFontColor, background,
+                textShadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic);
     }
 
     /**
@@ -279,11 +287,9 @@ public class ThemeDTO implements Serializable {
         String backgroundColor = "";
         String backgroundVideo = "";
         String backgroundImage = "";
-        double vidHue = 0;
         boolean vidStretch = false;
         if (background instanceof VideoBackground) {
             backgroundVideo = background.getString();
-            vidHue = ((VideoBackground) background).getHue();
             vidStretch = ((VideoBackground) background).getStretch();
         } else if (background instanceof ImageBackground) {
             backgroundImage = background.getString();
@@ -293,7 +299,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, vidStretch, textPosition, textAlignment);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidStretch, textPosition, textAlignment);
         return theme;
     }
 
@@ -310,7 +316,7 @@ public class ThemeDTO implements Serializable {
         } else if (!theme.getBackgroundimage().isEmpty()) {
             background = new ImageBackground(theme.getBackgroundimage());
         } else if (!theme.getBackgroundvid().isEmpty()) {
-            background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoHue(), theme.getVideoStretch());
+            background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoStretch());
         } else {
             background = new ColourBackground(Color.BLACK);
         }
@@ -340,7 +346,18 @@ public class ThemeDTO implements Serializable {
         ret.append("$fontcolour:").append(fontColor.toString());
         ret.append("$translatefontcolour:").append(translateFontColor.toString());
         if (!themeName.isEmpty()) {
-            ret.append("$themename:").append(themeName);
+            int dollar = themeName.indexOf('$');
+            if (dollar < 0) {
+                ret.append("$themename:").append(themeName);
+            } else {
+                // Older readers ignore the encoded field and can still show
+                // the part of the name before the first delimiter.
+                if (dollar > 0) {
+                    ret.append("$themename:").append(themeName, 0, dollar);
+                }
+                ret.append("$themename64:").append(Base64.getEncoder()
+                        .encodeToString(themeName.getBytes(StandardCharsets.UTF_8)));
+            }
         }
         ret.append("$isFontBold:").append(isFontBold);
         ret.append("$isFontItalic:").append(isFontItalic);
@@ -348,7 +365,6 @@ public class ThemeDTO implements Serializable {
         ret.append("$isTranslateFontItalic:").append(isTranslateFontItalic);
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
-            ret.append("$vidhue:").append(((VideoBackground) background).getHue());
             ret.append("$vidstretch:").append(((VideoBackground) background).getStretch());
         } else if (background instanceof ImageBackground) {
             ret.append("$backgroundimage:").append(((ImageBackground) background).getString());
@@ -392,13 +408,13 @@ public class ThemeDTO implements Serializable {
         String backgroundvid = "";
         String backgroundimage = "";
         String themeName = "";
+        String encodedThemeName = null;
         String shadowColor = "";
         String shadowRadius = "2";
         String shadowSpread = "0";
         String shadowUse = "true";
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
-        String vidHue = "0";
         String vidStretch = "false";
         String textPosition = "-1";
         String textAlignment = "0";
@@ -406,7 +422,7 @@ public class ThemeDTO implements Serializable {
             if (!part.contains(":")) {
                 continue;
             }
-            String[] parts = part.split(":");
+            String[] parts = part.split(":", 2);
             if (parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
             } else if (parts[0].equalsIgnoreCase("fontcolour")) {
@@ -441,6 +457,8 @@ public class ThemeDTO implements Serializable {
                 }
             } else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
+            } else if (parts[0].equalsIgnoreCase("themename64")) {
+                encodedThemeName = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowradius")) {
@@ -449,8 +467,6 @@ public class ThemeDTO implements Serializable {
                 shadowSpread = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowuse")) {
                 shadowUse = parts[1];
-            } else if (parts[0].equalsIgnoreCase("vidhue")) {
-                vidHue = parts[1];
             } else if (parts[0].equalsIgnoreCase("vidstretch")) {
                 vidStretch = parts[1];
             } else if (parts[0].equalsIgnoreCase("textposition")) {
@@ -461,6 +477,14 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
+            }
+        }
+        if (encodedThemeName != null) {
+            try {
+                byte[] bytes = Base64.getDecoder().decode(encodedThemeName);
+                themeName = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes)).toString();
+            } catch (IllegalArgumentException | CharacterCodingException ex) {
+                LOGGER.log(Level.WARNING, "Invalid encoded theme name; using legacy name", ex);
             }
         }
         Font sysFont = Font.font(fontname,
@@ -479,7 +503,7 @@ public class ThemeDTO implements Serializable {
         } else if (!backgroundimage.trim().isEmpty()) {
             background = new ImageBackground(backgroundimage);
         } else if (!backgroundvid.trim().isEmpty()) {
-            background = new VideoBackground(backgroundvid, Double.parseDouble(vidHue), Boolean.parseBoolean(vidStretch));
+            background = new VideoBackground(backgroundvid, Boolean.parseBoolean(vidStretch));
         } else {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             background = ThemeDTO.DEFAULT_BACKGROUND;

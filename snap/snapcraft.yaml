@@ -1,6 +1,6 @@
 name: quelea
 version: '2027.0'
-base: core20
+base: core26
 summary: Church projection software
 description: |
   Quelea is a free and open source software application that projects
@@ -10,17 +10,35 @@ issues: https://github.com/quelea-projection/Quelea/issues
 license: GPL-3.0
 
 environment:
-    JAVA_HOME: $SNAP/app/jvm
-    PATH: $SNAP/app/jvm/bin:$PATH
-    
-architectures:
-  - build-on: [amd64]
+  JAVA_HOME: $SNAP/app/jvm
+  PATH: $SNAP/app/jvm/bin:$PATH
+
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
 
 apps:
   quelea:
     command: app/launch.sh
     command-chain: [bin/desktop-launch]
-    plugs: [home, mount-observe, network-control, network, network-bind, x11, wayland, unity7, opengl, optical-drive, alsa, pulseaudio, desktop, desktop-legacy, removable-media, gsettings, account-control]
+    plugs:
+      - home
+      - mount-observe
+      - network-control
+      - network
+      - network-bind
+      - x11
+      - wayland
+      - opengl
+      - optical-drive
+      - alsa
+      - audio-playback
+      - desktop
+      - desktop-legacy
+      - removable-media
+      - gsettings
+      - account-control
 
 parts:
   desktop-gtk3:
@@ -28,55 +46,96 @@ parts:
     source-type: git
     source-subdir: gtk
     plugin: make
-    make-parameters: [ "FLAVOR=gtk3" ]
+    make-parameters: ["FLAVOR=gtk3"]
     build-packages:
       - libgtk-3-dev
     stage-packages:
       - libxkbcommon0  # XKB_CONFIG_ROOT
-      - ttf-ubuntu-font-family
+      - fonts-ubuntu
       - dmz-cursor-theme
-      - light-themes
       - adwaita-icon-theme
-      - gnome-themes-standard
       - shared-mime-info
-      - libgtk-3-0
-      - libgdk-pixbuf2.0-0
+      - libgtk-3-0t64
+      - libgdk-pixbuf-2.0-0
       - libglib2.0-bin
       - libgtk-3-bin
-      - unity-gtk3-module
-      - libappindicator3-1
+      - libayatana-appindicator3-1
       - locales-all
       - xdg-user-dirs
       - ibus-gtk3
       - libibus-1.0-5
+
   quelea:
     plugin: nil
     source: Quelea
-    build-packages: [unzip, wget]
-    stage-packages: [libgdk-pixbuf2.0-bin, libxext6, libxrender1, libxtst6, libxi6, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav, gstreamer1.0-tools, gstreamer1.0-x, gstreamer1.0-alsa, gstreamer1.0-gl, gstreamer1.0-gtk3, gstreamer1.0-qt5, gstreamer1.0-pulseaudio, zlib1g, zlib1g-dev]
+    after: [desktop-gtk3]
+    build-packages:
+      - unzip
+      - wget
+      - zlib1g-dev
+      - shared-mime-info
+    stage-packages:
+      - libgdk-pixbuf2.0-bin
+      - libxext6
+      - libxrender1
+      - libxtst6
+      - libxi6
+      - gstreamer1.0-plugins-base
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-plugins-bad
+      - gstreamer1.0-plugins-ugly
+      - gstreamer1.0-libav
+      - gstreamer1.0-tools
+      - gstreamer1.0-x
+      - gstreamer1.0-alsa
+      - gstreamer1.0-gl
+      - gstreamer1.0-gtk3
+      - gstreamer1.0-pulseaudio
+      - zlib1g
     override-build: |
+      rm -rf jdk jre gradle-9.9.1
+      mkdir -p jdk jre
+
       wget -O jdk.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jdk25.0.0-linux_x64.tar.gz
-      mkdir jdk
       tar -xf jdk.tar.gz -C jdk --strip-components 1
 
-      wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.2.1-bin.zip
-      unzip gradle.zip
+      wget -O gradle.zip https://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+      unzip -q gradle.zip
 
-      PATH=$PATH:$(pwd)/jdk/bin:$(pwd)/gradle-9.2.1/bin
-      JAVA_HOME=$(pwd)/jdk
+      export JAVA_HOME="$(pwd)/jdk"
+      export PATH="$JAVA_HOME/bin:$(pwd)/gradle-9.9.1/bin:$PATH"
 
-      gradle -Djava.net.useSystemProxies=true -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
+      GRADLE_PROXY_OPTS=""
+      if [ -n "${http_proxy:-}" ]; then
+        HTTP_PROXY_HOST=$(echo "$http_proxy" | sed 's|^https\?://||; s|[:/].*||')
+        HTTP_PROXY_PORT=$(echo "$http_proxy" | sed -n 's|^https\?://[^:]*:\([0-9][0-9]*\).*|\1|p')
+        [ -n "$HTTP_PROXY_HOST" ] && GRADLE_PROXY_OPTS="$GRADLE_PROXY_OPTS -Dhttp.proxyHost=$HTTP_PROXY_HOST"
+        [ -n "$HTTP_PROXY_PORT" ] && GRADLE_PROXY_OPTS="$GRADLE_PROXY_OPTS -Dhttp.proxyPort=$HTTP_PROXY_PORT"
+      fi
+      if [ -n "${https_proxy:-}" ]; then
+        HTTPS_PROXY_HOST=$(echo "$https_proxy" | sed 's|^https\?://||; s|[:/].*||')
+        HTTPS_PROXY_PORT=$(echo "$https_proxy" | sed -n 's|^https\?://[^:]*:\([0-9][0-9]*\).*|\1|p')
+        [ -n "$HTTPS_PROXY_HOST" ] && GRADLE_PROXY_OPTS="$GRADLE_PROXY_OPTS -Dhttps.proxyHost=$HTTPS_PROXY_HOST"
+        [ -n "$HTTPS_PROXY_PORT" ] && GRADLE_PROXY_OPTS="$GRADLE_PROXY_OPTS -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
+      fi
+
+      gradle --no-daemon $GRADLE_PROXY_OPTS -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
 
       wget -O jre.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
-      mkdir jre 
       tar -xf jre.tar.gz -C jre --strip-components 1
 
-      mkdir -p $SNAPCRAFT_STAGE/app/jvm
-      cp -a dist/. $SNAPCRAFT_STAGE/app
-      cp -a jre/. $SNAPCRAFT_STAGE/app/jvm
+      mkdir -p "$CRAFT_PART_INSTALL/app/jvm"
+      cp -a dist/. "$CRAFT_PART_INSTALL/app/"
+      cp -a jre/. "$CRAFT_PART_INSTALL/app/jvm/"
+      chmod +x "$CRAFT_PART_INSTALL/app/launch.sh"
     override-prime: |
-      snapcraftctl prime
-      mkdir app
-      cp -a $SNAPCRAFT_STAGE/app/. app/.
-      chmod +x $SNAPCRAFT_PRIME/app/launch.sh
-      glib-compile-schemas usr/share/glib-2.0/schemas/
+      craftctl default
+      if [ ! -d "$CRAFT_PRIME/usr/share/mime/packages" ]; then
+        echo "Error: packaged MIME type definitions are missing." >&2
+        exit 1
+      fi
+      XDG_DATA_HOME="$CRAFT_PRIME/usr/share" XDG_DATA_DIRS="$CRAFT_PRIME/usr/share" \
+        update-mime-database "$CRAFT_PRIME/usr/share/mime"
+      if [ -d "$CRAFT_PRIME/usr/share/glib-2.0/schemas" ]; then
+        glib-compile-schemas "$CRAFT_PRIME/usr/share/glib-2.0/schemas/"
+      fi

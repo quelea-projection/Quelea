@@ -191,7 +191,7 @@ public class RCHandler {
     }
 
     public static void logout(String ip) {
-        devices.remove(ip);
+        devices.removeIf(device -> java.util.Objects.equals(device, ip));
     }
 
     public static void logAllOut() {
@@ -303,6 +303,13 @@ public class RCHandler {
 
                 SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.AUTHOR);
                 songs.addAll(Arrays.asList(authorSongs));
+
+                SongDisplayable[] ccliSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.CCLI);
+                for (SongDisplayable song : ccliSongs) {
+                    if (songs.add(song)) {
+                        song.setLastSearch(null);
+                    }
+                }
             }
 
             StringBuilder response = new StringBuilder();
@@ -310,7 +317,7 @@ public class RCHandler {
             response.append("<head><meta charset=\"UTF-8\"></head>");
             for (SongDisplayable sd : songs) {
                 response.append("<a href=\"/song/").append(sd.getID()).append("\">");
-                response.append(sd.getTitle()).append(" - ").append(sd.getAuthor());
+                response.append(Utils.escapeXML(sd.getTitle())).append(" - ").append(Utils.escapeXML(sd.getAuthor()));
                 response.append("</a>").append("<br/>");
             }
             response.append("</html>");

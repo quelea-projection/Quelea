@@ -44,6 +44,14 @@ public final class FxTestSupport {
         Assumptions.assumeTrue(available, "JavaFX couldn't be started");
     }
 
+    /** Start JavaFX and initialize properties for tests that need both. */
+    public static synchronized void assumeAvailable() throws Exception {
+        if (QueleaProperties.get() == null) {
+            QueleaProperties.init(Files.createTempDirectory("quelea-fx-test").toString());
+        }
+        assumeFxAvailable();
+    }
+
     /**
      * Run the given code on the FX thread and wait for its result.
      */

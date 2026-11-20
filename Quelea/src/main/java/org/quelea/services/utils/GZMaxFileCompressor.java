@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.zip.Deflater;
 
 /**
@@ -38,6 +39,14 @@ public class GZMaxFileCompressor {
      * @return true if the operation completed successfully, false otherwise.
      */
     public boolean compress(File input, File output) {
+        try {
+            if (output.exists() && Files.isSameFile(input.toPath(), output.toPath())) {
+                return false;
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
         try(FileInputStream inputStream = new FileInputStream(input);
                 GZipOutputStreamEx outputStream = new GZipOutputStreamEx(new FileOutputStream(output), 1024, Deflater.BEST_COMPRESSION)) {
             byte[] buf = new byte[1024];

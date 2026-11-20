@@ -55,7 +55,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
         node.setMaxWidth(Double.MAX_VALUE);
         node.getStyleClass().add("simple-select-control");
 
-        comboBox = new ComboBox<String>(field.getItems());
+        comboBox = new ComboBox<>(field.itemsProperty().get());
 
         comboBox.getSelectionModel().select(field.getItems().indexOf(field.getSelection()));
     }
@@ -95,7 +95,7 @@ public class DefaultBibleSelector extends SimpleControl<SingleSelectionField<Str
         super.setupValueChangedListeners();
 
         field.itemsProperty().addListener(
-                (observable, oldValue, newValue) -> comboBox.setItems(field.getItems())
+                (observable, oldValue, newValue) -> comboBox.setItems(newValue)
         );
 
         field.selectionProperty().addListener((observable, oldValue, newValue) -> {

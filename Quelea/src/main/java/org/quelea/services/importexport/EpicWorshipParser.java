@@ -24,8 +24,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.Utils;
@@ -38,45 +41,30 @@ import org.quelea.windows.main.StatusPanel;
  */
 public class EpicWorshipParser implements SongParser {
 
-    Pattern NAME = Pattern.compile("\"name\":\"?.+?\"(?=,)");
-    Pattern AUTHOR = Pattern.compile("\"author\":\".+?\"(?=,)");
-    Pattern LYRICS = Pattern.compile("\"content\":\"?.+?\"");
-
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         ArrayList<SongDisplayable> ret = new ArrayList<>();
         try (BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(location), Utils.getEncoding(location)))){
-            String fullContents = bfr.readLine();
-            String songsWhole = fullContents.substring(10, fullContents.length() - 2);
-            String[] songInfoList = songsWhole.split("\\},\\{");
-            for (String songInfo : songInfoList) {
-                songInfo = songInfo.replace("{", "").replace("{", "");
-                Matcher m1 = NAME.matcher(songInfo);
-                String name = "";
-                String author = "";
-                String lyrics = "";
-                if (m1.find()) {
-                    name = m1.group(0);
-                    name = format(name);
+            JsonElement root = JsonParser.parseReader(bfr);
+            if (!root.isJsonObject() || !root.getAsJsonObject().has("songs")
+                    || !root.getAsJsonObject().get("songs").isJsonArray()) {
+                throw new IOException("EpicWorship song pack must contain a songs array");
+            }
+            JsonArray songs = root.getAsJsonObject().getAsJsonArray("songs");
+            for (JsonElement entry : songs) {
+                if (!entry.isJsonObject()) {
+                    throw new IOException("EpicWorship song pack contains a non-object song");
                 }
-
-                Matcher m2 = AUTHOR.matcher(songInfo);
-                if (m2.find()) {
-                    author = m2.group(0);
-                    author = format(author);
-                }
-
-                Matcher m3 = LYRICS.matcher(songInfo);
-                if (m3.find()) {
-                    lyrics = m3.group(0);
-                    lyrics = format(lyrics);
-                }
+                JsonObject songInfo = entry.getAsJsonObject();
+                String name = text(songInfo, "name");
+                String author = text(songInfo, "author");
+                String lyrics = text(songInfo, "content");
 
                 SongDisplayable s = new SongDisplayable(name, author);
 
                 ArrayList<String> section = new ArrayList<>();
                 int sectionCount = 0;
-                String[] lines = lyrics.split("\\\\n");
+                String[] lines = lyrics.replace("\r\n", "\n").replace('\r', '\n').split("\n");
                 for (String line : lines) {
                     if (!line.isEmpty()) {
                         section.add(line);
@@ -92,14 +80,15 @@ public class EpicWorshipParser implements SongParser {
 
                 ret.add(s);
             }
+        } catch (JsonParseException ex) {
+            throw new IOException("Invalid EpicWorship song pack", ex);
         }
         return ret;
     }
 
-    private String format(String s) {
-        String n;
-        n = s.split(":", 2)[1];
-        n = n.replace("\"", "");
-        return n;
+    private String text(JsonObject song, String field) {
+        JsonElement value = song.get(field);
+        return value != null && value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()
+                ? value.getAsString() : "";
     }
 }

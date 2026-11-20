@@ -21,37 +21,47 @@ public class UnicodeReader extends Reader {
      */
     public UnicodeReader(InputStream in, String defaultEncoding) throws IOException {
         byte[] bom = new byte[BOM_SIZE];
-        String encoding;
-        int unread;
+        String encoding = defaultEncoding;
+        int bomLength = 0;
         PushbackInputStream pushbackStream = new PushbackInputStream(in, BOM_SIZE);
-        int n = pushbackStream.read(bom, 0, bom.length);
-
-        // Read ahead four bytes and check for BOM marks.
-        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
-            encoding = "UTF-8";
-            unread = n - 3;
-        } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
-            encoding = "UTF-16BE";
-            unread = n - 2;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
-            encoding = "UTF-16LE";
-            unread = n - 2;
-        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
-            encoding = "UTF-32BE";
-            unread = n - 4;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
-            encoding = "UTF-32LE";
-            unread = n - 4;
-        } else {
-            encoding = defaultEncoding;
-            unread = n;
+        int n = 0;
+        while (n < bom.length) {
+            int count = pushbackStream.read(bom, n, bom.length - n);
+            if (count < 0) {
+                break;
+            }
+            if (count == 0) {
+                int next = pushbackStream.read();
+                if (next < 0) {
+                    break;
+                }
+                bom[n++] = (byte) next;
+            } else {
+                n += count;
+            }
         }
 
-        // Unread bytes if necessary and skip BOM marks.
-        if (unread > 0) {
-            pushbackStream.unread(bom, (n - unread), unread);
-        } else if (unread < -1) {
-            pushbackStream.unread(bom, 0, 0);
+        // Check four-byte marks before UTF-16LE, whose prefix is shared by UTF-32LE.
+        if (n >= 4 && bom[0] == 0 && bom[1] == 0 && bom[2] == (byte) 0xFE && bom[3] == (byte) 0xFF) {
+            encoding = "UTF-32BE";
+            bomLength = 4;
+        } else if (n >= 4 && bom[0] == (byte) 0xFF && bom[1] == (byte) 0xFE && bom[2] == 0 && bom[3] == 0) {
+            encoding = "UTF-32LE";
+            bomLength = 4;
+        } else if (n >= 3 && bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF) {
+            encoding = "UTF-8";
+            bomLength = 3;
+        } else if (n >= 2 && bom[0] == (byte) 0xFE && bom[1] == (byte) 0xFF) {
+            encoding = "UTF-16BE";
+            bomLength = 2;
+        } else if (n >= 2 && bom[0] == (byte) 0xFF && bom[1] == (byte) 0xFE) {
+            encoding = "UTF-16LE";
+            bomLength = 2;
+        }
+
+        // Put back all bytes after the BOM, or all bytes if no BOM was found.
+        if (n > bomLength) {
+            pushbackStream.unread(bom, bomLength, n - bomLength);
         }
 
         // Use given encoding.

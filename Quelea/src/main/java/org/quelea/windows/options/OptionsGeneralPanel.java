@@ -68,7 +68,7 @@ public class OptionsGeneralPanel {
     private ObservableList<String> applicationThemeList;
     private ObjectProperty<String> dbSongPreviewProperty;
     private ObservableList<String> dbSongPreviewList;
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private StringProperty churchCcliNumProperty;
     private BooleanProperty useDefaultTranslationProperty;
     private StringProperty defaultTranslationNameProperty;
@@ -79,7 +79,7 @@ public class OptionsGeneralPanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsGeneralPanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsGeneralPanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         showSmallSongProperty = new SimpleBooleanProperty(QueleaProperties.get().getSmallSongTextShow());
         smallSongSizeSpinnerProperty = new SimpleDoubleProperty(QueleaProperties.get().getSmallSongTextSize());

@@ -104,7 +104,7 @@ public class LogoOptionsGroupTest {
 
         /** What PreferencesDialog's OK button does. */
         void ok() {
-            prefs.saveSettings();
+            PreferencesDialog.savePreferences(prefs);
             logo().apply();
         }
 

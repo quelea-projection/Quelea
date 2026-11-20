@@ -96,10 +96,10 @@ public class PdfSlide {
         double factor;
         if (originalImage.getWidth() > originalImage.getHeight()) {
             factor = ((double) originalImage.getHeight() / (double) originalImage.getWidth());
-            finalh = (int) (finalw * factor);
+            finalh = Math.max(1, (int) (finalw * factor));
         } else {
             factor = ((double) originalImage.getWidth() / (double) originalImage.getHeight());
-            finalw = (int) (finalh * factor);
+            finalw = Math.max(1, (int) (finalh * factor));
         }
 
         BufferedImage scaledImage = new BufferedImage(finalw, finalh, BufferedImage.TYPE_INT_RGB);

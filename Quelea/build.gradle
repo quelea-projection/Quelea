@@ -1,16 +1,26 @@
+import edu.sc.seis.launch4j.Launch4jPlugin
+import edu.sc.seis.launch4j.Launch4jPluginExtension
+import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
+import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.internal.file.FileOperations
+import javax.inject.Inject
+import java.lang.module.ModuleFinder
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
 buildscript {
     dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:4.0.0'
         classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.53.0"
     }
 }
 
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'edu.sc.seis.launch4j' version '4.0.0'
-    id 'com.github.ben-manes.versions' version '0.53.0'
+    id 'io.github.ben-manes.versions' version '0.67.0'
     id 'com.bmuschko.izpack' version '3.2'
 }
 
@@ -23,7 +33,7 @@ configurations.all {
 repositories {
     mavenCentral()
     maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        url = 'https://oss.sonatype.org/content/repositories/snapshots/'
         content {
             includeGroup 'org.quelea'
         }
@@ -33,8 +43,12 @@ repositories {
     }
 }
 
+// Launch4j 4.0.0 uses the deprecated Configuration.setVisible API when applied.
+// Keep its task implementation but configure it without that obsolete call.
+apply plugin: QueleaLaunch4jPlugin
+
 javafx {
-    version = "25"
+    version = "25.0.5.1"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
 
@@ -72,12 +86,19 @@ compileJava   {
 clean.finalizedBy(removeDist)
 compileJava.finalizedBy(dependencyUpdates)
 
+// Keep dependency updates in their normal report rather than treating them as build problems.
+tasks.named('dependencyUpdates') {
+    outputFormatter = 'plain'
+}
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ext.mainClass = 'org.quelea.windows.main.MainStub'
+// JavaFX's graphics and web modules use JNI; leave classpath code unchanged.
+ext.nativeAccessJvmArg = '--enable-native-access=javafx.graphics,javafx.web'
 
 application {
     mainClass = 'org.quelea.windows.main.MainStub'
-    applicationDefaultJvmArgs = ["--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED"]
+    applicationDefaultJvmArgs = [nativeAccessJvmArg, "--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED"]
 }
 
 tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) { //Launch4j
@@ -87,15 +108,40 @@ tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTa
     icon = "../../icons/logo.ico"
     copyright = "GPLv3"
     bundledJrePath = "winjre64"
-    jvmOptions = ["-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "--add-opens java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens java.base/java.lang=ALL-UNNAMED", "--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
+    jvmOptions = [nativeAccessJvmArg, "-Dfile.encoding=UTF-8", "-Dprism.dirtyopts=false", "--add-opens java.base/java.nio=ALL-UNNAMED", "-Dglass.accessible.force=false", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED", "--add-exports=javafx.graphics/com.sun.javafx.css=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED", "--add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED", "--add-opens java.base/java.lang=ALL-UNNAMED", "--add-opens javafx.controls/javafx.scene.control=ALL-UNNAMED"]
     outfile = "Quelea64.exe"
     jreMinVersion = "1.5" //Hack to bypass launch4j
 }
 
 tasks.register('downloadGStreamer') {
-    def f = new File('gs.msi')
-    if (!f.exists()) {
-        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.11/msvc/gstreamer-1.0-msvc-x86_64-1.26.11.msi').withInputStream { i -> f.withOutputStream { it << i } }
+    def installer = layout.buildDirectory.file('downloads/gstreamer-1.0-msvc-x86_64-1.26.11.msi')
+    outputs.file(installer)
+    doLast {
+        def verifyChecksum = { File file ->
+            def digest = MessageDigest.getInstance('SHA-256')
+            file.withInputStream { input ->
+                byte[] buffer = new byte[64 * 1024]
+                int count
+                while ((count = input.read(buffer)) != -1) {
+                    digest.update(buffer, 0, count)
+                }
+            }
+            if (digest.digest().encodeHex().toString() != '31cbc21fa0950b5c1e79c80959b2799805cb05a7a35953a13a9f790776137605') {
+                throw new GradleException("GStreamer installer checksum does not match: ${file}")
+            }
+        }
+        def destination = installer.get().asFile
+        if (destination.isFile()) {
+            verifyChecksum(destination)
+            return
+        }
+        destination.parentFile.mkdirs()
+        def temporary = new File(destination.parentFile, destination.name + '.part')
+        new URI('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.11/msvc/gstreamer-1.0-msvc-x86_64-1.26.11.msi').toURL().withInputStream { input ->
+            temporary.withOutputStream { output -> output << input }
+        }
+        verifyChecksum(temporary)
+        Files.move(temporary.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 }
 
@@ -175,6 +221,7 @@ izPackCreateInstaller {
 }
 
 tasks.register('innosetup', Exec) {
+    dependsOn tasks.named('downloadGStreamer')
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
@@ -220,64 +267,64 @@ tasks.register('dist', GradleBuild) {
 }
 
 dependencies {
-    izpack 'org.codehaus.izpack:izpack-ant:5.1.3'
+    izpack 'org.codehaus.izpack:izpack-ant:5.2.7'
 
     implementation 'com.googlecode.paradoxdriver:paradoxdriver:1.6.3'
     implementation 'com.github.berry120.jopenlyrics:jopenlyrics:2.0'
-    implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.4'
-    implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.4.1'
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.4.1'
-    implementation group: 'org.apache.poi', name: 'poi', version: '5.4.1'
-    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.50.3.0'
-    implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-api', version: '4.3.1'
-    implementation group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
+    implementation 'org.hsqldb:hsqldb:2.7.4'
+    implementation 'org.apache.poi:poi-scratchpad:6.0.0'
+    implementation 'org.apache.poi:poi-ooxml:6.0.0'
+    implementation 'org.apache.poi:poi:6.0.0'
+    implementation 'org.xerial:sqlite-jdbc:3.54.1.0'
+    implementation 'org.apache.avalon.framework:avalon-framework-api:4.3.1'
+    implementation 'org.apache.avalon.framework:avalon-framework-impl:4.3.1'
 
-    implementation 'net.java.dev.jna:jna:5.18.1'
-    implementation 'net.java.dev.jna:jna-platform:5.18.1'
+    implementation 'net.java.dev.jna:jna:5.19.1'
+    implementation 'net.java.dev.jna:jna-platform:5.19.1'
     implementation 'org.freedesktop.gstreamer:gst1-java-core:1.4.0'
     implementation 'org.freedesktop.gstreamer:gst1-java-fx:0.9.0'
 
-    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.2'
-    implementation group: 'com.healthmarketscience.jackcess', name: 'jackcess', version: '4.0.8'
-    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '8.9.0'
-    implementation group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.9.0'
-    implementation group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.9.0'
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.35'
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
-    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.14'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.6'
-    implementation group: 'com.github.albfernandez', name: 'juniversalchardet', version: '2.5.0'
-    implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.6.15.Final'
-    implementation group: 'com.google.zxing', name: 'core', version: '3.5.3'
-    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.3'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.20.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.19.0'
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.14.0'
-    implementation group: 'com.memetix', name: 'microsoft-translator-java-api', version: '0.6.2'
-    implementation group: 'org.openoffice', name: 'jurt', version: '4.1.2'
-    implementation group: 'org.openoffice', name: 'juh', version: '4.1.2'
-    implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.3'
-    // SVG logos are drawn with Batik. FOP already brings it in; declared here too since we use it directly.
-    implementation group: 'org.apache.xmlgraphics', name: 'batik-transcoder', version: '1.10'
-    implementation group: 'org.quelea', name: 'planning-center', version: '0.3'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'com.google.code.gson:gson:2.15.0'
+    implementation 'com.healthmarketscience.jackcess:jackcess:5.0.4'
+    implementation 'org.apache.lucene:lucene-core:8.11.4'
+    implementation 'org.apache.lucene:lucene-queryparser:8.11.4'
+    implementation 'org.apache.lucene:lucene-analyzers-common:8.11.4'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.8'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'org.apache.httpcomponents:httpmime:4.5.14'
+    implementation 'org.fxmisc.richtext:richtextfx:0.11.7'
+    implementation 'com.github.albfernandez:juniversalchardet:2.5.2'
+    implementation 'org.hibernate:hibernate-gradle-plugin:5.6.15.Final'
+    implementation 'com.google.zxing:core:3.5.4'
+    implementation 'com.google.zxing:javase:3.5.4'
+    implementation 'commons-io:commons-io:2.22.0'
+    implementation 'org.apache.commons:commons-lang3:3.22.0'
+    implementation 'org.apache.commons:commons-text:1.15.0'
+    implementation 'com.memetix:microsoft-translator-java-api:0.6.2'
+    implementation 'org.openoffice:jurt:4.1.2'
+    implementation 'org.openoffice:juh:4.1.2'
+    implementation 'org.apache.xmlgraphics:fop:2.12'
+    // SVG logos use Batik directly; keep it aligned with FOP's version.
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.20'
+    implementation 'org.quelea:planning-center:0.3.1'
 
-    implementation group: 'org.openoffice', name: 'unoil', version: '4.1.2'
-    implementation group: 'org.openoffice', name: 'bootstrap-connector', version: '0.1.1'
+    implementation 'org.openoffice:unoil:4.1.2'
+    implementation 'org.openoffice:bootstrap-connector:0.1.1'
 
-    implementation group: 'com.aparapi', name: 'aparapi', version: '1.10.0'
+    implementation 'com.aparapi:aparapi:3.0.2'
 
-    implementation group: 'org.jflac', name: 'jflac-codec', version: '1.5.2'
-    implementation group: 'org.jcraft', name: 'jorbis', version: '0.0.17'
+    implementation 'org.jflac:jflac-codec:1.5.2'
+    implementation 'org.jcraft:jorbis:0.0.17'
 
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.4'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '4.0.6'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.6'
-    implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.5'
+    implementation 'com.sun.xml.bind:jaxb-core:4.0.9'
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.9'
+    implementation 'com.sun.activation:javax.activation:1.2.0'
 
-    implementation group: 'com.dlsc.preferencesfx', name: 'preferencesfx-core', version: '11.17.0'
+    implementation 'com.dlsc.preferencesfx:preferencesfx-core:11.19.0'
 
-    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.32'
+    implementation 'org.slf4j:slf4j-jdk14:2.0.20'
 
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
@@ -286,19 +333,25 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:linux"
     runtimeOnly "org.openjfx:javafx-web:$javafx.version:mac"
 
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '6.0.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '6.0.0'
-    testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: '6.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:6.1.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.1.3'
 }
 
 test {
     useJUnitPlatform()
     failOnNoDiscoveredTests = false
-    // Same JVM options as the application, so video code under test behaves as it does at runtime.
-    jvmArgs application.applicationDefaultJvmArgs
+    // JavaFX can be on the test classpath when the JDK does not bundle its modules.
+    jvmArgs application.applicationDefaultJvmArgs.findAll { it != nativeAccessJvmArg }
+    if (ModuleFinder.ofSystem().find('javafx.graphics').isPresent()) {
+        jvmArgs nativeAccessJvmArg
+    }
+    // Schedule drop tests use JavaFX's in-memory dragboard instead of the system clipboard.
+    jvmArgs '--add-exports=javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+            '--add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED'
     testLogging {
         events 'passed', 'skipped', 'failed'
-        exceptionFormat 'full'
+        exceptionFormat = 'full'
     }
 }
 
@@ -343,4 +396,55 @@ tasks.register('releaseSummary', JavaExec) {
 tasks.named("izPackCreateInstaller") {
     dependsOn(tasks.named("zipMacPackr"))
     dependsOn(tasks.named('tar'))
+}
+
+/*
+ * Compatibility adaptation of gradle-launch4j's plugin setup.
+ * Copyright (c) 2025 Sebastian Boegl
+ * Licensed under the Apache License, Version 2.0:
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * Remove this when upstream stops calling Configuration.setVisible.
+ * Executable and XML generation remain upstream's.
+ */
+class QueleaLaunch4jPlugin implements Plugin<Project> {
+    private final FileOperations fileOperations
+
+    @Inject
+    QueleaLaunch4jPlugin(FileOperations fileOperations) {
+        this.fileOperations = fileOperations
+    }
+
+    void apply(Project project) {
+        project.extensions.create('launch4j', Launch4jPluginExtension, project,
+                fileOperations, project.objects, project.providers)
+        def binaries = project.configurations.create('launch4jBin') {
+            transitive = false
+            canBeConsumed = false
+            canBeResolved = true
+            description = 'The launch4j binary configuration for this project.'
+            defaultDependencies {
+                it.add(project.dependencies.create("net.sf.launch4j:launch4j:${Launch4jPlugin.ARTIFACT_VERSION}:${Launch4jPlugin.workdir()}"))
+            }
+            resolutionStrategy.dependencySubstitution {
+                all { dependency ->
+                    if (dependency.requested instanceof ModuleComponentSelector &&
+                            dependency.requested.group == 'net.sf.launch4j' && dependency.requested.module == 'launch4j') {
+                        dependency.useTarget "net.sf.launch4j:launch4j:${dependency.requested.version}:${Launch4jPlugin.workdir()}"
+                    }
+                }
+            }
+        }
+        project.tasks.register('createExe', Launch4jLibraryTask) {
+            group = 'launch4j'
+            description = 'Runs the launch4j jar to generate an .exe file'
+        }
+        project.tasks.register('createAllExecutables') {
+            group = 'launch4j'
+            description = 'Runs all tasks that implement DefaultLaunch4jTask'
+            dependsOn project.tasks.withType(DefaultLaunch4jTask)
+        }
+        project.tasks.withType(DefaultLaunch4jTask).configureEach {
+            launch4jBinaryFiles.from(binaries)
+        }
+    }
 }

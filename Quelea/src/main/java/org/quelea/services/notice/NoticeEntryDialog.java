@@ -30,6 +30,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -75,6 +76,7 @@ public class NoticeEntryDialog extends Stage {
     private Button addButton;
     private Button cancelButton;
     private Button saveButton;
+    private Button saveOnlyButton;
     private final Button deleteButton;
     private Notice notice;
     private boolean noticeRemoved;
@@ -119,6 +121,7 @@ public class NoticeEntryDialog extends Stage {
         text.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             addButton.setDisable(t1.trim().isEmpty());
             saveButton.setDisable(t1.trim().isEmpty());
+            saveOnlyButton.setDisable(t1.trim().isEmpty());
         });
         times = new NumberSpinner(1, 1);
         infinite = new CheckBox();
@@ -196,6 +199,17 @@ public class NoticeEntryDialog extends Stage {
             }
         });
         southPanel.getChildren().add(saveButton);
+        // Save the notice for later without putting it on screen, so notices
+        // can be prepared before the service.
+        saveOnlyButton = new Button(LabelGrabber.INSTANCE.getLabel("save.text"), QueleaIcon.SAVE.create());
+        saveOnlyButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.notice.tooltip")));
+        saveOnlyButton.setOnAction(t -> {
+            addNotice(true);
+            notice = null;
+            hide();
+            closed = true;
+        });
+        southPanel.getChildren().add(saveOnlyButton);
         deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("delete.notice.button"), QueleaIcon.DELETE.create());
         deleteButton.setOnAction(e -> {
             QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().remove(notice);
@@ -245,10 +259,13 @@ public class NoticeEntryDialog extends Stage {
         }
         if (save) {
             NoticeFileHandler.saveNotice(notice);
+            ListView<Notice> templates = QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates();
             if (template) {
-                QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().set(QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getSelectionModel().getSelectedIndex(), notice);
-            } else if (!QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().contains(notice)) {
-                QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems().add(notice);
+                // The saved notice was changed in place, so its cell only needs
+                // redrawing. (It isn't selected when opened from the search.)
+                templates.refresh();
+            } else if (!templates.getItems().contains(notice)) {
+                templates.getItems().add(notice);
             }
             edit = false;
         }
@@ -298,6 +315,11 @@ public class NoticeEntryDialog extends Stage {
         this.template = template;
         closed = false;
         deleteButton.setVisible(template);
+        // Saving without showing makes sense for new and saved notices, not for
+        // a notice that is already on screen.
+        boolean canSaveOnly = notice == null || template;
+        saveOnlyButton.setVisible(canSaveOnly);
+        saveOnlyButton.setManaged(canSaveOnly);
         this.notice = notice;
         if (notice == null) {
             infinite.setSelected(false);
@@ -309,6 +331,7 @@ public class NoticeEntryDialog extends Stage {
             addButton.setText(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
             addButton.setDisable(true);
             saveButton.setDisable(true);
+            saveOnlyButton.setDisable(true);
         } else {
             infinite.setSelected(notice.getTimes() == Integer.MAX_VALUE);
             if (!infinite.isSelected()) {

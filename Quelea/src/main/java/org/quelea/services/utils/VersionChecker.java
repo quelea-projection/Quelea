@@ -19,7 +19,7 @@ package org.quelea.services.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,8 +49,7 @@ public class VersionChecker {
     public Version getLatestVersion() {
         LOGGER.log(Level.INFO, "Checking for an updated version...");
         try {
-            URL url = new URL(urlStr);
-            URLConnection connection = url.openConnection();
+            URLConnection connection = URI.create(urlStr).toURL().openConnection();
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {

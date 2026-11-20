@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.Utils;
+import org.quelea.services.utils.SecureXml;
 import org.quelea.windows.main.StatusPanel;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -61,10 +61,12 @@ public class ScreenMonkeyParser implements SongParser {
 
     private SongDisplayable getSongFromXML(String lyricsXML, String encoding) {
         try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            DocumentBuilder dBuilder = SecureXml.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes(encoding)));
             Node root = doc.getElementsByTagName("Song").item(0);
+            if (root == null) {
+                return null;
+            }
             StringBuilder lyrics = new StringBuilder();
             String title = "Screen Money Song";
             String author = "";

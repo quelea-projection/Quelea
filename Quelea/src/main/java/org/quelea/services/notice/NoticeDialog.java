@@ -19,6 +19,7 @@ package org.quelea.services.notice;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -245,6 +246,11 @@ public class NoticeDialog extends Stage {
     private void getNoticesFromFile() {
         noticeTemplates = new ListView<>();
         final File[] files = new File(QueleaProperties.get().getNoticeDir().getAbsolutePath()).listFiles();
+        if (files != null) {
+            // Files are named after their creation time, so this lists the
+            // saved notices in the order they were made.
+            Arrays.sort(files);
+        }
         if (noticeTemplatesUpdateThread != null && noticeTemplatesUpdateThread.isAlive()) {
             return;
         }

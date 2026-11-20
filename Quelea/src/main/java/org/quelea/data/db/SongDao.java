@@ -3,7 +3,7 @@ package org.quelea.data.db;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.quelea.data.db.model.Song;
 
@@ -30,9 +30,8 @@ public class SongDao {
      *
      * @return all the songs.
      */
-    @SuppressWarnings("unchecked")
     public List<Song> getSongs() {
-        return session.createQuery("from Song s left join fetch s.theme t left join fetch t.textShadow").list();
+        return session.createQuery("from Song s left join fetch s.theme t left join fetch t.textShadow", Song.class).list();
     }
 
     /**
@@ -42,9 +41,8 @@ public class SongDao {
      *
      * @return all the songs.
      */
-    @SuppressWarnings("unchecked")
     public List<Song> getSongsOneByOne() {
-        Query getAllSongQuery = session.createQuery("from Song");
+        Query<Song> getAllSongQuery = session.createQuery("from Song", Song.class);
         Iterator<Song> iter = getAllSongQuery.iterate();
         List<Song> ret = new ArrayList<>();
         while (iter.hasNext()) {

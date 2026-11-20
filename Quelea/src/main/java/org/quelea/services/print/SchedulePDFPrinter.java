@@ -27,9 +27,41 @@ import org.quelea.data.Schedule;
  * @author Michael
  */
 public class SchedulePDFPrinter extends PDFPrinter {
-    
+
+    private static final File XSL_FILE = new File("scheduleformat.xsl");
+
+    /**
+     * Write the order of service of a schedule to a PDF file.
+     *
+     * @param schedule the schedule.
+     * @param pdfFile the file to write.
+     * @throws IOException if the PDF couldn't be generated.
+     */
     public void print(Schedule schedule, File pdfFile) throws IOException {
-        print(schedule.getPrintXML(), new File("scheduleformat.xsl"), pdfFile);
+        print(schedule, SchedulePrintContent.OVERVIEW, pdfFile);
     }
-    
+
+    /**
+     * Write a schedule to a PDF file.
+     *
+     * @param schedule the schedule.
+     * @param content what should be printed.
+     * @param pdfFile the file to write.
+     * @throws IOException if the PDF couldn't be generated.
+     */
+    public void print(Schedule schedule, SchedulePrintContent content, File pdfFile) throws IOException {
+        printXML(schedule.getPrintXML(content), pdfFile);
+    }
+
+    /**
+     * Write schedule print XML (see Schedule.getPrintXML()) to a PDF file.
+     *
+     * @param printXML the print XML of the schedule.
+     * @param pdfFile the file to write.
+     * @throws IOException if the PDF couldn't be generated.
+     */
+    public void printXML(String printXML, File pdfFile) throws IOException {
+        print(printXML, XSL_FILE, pdfFile);
+    }
+
 }
