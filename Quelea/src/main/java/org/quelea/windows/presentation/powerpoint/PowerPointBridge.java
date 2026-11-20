@@ -131,6 +131,9 @@ class PowerPointBridge implements AppleScriptRunner {
             Thread.currentThread().interrupt();
             throw new PowerPointException(PowerPointException.Kind.FAILED, 0, "Interrupted", ex);
         } catch (ExecutionException ex) {
+            // EOF may arrive before Process.isAlive() notices the exit. Retire
+            // this process now so the next command starts a fresh bridge.
+            kill();
             throw new BridgeException("The PowerPoint bridge stopped", ex.getCause());
         }
         if (response.has("ok") && response.get("ok").getAsBoolean()) {

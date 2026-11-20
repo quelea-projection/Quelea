@@ -81,8 +81,10 @@ public class PowerPointBridgeTest {
     @DisplayName("If the bridge exits, the command fails as a bridge problem and the next one restarts it")
     public void exitRestarts() throws Exception {
         bridge = new PowerPointBridge(fake());
-        assertThrows(PowerPointBridge.BridgeException.class, () -> bridge.run(5000, "exit"));
-        assertEquals("back", bridge.run(5000, "echo", "back"));
+        for (int i = 0; i < 5; i++) {
+            assertThrows(PowerPointBridge.BridgeException.class, () -> bridge.run(5000, "exit"));
+            assertEquals("back", bridge.run(5000, "echo", "back"));
+        }
     }
 
     @Test

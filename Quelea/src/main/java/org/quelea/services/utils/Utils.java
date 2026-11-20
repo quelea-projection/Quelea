@@ -35,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,6 +47,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -161,7 +161,10 @@ public final class Utils {
 	 * otherwise.
 	 */
 	public static boolean isInDir(File dir, File file) {
-		File[] files = QueleaProperties.get().getImageDir().listFiles();
+		File[] files = dir.listFiles();
+		if (files == null) {
+			return false;
+		}
 		for (File listFile : files) {
 			if (file.equals(listFile)) {
 				return true;
@@ -494,6 +497,9 @@ public final class Utils {
 	 * @throws IOException if something goes wrong.
 	 */
 	public static void copyFile(File sourceFile, File destFile) throws IOException {
+		if (destFile.exists() && Files.isSameFile(sourceFile.toPath(), destFile.toPath())) {
+			return;
+		}
 		if (sourceFile.isDirectory()) {
 			if (sourceFile.getName().equals(".svn")) {
 				return;
@@ -504,23 +510,12 @@ public final class Utils {
 			}
 			return;
 		}
-		if (!destFile.exists()) {
-			destFile.createNewFile();
-		}
-
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
+		// Open the source first so a missing source cannot create or truncate the
+		// destination. FileOutputStream preserves the existing behavior of
+		// following a destination symbolic link.
+		try (FileInputStream source = new FileInputStream(sourceFile);
+			 FileOutputStream destination = new FileOutputStream(destFile)) {
+			source.transferTo(destination);
 		}
 	}
 
@@ -642,7 +637,7 @@ public final class Utils {
 		if (file.isDirectory() && !file.isHidden()) {
 			return true;
 		} else {
-			if (hasExtension(file, "*.cdt")) {
+			if (hasExtension(file, "cdt")) {
 				return true;
 			}
 			return false;
@@ -772,13 +767,13 @@ public final class Utils {
 	 * @return true if it has the given extension, false otherwise.
 	 */
 	public static boolean hasExtension(File file, String ext) {
-		String name = file.getName().toLowerCase();
-		if (!name.contains(".")) {
+		String name = file.getName().toLowerCase(Locale.ROOT);
+		int dot = name.lastIndexOf('.');
+		if (dot < 0 || dot == name.length() - 1) {
 			return false;
 		}
-		String[] parts = name.split("\\.");
-		String suffix = parts[parts.length - 1].toLowerCase().trim();
-		return suffix.equals(ext.trim().toLowerCase());
+		String suffix = name.substring(dot + 1).trim();
+		return suffix.equals(ext.trim().toLowerCase(Locale.ROOT));
 	}
 
 	/**

@@ -43,7 +43,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsImportExportPanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private StringProperty elevantoClientIdProperty;
     private IntegerProperty planningCenterPrevDaysProperty;
 
@@ -52,7 +52,7 @@ public class OptionsImportExportPanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsImportExportPanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsImportExportPanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         elevantoClientIdProperty = new SimpleStringProperty(QueleaProperties.get().getElevantoClientId());
         planningCenterPrevDaysProperty = new SimpleIntegerProperty(QueleaProperties.get().getPlanningCentrePrevDays());

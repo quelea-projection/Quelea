@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
@@ -146,7 +147,7 @@ public class RenderedPresentation implements Presentation {
 
     private static PresentationSlide[] render(File pdf) throws IOException {
         List<PresentationSlide> ret = new ArrayList<>();
-        try (PDDocument document = PDDocument.load(pdf)) {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
             PDFRenderer renderer = new PDFRenderer(document);
             for (int i = 0; i < document.getNumberOfPages(); i++) {
                 PDRectangle box = document.getPage(i).getMediaBox();

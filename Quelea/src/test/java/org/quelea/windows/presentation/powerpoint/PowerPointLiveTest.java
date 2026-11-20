@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
@@ -105,7 +106,7 @@ public class PowerPointLiveTest {
         pdf.deleteOnExit();
         int slides = service.exportPdf(deck, pdf).get(3, TimeUnit.MINUTES);
         assertEquals(4, slides);
-        try (PDDocument doc = PDDocument.load(pdf)) {
+        try (PDDocument doc = Loader.loadPDF(pdf)) {
             assertEquals(4, doc.getNumberOfPages());
         }
     }

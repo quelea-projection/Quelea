@@ -19,9 +19,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
@@ -52,7 +50,6 @@ public class AddBibleVerseHandler {
         if (b == null) {
             return;
         }
-        Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
         BiblePassage passage = (BiblePassage) d;
         ThemeDTO theme = passage.getTheme();
         List<BibleVerse> newVerses = new ArrayList<>();
@@ -101,16 +98,11 @@ public class AddBibleVerseHandler {
             }
         }
         String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
-        replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti()));
+        BiblePassage replacement = new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti());
+        int index = sl.indexOfDisplayableIdentity(passage);
+        IndexedDisplayable original = index < 0 ? null : sl.getItems().get(index);
         sl.getSelectionModel().clearSelection();
-        int index = -1;
-        for (BiblePassage key : replaceMap.keySet()) {
-            index = sl.indexOf(key);
-            if (index != -1) {
-                sl.getItems().remove(index);
-                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
-            }
-        }
+        index = sl.replaceItem(original, replacement);
         if (index != -1) {
             sl.getSelectionModel().clearAndSelect(index);
         }

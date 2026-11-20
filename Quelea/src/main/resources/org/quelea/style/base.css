@@ -64,11 +64,12 @@
 
 /* The tab outline is a border; the short separator in the gap to the left
    is a second background layer (a gradient that is 1px of colour, then
-   transparent), so that it doesn't add to the title's height the way border
-   insets would. */
+   transparent; its coordinates count from the title's own edge, and the
+   colour before the start repeats, so it starts where the layer does), so
+   that it doesn't add to the title's height the way border insets would. */
 .menu-bar > .container > .menu-button {
     -fx-background-color: transparent,
-        linear-gradient(from 0px 0px to 2px 0px, -q-border 50%, transparent 50%);
+        linear-gradient(from -2px 0px to 0px 0px, -q-border 50%, transparent 50%);
     -fx-background-insets: 0, 8 0 8 -2;
     -fx-background-radius: 6 6 0 0, 0;
     -fx-border-color: transparent;
@@ -663,10 +664,127 @@
     -fx-fill: #ffffff;
 }
 
-/* Grouped option boxes in the theme editor */
-.theme-option-box {
-    -fx-border-color: -q-border;
-    -fx-border-radius: 6;
+/* ---- Theme editor (ThemeToolbar): background, text and shadow sections ---- */
+.theme-editor {
+    -fx-background-color: -q-surface;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 10 14 12 14;
+    -fx-spacing: 10;
+}
+
+/* Section headings: same size as the rest, a little heavier */
+.theme-heading {
+    -fx-font-family: "Inter SemiBold";
+    -fx-text-fill: -q-text;
+}
+
+.theme-grid {
+    -fx-hgap: 8;
+    -fx-vgap: 6;
+}
+
+.theme-colour {
+    -fx-color-label-visible: false;
+}
+
+/* Keep white or very light colours visible in the colour buttons */
+.theme-colour .picker-color-rect {
+    -fx-stroke: -q-border-strong;
+}
+
+.theme-copy-row {
+    -fx-background-color: -q-surface;
+    -fx-padding: 10 14 0 14;
+}
+
+.theme-position-hint {
+    -fx-padding: 4 14 4 14;
+}
+
+.theme-number {
+    -fx-pref-column-count: 3;
+    -fx-max-width: 52;
+}
+
+/* Joined buttons, e.g. [Colour | Image | Video] or [B | I] */
+.segmented > .toggle-button {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0, 1 1 1 0;
+}
+
+.segmented > .toggle-button.left-pill {
+    -fx-background-radius: 6 0 0 6, 5 0 0 5;
+    -fx-background-insets: 0, 1;
+}
+
+.segmented > .toggle-button.right-pill {
+    -fx-background-radius: 0 6 6 0, 0 5 5 0;
+}
+
+.segmented > .toggle-button.only-pill {
+    -fx-background-radius: 6, 5;
+    -fx-background-insets: 0, 1;
+}
+
+.segmented > .toggle-button:selected,
+.segmented > .toggle-button:selected:hover,
+.segmented > .toggle-button:selected:focused {
+    -fx-background-color: -q-accent, -q-accent;
+    -fx-text-fill: -q-on-accent;
+}
+
+.segmented > .toggle-button:selected > .text {
+    -fx-fill: -q-on-accent;
+}
+
+.segmented > .toggle-button:selected .icon {
+    -fx-background-color: -q-on-accent;
+}
+
+/* An on / off switch made from a toggle button: a pill with a round thumb */
+.toggle-button.theme-switch,
+.toggle-button.theme-switch:focused,
+.toggle-button.theme-switch:hover {
+    -fx-background-color: -q-border-strong;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-padding: 2;
+    -fx-alignment: center-left;
+    -fx-min-width: 36;
+    -fx-pref-width: 36;
+    -fx-max-width: 36;
+    -fx-min-height: 20;
+    -fx-pref-height: 20;
+    -fx-max-height: 20;
+}
+
+.toggle-button.theme-switch:selected,
+.toggle-button.theme-switch:selected:focused,
+.toggle-button.theme-switch:selected:hover {
+    -fx-background-color: -q-accent;
+    -fx-alignment: center-right;
+}
+
+/* The theme button on a schedule item: it can lie over the item's name, so it
+   gets a small background of its own to stay readable */
+.toolbar-button.schedule-theme-button {
+    -fx-background-color: -q-border, -q-surface;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+}
+
+.toolbar-button.schedule-theme-button:hover {
+    -fx-background-color: -q-border, -q-control-hover;
+}
+
+.theme-switch-thumb {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-min-width: 16;
+    -fx-min-height: 16;
+    -fx-max-width: 16;
+    -fx-max-height: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 2, 0, 0, 1);
 }
 
 /* A strip that lines up with a tab pane header */
@@ -1404,6 +1522,24 @@
 
 .scroll-pane.content-card > .viewport {
     -fx-background-color: transparent;
+}
+
+/* Print preview: the pages to print, shown as sheets of paper */
+.scroll-pane.print-preview-area {
+    -fx-background-color: -q-border, -q-backdrop;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 1;
+}
+
+.scroll-pane.print-preview-area > .viewport {
+    -fx-background-color: transparent;
+}
+
+.print-preview-page {
+    /* Always white: this is what the paper will look like */
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 10, 0, 0, 2);
 }
 
 /* 3x3 text position picker shown over theme previews on hover */

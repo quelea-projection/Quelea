@@ -319,8 +319,8 @@ public class OOPresentation implements XEventListener {
      * Clear up this presentation, releasing all the resources associated with
      * it (all the underlying OO library objects.) This must be called before
      * this presentation is eligible for GC to prevent memory leaks. In the
-     * event that it isn't called before it's garbage collected, a warning will
-     * be printed since this should be classed as a bug.
+     * event that it isn't called before shutdown, a warning will be logged and
+     * the shutdown hook will release the resources.
      */
     public void dispose() {
         if (!disposed) {
@@ -343,19 +343,6 @@ public class OOPresentation implements XEventListener {
             }
             disposed = true;
         }
-    }
-
-    /**
-     * If the object hasn't been disposed, clean it up at this point and display
-     * a warning.
-     *
-     * @throws Throwable if something goes wrong in finalisation.
-     */
-    @Override
-    @SuppressWarnings( "deprecation" )
-    protected void finalize() throws Throwable {
-        super.finalize();
-        checkDisposed();
     }
 
     /**
@@ -430,7 +417,7 @@ public class OOPresentation implements XEventListener {
                     bridgeComponent.dispose();
                     bridgeComponent = null;
                     try {
-                        Process p = Runtime.getRuntime().exec("taskkill /F /IM soffice.bin");
+                        new ProcessBuilder("taskkill", "/F", "/IM", "soffice.bin").start();
                         //@todo the only way to kill this process. to be added other system support
                     } catch (IOException e) {
                     }

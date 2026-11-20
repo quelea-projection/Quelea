@@ -68,7 +68,7 @@ public class LabelGrabber extends ResourceBundle {
             Locale.setDefault(Locale.UK);
         } else {
             LOGGER.log(Level.INFO, "Setting {0} locale", labels.getProperty("LOCALE", "en"));
-            Locale.setDefault(new Locale(labels.getProperty("LOCALE", "en")));
+            Locale.setDefault(Locale.forLanguageTag(labels.getProperty("LOCALE", "en")));
         }
 
         if (langFile.getName().equals("gb.lang")) {

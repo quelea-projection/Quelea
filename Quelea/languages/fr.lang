@@ -438,7 +438,6 @@ selected.fonts.explanation = Quelea affiche uniquement une sélection de polices
 ignored.fonts.label = Polices ignorées
 selected.fonts.label = Polices choisies
 font.selection.dialog.title = Sélection de police
-video.hue.label = Teinte
 hover.for.position.label = Survolez le canevas pour définir la position du texte
 test.patterns.text = Mires de calibration
 test.patterns.explanation = Les mires disponibles ici devraient vous aider à calibrer correctement les paramètres de mise au point et de couleur de votre écran. Cliquez sur une mire pour l'afficher à la fois sur la vue principale et sur la scène.

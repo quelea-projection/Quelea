@@ -1,7 +1,6 @@
 package org.quelea.windows.timer;
 
 import java.io.File;
-import java.util.Calendar;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -44,18 +43,10 @@ public class TimerDrawer extends DisplayableDrawer {
     public void draw(Displayable displayable) {
         TimerDisplayable td = (TimerDisplayable) displayable;
         td.setDrawer(this);
-        int seconds = td.getSeconds();
-        if (seconds == -1) {
-            Calendar now = Calendar.getInstance();
-            seconds = (int) ((now.getTimeInMillis() - td.getTimeToFinish().getTimeInMillis()) / -1000);
-            if (seconds < 0) {
-                seconds = 0;
-            }
-        }
 
         if (getCanvas().isStageView()) {
             stageCanvas = getCanvas();
-            stageTimer = new Timer(seconds, td.getPretext(), td.getPosttext());
+            stageTimer = createTimer(td);
             stageTimer.setTheme(td.getTheme());
             controlPanel.addTimer(stageTimer);
             stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
@@ -68,7 +59,7 @@ public class TimerDrawer extends DisplayableDrawer {
             stageTimer.toFront();
         } else {
             mainCanvas = getCanvas();
-            timer = new Timer(seconds, td.getPretext(), td.getPosttext());
+            timer = createTimer(td);
             timer.setTheme(td.getTheme());
             controlPanel.addTimer(timer);
             stack = new StackPane();
@@ -103,6 +94,13 @@ public class TimerDrawer extends DisplayableDrawer {
             timer.setFontSize(pickFontSize(td.getTheme().getFont(), timer, mainCanvas));
             timer.toFront();
         }
+    }
+
+    private static Timer createTimer(TimerDisplayable td) {
+        if (td.isCountdownToTime()) {
+            return new Timer(td.getTimeToFinish(), td.getPretext(), td.getPosttext());
+        }
+        return new Timer(Math.max(0, td.getSeconds()), td.getPretext(), td.getPosttext());
     }
 
     @Override

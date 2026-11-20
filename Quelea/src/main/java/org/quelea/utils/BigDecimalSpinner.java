@@ -155,8 +155,8 @@ public class BigDecimalSpinner extends HBox {
      */
     private void increment() {
         BigDecimal value = numberField.getNumber();
-        if (value.doubleValue() < max.doubleValue()) {
-            value = value.add(stepWitdhProperty.get());
+        if (value.compareTo(max) < 0) {
+            value = value.add(stepWitdhProperty.get()).min(max);
         }
         numberField.setNumber(value);
     }
@@ -166,8 +166,8 @@ public class BigDecimalSpinner extends HBox {
      */
     private void decrement() {
         BigDecimal value = numberField.getNumber();
-        if (value.doubleValue() > min.doubleValue()) {
-            value = value.subtract(stepWitdhProperty.get());
+        if (value.compareTo(min) > 0) {
+            value = value.subtract(stepWitdhProperty.get()).max(min);
         }
         numberField.setNumber(value);
     }

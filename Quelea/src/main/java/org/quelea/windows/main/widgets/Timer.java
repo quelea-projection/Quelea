@@ -16,11 +16,10 @@
  */
 package org.quelea.windows.main.widgets;
 
+import java.time.LocalTime;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -29,60 +28,85 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.quelea.data.ThemeDTO;
+import org.quelea.windows.timer.CountdownTimes;
 
 /**
- * A simple JavaFX countdown timer.
+ * A simple JavaFX countdown timer. It either counts down a fixed duration, or
+ * counts down to a time of day by following the clock.
  * <p>
  * @author Ben
  */
 public class Timer extends Text {
 
-    private final int minutes;
-    private final int seconds;
+    private final int duration;
+    private final LocalTime target;
     private boolean paused;
     private boolean reset;
+    private int count;
     private Timeline timeline;
     private String pretext = "";
     private String posttext = "";
     private Pos textPosition;
     private ThemeDTO theme;
 
+    /**
+     * Create a timer that counts down a fixed duration.
+     *
+     * @param seconds the duration in seconds.
+     * @param pretext the text before the countdown.
+     * @param posttext the text after the countdown.
+     */
     public Timer(int seconds, String pretext, String posttext) {
-        this.minutes = seconds/60;
-        this.seconds = seconds % 60;
+        this(seconds, null, pretext, posttext);
+    }
+
+    /**
+     * Create a timer that counts down to a time of day.
+     *
+     * @param target the time of day the timer reaches 00:00.
+     * @param pretext the text before the countdown.
+     * @param posttext the text after the countdown.
+     */
+    public Timer(LocalTime target, String pretext, String posttext) {
+        this(-1, target, pretext, posttext);
+    }
+
+    private Timer(int seconds, LocalTime target, String pretext, String posttext) {
+        this.duration = seconds;
+        this.target = target;
         this.pretext = pretext;
         this.posttext = posttext;
-        setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
+        paused = true;
         bindToTime();
         setOpacity(1);
-        paused = true;
+    }
+
+    private int remaining() {
+        if (target != null) {
+            return CountdownTimes.secondsUntil(target, LocalTime.now());
+        }
+        return Math.max(0, duration - count);
+    }
+
+    private void showRemaining() {
+        setText(pretext + CountdownTimes.formatRemaining(remaining()) + posttext);
     }
 
     private void bindToTime() {
-        int starttime = minutes * 60 + seconds;
-        setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
-        timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1),
-                        new EventHandler<ActionEvent>() {
-                            private int count = 0;
-
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                if (!paused) {
-                                    count++;
-                                }
-                                if (reset) {
-                                    count = 0;
-                                    reset = false;
-                                }
-                                int remaining = starttime - count;
-                                if (remaining >= 0) {
-                                    setText(pretext + ((remaining / 60) > 9 ? "" : "0") + (int) Math.floor(remaining / 60) + ":" + ((remaining % 60) > 9 ? "" : "0") + remaining % 60 + posttext);
-                                }
-                            }
-                        }
-                )
-        );
+        showRemaining();
+        // A clock based timer ticks more often so it changes close to the second
+        Duration tick = target == null ? Duration.seconds(1) : Duration.millis(200);
+        timeline = new Timeline(new KeyFrame(tick, actionEvent -> {
+            if (reset) {
+                count = 0;
+                reset = false;
+            } else if (!paused && target == null) {
+                count++;
+            }
+            if (!paused || target == null) {
+                showRemaining();
+            }
+        }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -93,7 +117,9 @@ public class Timer extends Text {
 
     public void play() {
         if (timeline.getStatus() != Timeline.Status.RUNNING) {
-            setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
+            count = 0;
+            reset = false;
+            showRemaining();
             timeline.play();
         }
         paused = false;
@@ -102,7 +128,7 @@ public class Timer extends Text {
     public void reset() {
         reset = true;
     }
-    
+
     public void stop() {
         reset = true;
         timeline.stop();
@@ -111,7 +137,7 @@ public class Timer extends Text {
 
     @Override
     public String toString() {
-        return pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext;
+        return pretext + CountdownTimes.formatRemaining(target == null ? duration : remaining()) + posttext;
     }
 
     public void setTheme(ThemeDTO theme) {

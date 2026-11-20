@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -23,13 +25,12 @@ public final class FakeBridge {
     }
 
     public static void main(String[] argv) throws Exception {
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8), true);
         if (argv.length > 0 && "fatal".equals(argv[0])) {
-            System.out.println("{\"event\":\"fatal\",\"code\":-2741,\"message\":\"syntax error\"}");
-            System.out.flush();
+            out.println("{\"event\":\"fatal\",\"code\":-2741,\"message\":\"syntax error\"}");
             return;
         }
-        System.out.println("{\"event\":\"ready\"}");
-        System.out.flush();
+        out.println("{\"event\":\"ready\"}");
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         String line;
         while ((line = in.readLine()) != null) {
@@ -66,8 +67,7 @@ public final class FakeBridge {
                     res.addProperty("code", -50);
                     res.addProperty("message", "Unknown command: " + cmd);
             }
-            System.out.println(res);
-            System.out.flush();
+            out.println(res);
         }
     }
 }

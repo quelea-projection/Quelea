@@ -35,7 +35,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsDisplaySetupPanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private DisplayGroup controlScreen;
     private DisplayGroup projectorScreen;
     private DisplayGroup stageScreen;
@@ -45,7 +45,7 @@ public class OptionsDisplaySetupPanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsDisplaySetupPanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsDisplaySetupPanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         controlScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), false, bindings);
         projectorScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), true, bindings);
