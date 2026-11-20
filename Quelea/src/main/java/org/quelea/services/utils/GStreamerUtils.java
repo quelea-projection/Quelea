@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,17 +104,35 @@ public class GStreamerUtils {
      * @return location or empty string
      */
     private static String findWindowsLocation() {
+        return findWindowsLocation(System.getenv(), Platform.is64Bit());
+    }
+
+    static String findWindowsLocation(Map<String, String> environment, boolean is64Bit) {
         List<String> options = new ArrayList<>();
-        options.add(getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64"));
-        options.add(getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64"));
-        options.add(getenv("GSTREAMER_1_0_ROOT_X86_64"));
+        options.add(environment.get("GSTREAMER_1_0_ROOT_MSVC_X86_64"));
+        options.add(environment.get("GSTREAMER_1_0_ROOT_MINGW_X86_64"));
+        options.add(environment.get("GSTREAMER_1_0_ROOT_X86_64"));
+        String localAppData = environment.get("LOCALAPPDATA");
+        if (localAppData != null && !localAppData.isBlank()) {
+            options.add(Path.of(localAppData, "Programs", "gstreamer", "1.0", "msvc_x86_64").toString());
+            options.add(Path.of(localAppData, "Programs", "gstreamer", "1.0", "mingw_x86_64").toString());
+        }
+        String programFiles = environment.get("ProgramFiles");
+        if (programFiles != null && !programFiles.isBlank()) {
+            options.add(Path.of(programFiles, "gstreamer", "1.0", "msvc_x86_64").toString());
+            options.add(Path.of(programFiles, "gstreamer", "1.0", "mingw_x86_64").toString());
+        }
         options.add("C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64");
         options.add("C:\\Program Files\\gstreamer\\1.0\\mingw_x86_64");
         options.add("C:\\gstreamer\\1.0\\msvc_x86_64");
         options.add("C:\\gstreamer\\1.0\\mingw_x86_64");
 
-        if (Platform.is64Bit()) {
-            return options.stream().filter(Objects::nonNull).map(p -> p.endsWith("\\") ? p + "bin\\" : p + "\\bin\\").filter(p -> Files.exists(Path.of(p))).findFirst().orElse("");
+        if (is64Bit) {
+            return options.stream().filter(Objects::nonNull).filter(p -> !p.isBlank())
+                    .map(p -> Path.of(p, "bin"))
+                    .filter(Files::isDirectory)
+                    .map(p -> p.toString() + File.separator)
+                    .findFirst().orElse("");
         } else {
             return "";
         }

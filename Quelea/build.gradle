@@ -6,6 +6,9 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.internal.file.FileOperations
 import javax.inject.Inject
 import java.lang.module.ModuleFinder
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
 
 buildscript {
     dependencies {
@@ -111,9 +114,34 @@ tasks.register('createQueleaExe64', edu.sc.seis.launch4j.tasks.Launch4jLibraryTa
 }
 
 tasks.register('downloadGStreamer') {
-    def f = new File('gs.msi')
-    if (!f.exists()) {
-        new URL('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.11/msvc/gstreamer-1.0-msvc-x86_64-1.26.11.msi').withInputStream { i -> f.withOutputStream { it << i } }
+    def installer = layout.buildDirectory.file('downloads/gstreamer-1.0-msvc-x86_64-1.26.11.msi')
+    outputs.file(installer)
+    doLast {
+        def verifyChecksum = { File file ->
+            def digest = MessageDigest.getInstance('SHA-256')
+            file.withInputStream { input ->
+                byte[] buffer = new byte[64 * 1024]
+                int count
+                while ((count = input.read(buffer)) != -1) {
+                    digest.update(buffer, 0, count)
+                }
+            }
+            if (digest.digest().encodeHex().toString() != '31cbc21fa0950b5c1e79c80959b2799805cb05a7a35953a13a9f790776137605') {
+                throw new GradleException("GStreamer installer checksum does not match: ${file}")
+            }
+        }
+        def destination = installer.get().asFile
+        if (destination.isFile()) {
+            verifyChecksum(destination)
+            return
+        }
+        destination.parentFile.mkdirs()
+        def temporary = new File(destination.parentFile, destination.name + '.part')
+        new URI('https://gstreamer.freedesktop.org/data/pkg/windows/1.26.11/msvc/gstreamer-1.0-msvc-x86_64-1.26.11.msi').toURL().withInputStream { input ->
+            temporary.withOutputStream { output -> output << input }
+        }
+        verifyChecksum(temporary)
+        Files.move(temporary.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 }
 
@@ -193,6 +221,7 @@ izPackCreateInstaller {
 }
 
 tasks.register('innosetup', Exec) {
+    dependsOn tasks.named('downloadGStreamer')
     doFirst {
         workingDir = project.file('.')
         if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
