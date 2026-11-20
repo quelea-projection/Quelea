@@ -74,6 +74,75 @@ public class SongSearchIndexTest {
         Assertions.assertEquals(0, index.filter("evening", SearchIndex.FilterType.TITLE).length);
     }
 
+    @Test
+    public void searchesCcliNumbersByPrefixAndAcceptsCommonFormatting() {
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable first = song(1, "Grace", "Jane", "Words");
+        SongDisplayable second = song(2, "Hope", "John", "Words");
+        SongDisplayable empty = song(3, "Empty", "Author", "Words");
+        first.setCcli("CCLI #1,234,567");
+        second.setCcli("001234567890123456789");
+        empty.setCcli(null);
+        index.addAll(List.of(first, second, empty));
+        for (String query : List.of("1234567", "1234", "1,234,567", "CCLI #1234567", "ccli: 1234")) {
+            Assertions.assertArrayEquals(new SongDisplayable[]{first}, index.filter(query, SearchIndex.FilterType.CCLI), query);
+        }
+        Assertions.assertArrayEquals(new SongDisplayable[]{second}, index.filter("001234567890123456789", SearchIndex.FilterType.CCLI));
+        Assertions.assertEquals(0, index.filter("234567", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertEquals(0, index.filter("grace 1234", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertEquals(0, index.filter("!!!", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertEquals(3, index.filter("", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertArrayEquals(new SongDisplayable[]{first}, index.filter("grace", SearchIndex.FilterType.TITLE));
+        Assertions.assertEquals(0, index.filter("1234567", SearchIndex.FilterType.TITLE).length);
+    }
+
+    @Test
+    public void updatingReplacingRemovingAndClearingCcliNumbersUpdatesTheIndex() {
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable original = song(10, "Song", "Author", "Words");
+        original.setCcli("1234567");
+        index.add(original);
+        original.setCcli("7654321");
+        index.update(original);
+        Assertions.assertEquals(0, index.filter("1234567", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertArrayEquals(new SongDisplayable[]{original}, index.filter("7654321", SearchIndex.FilterType.CCLI));
+        SongDisplayable replacement = song(10, "Song", "Author", "Words");
+        replacement.setCcli("5555555");
+        index.add(replacement);
+        Assertions.assertEquals(0, index.filter("7654321", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertArrayEquals(new SongDisplayable[]{replacement}, index.filter("5555555", SearchIndex.FilterType.CCLI));
+        index.remove(replacement);
+        Assertions.assertEquals(0, index.filter("5555555", SearchIndex.FilterType.CCLI).length);
+        index.add(replacement);
+        index.clear();
+        Assertions.assertEquals(0, index.filter("5555555", SearchIndex.FilterType.CCLI).length);
+    }
+
+    @Test
+    public void hiddenDuplicatesAreSearchableOnlyByCcliAndCanBePromoted() {
+        SongSearchIndex index = new SongSearchIndex();
+        SongDisplayable visible = song(1, "Twin", "Author", "Words");
+        SongDisplayable hidden = song(2, "Twin", "Author", "Words");
+        visible.setCcli("1111111");
+        hidden.setCcli("2222222");
+        index.add(visible);
+        index.addCcliOnly(hidden);
+        Assertions.assertEquals(1, index.size());
+        Assertions.assertArrayEquals(new SongDisplayable[]{visible}, index.filter("twin", SearchIndex.FilterType.TITLE));
+        Assertions.assertArrayEquals(new SongDisplayable[]{hidden}, index.filter("2222222", SearchIndex.FilterType.CCLI));
+        Assertions.assertSame(hidden, index.getByID(2));
+        hidden.setCcli("3333333");
+        index.addCcliOnly(hidden);
+        Assertions.assertEquals(0, index.filter("2222222", SearchIndex.FilterType.CCLI).length);
+        Assertions.assertArrayEquals(new SongDisplayable[]{hidden}, index.filter("3333333", SearchIndex.FilterType.CCLI));
+        index.add(hidden);
+        Assertions.assertEquals(2, index.size());
+        Assertions.assertEquals(2, index.filter("twin", SearchIndex.FilterType.TITLE).length);
+        index.remove(hidden);
+        Assertions.assertNull(index.getByID(2));
+        Assertions.assertEquals(0, index.filter("3333333", SearchIndex.FilterType.CCLI).length);
+    }
+
     private SongDisplayable song(long id, String title, String author, String lyrics) {
         SongDisplayable song = new SongDisplayable(title, author);
         song.setID(id);

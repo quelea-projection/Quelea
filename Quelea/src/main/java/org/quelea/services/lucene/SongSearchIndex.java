@@ -45,6 +45,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
@@ -63,15 +64,20 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Pattern PUNCTUATION = Pattern.compile("[^\\w\\s]", Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern CCLI_QUERY = Pattern.compile("(?i)^(?:ccli\\s*[:#-]?\\s*)?[0-9][0-9\\s,.-]*$");
+    private static final Pattern NON_DIGIT = Pattern.compile("[^0-9]");
     private final Analyzer analyzer;
     private final Directory index;
     private final Map<Long, SongDisplayable> songs;
+    /** Database duplicates hidden from ordinary searches but searchable by CCLI. */
+    private final Map<Long, SongDisplayable> ccliOnlySongs;
 
     /**
      * Create a new empty search index.
      */
     public SongSearchIndex() {
         songs = new HashMap<>();
+        ccliOnlySongs = new HashMap<>();
         try {
             analyzer = CustomAnalyzer.builder()
                     .withTokenizer(StandardTokenizerFactory.class)
@@ -116,6 +122,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
             for (SongDisplayable song : songList) {
                 writer.updateDocument(idTerm(song), createDocument(song));
                 songs.put(song.getID(), song);
+                ccliOnlySongs.remove(song.getID());
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
             }
         } catch (IOException ex) {
@@ -124,7 +131,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     }
 
     private Document createDocument(SongDisplayable song) {
-        Document doc = new Document();
+        Document doc = createCcliDocument(song);
         if (song.getTitle() != null) {
             doc.add(new TextField("title", PUNCTUATION.matcher(song.getTitle()).replaceAll(""), Field.Store.NO));
         }
@@ -135,8 +142,38 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         if (lyrics != null) {
             doc.add(new TextField("lyrics", PUNCTUATION.matcher(lyrics).replaceAll(""), Field.Store.NO));
         }
+        return doc;
+    }
+
+    private Document createCcliDocument(SongDisplayable song) {
+        Document doc = new Document();
+        String number = song.getCcli();
+        if (number != null) {
+            String digits = NON_DIGIT.matcher(number).replaceAll("");
+            if (!digits.isEmpty()) {
+                doc.add(new StringField("ccli", digits, Field.Store.NO));
+            }
+        }
         doc.add(new StringField("number", Long.toString(song.getID()), Field.Store.YES));
         return doc;
+    }
+
+    /** Add hidden duplicate songs without exposing them in the existing text searches. */
+    public synchronized void addCcliOnlyAll(Collection<? extends SongDisplayable> songList) {
+        if (songList.isEmpty()) return;
+        try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
+            for (SongDisplayable song : songList) {
+                writer.updateDocument(idTerm(song), createCcliDocument(song));
+                songs.remove(song.getID());
+                ccliOnlySongs.put(song.getID(), song);
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't add CCLI-only songs to index", ex);
+        }
+    }
+
+    public void addCcliOnly(SongDisplayable song) {
+        addCcliOnlyAll(List.of(song));
     }
 
     private static Term idTerm(SongDisplayable song) {
@@ -163,6 +200,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
             for (SongDisplayable song : songList) {
                 writer.deleteDocuments(idTerm(song));
                 songs.remove(song.getID());
+                ccliOnlySongs.remove(song.getID());
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
@@ -179,6 +217,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(analyzer))) {
             writer.updateDocument(idTerm(song), createDocument(song));
             songs.put(song.getID(), song);
+            ccliOnlySongs.remove(song.getID());
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't update value in index", ex);
         }
@@ -191,30 +230,45 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * @return the song with the given id.
      */
     public synchronized SongDisplayable getByID(long id) {
-        return songs.get(id);
+        SongDisplayable song = songs.get(id);
+        return song != null ? song : ccliOnlySongs.get(id);
     }
 
     /**
      * Search for songs that match the given filter.
      *
      * @param queryString the query to use to search.
-     * @param type TITLE or BODY, depending on what to search in. BODY is
-     * equivalent to the lyrics, TITLE the title.
+     * @param type which field to search; CCLI searches normalized song numbers.
      * @return an array of songs that match the filter.
      */
     @Override
     public synchronized SongDisplayable[] filter(String queryString, FilterType type) {
+        if (type == FilterType.CCLI && (queryString == null || queryString.trim().isEmpty())) {
+            return songs.values().toArray(new SongDisplayable[0]);
+        }
         String sanctifyQueryString = SearchIndexUtils.makeLuceneQuery(queryString);
-        if (songs.isEmpty() || sanctifyQueryString.trim().isEmpty()) {
+        if (sanctifyQueryString.trim().isEmpty()) {
+            if (type == FilterType.CCLI) return new SongDisplayable[0];
             return songs.values().toArray(new SongDisplayable[songs.size()]);
         }
+        if (songs.isEmpty() && (type != FilterType.CCLI || ccliOnlySongs.isEmpty())) {
+            return new SongDisplayable[0];
+        }
         String typeStr;
+        String ccliDigits = null;
         if (type == FilterType.BODY) {
             typeStr = "lyrics";
         } else if (type == FilterType.TITLE) {
             typeStr = "title";
         } else if (type == FilterType.AUTHOR) {
             typeStr = "author";
+        } else if (type == FilterType.CCLI) {
+            String trimmed = queryString.trim();
+            if (!CCLI_QUERY.matcher(trimmed).matches()) {
+                return new SongDisplayable[0];
+            }
+            ccliDigits = NON_DIGIT.matcher(trimmed).replaceAll("");
+            typeStr = "ccli";
         } else {
             LOGGER.log(Level.SEVERE, "Unknown type: {0}", type);
             return new SongDisplayable[0];
@@ -222,7 +276,9 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         List<SongDisplayable> ret;
         try (DirectoryReader dr = DirectoryReader.open(index)) {
             IndexSearcher searcher = new IndexSearcher(dr);
-            Query q = new ComplexPhraseQueryParser(typeStr, analyzer).parse(sanctifyQueryString);
+            Query q = type == FilterType.CCLI
+                    ? new PrefixQuery(new Term(typeStr, ccliDigits))
+                    : new ComplexPhraseQueryParser(typeStr, analyzer).parse(sanctifyQueryString);
             TopScoreDocCollector collector = TopScoreDocCollector.create(1000,10000);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
@@ -232,7 +288,10 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
                 Document d = searcher.doc(docId);
                 final Long songNumber = Long.parseLong(d.get("number"));
                 SongDisplayable song = songs.get(songNumber);
-                ret.add(song);
+                if (song == null && type == FilterType.CCLI) {
+                    song = ccliOnlySongs.get(songNumber);
+                }
+                if (song != null) ret.add(song);
             }
             if (type == FilterType.BODY) {
                 for (SongDisplayable song : filter(queryString, FilterType.TITLE)) {
@@ -258,5 +317,6 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     public synchronized void clear() {
         SearchIndexUtils.clearIndex(index);
         songs.clear();
+        ccliOnlySongs.clear();
     }
 }

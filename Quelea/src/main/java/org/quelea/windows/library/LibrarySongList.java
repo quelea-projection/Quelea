@@ -18,6 +18,8 @@
 package org.quelea.windows.library;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -255,6 +257,9 @@ public class LibrarySongList extends StackPane {
                 songs.addAll(m);
                 m.clear();
                 LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
+
+                LOGGER.log(Level.INFO, "Filtering songs by CCLI number");
+                appendCcliMatches(songs, SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.CCLI));
             }
 
             Platform.runLater(() -> {
@@ -271,6 +276,21 @@ public class LibrarySongList extends StackPane {
             });
         });
 
+    }
+
+    /** Add number matches after existing groups without duplicating existing results. */
+    static void appendCcliMatches(List<SongDisplayable> songs, SongDisplayable[] ccliMatches) {
+        Set<Long> existingIds = new HashSet<>();
+        for (SongDisplayable song : songs) {
+            existingIds.add(song.getID());
+        }
+        TreeSet<SongDisplayable> sorted = new TreeSet<>();
+        for (SongDisplayable song : ccliMatches) {
+            if (existingIds.add(song.getID()) && sorted.add(song)) {
+                song.setLastSearch(null);
+            }
+        }
+        songs.addAll(sorted);
     }
 
     /**

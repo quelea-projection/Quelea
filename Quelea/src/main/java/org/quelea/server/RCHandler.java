@@ -303,6 +303,13 @@ public class RCHandler {
 
                 SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.AUTHOR);
                 songs.addAll(Arrays.asList(authorSongs));
+
+                SongDisplayable[] ccliSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.CCLI);
+                for (SongDisplayable song : ccliSongs) {
+                    if (songs.add(song)) {
+                        song.setLastSearch(null);
+                    }
+                }
             }
 
             StringBuilder response = new StringBuilder();

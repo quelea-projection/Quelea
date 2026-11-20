@@ -1,7 +1,7 @@
 package org.quelea.data.displayable;
 
 import java.nio.file.Files;
-import java.util.Calendar;
+import java.time.LocalTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +39,7 @@ public class TimerDisplayableTest {
 
     @Test
     public void unnamedClockTimerShowsTheActualHourAndMinute() {
-        Calendar finish = Calendar.getInstance();
-        finish.set(Calendar.HOUR_OF_DAY, 14);
-        finish.set(Calendar.MINUTE, 7);
+        LocalTime finish = LocalTime.of(14, 7);
         TimerDisplayable timer = new TimerDisplayable("", finish, "", "", ThemeDTO.DEFAULT_THEME);
         Assertions.assertTrue(timer.getName().contains("14:07"), timer.getName());
     }

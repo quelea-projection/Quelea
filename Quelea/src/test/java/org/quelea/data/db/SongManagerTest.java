@@ -1,11 +1,18 @@
 package org.quelea.data.db;
 
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
+import com.sun.net.httpserver.HttpServer;
 import javafx.application.Platform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -17,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SearchIndex;
+import org.quelea.server.RCHandler;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.search.UniversalSearch;
 
 /**
  * Runs against a real database in a temporary user home. The songs need the
@@ -228,5 +237,89 @@ public class SongManagerTest {
         Assertions.assertEquals(1, titles().stream().filter("Theme twins"::equals).count());
         reload();
         Assertions.assertEquals(1, titles().stream().filter("Theme twins"::equals).count());
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("CCLI search includes duplicate database rows before and after reload")
+    public void ccliSearchIncludesPersistedDuplicates() throws Exception {
+        SongDisplayable visible = song("CCLI twins", "Verse 1\nsame words");
+        SongDisplayable hidden = song("CCLI twins", "Verse 1\nsame words");
+        visible.setCcli("1000001");
+        hidden.setCcli("2000002");
+        Assertions.assertTrue(manager.addSong(visible, false));
+        Assertions.assertTrue(manager.addSong(hidden, false));
+        Assertions.assertEquals(2, rows("CCLI twins"));
+        Assertions.assertEquals(1, titles().stream().filter("CCLI twins"::equals).count());
+        assertCcliResult("1000001", visible.getID());
+        assertCcliResult("2000002", hidden.getID());
+        Assertions.assertEquals(List.of("CCLI twins"), search("CCLI twins", SearchIndex.FilterType.TITLE));
+
+        reload();
+        Assertions.assertEquals(1, titles().stream().filter("CCLI twins"::equals).count());
+        assertCcliResult("1000001", visible.getID());
+        assertCcliResult("2000002", hidden.getID());
+        Assertions.assertNotNull(manager.getIndex().getByID(hidden.getID()));
+
+        UniversalSearch universal = new UniversalSearch();
+        var results = universal.search("2000002", UniversalSearch.Kind.SONG,
+                new UniversalSearch.Sources(null, List.of(), List.of()));
+        Assertions.assertEquals(1, results.size());
+        Assertions.assertEquals("CCLI twins", results.get(0).title());
+        Assertions.assertTrue(results.get(0).subtitle().contains("2000002"));
+        Assertions.assertEquals("CCLI twins", universal.search("CCLI #2,000,002", UniversalSearch.Kind.SONG,
+                new UniversalSearch.Sources(null, List.of(), List.of())).get(0).title());
+
+        SongDisplayable numberInTitle = song("2000002", "Verse 1\nnumber in title");
+        numberInTitle.setCcli("2000002");
+        SongDisplayable numberInAuthor = new SongDisplayable.Builder("Author match", "Writer 2000002")
+                .lyrics("Verse 1\nother words").get();
+        Assertions.assertTrue(manager.addSong(numberInTitle, false));
+        Assertions.assertTrue(manager.addSong(numberInAuthor, false));
+        results = universal.search("2000002", UniversalSearch.Kind.SONG,
+                new UniversalSearch.Sources(null, List.of(), List.of()));
+        Assertions.assertEquals(3, results.size());
+        Assertions.assertEquals("2000002", results.get(0).title());
+        Assertions.assertEquals("Some Author", results.get(0).subtitle());
+        Assertions.assertEquals("Author match", results.get(1).title());
+        Assertions.assertEquals("CCLI twins", results.get(2).title());
+        Assertions.assertTrue(manager.removeSong(numberInTitle));
+        Assertions.assertTrue(manager.removeSong(numberInAuthor));
+
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/search/", exchange -> {
+            byte[] response = RCHandler.databaseSearch(exchange).getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, response.length);
+            try (var body = exchange.getResponseBody()) {
+                body.write(response);
+            }
+        });
+        server.start();
+        try {
+            URI uri = URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/search/2000002");
+            String response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(uri).build(),
+                    HttpResponse.BodyHandlers.ofString()).body();
+            Assertions.assertTrue(response.contains("/song/" + hidden.getID() + "\""));
+        } finally {
+            server.stop(0);
+        }
+
+        hidden.setCcli("3000003");
+        Assertions.assertTrue(manager.updateSong(hidden));
+        Assertions.assertEquals(0, manager.getIndex().filter("2000002", SearchIndex.FilterType.CCLI).length);
+        assertCcliResult("3000003", hidden.getID());
+        Assertions.assertEquals(1, titles().stream().filter("CCLI twins"::equals).count());
+        hidden.setTitle("CCLI renamed twin");
+        Assertions.assertTrue(manager.updateSong(hidden));
+        Assertions.assertTrue(titles().contains("CCLI renamed twin"));
+        assertCcliResult("3000003", hidden.getID());
+        Assertions.assertTrue(manager.removeSong(hidden));
+        Assertions.assertEquals(0, manager.getIndex().filter("3000003", SearchIndex.FilterType.CCLI).length);
+    }
+
+    private static void assertCcliResult(String query, long expectedId) {
+        SongDisplayable[] matches = manager.getIndex().filter(query, SearchIndex.FilterType.CCLI);
+        Assertions.assertEquals(1, matches.length, query);
+        Assertions.assertEquals(expectedId, matches[0].getID(), query);
     }
 }
