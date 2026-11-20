@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -53,15 +52,27 @@ class ScreenMonkeyParserTest {
     }
 
     @Test
-    @Disabled("Screen Monkey XML currently expands external file entities")
     void importedXmlCannotReadLocalFilesViaExternalEntities() throws Exception {
-        // Imported files are untrusted: expanding an external entity can copy
-        // private local file contents into the song or expose them elsewhere.
-        // Disable external entities and DTD loading on the DocumentBuilderFactory.
         Path secret = directory.resolve("private.txt");
         Files.writeString(secret, "PRIVATE_TEST_CONTENT", StandardCharsets.UTF_8);
         List<SongDisplayable> songs = parse("<?xml version=\"1.0\"?><!DOCTYPE Song [<!ENTITY xxe SYSTEM \""
                 + secret.toUri() + "\">]><Song><Title>&xxe;</Title><Lyrics><Verse>Words</Verse></Lyrics></Song>");
+        Assertions.assertTrue(songs.stream().noneMatch(song -> song.getTitle().contains("PRIVATE_TEST_CONTENT")));
+    }
+
+    @Test
+    void internalEntitiesContinueToWork() throws Exception {
+        List<SongDisplayable> songs = parse("<!DOCTYPE Song [<!ENTITY word 'Grace'>]>"
+                + "<Song><Title>&word; &amp; Peace</Title><Lyrics><Verse>Words</Verse></Lyrics></Song>");
+        Assertions.assertEquals(1, songs.size());
+        Assertions.assertEquals("Grace & Peace", songs.get(0).getTitle());
+    }
+
+    @Test
+    void externalDtdIsNotLoaded() throws Exception {
+        Path dtd = Files.writeString(directory.resolve("external.dtd"), "<!ENTITY word 'PRIVATE_TEST_CONTENT'>");
+        List<SongDisplayable> songs = parse("<!DOCTYPE Song SYSTEM \"" + dtd.toUri() + "\">"
+                + "<Song><Title>&word;</Title><Lyrics><Verse>Words</Verse></Lyrics></Song>");
         Assertions.assertTrue(songs.stream().noneMatch(song -> song.getTitle().contains("PRIVATE_TEST_CONTENT")));
     }
 
