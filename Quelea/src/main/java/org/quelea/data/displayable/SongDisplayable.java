@@ -45,7 +45,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.layout.BackgroundFill;
@@ -60,6 +59,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SecureXml;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -1197,10 +1197,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public static SongDisplayable parseXML(String xml) {
         try {
             InputStream inputStream = new ByteArrayInputStream(xml.getBytes("UTF8"));
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getFirstChild(), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
@@ -1215,10 +1214,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public static SongDisplayable parseXML(InputStream inputStream) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getChildNodes().item(0), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't parse the schedule", ex);
             return null;

@@ -9,7 +9,6 @@ import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -85,13 +84,7 @@ public class SchedulePersistenceTest {
     }
 
     @Test
-    @Disabled("A leading XML comment is mistaken for the schedule document element")
     public void commentsBeforeScheduleRootDoNotHideItems() throws Exception {
-        // XML comments before the document element are legal. Parsing the
-        // first child instead of the document element silently loads an empty
-        // schedule, which users could then save over their original work.
-        // Use the document element after securing this parser against external
-        // entities, so an existing XXE issue is not exposed more broadly.
         Path file = directory.resolve("commented.quelea");
         try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(file))) {
             out.putNextEntry(new ZipEntry("schedule.xml"));
@@ -104,6 +97,24 @@ public class SchedulePersistenceTest {
         Assertions.assertNotNull(loaded);
         Assertions.assertEquals(1, loaded.getSize());
         Assertions.assertEquals("Included", ((SongDisplayable) loaded.getDisplayable(0)).getTitle());
+    }
+
+    @Test
+    public void scheduleXmlDoesNotExpandExternalEntities() throws Exception {
+        Path secret = Files.writeString(directory.resolve("private.txt"), "PRIVATE_TEST_CONTENT");
+        String songXml = song("Placeholder", "Words").getXML().replace("<title>Placeholder</title>", "<title>&data;</title>");
+        String xml = "<!DOCTYPE schedule [<!ENTITY data SYSTEM \"" + secret.toUri() + "\">]>"
+                + "<schedule>" + songXml + "</schedule>";
+        Path file = directory.resolve("external.quelea");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(file))) {
+            out.putNextEntry(new ZipEntry("schedule.xml"));
+            out.write(xml.getBytes(StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        Schedule loaded = Schedule.fromFile(file.toFile());
+        Assertions.assertNotNull(loaded);
+        Assertions.assertEquals(1, loaded.getSize());
+        Assertions.assertFalse(((SongDisplayable) loaded.getDisplayable(0)).getTitle().contains("PRIVATE_TEST_CONTENT"));
     }
 
     @Test

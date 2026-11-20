@@ -3,15 +3,17 @@ package org.quelea.data.displayable;
 import java.nio.file.Files;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.quelea.services.utils.QueleaProperties;
 
 @DisplayName("Song persistence and sequencing")
 public class SongDisplayablePersistenceTest {
+    @TempDir Path directory;
     @BeforeAll
     public static void initializeProperties() throws Exception {
         if (QueleaProperties.get() == null) {
@@ -70,11 +72,7 @@ public class SongDisplayablePersistenceTest {
     }
 
     @Test
-    @Disabled("Both song XML entry points mistake a leading comment for the root element")
     public void xmlCommentBeforeRootDoesNotHideSongData() {
-        // Use the document element in both parseXML overloads, after disabling
-        // external XML entities. Otherwise song packs with comments can import
-        // blank songs, and changing the root alone can expose existing XXE.
         SongDisplayable song = new SongDisplayable("Commented song", "Author");
         song.setLyrics("Words");
         String xml = "<?xml version=\"1.0\"?><!-- comment -->" + song.getXML();
@@ -84,6 +82,21 @@ public class SongDisplayablePersistenceTest {
         Assertions.assertNotNull(fromStream);
         Assertions.assertEquals("Commented song", fromString.getTitle());
         Assertions.assertEquals("Commented song", fromStream.getTitle());
+    }
+
+    @Test
+    public void songXmlDoesNotExpandExternalEntities() throws Exception {
+        Path secret = Files.writeString(directory.resolve("private.txt"), "PRIVATE_TEST_CONTENT");
+        SongDisplayable song = new SongDisplayable("Placeholder", "Author");
+        song.setLyrics("Words");
+        String xml = "<!DOCTYPE song [<!ENTITY data SYSTEM \"" + secret.toUri() + "\">]>"
+                + song.getXML().replace("<title>Placeholder</title>", "<title>&data;</title>");
+        SongDisplayable fromString = SongDisplayable.parseXML(xml);
+        SongDisplayable fromStream = SongDisplayable.parseXML(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertNotNull(fromString);
+        Assertions.assertNotNull(fromStream);
+        Assertions.assertFalse(fromString.getTitle().contains("PRIVATE_TEST_CONTENT"));
+        Assertions.assertFalse(fromStream.getTitle().contains("PRIVATE_TEST_CONTENT"));
     }
 
     @Test
