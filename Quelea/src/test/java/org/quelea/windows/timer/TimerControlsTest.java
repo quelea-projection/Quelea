@@ -37,13 +37,23 @@ public class TimerControlsTest {
         FxTestSupport.assumeAvailable();
         FxTestSupport.onFx(() -> {
             TimerControls controls = new TimerControls();
+            Assertions.assertFalse(controls.runningProperty().get());
             controls.play(false);
             controls.play(false);
             Assertions.assertTrue(controls.status());
+            Assertions.assertTrue(controls.runningProperty().get());
             controls.setDisableControls(true);
             Assertions.assertFalse(controls.status());
+            Assertions.assertTrue(controls.runningProperty().get());
             controls.setDisableControls(false);
             Assertions.assertTrue(controls.status());
+            controls.play(true);
+            controls.play(true);
+            Assertions.assertFalse(controls.status());
+            Assertions.assertFalse(controls.runningProperty().get());
+            controls.play(false);
+            controls.reset();
+            Assertions.assertFalse(controls.runningProperty().get());
             return null;
         });
     }

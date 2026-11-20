@@ -98,6 +98,13 @@ public class MultimediaPanel extends AbstractPanel {
         controlPanel.play();
     }
 
+    /**
+     * @return the play, pause, stop, seek and loop controls of this panel.
+     */
+    public MultimediaControls getControls() {
+        return controlPanel;
+    }
+
     @Override
     public int getCurrentIndex() {
         return 0;

@@ -39,6 +39,7 @@ import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.options.customprefs.MobileServerPreference;
+import org.quelea.windows.options.customprefs.RemoteDevicesPreference;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import org.quelea.windows.style.QueleaIcon;
@@ -60,6 +61,10 @@ public class OptionsServerSettingsPanel {
     private StringProperty remotePortNumberProperty;
     private StringField remoteField;
     private StringProperty passwordProperty;
+    private BooleanProperty useRemoteV2Property;
+    private StringProperty remoteV2PortProperty;
+    private StringField remoteV2PortField;
+    private StringField remoteV2DevicesField;
 
     /**
      * Create the server settings panel.
@@ -84,6 +89,15 @@ public class OptionsServerSettingsPanel {
         bindings.put(remoteField, useMobileRemoteProperty.not());
 
         passwordProperty = new SimpleStringProperty(QueleaProperties.get().getRemoteControlPassword());
+
+        useRemoteV2Property = new SimpleBooleanProperty(QueleaProperties.get().getUseRemoteV2());
+        remoteV2PortProperty = new SimpleStringProperty(String.valueOf(QueleaProperties.get().getRemoteV2Port()));
+        // PreferencesFX needs its own controls; formsfx's default one breaks the dialog.
+        remoteV2PortField = Field.ofStringType(remoteV2PortProperty)
+                .render(new com.dlsc.preferencesfx.formsfx.view.controls.SimpleTextControl());
+        remoteV2PortField.validate(this::validatePortNumber);
+        bindings.put(remoteV2PortField, useRemoteV2Property.not());
+        remoteV2DevicesField = Field.ofStringType("").render(new RemoteDevicesPreference());
     }
 
     private ValidationResult validatePortNumber(String s) {
@@ -110,6 +124,15 @@ public class OptionsServerSettingsPanel {
                                 .customKey(remoteControlPortKey),
                         Setting.of(LabelGrabber.INSTANCE.getLabel("remote.control.password"), passwordProperty)
                                 .customKey(remoteControlPasswordKey)
+                ),
+                Group.of(LabelGrabber.INSTANCE.getLabel("remote.v2.heading"),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("use.remote.v2.label"), useRemoteV2Property)
+                                .customKey(useRemoteV2Key),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("port.number.label"), remoteV2PortField, remoteV2PortProperty)
+                                .customKey(remoteV2PortKey),
+                        Setting.of(LabelGrabber.INSTANCE.getLabel("remote.v2.devices.label"), remoteV2DevicesField,
+                                new SimpleStringProperty(""))
+                                .customKey(remoteV2DevicesUiKey)
                 )
         );
     }

@@ -23,6 +23,8 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import org.quelea.server.v2.RemoteApiServer;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -85,9 +87,17 @@ public class AutoDetectServer {
             String response;
             response = "" + QueleaApp.get().getMainWindow().getPreferencesDialog().getOptionsServerSettingsPanel().getLyricsPreference().getMLURL() + "\n";
             response = response + QueleaApp.get().getMainWindow().getPreferencesDialog().getOptionsServerSettingsPanel().getRemotePreference().getRCURL();
-            t.sendResponseHeaders(200, response.length());
+            // A third line tells newer apps where remote control v2 is, so
+            // they pair with it instead of the old remote. Older apps read
+            // only the first two lines.
+            RemoteApiServer v2 = QueleaApp.get().getRemoteV2Server();
+            if (v2 != null) {
+                response = response + "\nv2=" + v2.getPort();
+            }
+            byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
+            t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
-                os.write(response.getBytes());
+                os.write(bytes);
             }
         }
     }

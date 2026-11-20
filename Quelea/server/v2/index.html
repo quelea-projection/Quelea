@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16181d">
+  <title>Quelea Remote</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <button id="menu-button" class="icon-button" data-t-label="menu.open" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <button id="back-button" class="icon-button" data-t-label="menu.back" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+    <span id="page-title" class="page-title">Quelea</span>
+    <button id="search-button" class="icon-button app-only" data-page="add" data-t-label="page.add" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+    <button id="notices-button" class="icon-button app-only" data-page="notices" data-t-label="page.notices" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg><span id="notice-count" class="badge" hidden></span></button>
+    <span id="conn" class="conn" data-state="offline" title=""></span>
+  </header>
+
+  <!-- The schedule in a drawer, as in the mobile app. -->
+  <div id="scrim" class="scrim" hidden></div>
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h2 data-t="drawer.schedule"></h2>
+      <button class="icon-button" data-page="themes" data-t-label="page.themes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></button>
+    </div>
+    <ol id="schedule" class="schedule"></ol>
+    <p id="schedule-empty" class="muted center" data-t="schedule.empty" hidden></p>
+    <div class="drawer-footer">
+      <button id="unpair" class="text-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg><span data-t="more.unpair"></span></button>
+    </div>
+  </aside>
+
+  <!-- Shown until this browser is paired. -->
+  <main id="pair-view" class="view" hidden>
+    <form id="pair-form" class="card pair">
+      <h1 data-t="pair.title"></h1>
+      <p data-t="pair.help" class="muted"></p>
+      <button type="button" id="pair-ask" class="ask" data-t="pair.ask"></button>
+      <div id="pair-waiting" class="pair-waiting" role="status" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="pair-waiting-text"></span>
+        <button type="button" id="pair-ask-cancel" class="text-button" data-t="pair.cancel"></button>
+      </div>
+      <p class="or" data-t="pair.orCode"></p>
+      <label><span data-t="pair.code"></span>
+        <input id="pair-code" autocomplete="one-time-code" autocapitalize="characters" maxlength="6" spellcheck="false">
+      </label>
+      <label><span data-t="pair.name"></span>
+        <input id="pair-name" maxlength="64">
+      </label>
+      <button type="submit" class="primary" data-t="pair.button"></button>
+      <p id="pair-error" class="error" role="alert"></p>
+    </form>
+  </main>
+
+  <main id="app-view" class="view" hidden>
+    <section id="tab-live" class="tab">
+      <!-- The icons of Quelea's live panel (icons.css: icon-logo, icon-black, icon-clear-text). -->
+      <div class="toggles screen">
+        <button id="toggle-logo" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M435-274h301q12.75 0 21.38-8.63Q766-291.25 766-304v-198q0-12.75-8.62-21.38Q748.75-532 736-532H435q-12.75 0-21.37 8.62Q405-514.75 405-502v198q0 12.75 8.63 21.37Q422.25-274 435-274ZM140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Zm0-60h680v-520H140v520Zm0 0v-520 520Z"/></svg><span data-t="live.logo"></span></button>
+        <button id="toggle-black" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M140-160q-25 0-42.5-17.5T80-220v-520q0-25 17.5-42.5T140-800h680q25 0 42.5 17.5T880-740v520q0 25-17.5 42.5T820-160H140Z"/></svg><span data-t="live.black"></span></button>
+        <button id="toggle-clear" class="toggle" aria-pressed="false"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="m507-524-77-76 24-56h-58q-26 0-38.5-16T345-708q0-20 13-36t39-16h353q21 0 35.5 14.5T800-710q0 21-14.5 35.5T750-660H565l-58 136ZM785-77 457-406l-75 176q-6 14-18.5 22t-27.5 8q-27 0-42-22.5t-4-47.5l90-212L77-785q-9-9-9-21t9-21q9-9 21-9t21 9l708 708q9 9 9 21t-9 21q-9 9-21 9t-21-9Z"/></svg><span data-t="live.clear"></span></button>
+      </div>
+      <div class="live-area">
+        <div class="live-main">
+          <h2 id="live-heading" class="live-heading" hidden><span class="live-dot"></span><span id="live-title"></span></h2>
+          <div id="media-tools" class="media" hidden>
+            <div class="toggles">
+              <button id="media-play" class="primary" data-t="media.play"></button>
+              <button id="media-stop" data-t="media.stop"></button>
+              <button id="media-loop" class="toggle" data-t="media.loop" aria-pressed="false"></button>
+            </div>
+            <input id="media-position" type="range" min="0" max="1" step="0.001" value="0" data-t-title="media.position">
+          </div>
+          <ol id="sections" class="sections"></ol>
+          <p id="nothing-live" class="muted center" data-t="live.nothing" hidden></p>
+        </div>
+        <!-- Beside the lyrics, as in the app; next section is the largest. -->
+        <div class="nav-column">
+          <button id="prev-item" class="nav" data-t-label="live.prevItem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17.59 7.41 19 12 14.42 16.59 19 18 17.59l-6-6zM6 11l1.41 1.41L12 7.83l4.59 4.58L18 11l-6-6z"/></svg></button>
+          <button id="prev" class="nav mid" data-t-label="live.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></button>
+          <button id="next" class="nav big" data-t-label="live.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+          <button id="next-item" class="nav" data-t-label="live.nextItem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.41 16.59 5 12 9.58 7.41 5 6 6.41l6 6zM18 13l-1.41-1.41L12 16.17l-4.59-4.58L6 13l6 6z"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Everything that can be added, in one place, as in the app. -->
+    <section id="tab-add" class="tab" hidden>
+      <ul class="add-menu card">
+        <li><button class="add-option" data-page="add-song">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></span>
+          <span class="add-text"><span data-t="add.song"></span><small data-t="add.song.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-new-song">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg></span>
+          <span class="add-text"><span data-t="song.new"></span><small data-t="add.newsong.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-bible">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
+          <span class="add-text"><span data-t="add.bibleItem"></span><small data-t="add.bible.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="images">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></span>
+          <span class="add-text"><span data-t="add.image"></span><small data-t="add.media.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="videos">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg></span>
+          <span class="add-text"><span data-t="add.video"></span><small data-t="add.media.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="media" data-kind="documents">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg></span>
+          <span class="add-text"><span data-t="add.document"></span><small data-t="add.document.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+        <li><button class="add-option" data-page="add-web">
+          <span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></span>
+          <span class="add-text"><span data-t="web.title"></span><small data-t="add.web.sub"></small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button></li>
+      </ul>
+    </section>
+
+    <section id="tab-add-song" class="tab" hidden>
+      <form id="song-search" class="card">
+        <div class="row">
+          <input id="song-query" type="search" data-t-placeholder="add.songSearch">
+          <button type="submit" data-t="add.search"></button>
+        </div>
+        <ul id="song-results" class="results"></ul>
+      </form>
+    </section>
+
+    <section id="tab-add-new-song" class="tab" hidden>
+      <form id="new-song-form" class="card">
+          <input id="new-song-title" maxlength="200" required data-t-placeholder="song.title">
+          <input id="new-song-author" maxlength="200" data-t-placeholder="song.author">
+          <textarea id="new-song-lyrics" rows="10" maxlength="20000" required data-t-placeholder="song.lyrics"></textarea>
+          <p class="muted small" data-t="song.help"></p>
+          <div class="row">
+            <button type="submit" data-t="song.save"></button>
+            <button type="submit" id="new-song-add" class="primary" data-t="song.saveAdd"></button>
+          </div>
+        </form>
+    </section>
+
+    <section id="tab-add-bible" class="tab" hidden>
+      <form id="bible-form" class="card">
+        <select id="bible-translation"></select>
+        <div class="row">
+          <input id="bible-ref" data-t-placeholder="add.bibleRef" spellcheck="false">
+          <button type="submit" data-t="add.show"></button>
+        </div>
+        <div id="bible-preview" class="preview"></div>
+        <button id="bible-add" class="primary" data-t="add.add" hidden></button>
+      </form>
+    </section>
+
+    <section id="tab-add-web" class="tab" hidden>
+      <form id="web-form" class="card">
+        <div class="row">
+          <input id="web-url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" data-t-placeholder="web.placeholder">
+          <button type="submit" class="primary" data-t="media.add"></button>
+        </div>
+      </form>
+    </section>
+
+    <section id="tab-notices" class="tab" hidden>
+      <form id="notice-form" class="card">
+        <h2 data-t="notice.title"></h2>
+        <ul id="notices" class="results"></ul>
+        <div id="notice-saved" class="chips"></div>
+        <input id="notice-text" maxlength="500" data-t-placeholder="notice.text">
+        <div class="row">
+          <select id="notice-times">
+            <option value="1" data-t="notice.once"></option>
+            <option value="2" data-t="notice.twice"></option>
+            <option value="3" data-t="notice.three"></option>
+            <option value="5" data-t="notice.five"></option>
+            <option value="0" data-t="notice.always"></option>
+          </select>
+          <input id="notice-color" type="color" value="#ffffff" data-t-title="notice.color">
+          <button type="submit" class="primary" data-t="notice.show"></button>
+        </div>
+      </form>
+    </section>
+
+    <section id="tab-media" class="tab" hidden>
+      <div class="segmented three" role="tablist">
+        <button id="media-images" role="tab" aria-selected="true" data-t="media.images"></button>
+        <button id="media-videos" role="tab" aria-selected="false" data-t="media.videos"></button>
+        <button id="media-documents" role="tab" aria-selected="false" data-t="media.documents"></button>
+      </div>
+      <label class="upload-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm0-10h4v6h6v-6h4l-7-7-7 7z"/></svg><span id="upload-label" data-t="media.uploadImages"></span>
+        <input id="upload-input" type="file" accept="image/*" multiple>
+      </label>
+      <div id="upload-progress" class="upload-progress" hidden><div></div><span></span></div>
+      <ul id="media-list" class="themes media-list"></ul>
+      <p id="media-empty" class="muted center" data-t="media.empty" hidden></p>
+    </section>
+
+    <section id="tab-themes" class="tab" hidden>
+      <ul id="themes" class="themes"></ul>
+    </section>
+  </main>
+
+
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

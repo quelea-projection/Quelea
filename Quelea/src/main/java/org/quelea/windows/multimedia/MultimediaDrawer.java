@@ -1,5 +1,6 @@
 package org.quelea.windows.multimedia;
 
+import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import org.freedesktop.gstreamer.fx.FXImageSink;
 import org.quelea.data.displayable.Displayable;
@@ -52,7 +53,9 @@ public class MultimediaDrawer extends DisplayableDrawer {
             controlPanel.setOnVolumeChanged(vidDisplay::setVolume);
 
             vidDisplay.setOnPosChanged(controlPanel::setPosition);
-            vidDisplay.setOnFinished(controlPanel::reset);
+            // GStreamer reports the end on its own thread; the controls
+            // belong to the FX thread.
+            vidDisplay.setOnFinished(() -> Platform.runLater(controlPanel::reset));
         }
 
     }

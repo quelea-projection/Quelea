@@ -21,6 +21,7 @@ package org.quelea.windows.main.toolbars;
 import java.util.Date;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -293,6 +294,13 @@ public class MainToolbar extends ToolBar {
         recordAudioButton.setText("");
         recordAudioButton.setSelected(false);
         recTime = 0;
+    }
+
+    /**
+     * @return the selected state of the record button, true while recording.
+     */
+    public ReadOnlyBooleanProperty recordingProperty() {
+        return recordAudioButton.selectedProperty();
     }
 
     public RecordButtonHandler getRecordButtonHandler() {
