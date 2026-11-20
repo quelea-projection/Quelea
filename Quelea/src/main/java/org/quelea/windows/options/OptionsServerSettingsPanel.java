@@ -50,7 +50,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsServerSettingsPanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private MobileServerPreference lyricsPreference;
     private MobileServerPreference remotePreference;
     private BooleanProperty useMobileLyricsProperty;
@@ -66,7 +66,7 @@ public class OptionsServerSettingsPanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsServerSettingsPanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsServerSettingsPanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         lyricsPreference = new MobileServerPreference(true);
         remotePreference = new MobileServerPreference(false);

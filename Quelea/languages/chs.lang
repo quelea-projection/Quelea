@@ -418,7 +418,6 @@ chosen.fonts.explanation=Quelea 只在主题窗口显示预先选择的字体在
 ignored.fonts.label=忽略的字体
 chosen.fonts.label=已选字体
 font.selection.dialog.title=字体选择
-video.hue.label=色调
 hover.for.position.label=糊不上悬停设置位置
 test.patterns.text=测试图案
 test.patterns.explanation=测试图案可帮助您校准显示焦距。 点击图案后会显示在投影和舞台视图上。

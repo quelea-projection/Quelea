@@ -137,6 +137,8 @@ public class Version implements Comparable<Version> {
      * @param o the other version.
      * @return -1 if this version is less than the other one, 0 if they are the
      * same and 1 if this version is greater.
+     * Numeric components ignore leading zeroes; unlike equality, ordering
+     * therefore treats strings such as 2025.01 and 2025.1 as equivalent.
      */
     @Override
     public int compareTo(Version o) {
@@ -153,6 +155,6 @@ public class Version implements Comparable<Version> {
                 return -1;
             }
         }
-        return Integer.valueOf(versionStr.length()).compareTo(o.versionStr.length());
+        return Integer.compare(theseParts.length, otherParts.length);
     }
 }

@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.Desktop;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.Menu;
@@ -59,27 +58,15 @@ public class HelpMenu extends Menu {
             aboutDialog = new AboutDialog();
         });
 
-        if (Desktop.isDesktopSupported()) {
-            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
-            queleaFacebook.setOnAction(t -> {
-                launchPage(QueleaProperties.get().getFacebookPageLocation());
-            });
-            getItems().add(queleaFacebook);
-            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), QueleaIcon.FORUM.create());
-            queleaDiscuss.setOnAction(t -> {
-                launchPage(QueleaProperties.get().getDiscussLocation());
-            });
-            getItems().add(queleaDiscuss);
-            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), QueleaIcon.HELP.create());
-            queleaWiki.setOnAction(t -> {
-                launchPage(QueleaProperties.get().getWikiPageLocation());
-            });
-            getItems().add(queleaWiki);
-        } else {
-            queleaDiscuss = null;
-            queleaFacebook = null;
-            queleaWiki = null;
-        }
+        queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
+        queleaFacebook.setOnAction(t -> launchPage(QueleaProperties.get().getFacebookPageLocation()));
+        getItems().add(queleaFacebook);
+        queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), QueleaIcon.FORUM.create());
+        queleaDiscuss.setOnAction(t -> launchPage(QueleaProperties.get().getDiscussLocation()));
+        getItems().add(queleaDiscuss);
+        queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), QueleaIcon.HELP.create());
+        queleaWiki.setOnAction(t -> launchPage(QueleaProperties.get().getWikiPageLocation()));
+        getItems().add(queleaWiki);
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), QueleaIcon.UPDATE.create());
         updateCheck.setOnAction(t -> {
             new UpdateChecker().checkUpdate(true, true, true);
@@ -93,7 +80,9 @@ public class HelpMenu extends Menu {
     }
 
     private void launchPage(String page) {
-        DesktopApi.browse(page);
+        if (!DesktopApi.browse(page)) {
+            showError(page);
+        }
     }
 
     /**

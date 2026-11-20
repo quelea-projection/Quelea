@@ -441,7 +441,6 @@ chosen.fonts.explanation=Quelea wyświetla wybór fontów w oknie motywu. Przeci
 ignored.fonts.label=Dostępne fonty
 chosen.fonts.label=Wybrane fonty
 font.selection.dialog.title=Wybór fontów
-video.hue.label=Odcień
 hover.for.position.label=Wybierz pole, aby ustawić pozycję tekstu
 test.patterns.text=Obrazy testowe
 test.patterns.explanation=Dostępne tu obrazy testowe pomogą skalibrować ustawienia ostorści i kolorów ekranu projekcyjnego. Kliknij dowolny, aby wyświetlić je na ekranie głównym i promptera.

@@ -50,7 +50,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.AudioDisplayable;
@@ -68,6 +67,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.SchedulePrintContent;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SecureXml;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -107,6 +107,11 @@ public class Schedule implements Iterable<Displayable> {
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
+                ZipEntry scheduleEntry = zipFile.getEntry("schedule.xml");
+                if (scheduleEntry == null) {
+                    LOGGER.log(Level.WARNING, "Schedule archive has no schedule.xml: {0}", file);
+                    return null;
+                }
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
                 Map<String, String> fileChanges = new HashMap<>();
                 while (enumeration.hasMoreElements()) {
@@ -150,7 +155,7 @@ public class Schedule implements Iterable<Displayable> {
                         LOGGER.log(Level.INFO, "Opening schedule - written file {0}", writeFile.getAbsolutePath());
                     }
                 }
-                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
+                Schedule ret = parseXML(zipFile.getInputStream(scheduleEntry), fileChanges);
                 if (ret == null) {
                     return null;
                 }
@@ -198,10 +203,9 @@ public class Schedule implements Iterable<Displayable> {
              * End bodge.
              */
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
-            NodeList nodes = doc.getFirstChild().getChildNodes();
+            NodeList nodes = doc.getDocumentElement().getChildNodes();
             Schedule newSchedule = new Schedule();
             boolean skipped = false;
             for (int i = 0; i < nodes.getLength(); i++) {

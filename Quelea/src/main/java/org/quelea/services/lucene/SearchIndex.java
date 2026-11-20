@@ -32,7 +32,7 @@ public interface SearchIndex<T> {
      */
     enum FilterType {
 
-        TITLE, AUTHOR, BODY
+        TITLE, AUTHOR, BODY, CCLI
     }
     
     /**

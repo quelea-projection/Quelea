@@ -18,11 +18,7 @@
 package org.quelea.windows.main.actionhandlers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
@@ -42,20 +38,20 @@ public class AddBibleVerseHandler {
 
     public void add() {
         ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-        Set<Bible> current = new HashSet<>();
         Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-        if (d instanceof BiblePassage) {
-            current.add(((BiblePassage) d).getVerses()[0].getChapter().getBook().getBible());
+        if (d instanceof BiblePassage passage) {
+            add(sl, passage);
         }
-        Bible b = null;
-        if (current.size() == 1) {
-            b = current.iterator().next();
+    }
+
+    void add(ScheduleList sl, BiblePassage passage) {
+        if (passage.getVerses().length == 0) {
+            return;
         }
+        Bible b = passage.getVerses()[0].getChapter().getBook().getBible();
         if (b == null) {
             return;
         }
-        Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
-        BiblePassage passage = (BiblePassage) d;
         ThemeDTO theme = passage.getTheme();
         List<BibleVerse> newVerses = new ArrayList<>();
         int lastNumber = 0;
@@ -108,20 +104,17 @@ public class AddBibleVerseHandler {
             }
         }
         String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
-        BiblePassage newPassage = new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti());
+        BiblePassage replacement = new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti());
         if (passage.isParallel()) {
-            newPassage = newPassage.withVersions(passage.getBibleVersions());
-        }
-        replaceMap.put(passage, newPassage);
-        sl.getSelectionModel().clearSelection();
-        int index = -1;
-        for (BiblePassage key : replaceMap.keySet()) {
-            index = sl.indexOf(key);
-            if (index != -1) {
-                sl.getItems().remove(index);
-                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
+            replacement = replacement.withVersions(passage.getBibleVersions());
+            if (replacement == null) {
+                return;
             }
         }
+        int index = sl.indexOfDisplayableIdentity(passage);
+        IndexedDisplayable original = index < 0 ? null : sl.getItems().get(index);
+        sl.getSelectionModel().clearSelection();
+        index = sl.replaceItem(original, replacement);
         if (index != -1) {
             sl.getSelectionModel().clearAndSelect(index);
         }

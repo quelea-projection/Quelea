@@ -125,7 +125,7 @@ public class GZipOutputStreamEx extends DeflaterOutputStream {
      */
     private void writeTrailer() throws IOException {
         writeInt((int) crc.getValue());  // CRC-32 of uncompressed data
-        writeInt(def.getTotalIn());     // Number of uncompressed bytes
+        writeInt((int) def.getBytesRead()); // GZIP stores the input size modulo 2^32.
     }
 
     /*

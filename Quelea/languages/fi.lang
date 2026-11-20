@@ -429,7 +429,6 @@ chosen.fonts.explanation=Quelea näyttää vain muutaman fontin teemaikkunassa. 
 ignored.fonts.label=Ohitetut fontit
 chosen.fonts.label=Valitut fontit
 font.selection.dialog.title=Fontin valinta
-video.hue.label=Värisävy
 hover.for.position.label=Aseta tekstin sijainti napsauttamalla haluttua aluetta kalvosta
 test.patterns.text=Testikuviot
 test.patterns.explanation=Testikuvioilla voit säätää näytön terävyyden ja väritasapainon kohdilleen. Näytä testikuva päänäytöllä napsauttamalla sitä.

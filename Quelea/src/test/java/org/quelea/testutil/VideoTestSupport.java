@@ -154,7 +154,7 @@ public final class VideoTestSupport {
     public static ThemeDTO videoTheme(double shadowRadius) {
         ThemeDTO d = ThemeDTO.DEFAULT_THEME;
         return new ThemeDTO(d.getSerializableFont(), d.getFontPaint(), d.getSerializableFont(),
-                d.getTranslateFontPaint(), new VideoBackground(TEST_VIDEO.getAbsolutePath(), 0, false),
+                d.getTranslateFontPaint(), new VideoBackground(TEST_VIDEO.getAbsolutePath(), false),
                 new org.quelea.services.utils.SerializableDropShadow(Color.BLACK, 0, 0, shadowRadius, 0.1, true),
                 false, false, false, false, -1, 0);
     }

@@ -41,7 +41,9 @@ public class ChapterVerseParser {
             parseFull(str.trim());
         }
         catch (Exception ex) {
-            //Just ignore, invalid input
+            // Parsing may already have assigned part of the range. An invalid
+            // reference must not silently select a partially parsed passage.
+            fromChapter = fromVerse = toChapter = toVerse = -1;
         }
     }
 

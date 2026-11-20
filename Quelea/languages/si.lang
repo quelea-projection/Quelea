@@ -443,7 +443,6 @@ chosen.fonts.explanation=Quelea v oknu teme prikaže le izbor pisav. Povlecite p
 ignored.fonts.label=Prezrte pisave
 chosen.fonts.label=Izbrane pisave
 font.selection.dialog.title=Nabor pisav
-video.hue.label=Barvitost
 hover.for.position.label=Podržite nad platnom, da določite položaj besedila
 test.patterns.text=Preizkusni vzorci
 test.patterns.explanation=Vzorci, ki so tukaj na voljo, bi vam morali pomagati pri nastavljanju ostrine in barvnih nastavitev prikaza. Kliknite na preizkusno sliko, da se prikaže tako na glavnem, kot na odrskem zaslonu.

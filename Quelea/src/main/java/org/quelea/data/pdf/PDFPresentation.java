@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -74,7 +75,7 @@ public class PDFPresentation implements Pdf {
      */
     private PdfSlide[] makeSlides() throws IOException {
         File pdf = new File(file);
-        PDDocument document = PDDocument.load(pdf.getAbsoluteFile());
+        PDDocument document = Loader.loadPDF(pdf.getAbsoluteFile());
         Path f = Files.createTempDirectory(null);
         f.toFile().deleteOnExit();
         ArrayList<PdfSlide> ret = new ArrayList<>();

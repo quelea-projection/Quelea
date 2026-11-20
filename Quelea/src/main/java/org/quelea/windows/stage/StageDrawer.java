@@ -28,7 +28,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -257,7 +256,6 @@ public class StageDrawer extends WordDrawer {
         }
         this.theme = theme;
         Image image;
-        ColorAdjust colourAdjust = null;
         image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
 
         Node newBackground;
@@ -265,9 +263,6 @@ public class StageDrawer extends WordDrawer {
         newImageView.setFitHeight(getCanvas().getHeight());
         newImageView.setFitWidth(getCanvas().getWidth());
         newImageView.setImage(image);
-        if (colourAdjust != null) {
-            newImageView.setEffect(colourAdjust);
-        }
         getCanvas().getChildren().add(newImageView);
         newBackground = newImageView;
         getCanvas().getChildren().remove(getCanvas().getCanvasBackground());

@@ -46,7 +46,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsBiblePanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private Setting defaultBibleSetting;
     private Setting showVerseNumSetting;
     private SimpleBooleanProperty showVerseNumProperty;
@@ -65,7 +65,7 @@ public class OptionsBiblePanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsBiblePanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsBiblePanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         showVerseNumProperty = new SimpleBooleanProperty(QueleaProperties.get().getShowVerseNumbers());
         splitVersesProperty = new SimpleBooleanProperty(QueleaProperties.get().getBibleSplitVerses());
@@ -105,8 +105,8 @@ public class OptionsBiblePanel {
     }
 
     public Category getBiblesTab() {
-        bindings.put((Field) maxVersesSetting.getElement(), useMaxVersesProperty.not());
-        bindings.put((Field) multiBibleVersionsSetting.getElement(), alwaysUseMultiBibleProperty.not());
+        bindings.put((Field<?>) maxVersesSetting.getElement(), useMaxVersesProperty.not());
+        bindings.put((Field<?>) multiBibleVersionsSetting.getElement(), alwaysUseMultiBibleProperty.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), QueleaIcon.BIBLE.create(),
                 defaultBibleSetting,

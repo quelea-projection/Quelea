@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
@@ -75,13 +76,13 @@ public class SchedulePrintTest {
      * non-breaking spaces used to line up chords) turned into one space.
      */
     static String text(File pdf) throws IOException {
-        try (PDDocument document = PDDocument.load(pdf)) {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
             return new PDFTextStripper().getText(document).replace(' ', ' ').replaceAll("\\s+", " ");
         }
     }
 
     static int pages(File pdf) throws IOException {
-        try (PDDocument document = PDDocument.load(pdf)) {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
             return document.getNumberOfPages();
         }
     }

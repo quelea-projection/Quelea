@@ -445,7 +445,6 @@ chosen.fonts.explanation=A Quelea csak a betűtípusok egy szűkített listájá
 ignored.fonts.label=Figyelmen kívül hagyott betűtípusok
 chosen.fonts.label=Kiválasztott betűtípusok
 font.selection.dialog.title=Betűtípusok kiválasztása
-video.hue.label=Színárnyalat
 hover.for.position.label=Húzd az egeret a vásznon a szöveg helyzetének beállításához
 test.patterns.text=Teszt minták
 test.patterns.explanation=Az itt elérhető teszt minták segíthetnek a kijelzők helyes fókusz és szín beállításában. Kattints a teszt képre, hogy kivetítsd azt mind a fő, mind a színpadi megjelenítőre.
