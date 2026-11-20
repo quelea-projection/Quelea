@@ -4,10 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -44,11 +44,7 @@ class EpicWorshipParserTest {
     }
 
     @Test
-    @Disabled("The importer reads only one line and does not parse JSON escapes")
     void readsValidIndentedJsonWithEscapedQuotes() throws Exception {
-        // Song packs are JSON, so line breaks and escaped quotation marks are
-        // legal. Reading only the first line and matching fields with regular
-        // expressions loses data or throws. Parse the complete file as JSON.
         List<SongDisplayable> songs = parse("{\n  \"songs\": [\n"
                 + "    {\"name\": \"Say \\\"hello\\\"\", \"author\": \"Jane\", "
                 + "\"content\": \"Sing\\nAgain\"}\n  ]\n}");
@@ -56,6 +52,24 @@ class EpicWorshipParserTest {
         Assertions.assertEquals("Say \"hello\"", songs.get(0).getTitle());
         Assertions.assertEquals("Jane", songs.get(0).getAuthor());
         Assertions.assertTrue(songs.get(0).getLyrics(false, false, false).contains("Sing\nAgain"));
+    }
+
+    @Test
+    void readsJsonEscapesCrLfAndDelimitersInsideText() throws Exception {
+        List<SongDisplayable> songs = parse("{\"songs\":[{\"content\":\"Verse one\\r\\n{words}, {more}\\r\\n\\r\\nChorus\\nLine\","
+                + "\"name\":\"Caf\\u00e9 : \\\"yes\\\"\",\"author\":\"A \\\\ B\"}]}");
+        Assertions.assertEquals(1, songs.size());
+        Assertions.assertEquals("Caf\u00e9 : \"yes\"", songs.get(0).getTitle());
+        Assertions.assertEquals("A \\ B", songs.get(0).getAuthor());
+        Assertions.assertTrue(songs.get(0).getLyrics(false, false, false).contains("Verse one\n{words}, {more}"));
+        Assertions.assertTrue(songs.get(0).getLyrics(false, false, false).contains("Chorus\nLine"));
+    }
+
+    @Test
+    void malformedOrUnexpectedSongPacksReportIoErrors() {
+        for (String json : List.of("", "{\"songs\":[", "{}", "{\"songs\":null}", "{\"songs\":[1]}")) {
+            Assertions.assertThrows(IOException.class, () -> parse(json), json);
+        }
     }
 
     private List<SongDisplayable> parse(String json) throws Exception {
