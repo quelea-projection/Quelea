@@ -429,7 +429,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param verse the verse to find.
      * @return the verse, or null if that bible doesn't have it or it's empty.
      */
-    private static BibleVerse findVerse(Bible bible, BibleVerse verse) {
+    public static BibleVerse findVerse(Bible bible, BibleVerse verse) {
         BibleBook book = bible.getBookByNumber(verse.getChapter().getBook().getBookNumber());
         if (book == null || book.getChapter(verse.getChapter().getNum() - 1) == null) {
             return null;

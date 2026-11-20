@@ -61,9 +61,35 @@ public final class BibleReferenceParser {
         }
     }
 
+    /**
+     * What a reference that is still being typed points to, used for browsing
+     * a bible while the reference is typed.
+     *
+     * @param books the books that fit the typed book name best, in the order
+     * of the bible. Empty if no book fits.
+     * @param book the book the reference is in: the book of {@code reference}
+     * if there is one, otherwise the first of {@code books}. Null if no book
+     * fits.
+     * @param passage the chapters and verses typed, tidied up, or an empty
+     * string if only a book has been typed.
+     * @param chapter the first chapter of the passage, or 0 if no chapter of
+     * {@code book} has been typed.
+     * @param reference the passage, the same as the first one {@link #parse}
+     * finds. Null if there isn't one.
+     */
+    public record Lookup(List<BibleBook> books, BibleBook book, String passage, int chapter, Reference reference) {
+
+        /** A lookup that found nothing. */
+        public static final Lookup NONE = new Lookup(List.of(), null, "", 0, null);
+    }
+
     /** A book number, a book name and something that starts with a number. */
     private static final Pattern QUERY = Pattern.compile(
             "^\\s*(?<book>(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*(?<passage>\\d[\\d\\s:.,;\\-–—]*)$");
+    /** A book number and a book name on their own. */
+    private static final Pattern BOOK_ONLY = Pattern.compile(
+            "^\\s*(?<book>(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*$");
+    private static final Pattern FIRST_NUMBER = Pattern.compile("^(\\d{1,3})");
     private static final Pattern SECTION = Pattern.compile(
             "(?<from>\\d{1,3})(?::(?<fromVerse>\\d{1,3}))?(?:-(?:(?<toChapter>\\d{1,3}):)?(?<to>\\d{1,3}))?");
     private static final Pattern BOOK_NUMBER_WORD = Pattern.compile(
@@ -117,6 +143,102 @@ public final class BibleReferenceParser {
             best.add(reference);
         }
         return best;
+    }
+
+    /**
+     * Look up a reference that may still be being typed, such as "joh", "joh 3"
+     * or "joh 3:1". The books are matched in the same way as by {@link #parse},
+     * so a reference finds the same passage wherever it is typed.
+     *
+     * @param query the text typed.
+     * @param bible the bible to look in.
+     * @return what the query points to, {@link Lookup#NONE} if it doesn't fit
+     * any book.
+     */
+    public static Lookup lookup(String query, Bible bible) {
+        if (bible == null || query == null) {
+            return Lookup.NONE;
+        }
+        Matcher matcher = QUERY.matcher(query);
+        String passage = "";
+        String bookQuery;
+        if (matcher.matches()) {
+            bookQuery = matcher.group("book");
+            passage = normalisePassage(matcher.group("passage"));
+        } else {
+            Matcher bookOnly = BOOK_ONLY.matcher(query);
+            if (!bookOnly.matches()) {
+                return Lookup.NONE;
+            }
+            bookQuery = bookOnly.group("book");
+        }
+        List<BibleBook> books = findBooks(bookQuery, bible);
+        if (books.isEmpty()) {
+            return Lookup.NONE;
+        }
+        Reference reference = null;
+        BibleBook book = books.getFirst();
+        if (!passage.isEmpty()) {
+            List<Reference> references = parse(query, bible);
+            if (!references.isEmpty()) {
+                reference = references.getFirst();
+                book = reference.book();
+            }
+        }
+        int chapter = 0;
+        Matcher number = FIRST_NUMBER.matcher(passage);
+        if (number.find()) {
+            int typed = Integer.parseInt(number.group(1));
+            if (typed > 0 && book.getChapter(typed - 1) != null) {
+                chapter = typed;
+            }
+        }
+        return new Lookup(books, book, passage, chapter, reference);
+    }
+
+    /**
+     * Find the books that fit a typed book name best, in the order of the
+     * bible.
+     *
+     * @param bookQuery the book name, or the start of it.
+     * @param bible the bible to look in.
+     * @return the books, empty if none fits.
+     */
+    public static List<BibleBook> findBooks(String bookQuery, Bible bible) {
+        String normalised = normaliseBookName(bookQuery);
+        if (bible == null || normalised.length() < MIN_BOOK_LENGTH) {
+            return List.of();
+        }
+        int bestRank = NO_MATCH;
+        List<BibleBook> best = new ArrayList<>();
+        for (BibleBook book : bible.getBooks()) {
+            int rank = rankBook(normalised, book);
+            if (rank > bestRank || rank == NO_MATCH) {
+                continue;
+            }
+            if (rank < bestRank) {
+                bestRank = rank;
+                best.clear();
+            }
+            best.add(book);
+        }
+        return best;
+    }
+
+    /**
+     * Look a passage up in a book, written as in a reference: "3", "3:16-18",
+     * "3:16,18" and so on.
+     *
+     * @param book the book to look in.
+     * @param passage the chapters and verses.
+     * @return the passage, or null if any part of it doesn't exist.
+     */
+    public static Reference resolvePassage(BibleBook book, String passage) {
+        if (book == null || passage == null) {
+            return null;
+        }
+        String normalised = normalisePassage(passage.trim());
+        return normalised.isEmpty() ? null : resolve(book, normalised);
     }
 
     /**

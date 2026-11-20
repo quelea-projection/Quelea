@@ -77,6 +77,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsImportExportPanel importExportPanel;
     private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings = new HashMap<>();
     private boolean previousLinkPreviewLiveDividers;
+    private List<Object> previousBibleVersions;
 
     /**
      * Create a new preference dialog.
@@ -123,6 +124,9 @@ public class PreferencesDialog extends Stage {
             }
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
+            if (!getBibleVersionSettings().equals(previousBibleVersions)) {
+                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel().resetVersions();
+            }
 
             // If the option has changed for linking the preview and live dividers, update the current UI to respect
             // the options now
@@ -170,6 +174,15 @@ public class PreferencesDialog extends Stage {
         // Before showing the preferences dialog we save the current state of the link preview and live dividers so
         // that we can tell if it has been changed and whether we need to action anything
         previousLinkPreviewLiveDividers = QueleaProperties.get().getLinkPreviewAndLiveDividers();
+        previousBibleVersions = getBibleVersionSettings();
+    }
+
+    /**
+     * The settings that decide which versions the bibles tab starts with.
+     */
+    private static List<Object> getBibleVersionSettings() {
+        return List.of(String.valueOf(QueleaProperties.get().getDefaultBible()), QueleaProperties.get().getAlwaysUseMultiBible(),
+                List.copyOf(QueleaProperties.get().getMultiBibleVersions()));
     }
 
     static void savePreferences(PreferencesFx preferencesFx) {

@@ -108,8 +108,29 @@ public class UniversalSearch {
      * @param bible the bible to look in, may be null.
      * @param timers the timers to look in.
      * @param notices the saved notices to look in.
+     * @param versions the versions to show a bible passage in, the first
+     * being {@code bible}. Empty to use the versions set in the options.
      */
-    public record Sources(Bible bible, List<TimerDisplayable> timers, List<Notice> notices) {
+    public record Sources(Bible bible, List<TimerDisplayable> timers, List<Notice> notices, List<Bible> versions) {
+
+        /**
+         * Search with the bible versions set in the options.
+         *
+         * @param bible the bible to look in, may be null.
+         * @param timers the timers to look in.
+         * @param notices the saved notices to look in.
+         */
+        public Sources(Bible bible, List<TimerDisplayable> timers, List<Notice> notices) {
+            this(bible, timers, notices, List.of());
+        }
+
+        private BiblePassage createPassage(BibleReferenceParser.Reference reference) {
+            if (!versions.isEmpty()) {
+                return SelectBibleVersionActionHandler.createPassage(reference, versions);
+            }
+            return SelectBibleVersionActionHandler.applyDefaultVersions(new BiblePassage(bible.getName(), reference.getLocation(),
+                    reference.verses().toArray(new BibleVerse[0]), reference.multi()), bible);
+        }
     }
 
     private static final int MAX_REFERENCES = 5;
@@ -138,13 +159,13 @@ public class UniversalSearch {
         boolean searchable = !SearchIndexUtils.makeLuceneQuery(trimmed).isEmpty();
         List<Result> ret = new ArrayList<>();
         if (includes(filter, Kind.BIBLE)) {
-            ret.addAll(searchReferences(trimmed, sources.bible()));
+            ret.addAll(searchReferences(trimmed, sources));
         }
         if (searchable && includes(filter, Kind.SONG)) {
             ret.addAll(searchSongs(trimmed, maxSongs));
         }
         if (searchable && includes(filter, Kind.BIBLE)) {
-            ret.addAll(searchBibleText(trimmed, sources.bible(), maxOthers));
+            ret.addAll(searchBibleText(trimmed, sources, maxOthers));
         }
         if (includes(filter, Kind.IMAGE)) {
             ret.addAll(searchFiles(trimmed, Kind.IMAGE, QueleaProperties.get().getImageDir(), Utils::fileIsImage, maxOthers));
@@ -165,13 +186,12 @@ public class UniversalSearch {
         return filter == null || filter == kind;
     }
 
-    private List<Result> searchReferences(String query, Bible bible) {
-        return BibleReferenceParser.parse(query, bible).stream()
+    private List<Result> searchReferences(String query, Sources sources) {
+        return BibleReferenceParser.parse(query, sources.bible()).stream()
                 .limit(MAX_REFERENCES)
                 .map(reference -> new Result(Kind.BIBLE, reference.getLocation(), reference.verses().getFirst().getText(),
                         previewVerses(reference.verses()), 0, null,
-                        () -> addToSchedule(SelectBibleVersionActionHandler.applyDefaultVersions(new BiblePassage(bible.getName(), reference.getLocation(),
-                                reference.verses().toArray(new BibleVerse[0]), reference.multi()), bible))))
+                        () -> addToSchedule(sources.createPassage(reference))))
                 .toList();
     }
 
@@ -261,7 +281,8 @@ public class UniversalSearch {
                 .orElse("");
     }
 
-    private List<Result> searchBibleText(String query, Bible bible, int max) {
+    private List<Result> searchBibleText(String query, Sources sources, int max) {
+        Bible bible = sources.bible();
         if (bible == null || query.length() < MIN_BIBLE_TEXT_LENGTH || !BibleManager.get().isIndexInit()) {
             return List.of();
         }
@@ -273,9 +294,10 @@ public class UniversalSearch {
             }
             for (BibleVerse verse : chapter.getVerses()) {
                 if (containsWords(verse.getText(), query)) {
-                    String location = chapter.getBook() + " " + chapter.getNum() + ":" + verse.getNum();
-                    ret.add(new Result(Kind.BIBLE, location, verse.getText(), previewVerses(List.of(verse)), 0, null, () -> addToSchedule(SelectBibleVersionActionHandler.applyDefaultVersions(
-                            new BiblePassage(bible.getName(), location, new BibleVerse[]{verse}, false), bible))));
+                    BibleReferenceParser.Reference reference = new BibleReferenceParser.Reference(chapter.getBook(),
+                            chapter.getNum() + ":" + verse.getNum(), List.of(verse), false);
+                    ret.add(new Result(Kind.BIBLE, reference.getLocation(), verse.getText(), previewVerses(List.of(verse)), 0, null,
+                            () -> addToSchedule(sources.createPassage(reference))));
                     if (ret.size() == max) {
                         return ret;
                     }

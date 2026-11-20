@@ -26,6 +26,8 @@ import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
+import org.quelea.data.bible.BibleReferenceParser;
+import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.services.languages.LabelGrabber;
@@ -90,7 +92,23 @@ public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent
      * @return the passage to add to the schedule.
      */
     public static BiblePassage applyDefaultVersions(BiblePassage passage, Bible bible) {
-        List<Bible> bibles = BibleManager.get().getDefaultVersions(bible);
+        return applyVersions(passage, BibleManager.get().getDefaultVersions(bible));
+    }
+
+    /**
+     * Make a passage for the schedule from a reference.
+     *
+     * @param reference the passage, looked up in the first of the bibles.
+     * @param bibles the versions to show the passage in, in display order.
+     * @return the passage to add to the schedule.
+     */
+    public static BiblePassage createPassage(BibleReferenceParser.Reference reference, List<Bible> bibles) {
+        BiblePassage passage = new BiblePassage(bibles.getFirst().getName(), reference.getLocation(),
+                reference.verses().toArray(new BibleVerse[0]), reference.multi());
+        return applyVersions(passage, bibles);
+    }
+
+    private static BiblePassage applyVersions(BiblePassage passage, List<Bible> bibles) {
         if (bibles.size() < 2) {
             return passage;
         }

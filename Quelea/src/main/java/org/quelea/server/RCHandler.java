@@ -39,6 +39,9 @@ import javax.imageio.ImageIO;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
+import org.quelea.data.bible.BibleManager;
+import org.quelea.data.bible.BibleReferenceParser;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageGroupDisplayable;
@@ -52,11 +55,11 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.utils.ThemeUtils;
-import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
+import org.quelea.windows.main.actionhandlers.SelectBibleVersionActionHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
@@ -402,38 +405,25 @@ public class RCHandler {
             String book = searchString.split("/")[1];
             String cv = searchString.split("/")[2];
             String error = LabelGrabber.INSTANCE.getLabel("rcs.add.bible.error").replace("$1", book + " " + cv);
-            final LibraryBiblePanel lbp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel();
-            boolean success = false;
-            for (int i = 0; i < lbp.getBibleSelector().getItems().size(); i++) {
-                if (lbp.getBibleSelector().getItems().get(i).getBibleName().replaceAll("/", " - ").equalsIgnoreCase(translation)) {
-                    final int j = i;
-                    Utils.fxRunAndWait(() -> {
-                        lbp.getBibleSelector().selectionModelProperty().get().clearAndSelect(j);
-                    });
-                    success = true;
+            Bible bible = findBible(translation);
+            BibleBook bibleBook = null;
+            if (bible != null) {
+                for (BibleBook b : bible.getBooks()) {
+                    if (b.getBookName().equalsIgnoreCase(book)) {
+                        bibleBook = b;
+                    }
                 }
             }
-            if (!success) {
-                return error;
-            }
-            success = false;
-            for (int i = 0; i < lbp.getBookSelector().getItems().size(); i++) {
-                if (lbp.getBookSelector().getItems().get(i).getBookName().equalsIgnoreCase(book)) {
-                    final int j = i;
-                    Utils.fxRunAndWait(() -> {
-                        lbp.getBookSelector().selectionModelProperty().get().clearAndSelect(j);
-                    });
-                    success = true;
-                }
-            }
-            if (!success) {
+            // The passage is read the same way as when it's typed in the bibles tab
+            BibleReferenceParser.Reference reference = BibleReferenceParser.resolvePassage(bibleBook, cv);
+            if (reference == null) {
                 return error;
             }
 
             int before = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size();
             Utils.fxRunAndWait(() -> {
-                lbp.getPassageSelector().setText(cv);
-                lbp.getAddToSchedule().fire();
+                BiblePassage passage = SelectBibleVersionActionHandler.createPassage(reference, BibleManager.get().getDefaultVersions(bible));
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             });
             int after = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size();
 
@@ -532,8 +522,7 @@ public class RCHandler {
 
     public static String listBibleTranslations(HttpExchange he) {
         StringBuilder ret = new StringBuilder();
-        final LibraryBiblePanel lbp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel();
-        for (Bible b : lbp.getBibleSelector().getItems()) {
+        for (Bible b : BibleManager.get().getBibles()) {
             if (b.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
                 ret.append("*");
             }
@@ -543,31 +532,32 @@ public class RCHandler {
     }
 
     public static String listBibleBooks(HttpExchange he) throws UnsupportedEncodingException {
-        String searchString;
         if (he.getRequestURI().toString().contains("/books/")) {
             String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
-            searchString = uri.split("/books/")[1];
-            final LibraryBiblePanel lbp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel();
-            boolean success = false;
-            for (int i = 0; i < lbp.getBibleSelector().getItems().size(); i++) {
-                if (lbp.getBibleSelector().getItems().get(i).getBibleName().replaceAll("/", " - ").equalsIgnoreCase(searchString)) {
-                    final int j = i;
-                    Utils.fxRunAndWait(() -> {
-                        lbp.getBibleSelector().selectionModelProperty().get().clearAndSelect(j);
-                    });
-                    success = true;
-                }
-            }
-            if (!success) {
+            Bible bible = findBible(uri.split("/books/")[1]);
+            if (bible == null) {
                 return "";
             }
             StringBuilder ret = new StringBuilder();
-            for (BibleBook bb : lbp.getBookSelector().getItems()) {
+            for (BibleBook bb : bible.getBooks()) {
                 ret.append(bb.getBookName()).append("\n");
             }
             return ret.toString();
         }
         return "";
+    }
+
+    /**
+     * Find a bible from the name the remote control uses for it, where "/" is
+     * written as " - ".
+     */
+    private static Bible findBible(String name) {
+        for (Bible bible : BibleManager.get().getBibles()) {
+            if (bible.getBibleName().replaceAll("/", " - ").equalsIgnoreCase(name)) {
+                return bible;
+            }
+        }
+        return null;
     }
 
     public static String listSongTranslations(HttpExchange he) {
