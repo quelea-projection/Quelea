@@ -2536,6 +2536,48 @@ public final class QueleaProperties extends SortedProperties {
     }
 
     /**
+     * Get the bible versions new passages are shown in: the default bible,
+     * followed by the other versions if they're always used.
+     *
+     * @return the names, in display order. Empty if there's no default bible.
+     */
+    public List<String> getBibleVersions() {
+        List<String> ret = new ArrayList<>();
+        String defaultBible = getDefaultBible();
+        if (defaultBible == null || defaultBible.isEmpty()) {
+            return ret;
+        }
+        ret.add(defaultBible);
+        if (getAlwaysUseMultiBible()) {
+            for (String name : getMultiBibleVersions()) {
+                if (!ret.contains(name)) {
+                    ret.add(name);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Set the bible versions new passages are shown in. The first one becomes
+     * the default bible. With only one, the other versions chosen before are
+     * kept, just not used, so they come back if more versions are chosen
+     * again.
+     *
+     * @param names the names, in display order.
+     */
+    public void setBibleVersions(List<String> names) {
+        if (names.isEmpty()) {
+            return;
+        }
+        setProperty(defaultBibleKey, names.getFirst());
+        setProperty(alwaysUseMultiBibleKey, Boolean.toString(names.size() > 1));
+        if (names.size() > 1) {
+            setProperty(multiBibleVersionsKey, String.join("\n", names.subList(1, names.size())));
+        }
+    }
+
+    /**
      * Determine whether a line should be drawn between bible versions shown
      * on the same slide (with a smaller gap than the empty line otherwise.)
      *

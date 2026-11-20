@@ -1,17 +1,14 @@
 package org.quelea.windows.options;
 
 import com.dlsc.preferencesfx.PreferencesFx;
-import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.prefs.AbstractPreferences;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.HBox;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.QueleaPropertyKeys;
 import org.quelea.testutil.FxTestSupport;
-import org.quelea.windows.options.customprefs.DefaultBibleSelector;
 
 class PreferencesPersistenceTest {
     @TempDir Path directory;
@@ -68,22 +64,38 @@ class PreferencesPersistenceTest {
     }
 
     @Test
-    void bibleSelectorTracksReplacementItemsAndSelection() throws Exception {
-        FxTestSupport.assumeAvailable();
-        FxTestSupport.onFx(() -> {
-            var field = Field.ofSingleSelectionType(FXCollections.observableArrayList("First", "Second"), 0);
-            var control = new DefaultBibleSelector();
-            control.setField(field);
-            control.init();
-            var row = (HBox) control.getNode().getChildren().get(0);
-            var comboBox = (ComboBox<?>) row.getChildren().get(0);
-            Assertions.assertEquals("First", comboBox.getSelectionModel().getSelectedItem());
-            field.itemsProperty().set(FXCollections.observableArrayList("New", "Other"));
-            field.select(1);
-            Assertions.assertEquals(java.util.List.of("New", "Other"), comboBox.getItems());
-            Assertions.assertEquals("Other", comboBox.getSelectionModel().getSelectedItem());
-            return null;
-        });
+    void bibleVersionsAreSavedAsTheDefaultBibleAndTheOtherVersions() {
+        var handler = new PreferenceStorageHandler(new InMemoryPreferences());
+        var properties = QueleaProperties.get();
+
+        handler.saveObject(QueleaPropertyKeys.bibleVersionsKey, "KJV\nASV\nNET\n");
+        Assertions.assertEquals("KJV", properties.getDefaultBible());
+        Assertions.assertTrue(properties.getAlwaysUseMultiBible());
+        Assertions.assertEquals(List.of("ASV", "NET"), properties.getMultiBibleVersions());
+        Assertions.assertEquals("KJV\nASV\nNET", handler.loadObject(QueleaPropertyKeys.bibleVersionsKey, ""));
+
+        // With one version the others are kept, but not used
+        handler.saveObject(QueleaPropertyKeys.bibleVersionsKey, "ASV");
+        Assertions.assertEquals("ASV", properties.getDefaultBible());
+        Assertions.assertFalse(properties.getAlwaysUseMultiBible());
+        Assertions.assertEquals(List.of("ASV", "NET"), properties.getMultiBibleVersions());
+        Assertions.assertEquals("ASV", handler.loadObject(QueleaPropertyKeys.bibleVersionsKey, ""));
+
+        // The default bible isn't shown twice when it's also among the others
+        handler.saveObject(QueleaPropertyKeys.bibleVersionsKey, "NET\nKJV");
+        properties.setProperty(QueleaPropertyKeys.multiBibleVersionsKey, "NET\nKJV");
+        Assertions.assertEquals(List.of("NET", "KJV"), properties.getBibleVersions());
+
+        // Nothing chosen leaves the settings as they were
+        handler.saveObject(QueleaPropertyKeys.bibleVersionsKey, "");
+        Assertions.assertEquals("NET", properties.getDefaultBible());
+    }
+
+    @Test
+    void noDefaultBibleMeansNoVersions() {
+        Assertions.assertEquals(List.of(), QueleaProperties.get().getBibleVersions());
+        var handler = new PreferenceStorageHandler(new InMemoryPreferences());
+        Assertions.assertEquals("", handler.loadObject(QueleaPropertyKeys.bibleVersionsKey, "fallback"));
     }
 
     /** Keeps PreferencesFX window state out of the user's real preferences store. */

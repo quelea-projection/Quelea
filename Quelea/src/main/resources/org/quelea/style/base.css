@@ -1932,3 +1932,24 @@
 .bible-warning .icon {
     -fx-background-color: -q-warning;
 }
+
+/* The bible versions list in the options (BibleVersionsList) */
+.bible-versions-position {
+    -fx-font-family: "Inter SemiBold";
+    -fx-text-fill: -q-accent;
+}
+
+.bible-versions-default {
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-size: 0.85em;
+    -fx-text-fill: -q-accent;
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 999;
+    -fx-border-color: -q-accent-soft;
+    -fx-border-radius: 999;
+    -fx-padding: 1 8 1 8;
+}
+
+.bible-versions-list .list-cell:filled:selected .bible-versions-position {
+    -fx-text-fill: -q-on-accent;
+}

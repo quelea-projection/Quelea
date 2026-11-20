@@ -176,6 +176,9 @@ public class PreferenceStorageHandler implements StorageHandler {
             object = "";
         }
         switch (breadcrumb) {
+            case QueleaPropertyKeys.bibleVersionsKey:
+                QueleaProperties.get().setBibleVersions(object.toString().lines().filter(name -> !name.isBlank()).toList());
+                break;
             case QueleaPropertyKeys.languageFileKey:
                 if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
                     QueleaProperties.get().setLanguageFile(((LanguageFile) object).getFile().getName());
@@ -326,6 +329,9 @@ public class PreferenceStorageHandler implements StorageHandler {
         if (breadcrumb.equals(QueleaPropertyKeys.languageFileKey)) {
             return LanguageFileManager.INSTANCE.getCurrentFile();
         }
+        if (breadcrumb.equals(QueleaPropertyKeys.bibleVersionsKey)) {
+            return String.join("\n", QueleaProperties.get().getBibleVersions());
+        }
         String property = QueleaProperties.get().getProperty(breadcrumb);
         if (property == null) {
             return defaultObject;
@@ -333,7 +339,6 @@ public class PreferenceStorageHandler implements StorageHandler {
             switch (breadcrumb) {
                 case QueleaPropertyKeys.mobLyricsPortKey:
                 case QueleaPropertyKeys.remoteControlPortKey:
-                case QueleaPropertyKeys.multiBibleVersionsKey:
                     return property;
                 case QueleaPropertyKeys.uiThemeKey:
                     return UiTheme.current().getLabel();

@@ -119,6 +119,12 @@ public class QueleaPropertyKeys {
     public static final String splitBibleVersesKey = "split.bible.verses";
     public static final String alwaysUseMultiBibleKey = "always.use.multi.bible";
     public static final String multiBibleVersionsKey = "multi.bible.versions";
+    /**
+     * Only used by the options dialog, never stored: the bible versions to show,
+     * which are saved under {@link #defaultBibleKey}, {@link #alwaysUseMultiBibleKey}
+     * and {@link #multiBibleVersionsKey}.
+     */
+    public static final String bibleVersionsKey = "bible.versions";
     public static final String bibleVersionSeparatorKey = "bible.version.separator";
     public static final String lyricWidthBoundKey = "lyric.width.bound";
     public static final String lyricHeightBoundKey = "lyric.height.bound";
