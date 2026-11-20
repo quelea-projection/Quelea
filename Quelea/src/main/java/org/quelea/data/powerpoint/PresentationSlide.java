@@ -47,8 +47,6 @@ public class PresentationSlide {
     private WritableImage image;
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
-    private static double scaleWidth = 0;
-    private static double scaleHeight = 0;
 
     /**
      * Create a new presentation slide.
@@ -57,14 +55,11 @@ public class PresentationSlide {
      */
     public PresentationSlide(Slide slide, int numSlide) {
         SlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
-        BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Dimension pageSize = slideshow.getPageSize();
+        int width = Math.max(1, (int) (HEIGHT / pageSize.getHeight() * pageSize.getWidth()));
+        double scaleWidth = width / pageSize.getWidth();
+        double scaleHeight = HEIGHT / pageSize.getHeight();
+        BufferedImage originalImage = new BufferedImage(width, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
@@ -91,14 +86,11 @@ public class PresentationSlide {
      */
     public PresentationSlide(XSLFSlide slide, int numSlide) {
         org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
-        if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
-            int adjustHeight = HEIGHT;
-            int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
-            scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
-            scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
-        }
-        BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Dimension pageSize = slideshow.getPageSize();
+        int width = Math.max(1, (int) (HEIGHT / pageSize.getHeight() * pageSize.getWidth()));
+        double scaleWidth = width / pageSize.getWidth();
+        double scaleHeight = HEIGHT / pageSize.getHeight();
+        BufferedImage originalImage = new BufferedImage(width, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {

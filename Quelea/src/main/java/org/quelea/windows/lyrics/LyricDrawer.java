@@ -32,7 +32,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -437,7 +436,6 @@ public class LyricDrawer extends WordDrawer {
         }
         this.theme = theme;
         Image image = null;
-        ColorAdjust colourAdjust = null;
         final ImageView newImageView = getCanvas().getNewImageView();
         if (theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
@@ -486,9 +484,6 @@ public class LyricDrawer extends WordDrawer {
             newImageView.setImage(image);
         }
 
-//        if (colourAdjust != null) {
-//            newImageView.setEffect(colourAdjust);
-//        }
         getCanvas().getChildren().add(newImageView);
         newBackground = newImageView;
         Node oldBackground = getCanvas().getCanvasBackground();

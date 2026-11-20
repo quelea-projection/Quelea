@@ -23,7 +23,7 @@ package org.quelea.data.chord;
  */
 public class ChordLineTransposer {
 
-    private String line;
+    private final String line;
 
     /**
      * Create a new chord line transposer.
@@ -43,16 +43,22 @@ public class ChordLineTransposer {
      * @return the transposed line.
      */
     public String transpose(int semitones, String newKey) {
-        boolean startSpace = line.startsWith(" ");
-        boolean chordsComment = line.endsWith("//chords");
+        String chordLine = line;
+        String marker = "";
+        int markerStart = chordLine.length() - "//chords".length();
+        if (markerStart >= 0 && chordLine.regionMatches(true, markerStart, "//chords", 0, "//chords".length())) {
+            marker = chordLine.substring(markerStart);
+            chordLine = chordLine.substring(0, markerStart);
+        }
+        if (chordLine.isBlank()) {
+            return chordLine + marker;
+        }
+        boolean startSpace = chordLine.startsWith(" ");
         if(!startSpace) {
-            line = " " + line;
+            chordLine = " " + chordLine;
         }
-        if(chordsComment) {
-            line = line.substring(0,line.indexOf("//chords"));
-        }
-        String[] chords = line.split("\\s+");
-        String[] whitespace = line.split("[A-Za-z0-9#/]+");
+        String[] chords = chordLine.split("\\s+");
+        String[] whitespace = chordLine.split("[A-Za-z0-9#/]+");
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < chords.length; i++) {
             ret.append(new ChordTransposer(chords[i]).transpose(semitones, newKey));
@@ -60,17 +66,11 @@ public class ChordLineTransposer {
                 ret.append(whitespace[i]);
             }
         }
-        if(!startSpace) {
-            line = line.substring(1);
-        }
         String str = ret.toString();
         if(!startSpace) {
             str = str.substring(1);
         }
-        if(chordsComment) {
-            line = line + "//chords";
-        }
-        return str;
+        return str + marker;
     }
 
 }

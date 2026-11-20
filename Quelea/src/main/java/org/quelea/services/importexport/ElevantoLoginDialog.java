@@ -193,9 +193,8 @@ public class ElevantoLoginDialog extends Stage {
                 LOGGER.log(Level.WARNING, "Error", e);
             }
         }else{
-            Runtime runtime = Runtime.getRuntime();
             try {
-                runtime.exec("xdg-open " + url);
+                new ProcessBuilder("xdg-open", url).start();
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, "Error", e);
             }

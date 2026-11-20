@@ -145,8 +145,9 @@ public final class SongManager {
      */
     public synchronized SongDisplayable[] getSongs(LoadingPane loadingPane) {
         if (cacheSongs == null) {
-            cacheSongs = loadSongs(loadingPane);
-            buildIndex(new ArrayList<>(cacheSongs));
+            LoadedSongs loaded = loadSongs(loadingPane);
+            cacheSongs = loaded.visible();
+            buildIndex(new ArrayList<>(cacheSongs), loaded.ccliOnly());
         }
         return cacheSongs.toArray(new SongDisplayable[0]);
     }
@@ -156,7 +157,9 @@ public final class SongManager {
      * fail as a whole, so if that happens fall back to reading them one by one,
      * which can skip over the bad rows.
      */
-    private List<SongDisplayable> loadSongs(LoadingPane loadingPane) {
+    private record LoadedSongs(List<SongDisplayable> visible, List<SongDisplayable> ccliOnly) { }
+
+    private LoadedSongs loadSongs(LoadingPane loadingPane) {
         try {
             return readSongs(loadingPane, SongDao::getSongs);
         } catch (IllegalStateException ex) {
@@ -165,8 +168,9 @@ public final class SongManager {
         }
     }
 
-    private List<SongDisplayable> readSongs(LoadingPane loadingPane, Function<SongDao, List<Song>> query) {
+    private LoadedSongs readSongs(LoadingPane loadingPane, Function<SongDao, List<Song>> query) {
         final Set<SongDisplayable> songs = new TreeSet<>();
+        final List<SongDisplayable> duplicates = new ArrayList<>();
         HibernateUtil.execute((Session session) -> {
             List<Song> songsList = query.apply(new SongDao(session));
             final int progressStep = Math.max(1, songsList.size() / 100);
@@ -189,7 +193,10 @@ public final class SongManager {
                     LOGGER.log(Level.WARNING, "Song with id " + song.getId() + " is corrupt, skipping...", ex);
                     continue;
                 }
-                songs.add(toDisplayable(song));
+                SongDisplayable displayable = toDisplayable(song);
+                if (!songs.add(displayable)) {
+                    duplicates.add(displayable);
+                }
             }
             if (loadingPane != null) {
                 Platform.runLater(() -> {
@@ -197,20 +204,21 @@ public final class SongManager {
                 });
             }
         });
-        return new ArrayList<>(songs);
+        return new LoadedSongs(new ArrayList<>(songs), duplicates);
     }
 
     /**
      * Build the search index in the background, so the song list doesn't have
      * to wait for it. Anything that needs the index waits for this to finish.
      */
-    private void buildIndex(List<SongDisplayable> songs) {
+    private void buildIndex(List<SongDisplayable> songs, List<SongDisplayable> ccliOnly) {
         final CountDownLatch built = new CountDownLatch(1);
         indexBuilt = built;
         Thread thread = new Thread(() -> {
             try {
                 LOGGER.log(Level.INFO, "Adding {0} songs to index", songs.size());
                 index.addAll(songs);
+                index.addCcliOnlyAll(ccliOnly);
             } finally {
                 built.countDown();
             }
@@ -328,7 +336,13 @@ public final class SongManager {
             adjustedSongs.get(i).setID(storedSongs.get(i).getID());
         }
         if (cacheSongs != null) {
-            index.addAll(storedSongs.stream().filter(this::insertIntoCache).collect(Collectors.toList()));
+            List<SongDisplayable> visible = new ArrayList<>();
+            List<SongDisplayable> ccliOnly = new ArrayList<>();
+            for (SongDisplayable stored : storedSongs) {
+                (insertIntoCache(stored) ? visible : ccliOnly).add(stored);
+            }
+            index.addAll(visible);
+            index.addCcliOnlyAll(ccliOnly);
         }
         if (fireUpdate) {
             fireUpdate();
@@ -409,7 +423,7 @@ public final class SongManager {
             if (insertIntoCache(storedSong[0])) {
                 index.update(storedSong[0]);
             } else {
-                index.remove(storedSong[0]);
+                index.addCcliOnly(storedSong[0]);
             }
         }
         return true;

@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.video;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -33,7 +32,10 @@ import java.util.function.Consumer;
  */
 final class LatestFrameHandoff<T> {
 
-    private final AtomicReference<T> pending = new AtomicReference<>();
+    private final Object lock = new Object();
+    private T pending;
+    // Clearing a frame cannot cancel a queued task; keep its ticket until it runs.
+    private Object scheduledDelivery;
     private final Consumer<Runnable> scheduler;
     private final Consumer<T> show;
     private final Consumer<T> release;
@@ -58,21 +60,60 @@ final class LatestFrameHandoff<T> {
      * @param frame the frame.
      */
     void offer(T frame) {
-        if (disposed) {
-            release.accept(frame);
-            return;
+        T previous;
+        Object delivery = null;
+        synchronized (lock) {
+            if (disposed) {
+                previous = frame;
+            } else {
+                previous = pending;
+                pending = frame;
+                if (scheduledDelivery == null) {
+                    delivery = new Object();
+                    scheduledDelivery = delivery;
+                }
+            }
         }
-        T previous = pending.getAndSet(frame);
         if (previous != null) {
-            // A delivery is already scheduled and will pick up the new frame.
             release.accept(previous);
-        } else {
-            scheduler.accept(this::deliver);
+        }
+        if (delivery != null) {
+            Object ticket = delivery;
+            try {
+                scheduler.accept(() -> deliver(ticket));
+            } catch (RuntimeException | Error failure) {
+                T abandoned = null;
+                synchronized (lock) {
+                    if (scheduledDelivery == ticket) {
+                        scheduledDelivery = null;
+                        abandoned = pending;
+                        pending = null;
+                    }
+                }
+                if (abandoned != null) {
+                    try {
+                        release.accept(abandoned);
+                    } catch (RuntimeException | Error releaseFailure) {
+                        if (failure != releaseFailure) {
+                            failure.addSuppressed(releaseFailure);
+                        }
+                    }
+                }
+                throw failure;
+            }
         }
     }
 
-    private void deliver() {
-        T frame = pending.getAndSet(null);
+    private void deliver(Object ticket) {
+        T frame;
+        synchronized (lock) {
+            if (scheduledDelivery != ticket) {
+                return;
+            }
+            scheduledDelivery = null;
+            frame = pending;
+            pending = null;
+        }
         if (frame == null) {
             return;
         }
@@ -87,7 +128,11 @@ final class LatestFrameHandoff<T> {
      * Release the waiting frame, if there is one.
      */
     void clear() {
-        T frame = pending.getAndSet(null);
+        T frame;
+        synchronized (lock) {
+            frame = pending;
+            pending = null;
+        }
         if (frame != null) {
             release.accept(frame);
         }
@@ -98,7 +143,14 @@ final class LatestFrameHandoff<T> {
      * afterwards is released immediately.
      */
     void dispose() {
-        disposed = true;
-        clear();
+        T frame;
+        synchronized (lock) {
+            disposed = true;
+            frame = pending;
+            pending = null;
+        }
+        if (frame != null) {
+            release.accept(frame);
+        }
     }
 }

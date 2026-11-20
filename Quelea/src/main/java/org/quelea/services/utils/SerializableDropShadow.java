@@ -19,6 +19,7 @@
 package org.quelea.services.utils;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -68,6 +69,24 @@ public class SerializableDropShadow implements Serializable {
 
     public boolean getUse() {
         return use;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        SerializableDropShadow other = (SerializableDropShadow) obj;
+        return Objects.equals(color, other.color)
+                && Double.compare(xOffset, other.xOffset) == 0
+                && Double.compare(yOffset, other.yOffset) == 0
+                && Double.compare(radius, other.radius) == 0
+                && Double.compare(spread, other.spread) == 0
+                && use == other.use;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color, xOffset, yOffset, radius, spread, use);
     }
 
     @Override

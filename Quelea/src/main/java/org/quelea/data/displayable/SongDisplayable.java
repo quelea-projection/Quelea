@@ -45,7 +45,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.layout.BackgroundFill;
@@ -60,6 +59,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SecureXml;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -320,8 +320,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.capo = song.capo;
         this.lastSearch = song.lastSearch;
         this.translations = song.translations;
-        this.count = song.count++;
+        this.count = song.count;
         this.sequence = song.sequence;
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -742,6 +743,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setSequence(String sequence) {
         this.sequence = sequence;
+        fontSizeCache.clear();
+        setSectionsInSequence(sectionsWithoutSequence);
     }
 
     /**
@@ -876,14 +879,16 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
     private void setSectionsInSequence(List<TextSection> sectionsWithoutSequence) {
         sectionsInSequence.clear();
-        if (sequence != null && !sequence.equals("")) {
-            for (String s : sequence.split(" ")) {
+        if (sequence != null && !sequence.isBlank()) {
+            for (String s : sequence.trim().split("\\s+")) {
                 for (TextSection ts : sectionsWithoutSequence) {
                     if (ts.getTitle() != null && !ts.getTitle().equals("")) {
-                        String[] title = ts.getTitle().split(" ");
+                        String[] title = ts.getTitle().trim().split("\\s+");
                         StringBuilder sb = new StringBuilder();
                         for (String t : title) {
-                            sb.append(t.charAt(0));
+                            if (!t.isEmpty()) {
+                                sb.append(t.charAt(0));
+                            }
                         }
                         if (sb.toString().equals(s)) {
                             sectionsInSequence.add(ts);
@@ -1067,7 +1072,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("<translation>");
         if (getCurrentTranslationLyrics() != null) {
             xml.append("<name>");
-            xml.append(currentTranslation);
+            xml.append(Utils.escapeXML(currentTranslation));
             xml.append("</name>");
             xml.append("<tlyrics>");
             xml.append(Utils.escapeXML(translations.get(currentTranslation)));
@@ -1192,10 +1197,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public static SongDisplayable parseXML(String xml) {
         try {
             InputStream inputStream = new ByteArrayInputStream(xml.getBytes("UTF8"));
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getFirstChild(), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
@@ -1210,10 +1214,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public static SongDisplayable parseXML(InputStream inputStream) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = SecureXml.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
-            return parseXML(doc.getChildNodes().item(0), Collections.emptyMap());
+            return parseXML(doc.getDocumentElement(), Collections.emptyMap());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't parse the schedule", ex);
             return null;
@@ -1352,7 +1355,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         hash = 29 * hash + (this.author != null ? this.author.hashCode() : 0);
         hash = 29 * hash + (this.sectionsWithoutSequence != null ? this.sectionsWithoutSequence.hashCode() : 0);
         hash = 29 * hash + (this.theme != null ? this.theme.hashCode() : 0);
-        hash = hash + count;
         return hash;
     }
 

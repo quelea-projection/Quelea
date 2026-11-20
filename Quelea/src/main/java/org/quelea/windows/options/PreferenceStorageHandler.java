@@ -48,7 +48,11 @@ public class PreferenceStorageHandler implements StorageHandler {
     private Gson gson;
 
     public PreferenceStorageHandler(Class<?> saveClass) {
-        preferences = Preferences.userNodeForPackage(saveClass);
+        this(Preferences.userNodeForPackage(saveClass));
+    }
+
+    PreferenceStorageHandler(Preferences preferences) {
+        this.preferences = java.util.Objects.requireNonNull(preferences);
         gson = new Gson();
     }
 

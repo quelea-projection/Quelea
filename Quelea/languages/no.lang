@@ -387,7 +387,6 @@ olp.button=OpenLP
 filefilters.description.sqlite.files=SQLite-filer
 sp.button=Sunday Plus
 font.selection.dialog.title=Fontvalg
-video.hue.label=Fargetone
 chosen.fonts.explanation=Quelea viser bare et utvalg av fontene i temavinduet. Dra de fontene som du vil bruke fra det venstre panelet til det høyre panelet, dra de du ikke vil bruke fra høyre til venstre.
 test.patterns.text=Testmønster
 chosen.fonts.label=Valgte fonter

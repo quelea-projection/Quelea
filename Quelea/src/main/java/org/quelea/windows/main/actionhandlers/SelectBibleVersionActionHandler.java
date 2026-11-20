@@ -70,16 +70,8 @@ public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent
         }
         List<Integer> selected = new ArrayList<>(sl.getSelectionModel().getSelectedIndices());
         sl.getSelectionModel().clearSelection();
-        //Find the list entries by identity, as the same passage can be in the schedule more than once
-        for (Map.Entry<IndexedDisplayable, BiblePassage> entry : replaceMap.entrySet()) {
-            for (int index = 0; index < sl.getItems().size(); index++) {
-                if (sl.getItems().get(index) == entry.getKey()) {
-                    sl.getItems().remove(index);
-                    sl.getItems().add(index, new IndexedDisplayable(entry.getValue(), index));
-                    break;
-                }
-            }
-        }
+        // Replace the selected occurrences, even when the same passage is repeated.
+        replaceMap.forEach(sl::replaceItem);
         if (!selected.isEmpty()) {
             int[] selectRange = new int[selected.size() - 1];
             for (int i = 1; i < selected.size(); i++) {

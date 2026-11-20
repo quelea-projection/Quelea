@@ -428,7 +428,6 @@ chosen.fonts.explanation=Quelea отображает список выбранн
 ignored.fonts.label=Игнорируемые шрифты
 chosen.fonts.label=Выбранные шрифты
 font.selection.dialog.title=Выбор шрифта
-video.hue.label=Тон
 hover.for.position.label=Наведите курсор на экран чтобы выбрать положение текста
 test.patterns.text=Калибровка экрана
 test.patterns.explanation=Эти паттерны помогут вам откалибровать настройки цвета и фокуса для дисплея. Нажмите на изображение ниже чтобы отобразить его на обоих экранах.

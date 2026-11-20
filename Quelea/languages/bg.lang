@@ -440,7 +440,6 @@ chosen.fonts.explanation=Quelea само показва избрани шриф�
 ignored.fonts.label=Игнорирани шрифтове
 chosen.fonts.label=Избор на шрифтове
 font.selection.dialog.title=Избор на шрифт
-video.hue.label=Нюанс
 hover.for.position.label=Изберете позиция на текста върху платното по-долу.
 test.patterns.text=Тестови шаблони
 test.patterns.explanation=Тестовите шаблони тук ще ви помогнат да калибрирате фокуса на екраните, както и цветовите настройки.\nКликнете на тестовия шаблон, за да се покаже на екрана на проектора и на сцената.

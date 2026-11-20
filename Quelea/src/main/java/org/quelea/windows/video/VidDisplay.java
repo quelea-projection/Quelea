@@ -179,7 +179,7 @@ public class VidDisplay {
         if (!Objects.equals(this.uri, uri)) {
             this.uri = uri;
             if (playBin != null) {
-                playBin.setURI(uri);
+                playBin.setURI(VideoUri.forGStreamer(uri));
             }
         }
     }

@@ -233,6 +233,11 @@ public final class QueleaProperties extends SortedProperties {
         }
     }
 
+    /** Persist the current in-memory properties after a batch of changes. */
+    public void save() {
+        write();
+    }
+
     /**
      * Get the singleton instance of this class.
      * <p>

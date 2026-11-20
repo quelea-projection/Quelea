@@ -406,7 +406,6 @@ chosen.fonts.explanation=Quelea toont alleen een selectie van lettertypes in het
 ignored.fonts.label=Genegeerde fonts
 chosen.fonts.label=Gekozen fonts
 font.selection.dialog.title=Font Selectie
-video.hue.label=Nuance
 hover.for.position.label=Beweeg over het canvas om de tekst positie te zetten.
 test.patterns.text=Testbeeld
 test.patterns.explanation=De hier getoonde testbeelden zouden je kunnen helpen om de schermen (en focus) correct te calibreren.\n Klik op een test afbeelding om het te tonen op zowel het hoofd- als podiumscherm.

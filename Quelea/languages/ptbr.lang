@@ -407,7 +407,6 @@ chosen.fonts.explanation=O Quelea apenas mostra a seleção de fontes na janela 
 ignored.fonts.label=Fontes ignoradas
 chosen.fonts.label=Fontes escolhidas
 font.selection.dialog.title=Seleção de fontes
-video.hue.label=Tonalidade
 hover.for.position.label=Passe o mouse sobre a imagem para definir posição do texto.
 test.patterns.text=Padrões de Teste
 test.patterns.explanation=Os padrões de teste disponíveis servem para ajudá-lo a calibrar as cores e o foco do projetor. Clique numa imagem de teste para mostrá-la tanto na saída principal quanto no palco.

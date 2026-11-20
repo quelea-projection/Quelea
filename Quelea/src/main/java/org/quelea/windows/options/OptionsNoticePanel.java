@@ -43,7 +43,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsNoticePanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private DoubleProperty noticeSpeed;
     private DoubleProperty noticeSize;
 
@@ -52,7 +52,7 @@ public class OptionsNoticePanel {
      *
      * @param bindings HashMap of bindings to setup after the dialog has been created
      */
-    OptionsNoticePanel(HashMap<Field, ObservableValue> bindings) {
+    OptionsNoticePanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         this.bindings = bindings;
         noticeSpeed = new SimpleDoubleProperty(QueleaProperties.get().getNoticeSpeed());
         noticeSize = new SimpleDoubleProperty(QueleaProperties.get().getNoticeFontSize());

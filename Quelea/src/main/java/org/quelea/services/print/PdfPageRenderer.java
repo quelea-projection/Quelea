@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -59,7 +60,7 @@ public final class PdfPageRenderer {
      * @throws IOException if the file couldn't be read.
      */
     public static Pages render(File pdf, float dpi) throws IOException {
-        try (PDDocument document = PDDocument.load(pdf)) {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
             PDFRenderer renderer = new PDFRenderer(document);
             int count = document.getNumberOfPages();
             List<BufferedImage> pages = new ArrayList<>();
