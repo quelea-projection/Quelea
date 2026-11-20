@@ -11,7 +11,7 @@ capture="$test_root/launch.env"
 mkdir -p "$snap/app/jvm/bin" "$snap/usr/share/glycin-loaders/2+/conf.d" "$snap/usr/share/glycin-loaders/1+/conf.d" "$user_data" "$common"
 cat > "$snap/app/jvm/bin/java" <<'EOF'
 #!/bin/sh
-printf '%s\n' "${GLYCIN_DATA_DIR-unset}" "$GST_PLUGIN_PATH" "$*" > "$CAPTURE"
+printf '%s\n' "${GLYCIN_DATA_DIR-unset}" "$GST_PLUGIN_PATH" "$GST_PLUGIN_SCANNER" "$*" > "$CAPTURE"
 EOF
 chmod +x "$snap/app/jvm/bin/java"
 cat > "$snap/usr/share/glycin-loaders/2+/conf.d/glycin-svg.conf" <<'EOF'
@@ -31,6 +31,7 @@ env -i PATH="$PATH" SNAP="$snap" SNAP_USER_DATA="$user_data" SNAP_USER_COMMON="$
 data="$user_data/quelea-glycin"
 test "$(sed -n '1p' "$capture")" = "$data"
 test "$(sed -n '2p' "$capture")" = "$snap/usr/lib/x86_64-linux-gnu/gstreamer-1.0"
+test "$(sed -n '3p' "$capture")" = "$snap/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
 grep -Fx "Exec = $snap/usr/libexec/glycin-loaders/2+/glycin-svg" "$data/glycin-loaders/2+/conf.d/glycin-svg.conf" >/dev/null
 grep -Fx 'ExposeBaseDir = true' "$data/glycin-loaders/2+/conf.d/glycin-svg.conf" >/dev/null
 grep -Fx "Exec=$snap/usr/libexec/glycin-loaders/2+/glycin-image-rs" "$data/glycin-loaders/2+/conf.d/glycin-image-rs.conf" >/dev/null
