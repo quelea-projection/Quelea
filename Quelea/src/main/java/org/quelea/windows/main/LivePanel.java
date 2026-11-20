@@ -62,6 +62,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
+import org.quelea.windows.main.widgets.LogoImage;
 import org.quelea.windows.presentation.PowerPointHandler;
 
 import org.quelea.windows.style.QueleaIcon;
@@ -79,6 +80,8 @@ public class LivePanel extends LivePreviewPanel {
     private final TextField loopDuration;
 
     private final ToggleButton logo;
+    private final ContextMenu logoMenu;
+    private LogoSettingsDialog logoSettingsDialog;
     private final ToggleButton black;
     private final ToggleButton clear;
     private final ToggleButton hide;
@@ -158,22 +161,17 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(MouseEvent t) {
                 if (t.getButton().equals(MouseButton.SECONDARY) || t.isControlDown()) {
-                    FileChooser chooser = new FileChooser();
-                    if (QueleaProperties.get().getLastDirectory() != null) {
-                        chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
-                    }
-                    chooser.getExtensionFilters().add(FileFilters.IMAGE_VIDEOS);
-                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
-                    File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                    if (file != null) {
-                        QueleaProperties.get().setLastDirectory(file.getParentFile());
-                        QueleaProperties.get().setLogoImage(file.getAbsolutePath());
-                        updateLogo();
-                    }
+                    logoMenu.show(logo, t.getScreenX(), t.getScreenY());
+                } else {
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
                 }
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
             }
         });
+        MenuItem chooseLogoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("logo.choose.image"), QueleaIcon.IMAGES.create());
+        chooseLogoItem.setOnAction(e -> chooseLogoImage());
+        MenuItem logoSettingsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("logo.settings.menu"), QueleaIcon.SETTINGS.create());
+        logoSettingsItem.setOnAction(e -> showLogoSettings());
+        logoMenu = new ContextMenu(chooseLogoItem, logoSettingsItem);
         logo.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -544,14 +542,53 @@ public class LivePanel extends LivePreviewPanel {
     }
 
     /**
-     * Calls updateLogo() on each canvas. A tidy method.
+     * Let the user choose a new logo image (or video, or SVG).
+     */
+    private void chooseLogoImage() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(FileFilters.LOGO);
+        chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
+        File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+        if (file != null) {
+            QueleaProperties.get().setLastDirectory(file.getParentFile());
+            QueleaProperties.get().setLogoImage(file.getAbsolutePath());
+            refreshLogo();
+        }
+    }
+
+    /**
+     * Show the window with the logo's image, size and position.
+     */
+    private void showLogoSettings() {
+        if (logoSettingsDialog == null) {
+            logoSettingsDialog = new LogoSettingsDialog(QueleaApp.get().getMainWindow(), this::updateLogo);
+        }
+        if (logoSettingsDialog.isShowing()) {
+            logoSettingsDialog.toFront();
+        } else {
+            logoSettingsDialog.show();
+        }
+    }
+
+    /**
+     * Show the current logo settings (from the properties) everywhere: on all
+     * canvases, and in the logo settings window if it's open.
+     */
+    public void refreshLogo() {
+        updateLogo();
+        if (logoSettingsDialog != null && logoSettingsDialog.isShowing()) {
+            logoSettingsDialog.reload();
+        }
+    }
+
+    /**
+     * Show the current logo settings on every display canvas: not just the
+     * canvases of the panel that's currently showing, but also the image,
+     * video, presentation (etc.) panels and previews, which would otherwise
+     * keep the logo they were created with.
      */
     private void updateLogo() {
-        HashSet<DisplayCanvas> canvases = new HashSet<>();
-        canvases.addAll(getCanvases());
-        for (DisplayCanvas canvas : canvases) {
-            canvas.updateLogo();
-        }
+        LogoImage.refreshAll();
     }
 
     public void updateCanvases() {
