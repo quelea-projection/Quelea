@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -327,12 +326,8 @@ public class SongManagerTest {
 
     @Test
     @Order(13)
-    @Disabled("CSV exporter backslash-escapes quotes instead of doubling them")
     @DisplayName("CSV song list exports quoted song names and authors correctly")
     public void songListExportEscapesQuotes() throws Exception {
-        // A CSV reader interprets an embedded quote as the end of the field.
-        // CSV escapes quotes by doubling them, not with a backslash; without
-        // this, song titles/authors can be corrupted or split into columns.
         SongDisplayable entry = new SongDisplayable.Builder("A \"quoted\" song", "Jane, Writer")
                 .lyrics("Verse 1\nWords").get();
         Assertions.assertTrue(manager.addSong(entry, false));
@@ -343,12 +338,8 @@ public class SongManagerTest {
 
     @Test
     @Order(14)
-    @Disabled("CSV exporter does not quote CCLI numbers containing commas")
     @DisplayName("CSV song list keeps a formatted CCLI number in one field")
     public void songListExportQuotesCcliWithCommas() throws Exception {
-        // CCLI numbers can be stored with separators. Without CSV quoting a
-        // comma becomes an extra column and the number cannot be imported as
-        // one value. Apply the same CSV escaping to this field as the others.
         SongDisplayable entry = song("Formatted CCLI", "Verse 1\nWords");
         entry.setCcli("1,234,567");
         Assertions.assertTrue(manager.addSong(entry, false));
@@ -383,5 +374,21 @@ public class SongManagerTest {
         } finally {
             server.stop(0);
         }
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("CSV song list handles CCLI quotes and replaces existing files")
+    public void songListExportEscapesCcliAndTruncatesOldContents() throws Exception {
+        SongDisplayable entry = song("CSV test", "Verse 1\nWords");
+        entry.setCcli("1\"2\n3");
+        Assertions.assertTrue(manager.addSong(entry, false));
+        var file = Files.createTempFile("quelea-song-list", ".csv");
+        Files.writeString(file, "OLD CONTENT".repeat(10000));
+        new SongListExporter().exportToFile(file.toFile());
+        String csv = Files.readString(file);
+        Assertions.assertTrue(csv.contains("\"CSV test\",\"Some Author\",\"1\"\"2\n3\""));
+        Assertions.assertFalse(csv.contains("OLD CONTENT"));
+        Assertions.assertTrue(csv.contains("\"CCLI twins\",\"Some Author\",1000001"));
     }
 }
