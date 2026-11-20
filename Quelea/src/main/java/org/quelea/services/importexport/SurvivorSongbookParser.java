@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.quelea.data.displayable.SongDisplayable;
@@ -42,7 +43,7 @@ public class SurvivorSongbookParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        PDDocument document = PDDocument.load(location);
+        PDDocument document = Loader.loadPDF(location);
         List<SongDisplayable> pdfSongs = new ArrayList<>();
         PDFTextStripper stripper = new PDFTextStripper();
         List<String> songParts = new ArrayList<>();
@@ -80,8 +81,8 @@ public class SurvivorSongbookParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     private String getPageText(PDDocument document, PDFTextStripper stripper, int page) throws IOException {
-        stripper.setStartPage(page);
-        stripper.setEndPage(page);
+        stripper.setStartPage(page + 1);
+        stripper.setEndPage(page + 1);
         StringWriter textWriter = new StringWriter();
         stripper.writeText(document, textWriter);
         return textWriter.toString().replace("’", "'").replace("`", "'");
@@ -126,6 +127,9 @@ public class SurvivorSongbookParser implements SongParser {
             songLyrics.append("\n");
         }
         String songLyricsStr = songLyrics.toString().trim();
+        if (songLyricsStr.isEmpty()) {
+            return null;
+        }
         String title = songLyricsStr.split("\n")[0];
         if (!title.isEmpty() && !Character.isLetterOrDigit(title.charAt(title.length() - 1))) { //Remove ending punctuation from titles
             title = title.substring(0, title.length() - 1);
@@ -158,14 +162,20 @@ public class SurvivorSongbookParser implements SongParser {
             return text;
         }
         int startIndex = endIndex - 1;
-        while (parts[startIndex].trim().isEmpty()) {
+        while (startIndex >= 0 && parts[startIndex].trim().isEmpty()) {
             startIndex--;
         }
-        while (!parts[startIndex].trim().isEmpty()) {
+        int beforeCopyright = startIndex;
+        while (startIndex >= 0 && !parts[startIndex].trim().isEmpty()) {
             startIndex--;
         }
-        while (parts[startIndex].trim().isEmpty()) {
-            startIndex--;
+        if (startIndex < 0) {
+            // Without a blank separator, retain the preceding text: it may be lyrics.
+            startIndex = beforeCopyright;
+        } else {
+            while (startIndex >= 0 && parts[startIndex].trim().isEmpty()) {
+                startIndex--;
+            }
         }
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i <= startIndex; i++) {

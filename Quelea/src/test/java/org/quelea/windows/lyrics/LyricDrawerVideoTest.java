@@ -86,7 +86,7 @@ public class LyricDrawerVideoTest {
             Path video = Files.copy(TEST_VIDEO.toPath(), videos.resolve("theme-" + i + ".mp4"));
             themes[i] = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
                     defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
-                    new VideoBackground(video.toString(), 0, false), defaults.getShadow(),
+                    new VideoBackground(video.toString(), false), defaults.getShadow(),
                     false, false, false, false, -1, 0);
         }
         try {

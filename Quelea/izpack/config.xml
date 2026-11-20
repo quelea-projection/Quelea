@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
-<installation version="5.0">
+<izpack:installation version="5.0"
+                     xmlns:izpack="http://izpack.org/schema/installation"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
 
     <info>
         <appname>Quelea</appname>
@@ -27,12 +30,6 @@
         <res src="../izpack/shortcutSpec.xml" id="shortcutSpec.xml"/>
         <res src="../izpack/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
     </resources>
-
-    <native type="izpack" name="ShellLink.dll"/>
-    <native type="izpack" name="ShellLink_x64.dll"/>
-    <native type="3rdparty" name="COIOSHelper.dll" stage="both">
-        <os family="windows"/>
-    </native>
 
     <listeners>
         <listener classname="RegistryInstallerListener" stage="install" >
@@ -117,4 +114,4 @@
         </pack>
     </packs>
 
-</installation>
+</izpack:installation>

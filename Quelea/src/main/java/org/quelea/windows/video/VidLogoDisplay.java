@@ -56,7 +56,7 @@ public class VidLogoDisplay {
             if (playBin != null) {
                 playBin.stop();
                 fxImageSink.clear();
-                playBin.setURI(uri);
+                playBin.setURI(VideoUri.forGStreamer(uri));
                 playBin.play();
             }
         }

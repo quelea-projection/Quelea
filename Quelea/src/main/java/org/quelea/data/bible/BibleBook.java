@@ -99,17 +99,14 @@ public final class BibleBook implements BibleInterface, Serializable {
     public String getFullText() {
         if (htmlText == null) {
             caretPosList.clear();
-            int pos = 0;
             StringBuilder ret = new StringBuilder(1000);
             for (BibleChapter chapter : getChapters()) {
-                caretPosList.add(pos);
+                caretPosList.add(ret.length());
                 String numStr = Integer.toString(chapter.getNum());
-                pos += numStr.length();
                 ret.append("Chapter ").append(numStr);
                 ret.append("\n");
                 for (BibleVerse verse : chapter.getVerses()) {
                     String verseText = verse.getText();
-                    pos += verseText.length();
                     ret.append(verseText).append(' ');
                 }
                 ret.append("\n");
@@ -180,6 +177,8 @@ public final class BibleBook implements BibleInterface, Serializable {
             ret.bookName = node.getAttributes().getNamedItem("osisID").getNodeValue();
         } else if (ret.getChapters().length > 0 && ret.getChapter(0).getCaptions().length > 0) {
             ret.bookName = ret.getChapter(0).getCaptions()[0];
+        } else {
+            ret.bookName = defaultBookName;
         }
 
         if (node.getAttributes().getNamedItem("bsname") != null) {

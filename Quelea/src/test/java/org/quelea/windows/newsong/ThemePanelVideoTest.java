@@ -1,13 +1,20 @@
 package org.quelea.windows.newsong;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.VideoBackground;
+import org.quelea.data.ImageBackground;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.quelea.testutil.VideoTestSupport.activePipelines;
 import static org.quelea.testutil.VideoTestSupport.assumeVideoAvailable;
 import static org.quelea.testutil.VideoTestSupport.ensureProjectionWindow;
@@ -72,5 +79,85 @@ public class ThemePanelVideoTest {
         onFx(() -> stage.hide());
         assertTrue(waitFor(() -> activePipelines() == baseline, 5_000),
                 "No preview player should keep running once the editor is closed");
+    }
+
+    @Test
+    @DisplayName("Editing a video theme preserves its stretch setting")
+    public void videoStretchSurvivesEditing() throws Exception {
+        ThemeDTO defaults = ThemeDTO.DEFAULT_THEME;
+        for (boolean stretch : new boolean[]{false, true}) {
+            ThemeDTO theme = new ThemeDTO(defaults.getSerializableFont(), defaults.getFontPaint(),
+                    defaults.getTranslateSerializableFont(), defaults.getTranslateFontPaint(),
+                    new VideoBackground(videoTheme(2).getBackground().getString(), stretch), defaults.getShadow(),
+                    false, false, false, false, -1, 0);
+            onFx(() -> {
+                panel.setTheme(theme);
+                VideoBackground background = assertInstanceOf(VideoBackground.class, panel.getTheme().getBackground());
+                assertEquals(stretch, background.getStretch());
+            });
+        }
+    }
+
+    @Test
+    @DisplayName("Alignment and stretch changes are detected as unsaved")
+    public void detectsThemeChanges() throws Exception {
+        onFx(() -> {
+            ThemeDTO initial = videoTheme(2);
+            panel.setTheme(initial);
+            panel.resetSaveHash();
+            assertFalse(panel.hashChanged());
+            ThemeDTO aligned = videoTheme(2);
+            aligned.setTextAlignment(1);
+            panel.setTheme(aligned);
+            assertTrue(panel.hashChanged(), "Changing alignment should prompt to save");
+            panel.resetSaveHash();
+            assertFalse(panel.hashChanged());
+            ThemeDTO stretched = new ThemeDTO(aligned.getSerializableFont(), aligned.getFontPaint(),
+                    aligned.getTranslateSerializableFont(), aligned.getTranslateFontPaint(),
+                    new VideoBackground(((VideoBackground) aligned.getBackground()).getVideoFile().getAbsolutePath(), true),
+                    aligned.getShadow(), aligned.isBold(), aligned.isItalic(), aligned.isTranslateBold(),
+                    aligned.isTranslateItalic(), aligned.getTextPosition(), aligned.getTextAlignment());
+            panel.setTheme(stretched);
+            assertTrue(panel.hashChanged(), "Changing stretch should prompt to save");
+        });
+    }
+
+    @Test
+    @DisplayName("An unchanged image theme is not treated as an edit")
+    public void unchangedImageThemeIsNotMarkedDirty() throws Exception {
+        onFx(() -> {
+            ThemeDTO d = ThemeDTO.DEFAULT_THEME;
+            ThemeDTO image = new ThemeDTO(d.getSerializableFont(), d.getFontPaint(),
+                    d.getTranslateSerializableFont(), d.getTranslateFontPaint(),
+                    new ImageBackground("missing-background.png"), d.getShadow(),
+                    false, false, false, false, -1, 0);
+            panel.setTheme(image);
+            panel.resetSaveHash();
+            assertFalse(panel.hashChanged());
+        });
+    }
+
+    @Test
+    @DisplayName("The theme dialog selects and returns an alignment-only change")
+    public void themeDialogKeepsAlignmentChanges() throws Exception {
+        onFx(() -> {
+            EditThemeDialog dialog = new EditThemeDialog();
+            try {
+                ThemeDTO first = org.quelea.testutil.VideoTestSupport.colourTheme();
+                first.setThemeName("Same name");
+                ThemeDTO aligned = org.quelea.testutil.VideoTestSupport.colourTheme();
+                aligned.setThemeName("Same name");
+                aligned.setTextAlignment(1);
+                dialog.setTheme(first);
+                dialog.setTheme(aligned);
+                var confirm = EditThemeDialog.class.getDeclaredField("confirmButton");
+                confirm.setAccessible(true);
+                ((Button) confirm.get(dialog)).fire();
+                assertEquals(1, dialog.getTheme().getTextAlignment());
+            } finally {
+                dialog.hide();
+            }
+            return null;
+        });
     }
 }

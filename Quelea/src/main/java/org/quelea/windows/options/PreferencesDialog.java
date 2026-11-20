@@ -34,6 +34,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
@@ -44,6 +45,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -53,11 +55,14 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
 
 public class PreferencesDialog extends Stage {
+    private static final double PREFERRED_MIN_WIDTH = 1005;
+    private static final double PREFERRED_MIN_HEIGHT = 600;
     private PreferencesFx preferencesFx;
     private final BorderPane mainPane;
     private final Button okButton;
@@ -70,7 +75,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsServerSettingsPanel optionsServerSettingsPanel;
     private final OptionsRecordingPanel recordingPanel;
     private final OptionsImportExportPanel importExportPanel;
-    private HashMap<Field, ObservableValue> bindings = new HashMap<>();
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings = new HashMap<>();
     private boolean previousLinkPreviewLiveDividers;
 
     /**
@@ -112,7 +117,7 @@ public class PreferencesDialog extends Stage {
         StyleManager.markPrimaryButton(okButton);
         BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction((ActionEvent t) -> {
-            preferencesFx.saveSettings();
+            savePreferences(preferencesFx);
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
@@ -144,8 +149,8 @@ public class PreferencesDialog extends Stage {
         BorderPane.setAlignment(okButton, Pos.CENTER);
 
         mainPane.setBottom(okButton);
-        mainPane.setMinWidth(1005);
-        mainPane.setMinHeight(600);
+        mainPane.setMinWidth(PREFERRED_MIN_WIDTH);
+        mainPane.setMinHeight(PREFERRED_MIN_HEIGHT);
         mainPane.setCenter(preferencesFx.getView().getCenter());
 
         Scene scene = new Scene(mainPane);
@@ -159,6 +164,7 @@ public class PreferencesDialog extends Stage {
     }
 
     private void callBeforeShowing() {
+        fitToScreen();
         getDisplaySetupPanel().setDisplayChange(false);
 
         // Before showing the preferences dialog we save the current state of the link preview and live dividers so
@@ -166,8 +172,56 @@ public class PreferencesDialog extends Stage {
         previousLinkPreviewLiveDividers = QueleaProperties.get().getLinkPreviewAndLiveDividers();
     }
 
-    private void bind(Field field, ObservableValue<? extends Boolean> booleanProperty) {
-        ((SimpleControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
+    static void savePreferences(PreferencesFx preferencesFx) {
+        preferencesFx.saveSettings();
+        QueleaProperties.get().save();
+    }
+
+    /**
+     * Make sure the dialog never gets larger than the screen it is shown on,
+     * so that the OK button at the bottom is always reachable. The settings
+     * content itself is scrollable, so it just shrinks to fit.
+     */
+    private void fitToScreen() {
+        Rectangle2D screenBounds = getScreenBounds();
+        double maxWidth = screenBounds.getWidth();
+        double maxHeight = screenBounds.getHeight();
+
+        setMaxWidth(maxWidth);
+        setMaxHeight(maxHeight);
+        mainPane.setMinWidth(Math.min(PREFERRED_MIN_WIDTH, maxWidth));
+        mainPane.setMinHeight(Math.min(PREFERRED_MIN_HEIGHT, maxHeight));
+
+        if (getWidth() > maxWidth) {
+            setWidth(maxWidth);
+        }
+        if (getHeight() > maxHeight) {
+            setHeight(maxHeight);
+        }
+
+        // Keep the whole window (including the title bar) inside the screen
+        setX(Math.max(screenBounds.getMinX(), Math.min(getX(), screenBounds.getMaxX() - getWidth())));
+        setY(Math.max(screenBounds.getMinY(), Math.min(getY(), screenBounds.getMaxY() - getHeight())));
+    }
+
+    /**
+     * Get the usable bounds (excluding taskbar / menu bar) of the screen the
+     * main window is on, falling back to the primary screen.
+     */
+    private Rectangle2D getScreenBounds() {
+        Window owner = getOwner();
+        if (owner != null && !Double.isNaN(owner.getX()) && !Double.isNaN(owner.getY())) {
+            List<Screen> screens = Screen.getScreensForRectangle(
+                    owner.getX(), owner.getY(), Math.max(1, owner.getWidth()), Math.max(1, owner.getHeight()));
+            if (!screens.isEmpty()) {
+                return screens.get(0).getVisualBounds();
+            }
+        }
+        return Screen.getPrimary().getVisualBounds();
+    }
+
+    private void bind(Field<?> field, ObservableValue<? extends Boolean> booleanProperty) {
+        ((SimpleControl<?, ?>) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
     }
 
     public static Setting getColorPicker(String label, Color color) {
@@ -177,7 +231,7 @@ public class PreferencesDialog extends Stage {
         return Setting.of(label, field, property);
     }
 
-    public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+    public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         Setting setting;
         if (horizontal)
             setting = Setting.of(label, FXCollections.observableArrayList(
@@ -190,18 +244,18 @@ public class PreferencesDialog extends Stage {
                     LabelGrabber.INSTANCE.getLabel("bottom.text.position")),
                     new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
-            bindings.put((Field) setting.getElement(), booleanBind.not());
+            bindings.put((Field<?>) setting.getElement(), booleanBind.not());
         return setting;
     }
 
-    public static Setting getShowOnSlidesSelector(String label, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+    public static Setting getShowOnSlidesSelector(String label, String selectedValue, BooleanProperty booleanBind, HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         Setting setting = Setting.of(label, FXCollections.observableArrayList(
                 LabelGrabber.INSTANCE.getLabel("all"),
                 LabelGrabber.INSTANCE.getLabel("first"),
                 LabelGrabber.INSTANCE.getLabel("last")),
                 new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
-            bindings.put((Field) setting.getElement(), booleanBind.not());
+            bindings.put((Field<?>) setting.getElement(), booleanBind.not());
         return setting;
     }
 

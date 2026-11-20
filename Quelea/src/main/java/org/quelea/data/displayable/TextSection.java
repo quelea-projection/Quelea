@@ -39,6 +39,7 @@ import org.w3c.dom.NodeList;
  */
 public class TextSection implements Serializable {
 
+    private static final List<String> COMMENT_MARKERS = List.of("//lyrics", "//chords", "//title");
     private final String title;
     private final String[] lines;
     private final String[] smallLines;
@@ -243,14 +244,11 @@ public class TextSection implements Serializable {
      */
     private String removeComments(String line) {
         line = trimFromEnd(line);
-        if (line.toLowerCase().endsWith("//lyrics")) {
-            return line.substring(0, line.indexOf("//lyrics"));
-        }
-        if (line.toLowerCase().endsWith("//chords")) {
-            return line.substring(0, line.indexOf("//chords"));
-        }
-        if (line.toLowerCase().endsWith("//title")) {
-            return line.substring(0, line.indexOf("//title"));
+        for (String marker : COMMENT_MARKERS) {
+            int start = line.length() - marker.length();
+            if (start >= 0 && line.regionMatches(true, start, marker, 0, marker.length())) {
+                return line.substring(0, start);
+            }
         }
         return line;
     }

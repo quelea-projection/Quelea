@@ -19,6 +19,7 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.IntegerField;
+import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleComboBoxControl;
 import com.dlsc.preferencesfx.formsfx.view.controls.SimpleIntegerControl;
 import com.dlsc.preferencesfx.model.Group;
@@ -41,7 +42,7 @@ public class DisplayGroup {
     private boolean displayChange = false;
     private Group group;
 
-    DisplayGroup(String groupName, boolean custom, HashMap<Field, ObservableValue> bindings) {
+    DisplayGroup(String groupName, boolean custom, HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         BooleanProperty useCustomPosition = new SimpleBooleanProperty(false);
         if (groupName.equals(LabelGrabber.INSTANCE.getLabel("projector.screen.label"))) {
             useCustomPosition = new SimpleBooleanProperty(QueleaProperties.get().isProjectorModeCoords());
@@ -55,7 +56,7 @@ public class DisplayGroup {
         ObservableList<String> availableScreens = getAvailableScreens(custom);
         ListProperty<String> screenListProperty = new SimpleListProperty<>(availableScreens);
         ObjectProperty<String> screenSelectProperty = new SimpleObjectProperty<>(availableScreens.get(0));
-        Field customControl = Field.ofSingleSelectionType(screenListProperty, screenSelectProperty).render(
+        SingleSelectionField<String> customControl = Field.ofSingleSelectionType(screenListProperty, screenSelectProperty).render(
                 new SimpleComboBoxControl<>());
 
         availableScreens.addListener((ListChangeListener<? super String>) e -> {

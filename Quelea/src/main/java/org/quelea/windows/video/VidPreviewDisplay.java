@@ -38,7 +38,7 @@ public class VidPreviewDisplay {
         }
 
         LOGGER.log(Level.INFO, "PROCESSING URI " + uri);
-        playBin.setURI(uri);
+        playBin.setURI(VideoUri.forGStreamer(uri));
         playBin.getState();
         playBin.pause();
         playBin.getState();

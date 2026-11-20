@@ -27,11 +27,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -42,9 +43,9 @@ import java.util.regex.Pattern;
 public class Speller {
 
     public static final String SPELLING_REGEX = "([^\\p{Alnum}'\\-])+";
-    private static HashMap<File, HashSet<String>> dictionaries = new HashMap<>();
+    private static final ConcurrentHashMap<File, Set<String>> dictionaries = new ConcurrentHashMap<>();
     private HashSet<String> ignoreWords;
-    private HashSet<String> words;
+    private Set<String> words;
     private Dictionary dict;
 
     /**
@@ -67,27 +68,24 @@ public class Speller {
         if(dict == null) {
             return;
         }
-        this.dict = dict;
-        if(dictionaries.containsKey(dict.getDictFile())) {
-            words = dictionaries.get(dict.getDictFile());
-        }
-        else {
-            words = new HashSet<>();
-            dictionaries.put(dict.getDictFile(), words);
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), "UTF-8"));
+        Set<String> loaded = dictionaries.computeIfAbsent(dict.getDictFile(), file -> {
+            Set<String> result = ConcurrentHashMap.newKeySet();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
                 String line;
                 while((line = reader.readLine()) != null) {
                     line = sanitiseWord(line);
                     if(!line.isEmpty()) {
-                        dictionaries.get(dict.getDictFile()).add(line);
+                        result.add(line);
                     }
                 }
             }
             catch(IOException ex) {
                 throw new IllegalArgumentException("Error reading dictionary file", ex);
             }
-        }
+            return result;
+        });
+        this.dict = dict;
+        words = loaded;
     }
 
     /**
@@ -98,7 +96,7 @@ public class Speller {
      */
     public boolean checkWord(String word) {
         word = sanitiseWord(word);
-        if(ignoreWords == null || words == null || word.length()==1) {
+        if(ignoreWords == null || words == null || word.length() <= 1) {
             return true;
         }
         return words.contains(word) || ignoreWords.contains(word);
@@ -156,12 +154,10 @@ public class Speller {
         }
         List<String> ret = new ArrayList<>();
         int count = 0;
-        for(Suggestion word : list) {
+        while (!list.isEmpty() && count < 6) {
+            Suggestion word = list.poll();
             ret.add(word.getWord());
             count++;
-            if(count == 6) {
-                break;
-            }
         }
         return ret;
     }
@@ -211,7 +207,7 @@ public class Speller {
     }
 
     private String sanitiseWord(String word) {
-        word = word.trim().toLowerCase();
+        word = word.trim().toLowerCase(Locale.ROOT);
         word = Pattern.compile("[^\\p{Alnum}'\\- ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(word).replaceAll("");
         return word;
     }

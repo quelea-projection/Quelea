@@ -63,7 +63,9 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable
     private void expungeStaleEntries() {
         Reference<? extends V> sv;
         while((sv = queue.poll()) != null) {
-            hash.remove(reverseLookup.remove(sv));
+            // A reference may be enqueued after its key has been removed or
+            // replaced. Only remove the mapping that owns this reference.
+            hash.remove(reverseLookup.remove(sv), sv);
         }
     }
 
@@ -87,6 +89,7 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable
         if(result == null) {
             return null;
         }
+        reverseLookup.remove(result);
         return result.get();
     }
 
@@ -113,21 +116,12 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable
         for(final Entry<K, SoftReference<V>> entry : hash.entrySet()) {
             final V value = entry.getValue().get();
             if(value != null) {
-                result.add(new Entry<K, V>() {
-                    @Override
-                    public K getKey() {
-                        return entry.getKey();
-                    }
-
-                    @Override
-                    public V getValue() {
-                        return value;
-                    }
-
+                result.add(new SimpleEntry<K, V>(entry.getKey(), value) {
                     @Override
                     public V setValue(V v) {
-                        entry.setValue(new SoftReference<>(v, queue));
-                        return value;
+                        V previous = super.setValue(v);
+                        SoftHashMap.this.put(getKey(), v);
+                        return previous;
                     }
                 });
             }

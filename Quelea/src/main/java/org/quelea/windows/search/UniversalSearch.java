@@ -192,6 +192,12 @@ public class UniversalSearch {
         for (SongDisplayable song : SongManager.get().getIndex().filter(query, FilterType.BODY)) {
             found.putIfAbsent(song.getID(), songResult(song, findLine(song.getLyrics(false, false, false), query), query));
         }
+        for (SongDisplayable song : SongManager.get().getIndex().filter(query, FilterType.CCLI)) {
+            String author = song.getAuthor();
+            String subtitle = "CCLI " + song.getCcli()
+                    + (author == null || author.isBlank() ? "" : " · " + author);
+            found.putIfAbsent(song.getID(), songResult(song, subtitle, query));
+        }
         return found.values().stream().limit(max).toList();
     }
 

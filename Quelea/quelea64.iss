@@ -11,7 +11,7 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{5A8934E9-7C09-4BA1-82A8-A572960C2B4B}
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode=x64compatible
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppMutex=queleamutex
@@ -61,7 +61,7 @@ Type: filesandordirs; Name: "{app}/winjre"
 Type: filesandordirs; Name: "{app}/winjre64"
 
 [Files]
-Source: gs.msi; DestDir: {tmp}; Flags: deleteafterinstall;
+Source: "build\downloads\gstreamer-1.0-msvc-x86_64-1.26.11.msi"; DestDir: "{tmp}"; DestName: "quelea-gstreamer-setup.msi"; Flags: deleteafterinstall
 Source: "build/launch4j/Quelea64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist/Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fopcfg.xml"; DestDir: "{app}"; Flags: ignoreversion
@@ -90,5 +90,5 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFil
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; IconFilename: "{app}\icons\logo.ico"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\gs.msi"" /qb- INSTALLLEVEL=1000"; WorkingDir: {tmp};
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\quelea-gstreamer-setup.msi"" /qb- INSTALLLEVEL=1000"; WorkingDir: "{tmp}"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Flags: shellexec postinstall skipifsilent

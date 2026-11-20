@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -56,27 +57,29 @@ public class OpenLPParser implements SongParser {
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + location.getAbsolutePath());
-            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM songs");
-            while(rs.next()) {
-                String lyrics = getLyricsFromXML(rs.getString("lyrics"));
-                String title = rs.getString("title");
-                String ccli = rs.getString("ccli_number");
-                String comments = rs.getString("comments");
-                String copyright = rs.getString("copyright");
-                if(title != null && lyrics != null && !title.isEmpty() && !lyrics.isEmpty()) {
-                    SongDisplayable displayable = new SongDisplayable(title, "");
-                    displayable.setLyrics(lyrics);
-                    if(ccli != null) {
-                        displayable.setCcli(ccli.trim());
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + location.getAbsolutePath());
+                    Statement statement = conn.createStatement();
+                    ResultSet rs = statement.executeQuery("SELECT * FROM songs")) {
+                while(rs.next()) {
+                    String lyrics = getLyricsFromXML(rs.getString("lyrics"));
+                    String title = rs.getString("title");
+                    String ccli = rs.getString("ccli_number");
+                    String comments = rs.getString("comments");
+                    String copyright = rs.getString("copyright");
+                    if(title != null && lyrics != null && !title.isEmpty() && !lyrics.isEmpty()) {
+                        SongDisplayable displayable = new SongDisplayable(title, "");
+                        displayable.setLyrics(lyrics);
+                        if(ccli != null) {
+                            displayable.setCcli(ccli.trim());
+                        }
+                        if(comments != null) {
+                            displayable.setInfo(comments.trim());
+                        }
+                        if(copyright != null) {
+                            displayable.setCopyright(copyright.trim());
+                        }
+                        ret.add(displayable);
                     }
-                    if(comments != null) {
-                        displayable.setInfo(comments.trim());
-                    }
-                    if(copyright != null) {
-                        displayable.setCopyright(copyright.trim());
-                    }
-                    ret.add(displayable);
                 }
             }
             return ret;
@@ -87,15 +90,36 @@ public class OpenLPParser implements SongParser {
     }
 
     private String getLyricsFromXML(String lyricsXML) {
+        if (lyricsXML == null) {
+            return null;
+        }
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new ByteArrayInputStream(lyricsXML.getBytes("UTF8")));
-            Node root = doc.getElementsByTagName("song").item(0).getFirstChild();
+            Node song = doc.getElementsByTagName("song").item(0);
+            if (song == null) {
+                return null;
+            }
+            Node root = null;
+            NodeList children = song.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE && "lyrics".equals(child.getNodeName())) {
+                    root = child;
+                    break;
+                }
+            }
+            if (root == null) {
+                return null;
+            }
             StringBuilder lyrics = new StringBuilder();
             NodeList verses = root.getChildNodes();
             for(int j = 0; j < verses.getLength(); j++) {
-                lyrics.append(verses.item(j).getTextContent()).append("\n\n");
+                Node verse = verses.item(j);
+                if (verse.getNodeType() == Node.ELEMENT_NODE && "verse".equals(verse.getNodeName())) {
+                    lyrics.append(verse.getTextContent()).append("\n\n");
+                }
             }
             return lyrics.toString().trim();
         }

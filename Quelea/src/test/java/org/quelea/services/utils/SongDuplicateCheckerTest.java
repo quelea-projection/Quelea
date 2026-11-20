@@ -44,7 +44,7 @@ public class SongDuplicateCheckerTest {
             }
             String a = first.toString();
             String b = second.toString();
-            boolean expected = new LevenshteinDistance().apply(a, b) <= Math.min(a.length(), b.length()) / 10;
+            boolean expected = LevenshteinDistance.getDefaultInstance().apply(a, b) <= Math.min(a.length(), b.length()) / 10;
             Assertions.assertEquals(expected, SongDuplicateChecker.isSimilar(a, b), a + " / " + b);
         }
     }

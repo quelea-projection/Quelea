@@ -32,21 +32,24 @@ public class SongListExporter {
                 .map(s -> {
                     String out = escape(s.getTitle()) + "," + escape(s.getAuthor());
                     if (s.getCcli() != null && !s.getCcli().isEmpty()) {
-                        out += "," + s.getCcli();
+                        String ccli = s.getCcli();
+                        out += "," + (ccli.indexOf(',') >= 0 || ccli.indexOf('"') >= 0
+                                || ccli.indexOf('\r') >= 0 || ccli.indexOf('\n') >= 0 ? escape(ccli) : ccli);
                     }
                     return out;
                 })
                 .collect(Collectors.toList());
 
         try {
-            Files.write(file.toPath(), String.join("\n", songNames).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
+            Files.write(file.toPath(), String.join("\n", songNames).getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Exception exporting song list", ex);
         }
     }
 
     private String escape(String csvEle) {
-        return "\"" + csvEle.replace("\"", "\\\"") + "\"";
+        return "\"" + csvEle.replace("\"", "\"\"") + "\"";
     }
 
 }

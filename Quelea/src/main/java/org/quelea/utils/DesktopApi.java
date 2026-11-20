@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -45,17 +46,23 @@ public class DesktopApi {
     }
 
     public static boolean browse(URI uri) {
+        boolean snap = SystemUtils.IS_OS_LINUX && System.getenv("SNAP") != null;
+        return browse(uri, snap,
+                value -> runCommand("/usr/bin/xdg-open", "%s", value.toString()),
+                DesktopApi::browseDESKTOP,
+                value -> openSystemSpecific(value.toString()));
+    }
 
-        if (browseDESKTOP(uri)) {
+    static boolean browse(URI uri, boolean snap, Predicate<URI> snapOpener,
+                          Predicate<URI> desktopOpener, Predicate<URI> systemOpener) {
+        // In a confined Snap, snapd's xdg-open delegates to the user's desktop.
+        if (snap && snapOpener.test(uri)) {
             return true;
         }
-
-        if (openSystemSpecific(uri.toString())) {
+        if (desktopOpener.test(uri) || systemOpener.test(uri)) {
             return true;
         }
-
-        LOG.warn(String.format("failed to browse %s", uri));
-
+        LOG.warn("failed to browse {}", uri);
         return false;
     }
 
@@ -235,14 +242,16 @@ public class DesktopApi {
             try {
                 int retval = p.exitValue();
                 if (retval == 0) {
-                    LOG.error("Process ended immediately.");
-                    return false;
-                } else {
-                    LOG.error("Process crashed.");
-                    return false;
+                    return true;
                 }
+                LOG.warn("Command {} exited with status {}", command, retval);
+                return false;
             } catch (IllegalThreadStateException itse) {
-                LOG.error("Process is running.");
+                p.onExit().thenAccept(process -> {
+                    if (process.exitValue() != 0) {
+                        LOG.warn("Command {} exited with status {}", command, process.exitValue());
+                    }
+                });
                 return true;
             }
         } catch (IOException e) {

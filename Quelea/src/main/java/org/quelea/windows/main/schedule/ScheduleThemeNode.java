@@ -188,10 +188,10 @@ public class ScheduleThemeNode extends BorderPane {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
             });
-            if (selectedSongTheme != null && selectedSongTheme.equals(theme)) {
+            if (matchesSelection(selectedSongTheme, theme)) {
                 panel.getSongSelectButton().fire();
             }
-            if (selectedBibleTheme != null && selectedBibleTheme.equals(theme)) {
+            if (matchesSelection(selectedBibleTheme, theme)) {
                 panel.getBibleSelectButton().fire();
             }
             panel.getSongSelectButton().setToggleGroup(songGroup);
@@ -240,6 +240,18 @@ public class ScheduleThemeNode extends BorderPane {
 
     public void setSongTheme(ThemeDTO songTempTheme) {
         songCallback.updateTheme(songTempTheme);
+    }
+
+    /** Match a saved selection by file, so editing it does not lose selection. */
+    static boolean matchesSelection(ThemeDTO selected, ThemeDTO candidate) {
+        if (selected == null || candidate == null) {
+            return false;
+        }
+        if (selected.getFile() != null && candidate.getFile() != null) {
+            return selected.getFile().getAbsoluteFile().toPath().normalize()
+                    .equals(candidate.getFile().getAbsoluteFile().toPath().normalize());
+        }
+        return selected.equals(candidate);
     }
     
     public void setBibleTheme(ThemeDTO bibleTempTheme) {

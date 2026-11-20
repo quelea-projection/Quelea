@@ -29,7 +29,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -129,13 +128,12 @@ public class ImageBackground implements Background, Serializable {
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider, CheckBox vidStretchCheckbox) {
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, CheckBox vidStretchCheckbox) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backgroundImgLocation.setText(imageName);
         backgroundColorPicker.setValue(Color.BLACK);
         backgroundColorPicker.fireEvent(new ActionEvent());
         backgroundVidLocation.clear();
-        vidHueSlider.setValue(0);
         vidStretchCheckbox.setSelected(false);
     }
 
@@ -143,7 +141,6 @@ public class ImageBackground implements Background, Serializable {
     public int hashCode() {
         int hash = 5;
         hash = 71 * hash + Objects.hashCode(this.imageName);
-        hash = 71 * hash + Objects.hashCode(this.originalImage);
         return hash;
     }
 
@@ -157,9 +154,6 @@ public class ImageBackground implements Background, Serializable {
         }
         final ImageBackground other = (ImageBackground) obj;
         if(!Objects.equals(this.imageName, other.imageName)) {
-            return false;
-        }
-        if(!Objects.equals(this.originalImage, other.originalImage)) {
             return false;
         }
         return true;
