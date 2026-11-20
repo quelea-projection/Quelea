@@ -40,14 +40,6 @@ interface PowerPointBackend {
      */
     SlideState close() throws PowerPointException;
 
-    /**
-     * Windows only: close whatever PowerPoint has open, after
-     * {@link #open(File)} failed with {@link PowerPointException.Kind#ALREADY_RUNNING}.
-     */
-    default void closeAll() throws PowerPointException {
-        close();
-    }
-
     SlideState next() throws PowerPointException;
 
     SlideState previous() throws PowerPointException;

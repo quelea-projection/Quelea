@@ -35,6 +35,8 @@ public class PowerPointException extends Exception {
         NOT_ACCESSIBLE,
         /** Windows: a presentation is already open and must be closed first. */
         ALREADY_RUNNING,
+        /** The presentation has unsaved changes and was left open. */
+        UNSAVED_CHANGES,
         /** PowerPoint did not answer in time. */
         TIMEOUT,
         /** PowerPoint could not be found or started. */

@@ -45,6 +45,7 @@ import org.quelea.services.utils.QueleaProperties;
 final class WindowsPowerPointScripts {
 
     private static String title;
+    private static Process viewerProcess;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -78,12 +79,12 @@ final class WindowsPowerPointScripts {
      *
      * @return Message whether the command was successful
      */
-    static String closePresentation() {
+    static String closePresentation(File file) {
         String ret = "";
         if (QueleaProperties.get().getPPPath().contains("PPTVIEW")) {
             pptViewClose();
         } else {
-            ret = sendVBSSignal(getVBScriptPath("closePresentation.vbs"));
+            ret = sendVBSSignal(getVBScriptPath("closePresentation.vbs") + " \"" + file.getAbsolutePath() + "\"");
         }
         return ret;
     }
@@ -266,11 +267,8 @@ final class WindowsPowerPointScripts {
     private static String pptViewOpen(String ppPath, String path) {
         String ret = "";
         try {
-            // Always close old presentations before opening new ones
-            pptViewClose();
-            Thread.sleep(500);
             Runtime rt = Runtime.getRuntime();
-            rt.exec(("\"" + ppPath + "\" /F" + path).split(" "));
+            viewerProcess = rt.exec(("\"" + ppPath + "\" /F" + path).split(" "));
             Thread.sleep(500);
             for (int i = 0; i < QueleaProperties.get().getProjectorScreen(); i++) {
                 movePPTViewToSecondScreen();
@@ -289,11 +287,9 @@ final class WindowsPowerPointScripts {
      * Close PowerPoint Viewer in Windows
      */
     private static void pptViewClose() {
-        Runtime rt = Runtime.getRuntime();
-        try {
-            rt.exec(("taskkill /F /IM PPTVIEW.exe").split(" "));
-        } catch (IOException ex) {
-            LOGGER.log(Level.INFO, "Could not close PowerPoint Viewer ", ex);
+        if (viewerProcess != null) {
+            viewerProcess.destroy();
+            viewerProcess = null;
         }
     }
 

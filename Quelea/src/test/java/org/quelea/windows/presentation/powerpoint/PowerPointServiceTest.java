@@ -31,6 +31,7 @@ public class PowerPointServiceTest {
         volatile boolean black;
         volatile boolean open;
         volatile boolean denyAutomation;
+        volatile boolean unsaved;
         final List<String> calls = new CopyOnWriteArrayList<>();
         final int total = 3;
 
@@ -57,6 +58,9 @@ public class PowerPointServiceTest {
         @Override
         public SlideState close() throws PowerPointException {
             check("close");
+            if (unsaved) {
+                throw new PowerPointException(PowerPointException.Kind.UNSAVED_CHANGES, "Unsaved changes");
+            }
             open = false;
             return now();
         }
@@ -197,5 +201,18 @@ public class PowerPointServiceTest {
         service = null;
         assertTrue(fake.calls.contains("close"));
         assertTrue(fake.calls.contains("shutdown"));
+    }
+
+    @Test
+    @DisplayName("A refused close leaves the show tracked until it can be closed safely")
+    public void unsavedPresentationRemainsTracked() throws Exception {
+        PowerPointService s = service();
+        get(s.open(new File("x.pptx")));
+        fake.unsaved = true;
+        assertThrows(ExecutionException.class, () -> get(s.close()));
+        assertTrue(s.isShowOpen());
+        fake.unsaved = false;
+        get(s.close());
+        assertTrue(!s.isShowOpen());
     }
 }

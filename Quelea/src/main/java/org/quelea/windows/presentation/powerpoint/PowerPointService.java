@@ -191,7 +191,7 @@ public final class PowerPointService {
     /**
      * Open the presentation in PowerPoint and start its slide show. On Windows
      * this fails with {@link PowerPointException.Kind#ALREADY_RUNNING} if
-     * PowerPoint has something open already; see {@link #closeAllAndOpen(File)}.
+     * PowerPoint already has an independently opened presentation.
      *
      * @param file the presentation.
      * @return the state once the show runs.
@@ -220,32 +220,15 @@ public final class PowerPointService {
     }
 
     /**
-     * Windows: close whatever PowerPoint has open, then open the presentation.
-     *
-     * @param file the presentation.
-     * @return the state once the show runs.
-     */
-    public CompletableFuture<SlideState> closeAllAndOpen(File file, Rectangle2D screen) {
-        return submit("open", b -> {
-            b.closeAll();
-            SlideState state = b.open(file, screen);
-            warn(b.takeWarning());
-            showOnProjector = b.isShowOnScreen();
-            showOpen = true;
-            startPolling(b);
-            return state;
-        });
-    }
-
-    /**
      * Close the presentation Quelea opened.
      */
     public CompletableFuture<SlideState> close() {
         return submit("close", b -> {
+            SlideState state = b.close();
             stopPolling();
             showOpen = false;
             showOnProjector = false;
-            return b.close();
+            return state;
         });
     }
 

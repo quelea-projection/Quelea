@@ -27,6 +27,8 @@ import org.quelea.services.utils.QueleaProperties;
  */
 class WindowsPowerPointBackend implements PowerPointBackend {
 
+    private File openFile;
+
     private static boolean isViewer() {
         return QueleaProperties.get().getPPPath().contains("PPTVIEW");
     }
@@ -39,6 +41,9 @@ class WindowsPowerPointBackend implements PowerPointBackend {
             throw new PowerPointException(PowerPointException.Kind.NOT_AVAILABLE,
                     "PowerPoint was not found at " + QueleaProperties.get().getPPPath());
         }
+        if (openFile != null) {
+            close();
+        }
         String result = WindowsPowerPointScripts.openPresentation("\"" + file.getAbsolutePath() + "\"");
         if (result.contains("already running")) {
             throw new PowerPointException(PowerPointException.Kind.ALREADY_RUNNING, result);
@@ -46,23 +51,31 @@ class WindowsPowerPointBackend implements PowerPointBackend {
         if (result.startsWith("Could not") || result.startsWith("Interrupted")) {
             throw new PowerPointException(PowerPointException.Kind.NOT_AVAILABLE, result);
         }
+        if (!isViewer() && !result.contains("Quelea presentation opened")) {
+            throw new PowerPointException(PowerPointException.Kind.NOT_AVAILABLE,
+                    "Could not confirm PowerPoint opened the presentation: " + result);
+        }
+        openFile = file.getAbsoluteFile();
         return state();
     }
 
     @Override
     public SlideState close() throws PowerPointException {
-        WindowsPowerPointScripts.closePresentation();
-        return SlideState.NOT_RUNNING;
-    }
-
-    @Override
-    public void closeAll() throws PowerPointException {
-        WindowsPowerPointScripts.closePresentation();
-        try {
-            Thread.sleep(500); // As before: give PowerPoint time to quit.
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+        if (openFile == null) {
+            return SlideState.NOT_RUNNING;
         }
+        String result = WindowsPowerPointScripts.closePresentation(openFile);
+        if (result.contains("unsaved changes")) {
+            throw new PowerPointException(PowerPointException.Kind.UNSAVED_CHANGES, result);
+        }
+        if (result.startsWith("Could not") || (!isViewer()
+                && !result.contains("Quelea presentation closed")
+                && !result.contains("Quelea presentation is no longer open")
+                && !result.contains("PowerPoint is not running"))) {
+            throw new PowerPointException(PowerPointException.Kind.FAILED, result);
+        }
+        openFile = null;
+        return SlideState.NOT_RUNNING;
     }
 
     @Override
