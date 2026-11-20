@@ -20,6 +20,8 @@ package org.quelea.data.bible;
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +170,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
             ret.append('\"');
         }
         ret.append(">");
-        for (BibleVerse verse : verses.values()) {
+        for (BibleVerse verse : getVerses()) {
             ret.append(verse.toXML());
         }
         ret.append("</chapter>");
@@ -210,7 +212,9 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @return all the verses in the chapter.
      */
     public BibleVerse[] getVerses() {
-        return verses.values().toArray(new BibleVerse[verses.size()]);
+        BibleVerse[] ordered = verses.values().toArray(new BibleVerse[0]);
+        Arrays.sort(ordered, Comparator.comparingInt(BibleVerse::getNum));
+        return ordered;
     }
 
     /**

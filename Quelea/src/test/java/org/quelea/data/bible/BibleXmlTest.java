@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.quelea.services.utils.QueleaProperties;
@@ -93,12 +92,7 @@ public class BibleXmlTest {
     }
 
     @Test
-    @Disabled("Sparse verses can be iterated and serialized in HashMap order")
     public void sparseVersesRemainInNumericalReadingOrder() throws Exception {
-        // A chapter's verse map currently has unspecified HashMap iteration
-        // order. The library and saved XML use that order directly, so sparse
-        // or out-of-order verses can appear out of sequence. Return verses in
-        // numerical order, and use that same order for text and serialization.
         BibleChapter chapter = BibleChapter.parseXML(element("<chapter cnumber=\"1\">"
                 + "<verse vnumber=\"16\">Sixteenth</verse><verse vnumber=\"1\">First</verse>"
                 + "</chapter>"), 1);
@@ -106,6 +100,10 @@ public class BibleXmlTest {
                 java.util.Arrays.stream(chapter.getVerses()).mapToInt(BibleVerse::getNum).toArray());
         Assertions.assertTrue(chapter.getFullText().indexOf("First") < chapter.getFullText().indexOf("Sixteenth"));
         Assertions.assertTrue(chapter.toXML().indexOf("vnumber=\"1\"") < chapter.toXML().indexOf("vnumber=\"16\""));
+        BibleChapter restored = BibleChapter.parseXML(element(chapter.toXML()), 1);
+        Assertions.assertArrayEquals(new int[]{1, 16},
+                java.util.Arrays.stream(restored.getVerses()).mapToInt(BibleVerse::getNum).toArray());
+        Assertions.assertEquals("Sixteenth", restored.getVerse(16).getVerseText());
     }
 
     private Element element(String xml) throws Exception {
