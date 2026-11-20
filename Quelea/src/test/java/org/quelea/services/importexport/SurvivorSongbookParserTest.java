@@ -12,7 +12,6 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.quelea.data.displayable.SongDisplayable;
@@ -53,15 +52,27 @@ class SurvivorSongbookParserTest {
     }
 
     @Test
-    @Disabled("Short copyright footers make the backward scan run past the beginning of the page")
     void copyrightFooterWithoutBlankSeparatorDoesNotAbortImport() throws Exception {
-        // Songbook PDFs may have short or irregular footers. Walking backwards
-        // looking for a blank separator currently runs before the start of the
-        // page; bound the scan and keep the available song text.
         List<SongDisplayable> songs = new SurvivorSongbookParser().getSongs(
                 createPdf("Song title\nCopyright 2020").toFile(), null);
         Assertions.assertEquals(1, songs.size());
         Assertions.assertEquals("Song title", songs.get(0).getTitle());
+    }
+
+    @Test
+    void copyrightOnlyPageDoesNotCreateAnEmptySong() throws Exception {
+        Assertions.assertTrue(new SurvivorSongbookParser().getSongs(createPdf("Copyright 2020").toFile(), null).isEmpty());
+    }
+
+    @Test
+    void separatedAuthorAndCopyrightAreRemovedWithoutLosingLyrics() throws Exception {
+        List<SongDisplayable> songs = new SurvivorSongbookParser().getSongs(
+                createPdf("Song title\nSong words\n\nJane Writer\nCopyright 2020").toFile(), null);
+        Assertions.assertEquals(1, songs.size());
+        Assertions.assertEquals("Song title", songs.get(0).getTitle());
+        Assertions.assertTrue(songs.get(0).getLyrics(false, false, false).contains("Song words"));
+        Assertions.assertFalse(songs.get(0).getLyrics(false, false, false).contains("Copyright"));
+        Assertions.assertEquals("Jane Writer", songs.get(0).getAuthor());
     }
 
     private Path createPdf(String... pages) throws IOException {

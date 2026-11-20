@@ -127,6 +127,9 @@ public class SurvivorSongbookParser implements SongParser {
             songLyrics.append("\n");
         }
         String songLyricsStr = songLyrics.toString().trim();
+        if (songLyricsStr.isEmpty()) {
+            return null;
+        }
         String title = songLyricsStr.split("\n")[0];
         if (!title.isEmpty() && !Character.isLetterOrDigit(title.charAt(title.length() - 1))) { //Remove ending punctuation from titles
             title = title.substring(0, title.length() - 1);
@@ -159,14 +162,20 @@ public class SurvivorSongbookParser implements SongParser {
             return text;
         }
         int startIndex = endIndex - 1;
-        while (parts[startIndex].trim().isEmpty()) {
+        while (startIndex >= 0 && parts[startIndex].trim().isEmpty()) {
             startIndex--;
         }
-        while (!parts[startIndex].trim().isEmpty()) {
+        int beforeCopyright = startIndex;
+        while (startIndex >= 0 && !parts[startIndex].trim().isEmpty()) {
             startIndex--;
         }
-        while (parts[startIndex].trim().isEmpty()) {
-            startIndex--;
+        if (startIndex < 0) {
+            // Without a blank separator, retain the preceding text: it may be lyrics.
+            startIndex = beforeCopyright;
+        } else {
+            while (startIndex >= 0 && parts[startIndex].trim().isEmpty()) {
+                startIndex--;
+            }
         }
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i <= startIndex; i++) {
