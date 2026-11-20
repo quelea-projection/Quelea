@@ -248,6 +248,27 @@ public class ScheduleList extends StackPane {
         return -1;
     }
 
+    /** Find the schedule occurrence holding this exact displayable instance. */
+    public int indexOfDisplayableIdentity(Displayable displayable) {
+        if (displayable == null) return -1;
+        for (int i = 0; i < getItems().size(); i++) {
+            if (getItems().get(i).displayable() == displayable) return i;
+        }
+        return -1;
+    }
+
+    /** Replace a particular schedule occurrence, even if equal items are present. */
+    public int replaceItem(IndexedDisplayable original, Displayable replacement) {
+        if (original == null) return -1;
+        for (int i = 0; i < getItems().size(); i++) {
+            if (getItems().get(i) == original) {
+                getItems().set(i, new IndexedDisplayable(replacement, i));
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void add(Displayable displayable) {
         add(displayable, false);
     }

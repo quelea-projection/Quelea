@@ -200,6 +200,40 @@ public class ScheduleListReorderTest {
     }
 
     @Test
+    @DisplayName("Replacement targets the chosen occurrence even when the same item appears twice")
+    public void replaceDuplicateOccurrence() throws Exception {
+        onFx(() -> {
+            Item repeated = new Item("Repeated");
+            Item middle = new Item("Middle");
+            Item replacement = new Item("Replacement");
+            add(repeated, middle, repeated);
+            IndexedDisplayable first = list.getItems().get(0);
+            IndexedDisplayable second = list.getItems().get(2);
+            list.getSelectionModel().select(2);
+            list.moveCurrentItem(ScheduleList.Direction.UP);
+            Assertions.assertEquals(1, list.replaceItem(second, replacement));
+            assertOrder(repeated, replacement, middle);
+            Assertions.assertSame(first, list.getItems().get(0));
+            Assertions.assertEquals(-1, list.replaceItem(second, new Item("Stale")));
+            assertScheduleOrder(repeated, replacement, middle);
+        });
+    }
+
+    @Test
+    @DisplayName("Looking up a live item uses identity instead of equal song metadata")
+    public void lookupMatchesTheActualDisplayable() throws Exception {
+        onFx(() -> {
+            SongDisplayable first = song("First copyright");
+            SongDisplayable second = song("Second copyright");
+            Assertions.assertEquals(first, second);
+            add(first, second);
+            Assertions.assertEquals(1, list.indexOfDisplayableIdentity(second));
+            Assertions.assertEquals(-1, list.indexOfDisplayableIdentity(song("First copyright")));
+            Assertions.assertEquals(-1, list.indexOfDisplayableIdentity(null));
+        });
+    }
+
+    @Test
     @DisplayName("Clearing a loaded schedule removes its items and file association")
     public void clearLoadedSchedule() throws Exception {
         onFx(() -> {

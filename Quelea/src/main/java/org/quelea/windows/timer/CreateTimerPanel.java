@@ -81,6 +81,9 @@ public class CreateTimerPanel extends Stage {
     private final ThemePanel tp;
 
     public CreateTimerPanel(TimerDisplayable td) {
+        IndexedDisplayable selected = td == null ? null : QueleaApp.get().getMainWindow().getMainPanel()
+                .getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+        IndexedDisplayable original = selected != null && selected.displayable() == td ? selected : null;
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), QueleaIcon.CHECK.create());
         StyleManager.markPrimaryButton(confirmButton);
 
@@ -239,11 +242,9 @@ public class CreateTimerPanel extends Stage {
                     }
                 }
                 ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-                int idx = sl.indexOf(td);
-                if (td != null && idx > -1) {
-                    IndexedDisplayable indexedDisplayable = new IndexedDisplayable(displayable, idx);
-                    sl.getItems().set(idx, indexedDisplayable);
-                    sl.getSelectionModel().select(indexedDisplayable);
+                int idx = sl.replaceItem(original, displayable);
+                if (idx > -1) {
+                    sl.getSelectionModel().select(idx);
                 } else {
                     sl.add(displayable);
                 }

@@ -61,7 +61,7 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
         if (b == null) {
             return;
         }
-        Map<BiblePassage, BiblePassage> replaceMap = new IdentityHashMap<>();
+        Map<IndexedDisplayable, BiblePassage> replaceMap = new IdentityHashMap<>();
         for (IndexedDisplayable d : sl.getSelectionModel().getSelectedItems()) {
             if (d.displayable() instanceof BiblePassage passage) {
                 ThemeDTO theme = passage.getTheme();
@@ -74,18 +74,12 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
                 }
                 BibleVerse firstVerse = newVerses.get(0);
                 String summary = firstVerse.getChapter().getBook() + " " + passage.getLocation().split(" (?=\\d)")[1] + "\n" + b.getBibleName();
-                replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[newVerses.size()]), theme, passage.getMulti()));
+                replaceMap.put(d, new BiblePassage(summary, newVerses.toArray(new BibleVerse[newVerses.size()]), theme, passage.getMulti()));
             }
         }
         List<Integer> selected = new ArrayList<>(sl.getSelectionModel().getSelectedIndices());
         sl.getSelectionModel().clearSelection();
-        for (BiblePassage key : replaceMap.keySet()) {
-            int index = sl.indexOf(key);
-            if (index != -1) {
-                sl.getItems().remove(index);
-                sl.getItems().add(index, new IndexedDisplayable(replaceMap.get(key), index));
-            }
-        }
+        replaceMap.forEach(sl::replaceItem);
         if (!selected.isEmpty()) {
             int[] selectRange = new int[selected.size() - 1];
             for (int i = 1; i < selected.size(); i++) {

@@ -45,7 +45,7 @@ import org.quelea.windows.style.QueleaIcon;
  * @author Arvid
  */
 public class OptionsRecordingPanel {
-    private HashMap<Field, ObservableValue> bindings;
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
     private StringProperty recordingsDirectoryChooserProperty;
     private StringField recordingsDirectoryField;
     private BooleanProperty useConvertProperty;
@@ -58,7 +58,7 @@ public class OptionsRecordingPanel {
      * @param bindings HashMap of bindings to setup after the dialog has been created
      * @param hasVLC   true if VLC is installed
      */
-    OptionsRecordingPanel(HashMap<Field, ObservableValue> bindings, boolean hasVLC) {
+    OptionsRecordingPanel(HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings, boolean hasVLC) {
         this.bindings = bindings;
         this.hasVLC = hasVLC;
         recordingsDirectoryChooserProperty = new SimpleStringProperty(QueleaProperties.get().getRecordingsPath());
@@ -70,7 +70,7 @@ public class OptionsRecordingPanel {
     }
 
     public Category getRecordingsTab() {
-        bindings.put((Field) useConvertSetting.getElement(), new SimpleBooleanProperty(!hasVLC));
+        bindings.put((Field<?>) useConvertSetting.getElement(), new SimpleBooleanProperty(!hasVLC));
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"), QueleaIcon.RECORD.create(),
                 Setting.of(LabelGrabber.INSTANCE.getLabel("recordings.path"), recordingsDirectoryField, recordingsDirectoryChooserProperty).customKey(recPathKey),

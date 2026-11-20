@@ -1,6 +1,7 @@
 package org.quelea.windows.options;
 
 import com.dlsc.preferencesfx.PreferencesFx;
+import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
 import java.nio.file.Path;
@@ -8,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.AbstractPreferences;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +20,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.QueleaPropertyKeys;
 import org.quelea.testutil.FxTestSupport;
+import org.quelea.windows.options.customprefs.DefaultBibleSelector;
 
 class PreferencesPersistenceTest {
     @TempDir Path directory;
@@ -58,6 +63,25 @@ class PreferencesPersistenceTest {
             QueleaProperties.init(directory.toString());
             Assertions.assertTrue(QueleaProperties.get().getShowVerseNumbers());
             Assertions.assertFalse(QueleaProperties.get().getUseUniformFontSize());
+            return null;
+        });
+    }
+
+    @Test
+    void bibleSelectorTracksReplacementItemsAndSelection() throws Exception {
+        FxTestSupport.assumeAvailable();
+        FxTestSupport.onFx(() -> {
+            var field = Field.ofSingleSelectionType(FXCollections.observableArrayList("First", "Second"), 0);
+            var control = new DefaultBibleSelector();
+            control.setField(field);
+            control.init();
+            var row = (HBox) control.getNode().getChildren().get(0);
+            var comboBox = (ComboBox<?>) row.getChildren().get(0);
+            Assertions.assertEquals("First", comboBox.getSelectionModel().getSelectedItem());
+            field.itemsProperty().set(FXCollections.observableArrayList("New", "Other"));
+            field.select(1);
+            Assertions.assertEquals(java.util.List.of("New", "Other"), comboBox.getItems());
+            Assertions.assertEquals("Other", comboBox.getSelectionModel().getSelectedItem());
             return null;
         });
     }

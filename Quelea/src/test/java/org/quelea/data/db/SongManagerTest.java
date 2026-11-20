@@ -213,7 +213,7 @@ public class SongManagerTest {
     public void corruptSong() throws Exception {
         SongDisplayable corrupt = song("Corrupt", "Verse 1\nbroken words");
         manager.addSong(corrupt, false);
-        HibernateUtil.execute(session -> session.createSQLQuery("update songs set translations = X'00' where id = " + corrupt.getID()).executeUpdate());
+        HibernateUtil.execute(session -> session.createNativeQuery("update songs set translations = X'00' where id = " + corrupt.getID()).executeUpdate());
         reload();
 
         List<String> titles = titles();

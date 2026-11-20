@@ -75,7 +75,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsServerSettingsPanel optionsServerSettingsPanel;
     private final OptionsRecordingPanel recordingPanel;
     private final OptionsImportExportPanel importExportPanel;
-    private HashMap<Field, ObservableValue> bindings = new HashMap<>();
+    private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings = new HashMap<>();
     private boolean previousLinkPreviewLiveDividers;
 
     /**
@@ -220,8 +220,8 @@ public class PreferencesDialog extends Stage {
         return Screen.getPrimary().getVisualBounds();
     }
 
-    private void bind(Field field, ObservableValue<? extends Boolean> booleanProperty) {
-        ((SimpleControl) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
+    private void bind(Field<?> field, ObservableValue<? extends Boolean> booleanProperty) {
+        ((SimpleControl<?, ?>) field.getRenderer()).getNode().disableProperty().bind(booleanProperty);
     }
 
     public static Setting getColorPicker(String label, Color color) {
@@ -231,7 +231,7 @@ public class PreferencesDialog extends Stage {
         return Setting.of(label, field, property);
     }
 
-    public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+    public static Setting getPositionSelector(String label, boolean horizontal, String selectedValue, BooleanProperty booleanBind, HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         Setting setting;
         if (horizontal)
             setting = Setting.of(label, FXCollections.observableArrayList(
@@ -244,18 +244,18 @@ public class PreferencesDialog extends Stage {
                     LabelGrabber.INSTANCE.getLabel("bottom.text.position")),
                     new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
-            bindings.put((Field) setting.getElement(), booleanBind.not());
+            bindings.put((Field<?>) setting.getElement(), booleanBind.not());
         return setting;
     }
 
-    public static Setting getShowOnSlidesSelector(String label, String selectedValue, BooleanProperty booleanBind, HashMap<Field, ObservableValue> bindings) {
+    public static Setting getShowOnSlidesSelector(String label, String selectedValue, BooleanProperty booleanBind, HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings) {
         Setting setting = Setting.of(label, FXCollections.observableArrayList(
                 LabelGrabber.INSTANCE.getLabel("all"),
                 LabelGrabber.INSTANCE.getLabel("first"),
                 LabelGrabber.INSTANCE.getLabel("last")),
                 new SimpleObjectProperty<>(LabelGrabber.INSTANCE.getLabel(selectedValue.toLowerCase())));
         if (booleanBind != null)
-            bindings.put((Field) setting.getElement(), booleanBind.not());
+            bindings.put((Field<?>) setting.getElement(), booleanBind.not());
         return setting;
     }
 
