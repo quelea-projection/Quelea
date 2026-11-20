@@ -68,10 +68,12 @@ parts:
   quelea:
     plugin: nil
     source: Quelea
+    after: [desktop-gtk3]
     build-packages:
       - unzip
       - wget
       - zlib1g-dev
+      - shared-mime-info
     stage-packages:
       - libgdk-pixbuf2.0-bin
       - libxext6
@@ -128,6 +130,12 @@ parts:
       chmod +x "$CRAFT_PART_INSTALL/app/launch.sh"
     override-prime: |
       craftctl default
+      if [ ! -d "$CRAFT_PRIME/usr/share/mime/packages" ]; then
+        echo "Error: packaged MIME type definitions are missing." >&2
+        exit 1
+      fi
+      XDG_DATA_HOME="$CRAFT_PRIME/usr/share" XDG_DATA_DIRS="$CRAFT_PRIME/usr/share" \
+        update-mime-database "$CRAFT_PRIME/usr/share/mime"
       if [ -d "$CRAFT_PRIME/usr/share/glib-2.0/schemas" ]; then
         glib-compile-schemas "$CRAFT_PRIME/usr/share/glib-2.0/schemas/"
       fi
