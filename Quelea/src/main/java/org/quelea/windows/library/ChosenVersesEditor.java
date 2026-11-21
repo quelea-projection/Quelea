@@ -18,12 +18,14 @@
 package org.quelea.windows.library;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -46,6 +48,8 @@ import org.quelea.windows.style.StyleManager;
 public final class ChosenVersesEditor extends VBox {
 
     private static final String NUMBERS_ONLY = "[\\d\\s:,;\\-–.]+";
+    /** A book name, or the start of one, with no chapter yet. */
+    private static final String BOOK_ONLY = "\\s*(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*";
 
     private final TextField field = new TextField();
     private final Label note = new Label();
@@ -123,8 +127,9 @@ public final class ChosenVersesEditor extends VBox {
             BibleBook book = firstBook == null ? null : other.getMatchingBook(firstBook);
             start = book == null ? "" : book.getBookName() + " ";
         }
-        field.textProperty().addListener((obs, oldText, newText) -> updateNote());
         field.setText(start);
+        field.setTextFormatter(new TextFormatter<>(this::completeBook));
+        field.textProperty().addListener((obs, oldText, newText) -> updateNote());
         updateNote();
     }
 
@@ -203,6 +208,63 @@ public final class ChosenVersesEditor extends VBox {
         return null;
     }
 
+    /**
+     * Suggest the rest of a book name as it's typed, as selected text after
+     * the cursor. A space or a number takes the whole name. A book named by
+     * an abbreviation, such as "Mt", is written out in the same way.
+     */
+    private TextFormatter.Change completeBook(TextFormatter.Change change) {
+        if (!change.isContentChange()) {
+            return change;
+        }
+        String oldText = change.getControlText();
+        String added = change.getText();
+        boolean atEnd = change.getRangeEnd() == oldText.length();
+        if (!atEnd || added.isEmpty()) {
+            return change;
+        }
+        if (added.matches("\\s|\\d")) {
+            // Take the suggestion, or write out the book typed
+            String typed = oldText.substring(0, change.getRangeStart());
+            BibleBook book = typed.matches(BOOK_ONLY) && !typed.endsWith(" ") ? findBook(typed) : null;
+            if (book == null) {
+                return change;
+            }
+            String text = book.getBookName() + " " + added.trim();
+            change.setRange(0, oldText.length());
+            change.setText(text);
+            change.selectRange(text.length(), text.length());
+            return change;
+        }
+        String typed = change.getControlNewText();
+        if (!typed.matches(BOOK_ONLY) || typed.endsWith(" ")) {
+            return change;
+        }
+        BibleBook book = findBook(typed);
+        String name = book == null ? null : book.getBookName();
+        if (name == null || name.length() <= typed.length()
+                || !name.toLowerCase(Locale.ROOT).startsWith(typed.toLowerCase(Locale.ROOT))) {
+            return change;
+        }
+        change.setRange(0, oldText.length());
+        change.setText(name);
+        change.selectRange(name.length(), typed.length());
+        return change;
+    }
+
+    /**
+     * Find the book a book name typed points to in the other version. It can
+     * be named as in that version or as in the first one.
+     */
+    private BibleBook findBook(String typed) {
+        List<BibleBook> books = BibleReferenceParser.findBooks(typed, other);
+        if (!books.isEmpty()) {
+            return books.getFirst();
+        }
+        books = BibleReferenceParser.findBooks(typed, first);
+        return books.isEmpty() ? null : other.getMatchingBook(books.getFirst());
+    }
+
     private void updateNote() {
         BibleReferenceParser.Reference chosen = parse();
         apply.setDisable(chosen == null);
@@ -212,6 +274,13 @@ public final class ChosenVersesEditor extends VBox {
             note.getStyleClass().add("bible-match-error");
         }
         String firstName = first.getBibleName();
+        String text = field.getText();
+        BibleBook book = chosen == null && text.matches(BOOK_ONLY) ? findBook(text) : null;
+        if (book != null) {
+            note.getStyleClass().remove("bible-match-error");
+            note.setText(LabelGrabber.INSTANCE.getLabel("bible.match.note.book").replace("$1", book.getBookName()));
+            return;
+        }
         if (chosen == null) {
             note.setText(LabelGrabber.INSTANCE.getLabel(field.getText().isBlank()
                     ? "bible.match.note.hint" : "bible.match.note.invalid").replace("$1", other.getBibleName()));

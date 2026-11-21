@@ -846,6 +846,7 @@ bible.match.apply.button=Använd
 bible.match.reset=Matcha automatiskt igen
 bible.match.note.hint=Skriv stället i $1, t.ex. 31:2-4.
 bible.match.note.invalid=Det är inget ställe i $1.
+bible.match.note.book=$1: skriv nu kapitel och verser.
 bible.match.note.same=Verserna visas en och en bredvid versionen $1.
 bible.match.note.more=$1 verser, $2 har $3. De extra visas med den sista versen.
 bible.match.note.fewer=$1 verser, $2 har $3. De sista får ingen text från $4.

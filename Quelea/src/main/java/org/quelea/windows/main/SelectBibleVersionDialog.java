@@ -247,6 +247,7 @@ public class SelectBibleVersionDialog extends Stage {
             location.setAlignment(Pos.CENTER_RIGHT);
             HBox.setHgrow(location, Priority.ALWAYS);
             change.setMinWidth(Region.USE_PREF_SIZE);
+            change.getStyleClass().add("bible-version-change");
             change.setFocusTraversable(false);
             change.addEventHandler(MouseEvent.MOUSE_CLICKED, MouseEvent::consume);
             change.setOnAction(event -> {

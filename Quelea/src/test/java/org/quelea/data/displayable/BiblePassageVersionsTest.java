@@ -11,6 +11,8 @@ import org.quelea.windows.library.ChosenVersesEditor;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.bible.BibleVersionText;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.testutil.FxTestSupport;
+import javafx.scene.control.TextField;
 import org.quelea.services.utils.QueleaPropertyKeys;
 import org.w3c.dom.Document;
 
@@ -372,6 +374,42 @@ public class BiblePassageVersionsTest {
         assertEquals("John 3:18", ChosenVersesEditor.parse("3:18", beta, johannes, alpha, null).getLocation());
         assertNull(ChosenVersesEditor.parse("Nothing 9:9", beta, johannes, alpha, null));
         assertNull(ChosenVersesEditor.parse(" ", beta, johannes, alpha, null));
+    }
+
+    @Test
+    @DisplayName("A book name is suggested as it's typed, and a space or a number takes it")
+    void bookNamesAreCompleted() throws Exception {
+        FxTestSupport.assumeAvailable();
+        Bible alpha = BibleManager.get().getBibleFromName(ALPHA);
+        Bible beta = BibleManager.get().getBibleFromName(BETA);
+        BibleBook johannes = beta.getBookByNumber(JOHN);
+        List<String> seen = FxTestSupport.onFx(() -> {
+            ChosenVersesEditor editor = new ChosenVersesEditor("Johannes 3:16", beta, johannes, alpha, null, 1,
+                    chosen -> { }, () -> { });
+            TextField field = editor.getField();
+            List<String> ret = new ArrayList<>();
+            field.clear();
+            for (String typed : List.of("j", "o")) {
+                field.replaceSelection(typed);
+            }
+            ret.add(field.getText() + "|" + field.getSelectedText());
+            field.replaceSelection(" ");
+            field.replaceSelection("3");
+            ret.add(field.getText());
+            field.clear();
+            for (String typed : List.of("J", "o", "3")) {
+                field.replaceSelection(typed);
+            }
+            ret.add(field.getText());
+            field.clear();
+            for (String typed : List.of("J", "o")) {
+                field.replaceSelection(typed);
+            }
+            field.deleteText(field.getSelection());
+            ret.add(field.getText());
+            return ret;
+        });
+        assertEquals(List.of("John|hn", "John 3", "John 3", "Jo"), seen);
     }
 
     private static BiblePassage numbered(String bible, int book, int chapter, int from, int to) {

@@ -1512,6 +1512,22 @@
     -fx-text-fill: -q-on-accent;
 }
 
+/* A ticked box would be the colour of the row, so it's turned inside out */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .check-box:selected > .box,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .check-box:selected > .box {
+    -fx-background-color: -q-on-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .check-box:selected > .box > .mark,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .check-box:selected > .box > .mark {
+    -fx-background-color: -q-accent;
+}
+
+/* A button keeps its own background, so it keeps its own text colour */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .bible-version-change .text {
+    -fx-fill: -q-text;
+}
+
 /* A scrollable list area shown as a card (e.g. song selection dialogs) */
 .scroll-pane.content-card {
     -fx-background-color: -q-border, -q-surface;
@@ -1615,9 +1631,12 @@
     -fx-min-height: 30;
 }
 
-.bible-version-chip.bible-version-drop-target {
-    -fx-background-color: -q-accent, -q-accent-soft;
-    -fx-background-insets: 0, 2;
+.bible-version-drop-slot {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 999;
+    -fx-border-color: -q-accent;
+    -fx-border-style: dashed;
+    -fx-border-radius: 999;
 }
 
 .bible-version-chip > .label {

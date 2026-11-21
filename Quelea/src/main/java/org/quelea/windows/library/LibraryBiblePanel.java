@@ -38,6 +38,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -128,6 +129,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     private final ObservableList<Bible> versions = FXCollections.observableArrayList();
     private final FlowPane versionPane = new FlowPane(6, 6);
+    /** The gap a dragged chip leaves where it would land. */
+    private final Region chipSlot = new Region();
+    private HBox draggedChip;
     private final MenuButton addVersionButton;
     private final TextField searchField = new TextField();
     private final Button addButton;
@@ -184,6 +188,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
         versionPane.setAlignment(Pos.CENTER_LEFT);
         versionPane.setStyle("-fx-padding: 12 14 8 14;");
+        chipSlot.getStyleClass().add("bible-version-drop-slot");
+        acceptChipDrops();
         addVersionButton = new MenuButton(LabelGrabber.INSTANCE.getLabel("bible.add.version.button"), QueleaIcon.ADD.create(12));
         addVersionButton.getStyleClass().add("bible-add-version");
         addVersionButton.setOnShowing(event -> fillVersionMenu());
@@ -353,7 +359,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             }
             HBox chip = new HBox(number, name);
             chip.getStyleClass().add("bible-version-chip");
-            makeDraggable(chip, i);
+            makeDraggable(chip, bible);
             if (versions.size() > 1) {
                 Button remove = new Button(null, QueleaIcon.CLOSE.create(12));
                 remove.getStyleClass().add("bible-version-remove");
@@ -373,55 +379,118 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     }
 
     /**
-     * Get the name to show on a version's chip. With several versions, long
-     * names such as "King James Version" are shortened to "KJV" so the chips
-     * fit next to each other.
-     */
-    /**
-     * Let a version be moved by dragging its chip onto another chip.
+     * Let a version be moved by dragging its chip. While it's dragged, the
+     * chip leaves a gap where it would land, and the other chips move aside.
      *
-     * @param chip the chip.
-     * @param index the position of its version.
+     * @param chip  the chip.
+     * @param bible its version.
      */
-    private void makeDraggable(HBox chip, int index) {
+    private void makeDraggable(HBox chip, Bible bible) {
+        chip.setUserData(bible);
         chip.setOnDragDetected(event -> {
             if (versions.size() < 2) {
                 return;
             }
             Dragboard dragboard = chip.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.put(VERSION_FORMAT, index);
+            content.put(VERSION_FORMAT, bible.getBibleName());
             dragboard.setContent(content);
             dragboard.setDragView(chip.snapshot(null, null), event.getX(), event.getY());
+            draggedChip = chip;
+            chipSlot.setMinSize(chip.getWidth(), chip.getHeight());
+            chipSlot.setPrefSize(chip.getWidth(), chip.getHeight());
+            chipSlot.setMaxSize(chip.getWidth(), chip.getHeight());
+            versionPane.getChildren().add(versionPane.getChildren().indexOf(chip), chipSlot);
+            chip.setVisible(false);
+            chip.setManaged(false);
             event.consume();
         });
-        chip.setOnDragOver(event -> {
-            if (event.getGestureSource() != chip && event.getDragboard().hasContent(VERSION_FORMAT)) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-        chip.setOnDragEntered(event -> {
-            if (event.getGestureSource() != chip && event.getDragboard().hasContent(VERSION_FORMAT)) {
-                toggleStyle(chip, "bible-version-drop-target", true);
-            }
-        });
-        chip.setOnDragExited(event -> toggleStyle(chip, "bible-version-drop-target", false));
-        chip.setOnDragDropped(event -> {
-            Object from = event.getDragboard().getContent(VERSION_FORMAT);
-            if (from instanceof Integer fromIndex && fromIndex >= 0 && fromIndex < versions.size() && fromIndex != index) {
-                List<Bible> order = new ArrayList<>(versions);
-                Bible moved = order.remove((int) fromIndex);
-                order.add(index, moved);
-                versions.setAll(order);
-                event.setDropCompleted(true);
-            } else {
-                event.setDropCompleted(false);
-            }
+        chip.setOnDragDone(event -> {
+            endChipDrag();
             event.consume();
         });
     }
 
+    /**
+     * Follow a dragged chip over the other chips, and move it to where it's
+     * dropped.
+     */
+    private void acceptChipDrops() {
+        versionPane.setOnDragOver(event -> {
+            if (draggedChip != null && event.getDragboard().hasContent(VERSION_FORMAT)) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                Point2D point = versionPane.sceneToLocal(event.getSceneX(), event.getSceneY());
+                moveChipSlot(point.getX(), point.getY());
+                event.consume();
+            }
+        });
+        versionPane.setOnDragDropped(event -> {
+            if (draggedChip == null) {
+                return;
+            }
+            List<Bible> order = new ArrayList<>();
+            for (Node node : versionPane.getChildren()) {
+                if (node == chipSlot) {
+                    order.add((Bible) draggedChip.getUserData());
+                } else if (node != draggedChip && node.getUserData() instanceof Bible other) {
+                    order.add(other);
+                }
+            }
+            event.setDropCompleted(true);
+            event.consume();
+            if (!order.equals(versions)) {
+                // After the drag has finished, as the chips are made again
+                Platform.runLater(() -> versions.setAll(order));
+            }
+        });
+    }
+
+    /**
+     * Move the gap left by a dragged chip to where a drop at this point would
+     * put it: before the first chip whose middle is after the point.
+     */
+    private void moveChipSlot(double x, double y) {
+        if (chipSlot.getBoundsInParent().contains(x, y)) {
+            return;
+        }
+        List<Node> children = versionPane.getChildren();
+        int before = 0;
+        for (Node node : children) {
+            if (node == chipSlot || node == draggedChip || !(node.getUserData() instanceof Bible)) {
+                continue;
+            }
+            Bounds bounds = node.getBoundsInParent();
+            if (y >= bounds.getMaxY() || (y >= bounds.getMinY() && x > bounds.getCenterX())) {
+                before++;
+            }
+        }
+        children.remove(chipSlot);
+        int index = 0;
+        int seen = 0;
+        while (index < children.size() && seen < before) {
+            Node node = children.get(index);
+            if (node != draggedChip && node.getUserData() instanceof Bible) {
+                seen++;
+            }
+            index++;
+        }
+        children.add(index, chipSlot);
+    }
+
+    private void endChipDrag() {
+        versionPane.getChildren().remove(chipSlot);
+        if (draggedChip != null) {
+            draggedChip.setVisible(true);
+            draggedChip.setManaged(true);
+            draggedChip = null;
+        }
+    }
+
+    /**
+     * Get the name to show on a version's chip. With several versions, long
+     * names such as "King James Version" are shortened to "KJV" so the chips
+     * fit next to each other.
+     */
     private String getChipName(Bible bible) {
         String name = bible.getBibleName();
         String[] words = name.trim().split("\\s+");
