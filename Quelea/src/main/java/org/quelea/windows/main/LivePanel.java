@@ -62,7 +62,9 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
-import org.quelea.windows.presentation.PowerPointHandler;
+import org.quelea.windows.main.widgets.LogoImage;
+import org.quelea.windows.presentation.powerpoint.PowerPointException;
+import org.quelea.windows.presentation.powerpoint.PowerPointService;
 
 import org.quelea.windows.style.QueleaIcon;
 /**
@@ -79,7 +81,11 @@ public class LivePanel extends LivePreviewPanel {
     private final TextField loopDuration;
 
     private final ToggleButton logo;
+    private final ContextMenu logoMenu;
+    private LogoSettingsDialog logoSettingsDialog;
     private final ToggleButton black;
+    /** True while the black button is switched back because PowerPoint could not follow. */
+    private boolean revertingBlack;
     private final ToggleButton clear;
     private final ToggleButton hide;
 
@@ -106,12 +112,8 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(liveIcon);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
         loop.setOnMouseClicked(e -> {
-            if (getDisplayable() instanceof PresentationDisplayable) {
-                if (isLoopSelected()) {
-                    PowerPointHandler.loopPresentation();
-                } else {
-                    PowerPointHandler.stopLoop();
-                }
+            if (getDisplayable() instanceof PresentationDisplayable && PowerPointService.isEnabled()) {
+                PowerPointService.get().setLoop(isLoopSelected());
             }
         });
         loopDuration = new TextField("10");
@@ -158,22 +160,17 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(MouseEvent t) {
                 if (t.getButton().equals(MouseButton.SECONDARY) || t.isControlDown()) {
-                    FileChooser chooser = new FileChooser();
-                    if (QueleaProperties.get().getLastDirectory() != null) {
-                        chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
-                    }
-                    chooser.getExtensionFilters().add(FileFilters.IMAGE_VIDEOS);
-                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
-                    File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                    if (file != null) {
-                        QueleaProperties.get().setLastDirectory(file.getParentFile());
-                        QueleaProperties.get().setLogoImage(file.getAbsolutePath());
-                        updateLogo();
-                    }
+                    logoMenu.show(logo, t.getScreenX(), t.getScreenY());
+                } else {
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
                 }
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().requestFocus();
             }
         });
+        MenuItem chooseLogoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("logo.choose.image"), QueleaIcon.IMAGES.create());
+        chooseLogoItem.setOnAction(e -> chooseLogoImage());
+        MenuItem logoSettingsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("logo.settings.menu"), QueleaIcon.SETTINGS.create());
+        logoSettingsItem.setOnAction(e -> showLogoSettings());
+        logoMenu = new ContextMenu(chooseLogoItem, logoSettingsItem);
         logo.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -189,8 +186,26 @@ public class LivePanel extends LivePreviewPanel {
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
         black.setOnAction(t -> {
-            if (getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP()) {
-                PowerPointHandler.screenBlack();
+            // On macOS Quelea's projection lies over the PowerPoint show, so its
+            // own black screen covers it; only Windows tells PowerPoint.
+            if (getDisplayable() instanceof PresentationDisplayable && PowerPointService.isEnabled() && !revertingBlack && !Utils.isMac()) {
+                boolean wanted = black.isSelected();
+                PowerPointService.get().setBlack(wanted).whenComplete((state, failure) -> {
+                    if (failure != null) {
+                        // PowerPoint is still showing what it showed (e.g. no
+                        // permission to type into it), so don't claim otherwise.
+                        Platform.runLater(() -> {
+                            if (black.isSelected() == wanted) {
+                                revertingBlack = true;
+                                try {
+                                    black.fire();
+                                } finally {
+                                    revertingBlack = false;
+                                }
+                            }
+                        });
+                    }
+                });
             }
             HashSet<DisplayCanvas> canvases = new HashSet<>();
             canvases.addAll(getCanvases());
@@ -276,13 +291,8 @@ public class LivePanel extends LivePreviewPanel {
                         try {
                             int i = Integer.parseInt(t.getCharacter());
                             if (i > 0 && i < 10) {
-                                if (QueleaProperties.get().getUsePP()) {
-                                    PowerPointHandler.gotoSlide(i);
-                                    String result = PowerPointHandler.getCurrentSlide();
-                                    if (!result.contains("not running") && !result.equals("")) {
-                                        int slide = Integer.parseInt(result);
-                                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(slide, true);
-                                    }
+                                if (PowerPointService.isEnabled()) {
+                                    PowerPointService.get().gotoSlide(i); // The presentation panel follows.
                                 } else {
                                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i);
                                 }
@@ -429,14 +439,20 @@ public class LivePanel extends LivePreviewPanel {
                 header.getItems().add(1, loopBox);
             }
             if (d instanceof PresentationDisplayable) {
-                if (QueleaProperties.get().getUsePP() && (oldD == null || !oldD.equals(d))) {
+                if (PowerPointService.isEnabled() && (oldD == null || !oldD.equals(d))) {
                     startPowerPoint(d);
                 }
             }
         } else {
             header.getItems().remove(loopBox);
-            if (oldD != null && oldD instanceof PresentationDisplayable) {
-                PowerPointHandler.closePresentation();
+            if (oldD instanceof PresentationDisplayable && PowerPointService.isEnabled()) {
+                getPresentationPanel().setPowerPointCovering(false);
+                PowerPointService.get().close().whenComplete((state, failure) -> {
+                    PowerPointException ex = failure == null ? null : PowerPointService.unwrap(failure);
+                    if (ex != null && ex.getKind() == PowerPointException.Kind.UNSAVED_CHANGES) {
+                        Platform.runLater(LivePanel::showPowerPointUnsaved);
+                    }
+                });
             }
             if (focusDialog != null) {
                 focusDialog.close();
@@ -544,14 +560,53 @@ public class LivePanel extends LivePreviewPanel {
     }
 
     /**
-     * Calls updateLogo() on each canvas. A tidy method.
+     * Let the user choose a new logo image (or video, or SVG).
+     */
+    private void chooseLogoImage() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(FileFilters.LOGO);
+        chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
+        File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+        if (file != null) {
+            QueleaProperties.get().setLastDirectory(file.getParentFile());
+            QueleaProperties.get().setLogoImage(file.getAbsolutePath());
+            refreshLogo();
+        }
+    }
+
+    /**
+     * Show the window with the logo's image, size and position.
+     */
+    private void showLogoSettings() {
+        if (logoSettingsDialog == null) {
+            logoSettingsDialog = new LogoSettingsDialog(QueleaApp.get().getMainWindow(), this::updateLogo);
+        }
+        if (logoSettingsDialog.isShowing()) {
+            logoSettingsDialog.toFront();
+        } else {
+            logoSettingsDialog.show();
+        }
+    }
+
+    /**
+     * Show the current logo settings (from the properties) everywhere: on all
+     * canvases, and in the logo settings window if it's open.
+     */
+    public void refreshLogo() {
+        updateLogo();
+        if (logoSettingsDialog != null && logoSettingsDialog.isShowing()) {
+            logoSettingsDialog.reload();
+        }
+    }
+
+    /**
+     * Show the current logo settings on every display canvas: not just the
+     * canvases of the panel that's currently showing, but also the image,
+     * video, presentation (etc.) panels and previews, which would otherwise
+     * keep the logo they were created with.
      */
     private void updateLogo() {
-        HashSet<DisplayCanvas> canvases = new HashSet<>();
-        canvases.addAll(getCanvases());
-        for (DisplayCanvas canvas : canvases) {
-            canvas.updateLogo();
-        }
+        LogoImage.refreshAll();
     }
 
     public void updateCanvases() {
@@ -632,42 +687,83 @@ public class LivePanel extends LivePreviewPanel {
     }
 
     /**
-     * Start native PowerPoint service.
+     * Open the presentation in PowerPoint and start the slide show. Runs in the
+     * background; the focus switcher is shown once the show is up.
      *
      * @param d a Presentation displayable to show in PowerPoint
      */
     private void startPowerPoint(Displayable d) {
-        String filePath;
-        filePath = "\"" + d.getResources().toString().replace("[", "").replace("]", "") + "\"";
-        String openPP = PowerPointHandler.openPresentation(filePath);
-        if (openPP.contains("not started")) {
+        File file = d.getResources().iterator().next();
+        javafx.geometry.Rectangle2D screen = PowerPointService.projectorArea();
+        PowerPointService.get().open(file, screen).whenComplete((state, failure) -> Platform.runLater(() -> {
+            PowerPointException ex = failure == null ? null : PowerPointService.unwrap(failure);
+            if (ex != null && ex.getKind() == PowerPointException.Kind.ALREADY_RUNNING) {
+                if (getDisplayable() == d) {
+                    Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("pp.already.running.label"), LabelGrabber.INSTANCE.getLabel("pp.already.running.message"));
+                }
+            } else if (ex != null && ex.getKind() == PowerPointException.Kind.UNSAVED_CHANGES) {
+                showPowerPointUnsaved();
+            } else {
+                powerPointStarted(d, failure);
+            }
+        }));
+    }
+
+    private static void showPowerPointUnsaved() {
+        Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("pp.unsaved.title"),
+                LabelGrabber.INSTANCE.getLabel("pp.unsaved.message"));
+    }
+
+    /**
+     * Make Quelea the active application with its main window in front. Unlike
+     * Stage.toFront() alone this also works while another application is
+     * active.
+     */
+    private static void bringQueleaToFront() {
+        QueleaApp.get().getMainWindow().toFront();
+        try {
+            if (java.awt.Desktop.isDesktopSupported()
+                    && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.APP_REQUEST_FOREGROUND)) {
+                java.awt.Desktop.getDesktop().requestForeground(true);
+            }
+        } catch (RuntimeException ex) {
+            LoggerUtils.getLogger().log(Level.INFO, "Could not bring Quelea to the front", ex);
+        }
+    }
+
+    private void powerPointStarted(Displayable d, Throwable failure) {
+        if (getDisplayable() != d) {
+            return; // Something else went live meanwhile.
+        }
+        if (failure != null) {
+            PowerPointException ex = PowerPointService.unwrap(failure);
+            if (ex != null && ex.isPermissionProblem()) {
+                return; // PowerPointPermissionDialog explains this one.
+            }
+            LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.", failure);
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
-            LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
-        } else if (openPP.contains("running")) {
-            if (!(oldD instanceof PresentationDisplayable)) {
-                Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("close.all.presentations.label"), LabelGrabber.INSTANCE.getLabel("close.all.presentations.message"));
-            }
-            PowerPointHandler.closePresentation();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(LivePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            openPP = PowerPointHandler.openPresentation(filePath);
-            if (openPP.contains("not started")) {
-                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
-                LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
-            }
+            return;
         }
-        if (!openPP.contains("not started")) {
-            focusDialog = Dialog.buildFocusSwitcher().build();
-            focusDialog.setAlwaysOnTop(true);
-            focusDialog.initModality(Modality.NONE);
-            focusDialog.setResizable(false);
-            focusDialog.setY(20);
-            focusDialog.setX(20);
-            focusDialog.show();
-            QueleaApp.get().getMainWindow().requestFocus();
+        getPresentationPanel().setPowerPointCovering(PowerPointService.get().isShowOnProjector());
+        if (focusDialog != null) {
+            focusDialog.close();
+            focusDialog = null;
         }
+        if (Utils.isMac()) {
+            // Opening the presentation and starting the show activate
+            // PowerPoint, whose document window then covers Quelea. Take the
+            // focus back; from here on PowerPoint is only controlled in the
+            // background, so no focus switcher is needed.
+            bringQueleaToFront();
+            return;
+        }
+        focusDialog = Dialog.buildFocusSwitcher().build();
+        focusDialog.setAlwaysOnTop(true);
+        focusDialog.initModality(Modality.NONE);
+        focusDialog.setResizable(false);
+        focusDialog.setY(20);
+        focusDialog.setX(20);
+        focusDialog.show();
+        QueleaApp.get().getMainWindow().requestFocus();
     }
 }

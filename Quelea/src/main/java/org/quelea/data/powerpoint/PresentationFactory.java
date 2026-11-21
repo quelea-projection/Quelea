@@ -43,6 +43,12 @@ public class PresentationFactory {
     public Presentation getPresentation(File file) throws IOException {
         Presentation ret = null;
         if(Utils.hasExtension(file, "ppt") || Utils.hasExtension(file, "pptx")) {
+            if(RenderedPresentation.isEnabled()) {
+                ret = RenderedPresentation.load(file);
+                if(ret != null) {
+                    return ret;
+                }
+            }
             try {
                 ret = new PPTPresentation(file.getAbsolutePath());
             }

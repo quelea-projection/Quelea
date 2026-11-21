@@ -39,6 +39,7 @@ public class OptionsDisplaySetupPanel {
     private DisplayGroup controlScreen;
     private DisplayGroup projectorScreen;
     private DisplayGroup stageScreen;
+    private LogoOptionsGroup logoGroup;
 
     /**
      * Create a new display setup panel.
@@ -50,6 +51,7 @@ public class OptionsDisplaySetupPanel {
         controlScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("control.screen.label"), false, bindings);
         projectorScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("projector.screen.label"), true, bindings);
         stageScreen = new DisplayGroup(LabelGrabber.INSTANCE.getLabel("stage.screen.label"), true, bindings);
+        logoGroup = new LogoOptionsGroup();
 
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(devices -> {
             QueleaApp.get().getMainWindow().getPreferencesDialog().updatePos();
@@ -60,10 +62,18 @@ public class OptionsDisplaySetupPanel {
         return Category.of(LabelGrabber.INSTANCE.getLabel("display.options.heading"), QueleaIcon.MONITOR.create(),
                 controlScreen.getGroup(),
                 projectorScreen.getGroup(),
-                stageScreen.getGroup()
+                stageScreen.getGroup(),
+                logoGroup.getGroup()
         );
     }
 
+
+    /**
+     * @return the logo settings shown on this tab.
+     */
+    LogoOptionsGroup getLogoGroup() {
+        return logoGroup;
+    }
 
     boolean isDisplayChange() {
         return controlScreen.isDisplayChange() ||

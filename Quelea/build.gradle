@@ -247,6 +247,20 @@ tasks.register('runPackr', JavaExec) {
     classpath = files('packr.jar')
     mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
+
+    doLast {
+        // macOS shows this text when Quelea first asks to control PowerPoint
+        // (Automation permission); without it the prompt has no explanation.
+        def plist = file("out-mac/Quelea.app/Contents/Info.plist")
+        if (plist.exists() && !plist.text.contains("NSAppleEventsUsageDescription")) {
+            def text = plist.text
+            int end = text.lastIndexOf("</dict>")
+            plist.text = text.substring(0, end) +
+                    "\t<key>NSAppleEventsUsageDescription</key>\n" +
+                    "\t<string>Quelea controls Microsoft PowerPoint to run presentations in its slide show.</string>\n" +
+                    text.substring(end)
+        }
+    }
 }
 
 tasks.register('zipMacPackr', Zip) {
@@ -305,6 +319,8 @@ dependencies {
     implementation 'org.openoffice:jurt:4.1.2'
     implementation 'org.openoffice:juh:4.1.2'
     implementation 'org.apache.xmlgraphics:fop:2.12'
+    // SVG logos use Batik directly; keep it aligned with FOP's version.
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.20'
     implementation 'org.quelea:planning-center:0.3.1'
 
     implementation 'org.openoffice:unoil:4.1.2'
@@ -347,6 +363,8 @@ test {
     // Schedule drop tests use JavaFX's in-memory dragboard instead of the system clipboard.
     jvmArgs '--add-exports=javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
             '--add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED'
+    // Opt-in tests that drive real applications, e.g. -Dquelea.test.powerpoint=true
+    systemProperties System.properties.findAll { it.key.toString().startsWith('quelea.test.') }
     testLogging {
         events 'passed', 'skipped', 'failed'
         exceptionFormat = 'full'

@@ -10,7 +10,9 @@ If Err.Number <> 0 Then
     WScript.Echo "PowerPoint is not running"
     Err.Clear             ' Clear the Error
 else
-	WScript.Echo pptAppl.ActivePresentation.SlideShowWindow.View.Slide.SlideIndex 
+    If pptAppl.SlideShowWindows.Count > 0 Then
+        WScript.Echo pptAppl.SlideShowWindows(1).View.Slide.SlideIndex
+    End If
 End If
 On Error Goto 0           ' Don't resume on Error
 

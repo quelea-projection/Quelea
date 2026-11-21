@@ -81,11 +81,16 @@ public class QueleaPropertyKeys {
     public static final String ooPathKey = "oo.path";
     public static final String usePpKey = "use.pp";
     public static final String ppPathKey = "pp.path";
+    public static final String ppRenderKey = "pp.render";
     public static final String recPathKey = "rec.path";
     public static final String downloadPathKey = "download.path";
     public static final String convertMp3Key = "convert.mp3";
     public static final String ooOntopKey = "oo.ontop";
     public static final String logoImageLocationKey = "logo.image.location";
+    public static final String logoSizeKey = "logo.size";
+    public static final String logoPositionKey = "logo.position";
+    public static final String logoOffsetXKey = "logo.offset.x";
+    public static final String logoOffsetYKey = "logo.offset.y";
     public static final String mobLyricsPortKey = "mob.lyrics.port";
     public static final String useMobLyricsKey = "use.mob.lyrics";
     public static final String planningCenterRefreshToken = "planning.center.refresh.token";

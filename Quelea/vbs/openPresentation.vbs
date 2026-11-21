@@ -1,60 +1,54 @@
-' Script to open a new PowerPoint presentation.
-' Returns warning if PowerPoint is not running or message if it was successful.
-' @author Arvid, based on code by Kelvin Sung
-
 Option Explicit
-
-' Get input from Java/command line
-Dim oArgs
+Dim oArgs, pptAppl, presentation, show, objShell
 Set oArgs = WScript.Arguments
-
-' Object variable
-dim objShell
-Set objShell = CreateObject("WScript.Shell")
+If oArgs.Count = 0 Then
+    WScript.Echo "Could not open presentation: no file was supplied"
+    WScript.Quit 1
+End If
 
 On Error Resume Next
-dim pptAppl
-set pptAppl = GetObject(, "Powerpoint.Application")
+Set pptAppl = GetObject(, "PowerPoint.Application")
 If Err.Number <> 0 Then
-	' Create new PowerPoint instanse
-	set pptAppl = CreateObject("Powerpoint.Application")
-
-
-	if (openPPTDocument()) then
-		' Minimize the main window
-		pptAppl.WindowState = 2
-
-		' Move focus to window whose title begins with PowerPoint
-		objShell.AppActivate "PowerPoint"
-   
-	else
-		MsgBox("No PowerPoint document found")
-		pptAppl.Quit
-	end if
-else
-	WScript.Echo "PowerPoint is already running."
-    Err.Clear             ' Clear the Error
+    Err.Clear
+    Set pptAppl = CreateObject("PowerPoint.Application")
 End If
-On Error Goto 0           ' Don't resume on Error
+If Err.Number <> 0 Then
+    WScript.Echo "Could not start PowerPoint: " & Err.Description
+    WScript.Quit 1
+End If
 
-'-----------------------------------------------------------------------------
-' FUNCTION: openPPTDocument()
-'
-' Input:   none (uses the global dlgOpen to let user open a .ppt document)
-' Returns: none (changes the global pptAppl variable to have an opened document)
-' Error:   Checks to make sure input is a number
-'
-'   Remark: 
-FUNCTION openPPTDocument()
-	dim objPresentation
-	dim objSlideShow
-	
-	openPPTDocument = FALSE
-    pptAppl.Visible = TRUE                    ' first set ppt to visible
-    Set objPresentation = pptAppl.Presentations.Open(oArgs(0))   ' now open the file 
-	'objPresentation.SlideShowSettings.ShowType = 3	' start slide show
-	objPresentation.SlideShowSettings.Run ' apply changes
-	
-	
-    openPPTDocument = TRUE
-end FUNCTION
+' The control scripts use the current slide show. Do not interfere with any
+' independently opened presentation or claim ownership of it.
+Err.Clear
+Dim presentationCount, showCount
+presentationCount = pptAppl.Presentations.Count
+showCount = pptAppl.SlideShowWindows.Count
+If Err.Number <> 0 Then
+    WScript.Echo "Could not check whether PowerPoint is already in use: " & Err.Description
+    WScript.Quit 1
+End If
+If presentationCount > 0 Or showCount > 0 Then
+    WScript.Echo "PowerPoint is already running a presentation."
+    WScript.Quit 0
+End If
+
+pptAppl.Visible = True
+Err.Clear
+Set presentation = Nothing
+Set presentation = pptAppl.Presentations.Open(oArgs(0))
+If Err.Number <> 0 Or presentation Is Nothing Then
+    WScript.Echo "Could not open presentation: " & Err.Description
+    WScript.Quit 1
+End If
+Err.Clear
+Set show = Nothing
+Set show = presentation.SlideShowSettings.Run
+If Err.Number <> 0 Or show Is Nothing Then
+    WScript.Echo "Could not start presentation: " & Err.Description
+    WScript.Quit 1
+End If
+pptAppl.WindowState = 2
+Set objShell = CreateObject("WScript.Shell")
+objShell.AppActivate "PowerPoint"
+WScript.Echo "Quelea presentation opened"
+On Error Goto 0

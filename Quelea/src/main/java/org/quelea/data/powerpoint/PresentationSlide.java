@@ -47,6 +47,15 @@ public class PresentationSlide {
     private WritableImage image;
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
+    /**
+     * Create a slide from an image rendered elsewhere (by PowerPoint itself,
+     * see {@link RenderedPresentation}).
+     *
+     * @param image the slide.
+     */
+    public PresentationSlide(WritableImage image) {
+        this.image = image;
+    }
 
     /**
      * Create a new presentation slide.

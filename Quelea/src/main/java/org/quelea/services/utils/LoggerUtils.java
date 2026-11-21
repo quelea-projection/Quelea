@@ -116,6 +116,9 @@ public final class LoggerUtils {
     }
 
     private static void writeToLog(String message) {
+        if(handlerFile == null) {
+            return; // Not set up yet (e.g. in unit tests without QueleaProperties).
+        }
         try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(handlerFile, true)))) {
             out.println(message);
         }

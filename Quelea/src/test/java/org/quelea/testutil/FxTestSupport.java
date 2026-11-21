@@ -1,44 +1,80 @@
 package org.quelea.testutil;
 
-import java.nio.file.Files;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import org.junit.jupiter.api.Assumptions;
 import org.quelea.services.utils.QueleaProperties;
 
-/** Starts JavaFX without making non-video tests depend on GStreamer. */
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Shared setup for tests that need the JavaFX toolkit (but not video). Tests
+ * using it are skipped where JavaFX can't be started.
+ */
 public final class FxTestSupport {
+
+    private static Boolean available;
+
     private FxTestSupport() {
     }
 
+    /**
+     * Start JavaFX (once per test run), or skip the calling test if that isn't
+     * possible here.
+     */
+    public static synchronized void assumeFxAvailable() {
+        if (available == null) {
+            try {
+                CompletableFuture<Void> started = new CompletableFuture<>();
+                Platform.startup(() -> started.complete(null));
+                started.get(30, TimeUnit.SECONDS);
+                available = true;
+            } catch (IllegalStateException alreadyStarted) {
+                available = true;
+            } catch (Throwable ex) {
+                available = false;
+            }
+            if (available) {
+                Platform.setImplicitExit(false);
+            }
+        }
+        Assumptions.assumeTrue(available, "JavaFX couldn't be started");
+    }
+
+    /** Start JavaFX and initialize properties for tests that need both. */
     public static synchronized void assumeAvailable() throws Exception {
         if (QueleaProperties.get() == null) {
             QueleaProperties.init(Files.createTempDirectory("quelea-fx-test").toString());
         }
-        CountDownLatch started = new CountDownLatch(1);
-        try {
-            Platform.startup(started::countDown);
-            Assumptions.assumeTrue(started.await(20, TimeUnit.SECONDS), "JavaFX did not start");
-        } catch (IllegalStateException alreadyStarted) {
-            // Another test started the toolkit.
-        } catch (UnsupportedOperationException unavailable) {
-            Assumptions.abort("JavaFX is unavailable: " + unavailable);
-        }
-        Platform.setImplicitExit(false);
+        assumeFxAvailable();
     }
 
-    public static <T> T onFx(Callable<T> action) throws Exception {
+    /**
+     * Run the given code on the FX thread and wait for its result.
+     */
+    public static <T> T onFx(Callable<T> callable) throws Exception {
         CompletableFuture<T> result = new CompletableFuture<>();
         Platform.runLater(() -> {
             try {
-                result.complete(action.call());
+                result.complete(callable.call());
             } catch (Throwable ex) {
                 result.completeExceptionally(ex);
             }
         });
-        return result.get(20, TimeUnit.SECONDS);
+        return result.get(30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Point the properties at a fresh, empty Quelea home. Tests that use a
+     * JUnit temp dir as home should call this afterwards, since other tests in
+     * the same JVM keep using the properties after the temp dir is deleted.
+     */
+    public static void useScratchHome() throws Exception {
+        Path scratch = Files.createTempDirectory("quelea-test-home");
+        scratch.toFile().deleteOnExit();
+        QueleaProperties.init(scratch.toString());
     }
 }

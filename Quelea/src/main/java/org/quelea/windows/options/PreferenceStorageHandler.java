@@ -175,6 +175,12 @@ public class PreferenceStorageHandler implements StorageHandler {
         if (object == null) {
             object = "";
         }
+        if (LogoOptionsGroup.isLogoKey(breadcrumb)) {
+            // Saved by LogoOptionsGroup.apply() when OK is pressed, and only if
+            // changed, never from here: this is also called with old values
+            // when the window is closed without OK.
+            return;
+        }
         switch (breadcrumb) {
             case QueleaPropertyKeys.bibleVersionsKey:
                 QueleaProperties.get().setBibleVersions(object.toString().lines().filter(name -> !name.isBlank()).toList());
@@ -331,6 +337,10 @@ public class PreferenceStorageHandler implements StorageHandler {
         }
         if (breadcrumb.equals(QueleaPropertyKeys.bibleVersionsKey)) {
             return String.join("\n", QueleaProperties.get().getBibleVersions());
+        }
+        if (LogoOptionsGroup.isLogoKey(breadcrumb)) {
+            // Always known (with defaults), and also changed from the logo button
+            return LogoOptionsGroup.loadValue(breadcrumb);
         }
         String property = QueleaProperties.get().getProperty(breadcrumb);
         if (property == null) {
