@@ -650,6 +650,16 @@
     -fx-background-radius: 4;
 }
 
+.splash-progress > .bar {
+    -fx-background-color: rgba(255, 255, 255, 0.68);
+    -fx-background-radius: 4;
+}
+
+.splash-progress > .track {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-background-radius: 4;
+}
+
 .slider > .track {
     -fx-background-color: -q-border;
     -fx-background-radius: 3;
