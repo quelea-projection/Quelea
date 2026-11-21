@@ -1615,6 +1615,11 @@
     -fx-min-height: 30;
 }
 
+.bible-version-chip.bible-version-drop-target {
+    -fx-background-color: -q-accent, -q-accent-soft;
+    -fx-background-insets: 0, 2;
+}
+
 .bible-version-chip > .label {
     -fx-text-fill: -q-accent;
     -fx-font-family: "Inter SemiBold";
@@ -1966,6 +1971,23 @@
 
 .bible-match .bible-match-chosen {
     -fx-text-fill: -q-warning;
+}
+
+.bible-version-location {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.92em;
+}
+
+.list-view .list-cell .bible-version-location .text {
+    -fx-fill: -q-text-muted;
+}
+
+.list-view .list-cell .bible-version-location.bible-match-chosen .text {
+    -fx-fill: -q-warning;
+}
+
+.bible-version-location.bible-match-unknown .icon {
+    -fx-background-color: -q-warning;
 }
 
 .bible-match-note {

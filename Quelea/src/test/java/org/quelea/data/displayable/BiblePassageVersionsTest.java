@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.windows.library.ChosenVersesEditor;
+import org.quelea.data.bible.BibleBook;
 import org.quelea.data.bible.BibleVersionText;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.QueleaPropertyKeys;
@@ -353,6 +355,23 @@ public class BiblePassageVersionsTest {
         assertEquals("Joel 3:1-2", passage.getVersionTexts().get(1).getLocation());
         BiblePassage unknown = john(16, 17).withVersions(bibles(ALPHA, BETA));
         assertEquals(BibleVersionText.Match.AUTOMATIC, reload(unknown).getVersionTexts().get(1).getMatch());
+    }
+
+    @Test
+    @DisplayName("Chosen verses are typed as in the search field")
+    void chosenVersesAreParsedLikeTheSearch() {
+        Bible alpha = BibleManager.get().getBibleFromName(ALPHA);
+        Bible beta = BibleManager.get().getBibleFromName(BETA);
+        BibleBook johannes = beta.getBookByNumber(JOHN);
+        // Shortened book name in the other version
+        assertEquals("John 3:17", ChosenVersesEditor.parse("Jo 3:17", beta, johannes, alpha, null).getLocation());
+        // The book named as in the first version
+        assertEquals("John 3:17-18", ChosenVersesEditor.parse("Johannes 3:17-18", beta, johannes, alpha, null).getLocation());
+        // Only verses, in the chapter shown now
+        assertEquals("John 3:18-19", ChosenVersesEditor.parse("18-19", beta, johannes, alpha, "John 3:16-17").getLocation());
+        assertEquals("John 3:18", ChosenVersesEditor.parse("3:18", beta, johannes, alpha, null).getLocation());
+        assertNull(ChosenVersesEditor.parse("Nothing 9:9", beta, johannes, alpha, null));
+        assertNull(ChosenVersesEditor.parse(" ", beta, johannes, alpha, null));
     }
 
     private static BiblePassage numbered(String bible, int book, int chapter, int from, int to) {

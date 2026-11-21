@@ -57,8 +57,9 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.style.QueleaIcon;
 
 /**
- * The bibles that are installed, with the ones new passages are shown in ticked
- * and in display order. The first ticked bible is the default bible. The field
+ * The bibles that are installed, with the ones new passages are shown in ticked.
+ * They are shown in the order they are ticked, as in the dialog for choosing
+ * the versions of a passage, and the first ticked bible is the default bible. The field
  * holds the names of the ticked bibles, one per line, as a bible name can
  * contain anything else.
  *
@@ -73,8 +74,6 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
     private final ObservableList<String> names = FXCollections.observableArrayList();
     private final Set<String> ticked = new LinkedHashSet<>();
     private ListView<String> listView;
-    private Button upButton;
-    private Button downButton;
     private Button addButton;
     private Button deleteButton;
     private boolean updating;
@@ -92,11 +91,9 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
         listView.setCellFactory(list -> new VersionCell());
         listView.setFixedCellSize(ROW_HEIGHT);
         listView.setPrefHeight(ROW_HEIGHT * VISIBLE_ROWS + 2);
-        upButton = new Button(LabelGrabber.INSTANCE.getLabel("bible.move.up.button"), QueleaIcon.UP.create());
-        downButton = new Button(LabelGrabber.INSTANCE.getLabel("bible.move.down.button"), QueleaIcon.DOWN.create());
         addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), QueleaIcon.ADD.create());
         deleteButton = new Button(LabelGrabber.INSTANCE.getLabel("bible.delete.button"), QueleaIcon.CLOSE.create());
-        for (Button button : List.of(upButton, downButton, addButton, deleteButton)) {
+        for (Button button : List.of(addButton, deleteButton)) {
             button.setMaxWidth(Double.MAX_VALUE);
             button.setAlignment(Pos.CENTER_LEFT);
         }
@@ -108,9 +105,7 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
      */
     @Override
     public void layoutParts() {
-        Region gap = new Region();
-        gap.setMinHeight(6);
-        VBox buttons = new VBox(6, upButton, downButton, gap, addButton, deleteButton);
+        VBox buttons = new VBox(6, addButton, deleteButton);
         buttons.setMinWidth(Region.USE_PREF_SIZE);
         HBox.setHgrow(listView, Priority.ALWAYS);
         HBox row = new HBox(10, listView, buttons);
@@ -142,8 +137,6 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
      */
     @Override
     public void setupEventHandlers() {
-        upButton.setOnAction(event -> move(-1));
-        downButton.setOnAction(event -> move(1));
         addButton.setOnAction(event -> addBible());
         deleteButton.setOnAction(event -> deleteBible());
         listView.setOnKeyPressed(event -> {
@@ -157,9 +150,7 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
     }
 
     /**
-     * Show the installed bibles, ticked as in the field. The ticked ones come
-     * first, in their order, then the versions that were chosen before but
-     * aren't used now, then the rest.
+     * Show the installed bibles, ticked as in the field.
      */
     private void loadFromField() {
         List<String> installed = new ArrayList<>();
@@ -172,11 +163,8 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
         if (ticked.isEmpty() && !installed.isEmpty()) {
             ticked.add(installed.getFirst());
         }
-        Set<String> order = new LinkedHashSet<>(ticked);
-        QueleaProperties.get().getMultiBibleVersions().stream().filter(installed::contains).forEach(order::add);
-        order.addAll(installed);
         String selected = listView.getSelectionModel().getSelectedItem();
-        names.setAll(order);
+        names.setAll(installed);
         listView.getSelectionModel().select(selected);
         writeField();
     }
@@ -191,25 +179,11 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
         writeField();
     }
 
-    private void move(int by) {
-        int index = listView.getSelectionModel().getSelectedIndex();
-        int target = index + by;
-        if (index < 0 || target < 0 || target >= names.size()) {
-            return;
-        }
-        String name = names.remove(index);
-        names.add(target, name);
-        listView.getSelectionModel().select(target);
-        writeField();
-    }
-
     /**
-     * Put the ticked bibles in the field, in the order they're listed.
+     * Put the ticked bibles in the field, in the order they were ticked.
      */
     private void writeField() {
-        List<String> versions = names.stream().filter(ticked::contains).toList();
-        ticked.clear();
-        ticked.addAll(versions);
+        List<String> versions = new ArrayList<>(ticked);
         updating = true;
         field.userInputProperty().set(String.join("\n", versions));
         updating = false;
@@ -218,10 +192,7 @@ public class BibleVersionsList extends SimpleControl<StringField, StackPane> {
     }
 
     private void updateButtons() {
-        int index = listView.getSelectionModel().getSelectedIndex();
-        upButton.setDisable(index <= 0);
-        downButton.setDisable(index < 0 || index >= names.size() - 1);
-        deleteButton.setDisable(index < 0);
+        deleteButton.setDisable(listView.getSelectionModel().getSelectedIndex() < 0);
     }
 
     private void addBible() {

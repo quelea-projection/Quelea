@@ -54,15 +54,19 @@ public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent
         if (passages.isEmpty()) {
             return;
         }
-        List<Bible> bibles = new SelectBibleVersionDialog().getVersions(((BiblePassage) passages.get(0).displayable()).getBibleVersions());
-        if (bibles == null) {
+        BiblePassage first = (BiblePassage) passages.get(0).displayable();
+        SelectBibleVersionDialog.Choice choice = new SelectBibleVersionDialog()
+                .choose(first.getBibleVersions(), passages.size() == 1 ? first : null);
+        if (choice == null) {
             return;
         }
+        List<Bible> bibles = choice.versions();
         Map<IndexedDisplayable, BiblePassage> replaceMap = new IdentityHashMap<>();
         List<String> missing = new ArrayList<>();
         for (IndexedDisplayable item : passages) {
             BiblePassage passage = (BiblePassage) item.displayable();
-            BiblePassage newPassage = passage.withVersions(bibles);
+            BiblePassage newPassage = passages.size() == 1 ? passage.withVersions(bibles, choice.chosen())
+                    : passage.withVersions(bibles);
             if (newPassage == null) {
                 missing.add(passage.getLocation());
             } else {
