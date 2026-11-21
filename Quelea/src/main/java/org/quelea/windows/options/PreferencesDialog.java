@@ -285,13 +285,13 @@ public class PreferencesDialog extends Stage {
             }
             fiLyricWindow.setAreaImmediate(bounds);
             if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
-                fiLyricWindow.show();
+                QueleaApp.get().getMainWindow().setProjectionShowing(fiLyricWindow, true);
             }
 
             // non-custom positioned windows are fullscreen
             if (!QueleaProperties.get().isProjectorModeCoords()) {
                 if (QueleaProperties.get().getProjectorScreen() == -1) {
-                    fiLyricWindow.hide();
+                    QueleaApp.get().getMainWindow().setProjectionShowing(fiLyricWindow, false);
                 } else {
                     fiLyricWindow.setFullScreenAlwaysOnTop(true);
                 }

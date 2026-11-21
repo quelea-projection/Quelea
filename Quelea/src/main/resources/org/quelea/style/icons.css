@@ -19,6 +19,10 @@
     -fx-position-shape: true;
 }
 
+/* Picture-in-picture controls, in the same scalable vector icon system. */
+.icon-picture-in-picture { -fx-shape: "M2 3H22V19H2Z M4 5V17H20V5Z M11 10H19V16H11Z"; }
+.icon-return-to-window { -fx-shape: "M9 2H22V15H20V5.4L9.4 16L8 14.6L18.6 4H9Z M2 8H4V20H16V22H2Z"; }
+
 /* Icon colour in interactive states */
 .button:hover .icon,
 .toggle-button:hover .icon,

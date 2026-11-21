@@ -26,6 +26,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -36,6 +38,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddImageActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
@@ -72,6 +75,7 @@ public class MainToolbar extends ToolBar {
     private final ProgressIndicator loadingView;
     private final StackPane dvdImageStack;
     private final ToggleButton recordAudioButton;
+    private final Region rightSpacer = new Region();
     private final ProgressBar pb = new ProgressBar(0);
     private Dialog setRecordinPathWarning;
     private RecordButtonHandler recordingsHandler;
@@ -232,6 +236,24 @@ public class MainToolbar extends ToolBar {
         recordAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("record.audio.tooltip")));
         getItems().add(recordAudioButton);
 
+        addPictureInPictureControl(this, rightSpacer,
+                () -> QueleaApp.get().getMainWindow().togglePictureInPicture());
+
+    }
+
+    static Button addPictureInPictureControl(ToolBar toolbar, Region spacer, Runnable action) {
+        spacer.setMinWidth(0);
+        spacer.setPrefWidth(0);
+        spacer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button button = new Button("", QueleaIcon.PICTURE_IN_PICTURE.create(QueleaIcon.TOOLBAR_SIZE));
+        Utils.setToolbarButtonStyle(button);
+        String label = LabelGrabber.INSTANCE.getLabel("picture.in.picture.tooltip");
+        button.setAccessibleText(label);
+        button.setTooltip(new Tooltip(label + " (" + MainWindow.PICTURE_IN_PICTURE_SHORTCUT.getDisplayText() + ")"));
+        button.setOnAction(e -> action.run());
+        toolbar.getItems().addAll(spacer, button);
+        return button;
     }
 
     public void setToggleButtonText(String text) {
@@ -270,7 +292,7 @@ public class MainToolbar extends ToolBar {
         recordAudioButton.setSelected(true);
         recording = true;
 //        getItems().add(pb);
-        getItems().add(recordingPathTextField);
+        getItems().add(getItems().indexOf(rightSpacer), recordingPathTextField);
         recordAudioButton.setText("Recording...");
         recordAudioButton.setSelected(true);
         recordingsHandler = new RecordButtonHandler();
