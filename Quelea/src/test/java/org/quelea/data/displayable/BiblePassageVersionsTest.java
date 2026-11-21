@@ -31,6 +31,10 @@ public class BiblePassageVersionsTest {
     private static final String ALPHA = "Alpha";
     private static final String BETA = "Beta, the + second";
     private static final String NEW_TESTAMENT = "New Testament";
+    private static final String ENGLISH = "English numbering";
+    private static final String HEBREW = "Hebrew numbering";
+    private static final int PSALMS = 19;
+    private static final int JOEL = 29;
     private static final int GENESIS = 1;
     private static final int JOHN = 43;
 
@@ -47,6 +51,10 @@ public class BiblePassageVersionsTest {
                 book(JOHN, "Johannes", 3, verse(16, "Beta sixteen."), verse(17, "Beta seventeen."), verse(18, "Beta eighteen."), verse(19, "Beta nineteen.")));
         writeBible("nt.xml", NEW_TESTAMENT,
                 book(JOHN, "John", 3, verse(16, "Testament sixteen."), verse(17, "Testament seventeen.")));
+        writeBible("english.xml", ENGLISH,
+                chapters(PSALMS, "Psalms", "E", 6, 12, 8), chapters(JOEL, "Joel", "E", 20, 32, 21));
+        writeBible("hebrew.xml", HEBREW,
+                chapters(PSALMS, "Psaltaren", "H", 6, 12, 9), chapters(JOEL, "Joel", "H", 20, 27, 5, 21));
         BibleManager.get().loadBibles(false);
     }
 
@@ -248,6 +256,70 @@ public class BiblePassageVersionsTest {
         QueleaProperties.get().setProperty(QueleaPropertyKeys.multiBibleVersionsKey, BETA + "\nGone\n" + ALPHA);
         assertEquals(bibles(ALPHA, BETA), manager.getDefaultVersions(alpha));
         assertEquals(bibles(BETA, ALPHA), manager.getDefaultVersions(manager.getBibleFromName(BETA)));
+    }
+
+    @Test
+    @DisplayName("Verses are paired between bibles that number them differently")
+    void pairsAcrossNumberings() {
+        BiblePassage passage = numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(ENGLISH, HEBREW));
+        assertArrayEquals(new String[]{"<sup>28</sup>E 2:28 <sup>29</sup>E 2:29", "<sup>3:1</sup>H 3:1 <sup>3:2</sup>H 3:2"},
+                slide(passage, 0));
+        assertTrue(passage.getMissingVerses().isEmpty());
+    }
+
+    @Test
+    @DisplayName("A psalm title that is a verse of its own is shown with the first verse")
+    void psalmTitleWithFirstVerse() {
+        QueleaProperties.get().setProperty(QueleaPropertyKeys.maxBibleVersesKey, "10");
+        assertArrayEquals(new String[]{"<sup>1</sup>E 3:1", "<sup>1-2</sup>H 3:1 H 3:2"},
+                slide(numbered(ENGLISH, PSALMS, 3, 1, 1).withVersions(bibles(ENGLISH, HEBREW)), 0));
+        BiblePassage passage = numbered(HEBREW, PSALMS, 3, 1, 3).withVersions(bibles(HEBREW, ENGLISH));
+        assertArrayEquals(new String[]{"<sup>1</sup>H 3:1 <sup>2</sup>H 3:2 <sup>3</sup>H 3:3", "<sup>1</sup>E 3:1 <sup>2</sup>E 3:2"},
+                slide(passage, 0));
+        assertTrue(passage.getMissingVerses().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Switching to a bible that numbers the verses differently follows its numbers")
+    void switchFollowsNumbering() {
+        BiblePassage passage = numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(HEBREW));
+        assertEquals("Joel 3:1-2\n" + HEBREW, passage.getPreviewText());
+        assertEquals(3, passage.getVerses()[0].getChapterNum());
+        assertEquals(1, passage.getVerses()[0].getNum());
+    }
+
+    @Test
+    @DisplayName("Each version's own numbers are kept in the schedule")
+    void roundTripKeepsOwnNumbers() throws Exception {
+        QueleaProperties.get().setProperty(QueleaPropertyKeys.maxBibleVersesKey, "10");
+        BiblePassage passage = numbered(HEBREW, PSALMS, 3, 1, 3).withVersions(bibles(HEBREW, ENGLISH));
+        BiblePassage reloaded = reload(passage);
+        assertArrayEquals(slide(passage, 0), slide(reloaded, 0));
+        BiblePassage joel = reload(numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(ENGLISH, HEBREW)));
+        assertArrayEquals(new String[]{"<sup>28</sup>E 2:28 <sup>29</sup>E 2:29", "<sup>3:1</sup>H 3:1 <sup>3:2</sup>H 3:2"},
+                slide(joel, 0));
+    }
+
+    private static BiblePassage numbered(String bible, int book, int chapter, int from, int to) {
+        List<BibleVerse> verses = new ArrayList<>();
+        for (int i = from; i <= to; i++) {
+            verses.add(verse(bible, book, chapter, i));
+        }
+        BibleVerse first = verses.get(0);
+        return new BiblePassage(bible, first.getChapter().getBook() + " " + chapter + ":" + from + "-" + to,
+                verses.toArray(new BibleVerse[0]), false);
+    }
+
+    private static String chapters(int number, String name, String prefix, int... verseCounts) {
+        StringBuilder ret = new StringBuilder("<BIBLEBOOK bnumber=\"" + number + "\" bname=\"" + name + "\">");
+        for (int c = 0; c < verseCounts.length; c++) {
+            ret.append("<CHAPTER cnumber=\"").append(c + 1).append("\">");
+            for (int v = 1; v <= verseCounts[c]; v++) {
+                ret.append(verse(v, prefix + " " + (c + 1) + ":" + v));
+            }
+            ret.append("</CHAPTER>");
+        }
+        return ret.append("</BIBLEBOOK>").toString();
     }
 
     private static BiblePassage john(int from, int to) {

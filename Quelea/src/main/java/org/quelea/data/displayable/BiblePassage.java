@@ -27,7 +27,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Set;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
@@ -39,6 +41,7 @@ import org.quelea.data.bible.BibleBookNameUtil;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.bible.BibleVersionText;
+import org.quelea.data.bible.versification.Versification;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -238,7 +241,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             int verseChars = 0;
             for (int v = 0; v < verseTexts.length; v++) {
                 String text = versions.get(v).getVerseText(i);
-                verseTexts[v] = text == null ? "" : getVerseLabel(verses[i]) + text;
+                verseTexts[v] = text == null || text.isEmpty() ? "" : getVerseLabel(verses[i], versions.get(v).getVerseRef(i)) + text;
                 verseChars += verseTexts[v].length();
             }
             boolean full = slideVerses >= versesPerSlide || slideChars + verseChars > charsPerSlide;
@@ -288,10 +291,27 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     private String getVerseLabel(BibleVerse verse) {
+        return getVerseLabel(verse, null);
+    }
+
+    /**
+     * Get the verse number shown before a verse.
+     *
+     * @param verse the verse of the passage.
+     * @param ref   the version's own numbers for the verse, such as "31:2",
+     *              or null if they are the passage's.
+     * @return the label, or an empty string if verse numbers aren't shown.
+     */
+    private String getVerseLabel(BibleVerse verse, String ref) {
         if (!QueleaProperties.get().getShowVerseNumbers()) {
             return "";
         }
-        return "<sup>" + (multi ? verse.getChapterNum() + ":" : "") + verse.getNum() + "</sup>";
+        if (ref == null) {
+            return "<sup>" + (multi ? verse.getChapterNum() + ":" : "") + verse.getNum() + "</sup>";
+        }
+        boolean sameChapter = ref.startsWith(verse.getChapterNum() + ":") && !ref.contains(";")
+                && !ref.substring(ref.indexOf(':') + 1).contains(":");
+        return "<sup>" + (multi || !sameChapter ? ref : ref.substring(ref.indexOf(':') + 1)) + "</sup>";
     }
 
     /**
@@ -374,51 +394,93 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (bibles == null || bibles.isEmpty()) {
             return null;
         }
+        // The rows follow the first version's verses
         List<BibleVerse> newVerses = new ArrayList<>();
-        List<String[]> rows = new ArrayList<>();
-        List<String> missing = new ArrayList<>();
         for (BibleVerse verse : verses) {
             if (verse == null) {
                 continue;
             }
-            String[] row = new String[bibles.size()];
-            BibleVerse reference = null;
-            for (int i = 0; i < row.length; i++) {
-                BibleVerse found = findVerse(bibles.get(i), verse);
-                if (found == null) {
-                    missing.add(bibles.get(i).getBibleName() + ": " + verse.getChapterNum() + ":" + verse.getNum());
-                } else {
-                    row[i] = found.getText().replaceAll("\\s+", " ").trim();
-                    if (reference == null) {
-                        reference = found;
-                    }
+            List<BibleVerse> matched = Versification.match(verse, bibles.get(0)).verses();
+            for (BibleVerse found : matched.isEmpty() ? List.of(verse) : matched) {
+                if (newVerses.stream().noneMatch(added -> added == found)) {
+                    newVerses.add(found);
                 }
             }
-            if (reference != null) {
-                newVerses.add(reference);
-                rows.add(row);
-            }
         }
-        if (newVerses.isEmpty()) {
+        List<String[]> texts = new ArrayList<>();
+        List<String[]> refs = new ArrayList<>();
+        boolean[] certain = new boolean[bibles.size()];
+        Arrays.fill(certain, true);
+        List<String> missing = new ArrayList<>();
+        List<Set<BibleVerse>> used = new ArrayList<>();
+        for (int i = 0; i < bibles.size(); i++) {
+            used.add(Collections.newSetFromMap(new IdentityHashMap<>()));
+        }
+        boolean anyFound = false;
+        for (BibleVerse verse : newVerses) {
+            String[] rowTexts = new String[bibles.size()];
+            String[] rowRefs = new String[bibles.size()];
+            for (int i = 0; i < bibles.size(); i++) {
+                Versification.Match match = Versification.match(verse, bibles.get(i));
+                certain[i] &= match.certain();
+                if (match.verses().isEmpty()) {
+                    missing.add(bibles.get(i).getBibleName() + ": " + verse.getChapterNum() + ":" + verse.getNum());
+                    continue;
+                }
+                anyFound = true;
+                List<BibleVerse> unused = new ArrayList<>();
+                for (BibleVerse found : match.verses()) {
+                    if (used.get(i).add(found)) {
+                        unused.add(found);
+                    }
+                }
+                List<String> parts = new ArrayList<>();
+                for (BibleVerse found : unused) {
+                    parts.add(found.getText().replaceAll("\\s+", " ").trim());
+                }
+                rowTexts[i] = String.join(" ", parts);
+                if (!unused.isEmpty() && !(unused.size() == 1 && sameNumber(unused.get(0), verse))) {
+                    rowRefs[i] = describe(unused);
+                }
+            }
+            texts.add(rowTexts);
+            refs.add(rowRefs);
+        }
+        if (!anyFound) {
             return null;
+        }
+        // Rows with no text in any version
+        for (int row = newVerses.size() - 1; row >= 0; row--) {
+            boolean empty = true;
+            for (String text : texts.get(row)) {
+                empty &= text == null;
+            }
+            if (empty) {
+                newVerses.remove(row);
+                texts.remove(row);
+                refs.remove(row);
+            }
         }
         List<BibleVersionText> newVersions = new ArrayList<>();
         if (bibles.size() > 1) {
             for (int i = 0; i < bibles.size(); i++) {
-                String[] texts = new String[rows.size()];
-                for (int row = 0; row < texts.length; row++) {
-                    texts[row] = rows.get(row)[i];
+                String[] versionTexts = new String[texts.size()];
+                String[] versionRefs = new String[texts.size()];
+                for (int row = 0; row < versionTexts.length; row++) {
+                    versionTexts[row] = texts.get(row)[i];
+                    versionRefs[row] = refs.get(row)[i];
                 }
-                newVersions.add(new BibleVersionText(bibles.get(i).getBibleName(), texts));
+                newVersions.add(new BibleVersionText(bibles.get(i).getBibleName(), versionTexts, versionRefs, certain[i]));
             }
         }
         BibleBook book = newVerses.get(0).getChapter().getBook();
-        BibleBook primaryBook = bibles.get(0).getBookByNumber(book.getBookNumber());
+        BibleBook primaryBook = bibles.get(0).getMatchingBook(book);
         List<String> names = new ArrayList<>();
         for (Bible bible : bibles) {
             names.add(bible.getBibleName());
         }
-        String newSummary = (primaryBook == null ? book : primaryBook) + " " + getPassageNumbers() + "\n" + String.join(VERSION_SEPARATOR, names);
+        String numbers = sameNumbers(newVerses) ? getPassageNumbers() : describe(newVerses);
+        String newSummary = (primaryBook == null ? book : primaryBook) + " " + numbers + "\n" + String.join(VERSION_SEPARATOR, names);
         return new BiblePassage(newSummary, newVerses.toArray(new BibleVerse[0]), theme, multi, newVersions, missing);
     }
 
@@ -428,14 +490,85 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param bible the bible to look in.
      * @param verse the verse to find.
      * @return the verse, or null if that bible doesn't have it or it's empty.
+     * Where the bibles number the verse differently, the first of the verses
+     * it corresponds to.
      */
     public static BibleVerse findVerse(Bible bible, BibleVerse verse) {
-        BibleBook book = bible.getBookByNumber(verse.getChapter().getBook().getBookNumber());
-        if (book == null || book.getChapter(verse.getChapter().getNum() - 1) == null) {
-            return null;
+        List<BibleVerse> found = Versification.match(verse, bible).verses();
+        return found.isEmpty() ? null : found.get(0);
+    }
+
+    private static boolean sameNumber(BibleVerse a, BibleVerse b) {
+        return a.getChapterNum() == b.getChapterNum() && a.getNum() == b.getNum();
+    }
+
+    /**
+     * Determine whether some verses are numbered the same as this passage's.
+     */
+    private boolean sameNumbers(List<BibleVerse> other) {
+        List<BibleVerse> own = new ArrayList<>();
+        for (BibleVerse verse : verses) {
+            if (verse != null) {
+                own.add(verse);
+            }
         }
-        BibleVerse found = book.getChapter(verse.getChapter().getNum() - 1).getVerse(verse.getNum());
-        return found == null || found.getText().isBlank() ? null : found;
+        if (own.size() != other.size()) {
+            return false;
+        }
+        for (int i = 0; i < own.size(); i++) {
+            if (!sameNumber(own.get(i), other.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Describe the chapter and verse numbers of some verses, such as "31:1-2",
+     * "1:17-2:1" or "3:16,18".
+     *
+     * @param verses the verses, in order.
+     * @return the description.
+     */
+    public static String describe(List<BibleVerse> verses) {
+        StringBuilder ret = new StringBuilder();
+        int start = 0;
+        int lastChapter = -1;
+        while (start < verses.size()) {
+            int end = start;
+            while (end + 1 < verses.size() && follows(verses.get(end), verses.get(end + 1))) {
+                end++;
+            }
+            BibleVerse first = verses.get(start);
+            BibleVerse last = verses.get(end);
+            if (ret.length() > 0) {
+                ret.append(first.getChapterNum() == lastChapter ? "," : ";");
+            }
+            if (first.getChapterNum() != lastChapter) {
+                ret.append(first.getChapterNum()).append(':');
+            }
+            ret.append(first.getNum());
+            if (end > start) {
+                ret.append('-');
+                if (last.getChapterNum() != first.getChapterNum()) {
+                    ret.append(last.getChapterNum()).append(':');
+                }
+                ret.append(last.getNum());
+            }
+            lastChapter = last.getChapterNum();
+            start = end + 1;
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Determine whether a verse comes straight after another.
+     */
+    private static boolean follows(BibleVerse verse, BibleVerse next) {
+        if (next.getChapterNum() == verse.getChapterNum()) {
+            return next.getNum() == verse.getNum() + 1;
+        }
+        return next.getChapterNum() == verse.getChapterNum() + 1 && next.getNum() == 1;
     }
 
     /**
@@ -488,11 +621,20 @@ public class BiblePassage implements TextDisplayable, Serializable {
             ret.append(verse.toXML());
         }
         for (BibleVersionText version : versions) {
-            ret.append("<version name=\"").append(Utils.escapeXML(version.getBibleName())).append("\">");
+            ret.append("<version name=\"").append(Utils.escapeXML(version.getBibleName()));
+            if (!version.isCertain()) {
+                ret.append("\" certain=\"false");
+            }
+            ret.append("\">");
             for (int i = 0; i < verses.length; i++) {
                 if (version.getVerseText(i) != null) {
-                    ret.append("<vers cnumber=\"").append(verses[i].getChapterNum());
-                    ret.append("\" vnumber=\"").append(verses[i].getNum()).append("\">");
+                    ret.append("<vers row=\"").append(i);
+                    ret.append("\" cnumber=\"").append(verses[i].getChapterNum());
+                    ret.append("\" vnumber=\"").append(verses[i].getNum());
+                    if (version.getVerseRef(i) != null) {
+                        ret.append("\" ref=\"").append(Utils.escapeXML(version.getVerseRef(i)));
+                    }
+                    ret.append("\">");
                     ret.append(Utils.escapeXML(version.getVerseText(i)));
                     ret.append("</vers>");
                 }
@@ -565,7 +707,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (passage.getAttributes().getNamedItem("booknumber") != null) {
             bookNumber = Integer.parseInt(passage.getAttributes().getNamedItem("booknumber").getTextContent());
         }
-        Map<String, Map<String, String>> versionTexts = parseVersions(list);
+        Map<String, ParsedVersion> versionTexts = parseVersions(list);
         List<String> bibleNames = new ArrayList<>(versionTexts.keySet());
         if (bibleNames.isEmpty()) {
             bibleNames.add(bibleSummary);
@@ -594,40 +736,73 @@ public class BiblePassage implements TextDisplayable, Serializable {
             return new BiblePassage(summary, verseArray, tempTheme, multi);
         }
         List<BibleVersionText> versions = new ArrayList<>();
-        for (Map.Entry<String, Map<String, String>> version : versionTexts.entrySet()) {
+        for (Map.Entry<String, ParsedVersion> version : versionTexts.entrySet()) {
+            ParsedVersion parsed = version.getValue();
             String[] texts = new String[verseArray.length];
+            String[] refs = new String[verseArray.length];
             for (int i = 0; i < texts.length; i++) {
-                texts[i] = version.getValue().get(verseArray[i].getChapterNum() + ":" + verseArray[i].getNum());
+                if (parsed.byRow().isEmpty()) {
+                    texts[i] = parsed.byNumber().get(verseArray[i].getChapterNum() + ":" + verseArray[i].getNum());
+                } else {
+                    texts[i] = parsed.byRow().get(i);
+                    refs[i] = parsed.refs().get(i);
+                }
             }
-            versions.add(new BibleVersionText(version.getKey(), texts));
+            versions.add(new BibleVersionText(version.getKey(), texts, refs, parsed.certain()));
         }
         return new BiblePassage(summary, verseArray, tempTheme, multi, versions, Collections.emptyList());
+    }
+
+    /**
+     * The text of a passage in one version, as read from a schedule.
+     *
+     * @param byNumber the text of each verse by the passage's "chapter:verse",
+     *                 for schedules saved before rows were numbered.
+     * @param byRow    the text of each verse by its position in the passage.
+     * @param refs     the version's own numbers by position, where they differ.
+     * @param certain  false if the verses were paired by number somewhere
+     *                 because the numbering wasn't known.
+     */
+    private record ParsedVersion(Map<String, String> byNumber, Map<Integer, String> byRow,
+                                 Map<Integer, String> refs, boolean certain) {
     }
 
     /**
      * Read the version elements of a passage.
      *
      * @param list the child nodes of the passage.
-     * @return the text of each verse, by "chapter:verse", for each bible name
-     * in display order.
+     * @return the text of each version, by bible name in display order.
      */
-    private static Map<String, Map<String, String>> parseVersions(NodeList list) {
-        Map<String, Map<String, String>> ret = new LinkedHashMap<>();
+    private static Map<String, ParsedVersion> parseVersions(NodeList list) {
+        Map<String, ParsedVersion> ret = new LinkedHashMap<>();
         for (int i = 0; i < list.getLength(); i++) {
             if (list.item(i).getNodeName().equals("version")) {
-                Map<String, String> texts = new HashMap<>();
+                ParsedVersion version = new ParsedVersion(new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                        !"false".equals(attribute(list.item(i), "certain")));
                 NodeList verseNodes = list.item(i).getChildNodes();
                 for (int j = 0; j < verseNodes.getLength(); j++) {
                     Node verse = verseNodes.item(j);
                     if (verse.getNodeName().equals("vers")) {
-                        texts.put(verse.getAttributes().getNamedItem("cnumber").getTextContent() + ":"
-                                + verse.getAttributes().getNamedItem("vnumber").getTextContent(), verse.getTextContent());
+                        String row = attribute(verse, "row");
+                        if (row != null) {
+                            int index = Integer.parseInt(row.trim());
+                            version.byRow().put(index, verse.getTextContent());
+                            if (attribute(verse, "ref") != null) {
+                                version.refs().put(index, attribute(verse, "ref"));
+                            }
+                        }
+                        version.byNumber().put(attribute(verse, "cnumber") + ":" + attribute(verse, "vnumber"), verse.getTextContent());
                     }
                 }
-                ret.put(list.item(i).getAttributes().getNamedItem("name").getTextContent(), texts);
+                ret.put(attribute(list.item(i), "name"), version);
             }
         }
         return ret;
+    }
+
+    private static String attribute(Node node, String name) {
+        Node attribute = node.getAttributes().getNamedItem(name);
+        return attribute == null ? null : attribute.getTextContent();
     }
 
     /**
@@ -648,6 +823,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
                     if (bookNumber > 0 ? bb.getBookNumber() == bookNumber : bb.getBookName().equals(bookName)) {
                         verse.getChapter().setBook(BibleBook.parseXML(node, bb.getBookNumber(), BibleBookNameUtil.getBookNameForIndex(ii-1, b.getBooks().length)));
                         verse.getChapter().getBook().setBible(b);
+                        // The copy holds only this verse, too little to tell which book it is
+                        verse.getChapter().getBook().setBookCode(bb.getBookCode());
                         return true;
                     }
                     ii++;

@@ -63,6 +63,7 @@ import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleReferenceParser;
 import org.quelea.data.bible.BibleReferenceParser.Lookup;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.versification.Versification;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -310,7 +311,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         buildChips();
         if (primary != shownBible && primary != null && lookup.book() != null && !typingBook) {
             // Keep the passage, with the book's name in the new bible
-            BibleBook book = primary.getBookByNumber(lookup.book().getBookNumber());
+            BibleBook book = primary.getMatchingBook(lookup.book());
             if (book != null) {
                 String text = searchField.getText();
                 String rest = lookup.passage().isEmpty() ? (text.endsWith(" ") ? " " : "") : " " + lookup.passage();
@@ -679,13 +680,26 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      * Warn when another version has a different number of verses in the
      * chapter, as its verse numbers may then not line up with the first one's.
      */
+    /**
+     * Determine whether Quelea knows how both bibles number every verse of a
+     * chapter, so that the verses pair up even if the numbers differ.
+     */
+    private static boolean isMatchKnown(BibleChapter chapter, Bible other) {
+        for (BibleVerse verse : chapter.getVerses()) {
+            if (!Versification.match(verse, other).certain()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void addVerseCountWarnings(BibleChapter chapter) {
         Bible primary = getPrimaryBible();
         int count = chapter.getVerses().length;
         for (Bible other : versions.subList(1, versions.size())) {
-            BibleBook book = other.getBookByNumber(lookup.book().getBookNumber());
+            BibleBook book = other.getMatchingBook(lookup.book());
             BibleChapter otherChapter = book == null ? null : book.getChapter(lookup.chapter() - 1);
-            if (otherChapter == null || otherChapter.getVerses().length == count) {
+            if (otherChapter == null || otherChapter.getVerses().length == count || isMatchKnown(chapter, other)) {
                 continue;
             }
             Label text = new Label(LabelGrabber.INSTANCE.getLabel("bible.verse.count.warning")
@@ -941,13 +955,19 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             body.getChildren().setAll(text);
             if (chosen) {
                 for (Bible other : versions.subList(1, versions.size())) {
-                    BibleVerse found = BiblePassage.findVerse(other, verse);
-                    Label name = new Label(other.getBibleName());
+                    List<BibleVerse> found = Versification.match(verse, other).verses();
+                    boolean renumbered = found.size() > 1 || (found.size() == 1
+                            && (found.get(0).getNum() != verse.getNum() || found.get(0).getChapterNum() != verse.getChapterNum()));
+                    Label name = new Label(other.getBibleName() + (renumbered ? " · " + BiblePassage.describe(found) : ""));
                     name.getStyleClass().add("bible-other-version-name");
-                    Label otherText = new Label(found == null
-                            ? LabelGrabber.INSTANCE.getLabel("bible.not.in.version") : clean(found.getText()));
+                    List<String> texts = new ArrayList<>();
+                    for (BibleVerse otherVerse : found) {
+                        texts.add(clean(otherVerse.getText()));
+                    }
+                    Label otherText = new Label(found.isEmpty()
+                            ? LabelGrabber.INSTANCE.getLabel("bible.not.in.version") : String.join(" ", texts));
                     otherText.getStyleClass().add("bible-other-version-text");
-                    if (found == null) {
+                    if (found.isEmpty()) {
                         otherText.getStyleClass().add("bible-missing");
                     }
                     otherText.setWrapText(true);

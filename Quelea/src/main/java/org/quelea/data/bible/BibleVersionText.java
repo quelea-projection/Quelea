@@ -31,17 +31,62 @@ public final class BibleVersionText implements Serializable {
 
     private final String bibleName;
     private final String[] verseTexts;
+    private final String[] verseRefs;
+    private final boolean certain;
 
     /**
-     * Create the text of a passage in one version.
+     * Create the text of a passage in one version, numbered as the passage.
      *
      * @param bibleName  the name of the bible.
      * @param verseTexts the text of each verse, in passage order, with null for
      *                   a verse that doesn't exist in this version.
      */
     public BibleVersionText(String bibleName, String[] verseTexts) {
+        this(bibleName, verseTexts, new String[verseTexts.length], true);
+    }
+
+    /**
+     * Create the text of a passage in one version.
+     *
+     * @param bibleName  the name of the bible.
+     * @param verseTexts the text of each verse of the passage in this version,
+     *                   in passage order: null for a verse that doesn't exist
+     *                   in this version, or an empty string for one whose text
+     *                   is already in the line above.
+     * @param verseRefs  this version's own chapter and verse numbers for each
+     *                   verse, such as "31:2" or "31:1-2", or null where they
+     *                   are the same as the passage's.
+     * @param certain    false if the numbering of the bibles wasn't known in
+     *                   some part of the passage and verses were paired by
+     *                   number there.
+     */
+    public BibleVersionText(String bibleName, String[] verseTexts, String[] verseRefs, boolean certain) {
         this.bibleName = bibleName;
         this.verseTexts = Arrays.copyOf(verseTexts, verseTexts.length);
+        this.verseRefs = Arrays.copyOf(verseRefs, verseTexts.length);
+        this.certain = certain;
+    }
+
+    /**
+     * Get this version's own chapter and verse numbers for a verse.
+     *
+     * @param index the position of the verse in the passage.
+     * @return the numbers, such as "31:2" or "31:1-2", or null if they are the
+     * same as the passage's.
+     */
+    public String getVerseRef(int index) {
+        return verseRefs[index];
+    }
+
+    /**
+     * Determine whether the verses were paired knowing how both bibles number
+     * them.
+     *
+     * @return false if some verses were paired by number because the
+     * numbering of a bible wasn't known there.
+     */
+    public boolean isCertain() {
+        return certain;
     }
 
     /**

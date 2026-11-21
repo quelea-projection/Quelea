@@ -17,6 +17,7 @@
  */
 package org.quelea.data.bible;
 
+import org.quelea.data.bible.versification.Versification;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.UnicodeReader;
 import org.quelea.services.utils.Utils;
@@ -53,6 +54,7 @@ public final class Bible implements BibleInterface, Serializable {
     private BibleInfo information;
     private final List<BibleBook> books;
     private String filePath;
+    private transient Versification versification;
 
     /**
      * Create a new bible.
@@ -285,6 +287,60 @@ public final class Bible implements BibleInterface, Serializable {
     public BibleBook getBookByNumber(int number) {
         for (BibleBook book : books) {
             if (book.getBookNumber() == number) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find the book in this bible that is the same book as a book in another
+     * bible. Books are paired by which book they are, so that a book with a
+     * different number, or a wrong number, in one of the bibles still pairs.
+     * Books that can't be told apart are paired by number.
+     * <p/>
+     * @param other the book in the other bible.
+     * @return the book in this bible, or null if this bible doesn't contain
+     * it.
+     */
+    public BibleBook getMatchingBook(BibleBook other) {
+        if (other.getBible() == this) {
+            return getBookByNumber(other.getBookNumber());
+        }
+        String code = other.getBookCode();
+        if (code == null) {
+            return getBookByNumber(other.getBookNumber());
+        }
+        for (BibleBook book : books) {
+            if (code.equals(book.getBookCode())) {
+                return book;
+            }
+        }
+        BibleBook ret = getBookByNumber(other.getBookNumber());
+        return ret != null && ret.getBookCode() == null ? ret : null;
+    }
+
+    /**
+     * Get the numbering this bible follows, passage by passage.
+     * <p/>
+     * @return the numbering, worked out the first time it's needed.
+     */
+    public synchronized Versification getVersification() {
+        if (versification == null) {
+            versification = new Versification(this);
+        }
+        return versification;
+    }
+
+    /**
+     * Get a book by which book it is.
+     * <p/>
+     * @param code the USFM code of the book, such as GEN.
+     * @return the book, or null if this bible doesn't contain it.
+     */
+    public BibleBook getBookByCode(String code) {
+        for (BibleBook book : books) {
+            if (code.equals(book.getBookCode())) {
                 return book;
             }
         }
