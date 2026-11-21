@@ -2038,3 +2038,12 @@
 .bible-versions-list .list-cell:filled:selected .bible-versions-position {
     -fx-text-fill: -q-on-accent;
 }
+
+/* The badge keeps its own background, so it keeps its own text colour */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .label.bible-versions-default {
+    -fx-text-fill: -q-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .bible-versions-default .text {
+    -fx-fill: -q-accent;
+}

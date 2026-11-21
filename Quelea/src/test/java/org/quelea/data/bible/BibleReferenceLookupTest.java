@@ -30,6 +30,7 @@ public class BibleReferenceLookupTest {
         QueleaProperties.init(Files.createTempDirectory("quelea-test").toString());
         StringBuilder xml = new StringBuilder("<XMLBIBLE biblename=\"Test\">");
         appendBook(xml, 1, "1 Mosebok", 3, 5);
+        appendBook(xml, 5, "5 Mosebok", 34, 5);
         appendBook(xml, 6, "Josua", 24, 5);
         appendBook(xml, 18, "Job", 42, 5);
         appendBook(xml, 19, "Psaltaren", 150, 6);
@@ -72,6 +73,7 @@ public class BibleReferenceLookupTest {
         Assertions.assertEquals(List.of("Johannes"), names(BibleReferenceParser.lookup("joh", bible).books()));
         Assertions.assertEquals(List.of("1 Johannesbrevet"), names(BibleReferenceParser.lookup("1 joh", bible).books()));
         Assertions.assertEquals(List.of("1 Johannesbrevet"), names(BibleReferenceParser.lookup("I Joh", bible).books()));
+        Assertions.assertEquals(List.of("5 Mosebok"), names(BibleReferenceParser.lookup("5 mos", bible).books()));
         Assertions.assertEquals(List.of("Psaltaren"), names(BibleReferenceParser.lookup("Psaltaren ", bible).books()));
     }
 

@@ -49,7 +49,7 @@ public final class ChosenVersesEditor extends VBox {
 
     private static final String NUMBERS_ONLY = "[\\d\\s:,;\\-–.]+";
     /** A book name, or the start of one, with no chapter yet. */
-    private static final String BOOK_ONLY = "\\s*(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*";
+    private static final String BOOK_ONLY = "\\s*(?:[1-5][.\\s]*)?\\p{L}[\\p{L}.\\s]*";
 
     private final TextField field = new TextField();
     private final Label note = new Label();

@@ -85,19 +85,26 @@ public final class BibleReferenceParser {
 
     /** A book number, a book name and something that starts with a number. */
     private static final Pattern QUERY = Pattern.compile(
-            "^\\s*(?<book>(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*(?<passage>\\d[\\d\\s:.,;\\-–—]*)$");
+            "^\\s*(?<book>(?:[1-5][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*(?<passage>\\d[\\d\\s:.,;\\-–—]*)$");
     /** A book number and a book name on their own. */
     private static final Pattern BOOK_ONLY = Pattern.compile(
-            "^\\s*(?<book>(?:[1-3][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*$");
+            "^\\s*(?<book>(?:[1-5][.\\s]*)?\\p{L}[\\p{L}.\\s]*?)[.\\s]*$");
     private static final Pattern FIRST_NUMBER = Pattern.compile("^(\\d{1,3})");
     private static final Pattern SECTION = Pattern.compile(
             "(?<from>\\d{1,3})(?::(?<fromVerse>\\d{1,3}))?(?:-(?:(?<toChapter>\\d{1,3}):)?(?<to>\\d{1,3}))?");
+    /**
+     * A book's number written as a word or a Roman numeral. Books go up to five
+     * in some languages, such as "5 Mos" in Swedish and "4 Kings" in older
+     * English bibles.
+     */
     private static final Pattern BOOK_NUMBER_WORD = Pattern.compile(
-            "^(iii|ii|i|forsta|andra|tredje|first|second|third)(?:[.\\s]+)(?=\\p{L})");
-    private static final Map<String, String> BOOK_NUMBERS = Map.of(
-            "i", "1", "ii", "2", "iii", "3",
-            "forsta", "1", "andra", "2", "tredje", "3",
-            "first", "1", "second", "2", "third", "3");
+            "^(iii|iv|ii|i|v|forsta|andra|tredje|fjarde|femte|first|second|third|fourth|fifth)(?:[.\\s]+)(?=\\p{L})");
+    private static final Map<String, String> BOOK_NUMBERS = Map.ofEntries(
+            Map.entry("i", "1"), Map.entry("ii", "2"), Map.entry("iii", "3"), Map.entry("iv", "4"), Map.entry("v", "5"),
+            Map.entry("forsta", "1"), Map.entry("andra", "2"), Map.entry("tredje", "3"),
+            Map.entry("fjarde", "4"), Map.entry("femte", "5"),
+            Map.entry("first", "1"), Map.entry("second", "2"), Map.entry("third", "3"),
+            Map.entry("fourth", "4"), Map.entry("fifth", "5"));
     private static final int MIN_BOOK_LENGTH = 2;
     private static final int MAX_ABBREVIATION_LENGTH = 3;
     private static final int NO_MATCH = Integer.MAX_VALUE;
