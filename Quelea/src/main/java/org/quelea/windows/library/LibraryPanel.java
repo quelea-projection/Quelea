@@ -40,7 +40,9 @@ public class LibraryPanel extends VBox {
     private final LibrarySongPanel songPanel;
     private final LibraryBiblePanel biblePanel;
     private final LibraryImagePanel imagePanel;
-    private final LibraryVideoPanel videoPanel;
+    private final Tab imageTab;
+    private LibraryVideoPanel videoPanel;
+    private Tab videoTab;
     private final LibraryTimerPanel timerPanel;
     private final Tab timerTab;
     private final TabPane tabPane;
@@ -71,24 +73,13 @@ public class LibraryPanel extends VBox {
 
         LOGGER.log(Level.INFO, "Creating library image panel");
         imagePanel = new LibraryImagePanel();
-        Tab imageTab = new Tab();
+        imageTab = new Tab();
         imageTab.setClosable(false);
         imageTab.setText(LabelGrabber.INSTANCE.getLabel("library.image.heading"));
         imageTab.setContent(imagePanel);
         tabPane.getTabs().add(imageTab);
 
-        if (QueleaProperties.get().getDisplayVideoTab()) {
-            LOGGER.log(Level.INFO, "Creating library video panel");
-            videoPanel = new LibraryVideoPanel();
-            Tab videoTab = new Tab();
-            videoTab.setClosable(false);
-            videoTab.setText(LabelGrabber.INSTANCE.getLabel("library.video.heading"));
-            videoTab.setContent(videoPanel);
-            tabPane.getTabs().add(videoTab);
-        }
-        else {
-            videoPanel = null;
-        }
+        setVideoTabVisible(QueleaProperties.get().getDisplayVideoTab());
 
         LOGGER.log(Level.INFO, "Creating library timer panel");
         timerPanel = new LibraryTimerPanel();
@@ -133,9 +124,36 @@ public class LibraryPanel extends VBox {
     }
 
     /**
+     * Show or hide the video tab. The panel is created the first time it is
+     * shown and kept afterwards, so hiding and showing it again is cheap.
+     *
+     * @param visible true to show the tab, false to hide it.
+     */
+    public final void setVideoTabVisible(boolean visible) {
+        if (visible && videoTab == null) {
+            LOGGER.log(Level.INFO, "Creating library video panel");
+            videoPanel = new LibraryVideoPanel();
+            videoTab = new Tab();
+            videoTab.setClosable(false);
+            videoTab.setText(LabelGrabber.INSTANCE.getLabel("library.video.heading"));
+            videoTab.setContent(videoPanel);
+        }
+        if (videoTab == null) {
+            return;
+        }
+        boolean showing = tabPane.getTabs().contains(videoTab);
+        if (visible && !showing) {
+            tabPane.getTabs().add(tabPane.getTabs().indexOf(imageTab) + 1, videoTab);
+        } else if (!visible && showing) {
+            tabPane.getTabs().remove(videoTab);
+        }
+    }
+
+    /**
      * Get the library video panel.
      *
-     * @return the library video panel.
+     * @return the library video panel, or null if the video tab has never
+     * been shown.
      */
     public LibraryVideoPanel getVideoPanel() {
         return videoPanel;

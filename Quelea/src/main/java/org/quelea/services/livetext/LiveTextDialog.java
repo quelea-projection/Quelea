@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.server.MobileLyricsServer;
 import org.quelea.windows.main.QueleaApp;
 
 import org.quelea.windows.style.StyleManager;
@@ -139,8 +140,9 @@ public class LiveTextDialog extends Stage {
             } catch (InterruptedException ex) {
             }
         }
-        if (!dialog.isShowing()) {
-            QueleaApp.get().getMobileLyricsServer().setText("");
+        MobileLyricsServer server = QueleaApp.get().getMobileLyricsServer();
+        if (!dialog.isShowing() && server != null) {
+            server.setText("");
         }
         return dialog.textField.getText();
     }
@@ -166,7 +168,10 @@ public class LiveTextDialog extends Stage {
         if (text.length() > 200) {
             text = text.substring(text.indexOf(" ", text.length() - 200));
         }
-        QueleaApp.get().getMobileLyricsServer().setText(text);
+        MobileLyricsServer server = QueleaApp.get().getMobileLyricsServer();
+        if (server != null) {
+            server.setText(text);
+        }
     }
 
 }

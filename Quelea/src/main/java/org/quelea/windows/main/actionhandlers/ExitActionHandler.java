@@ -32,6 +32,7 @@ import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.IndexedDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
+import org.quelea.server.ServerManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -116,14 +117,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
 
         LOGGER.log(Level.INFO, "Try to close OOfice if opened");
         OOUtils.closeOOApp();
-        if (QueleaApp.get().getMobileLyricsServer() != null) {
-            LOGGER.log(Level.INFO, "Stopping mobile lyrics server");
-            QueleaApp.get().getMobileLyricsServer().stop();
-        }
-        if (QueleaApp.get().getRemoteControlServer() != null) {
-            LOGGER.log(Level.INFO, "Stopping remote control server");
-            QueleaApp.get().getRemoteControlServer().stop();
-        }
+        ServerManager.INSTANCE.stopAll();
         if (PowerPointService.isEnabled()) {
             LOGGER.log(Level.INFO, "Closing the PowerPoint presentation");
             PowerPointService.get().shutdown();

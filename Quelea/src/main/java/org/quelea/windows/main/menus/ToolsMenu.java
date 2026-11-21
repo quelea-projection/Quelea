@@ -32,6 +32,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.ShortcutManager;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
+import org.quelea.server.ServerManager;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
 import org.quelea.windows.main.actionhandlers.UniversalSearchActionHandler;
@@ -88,9 +89,7 @@ public class ToolsMenu extends Menu {
         liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), QueleaIcon.LIVE_TEXT.create());
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         liveTextItem.setOnAction(new LiveTextActionHandler());
-        if (QueleaApp.get().getMobileLyricsServer() == null) {
-            liveTextItem.setDisable(true);
-        }
+        liveTextItem.disableProperty().bind(ServerManager.INSTANCE.lyricsRunningProperty().not());
         getItems().add(liveTextItem);
 
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), QueleaIcon.SETTINGS.create());

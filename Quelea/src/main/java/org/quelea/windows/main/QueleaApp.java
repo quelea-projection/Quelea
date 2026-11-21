@@ -38,9 +38,9 @@ public class QueleaApp {
     private MainWindow mainWindow;
     private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
-    private MobileLyricsServer mls;
-    private RemoteControlServer rcs;
-    private AutoDetectServer ads;
+    private volatile MobileLyricsServer mls;
+    private volatile RemoteControlServer rcs;
+    private volatile AutoDetectServer ads;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
