@@ -886,7 +886,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         change.setOnAction(event -> openMatchEditor(other));
         HBox ret = new HBox(8, body, change);
         ret.setAlignment(Pos.CENTER_LEFT);
-        ret.getStyleClass().add("bible-match");
+        ret.getStyleClass().add("bible-match-box");
         return ret;
     }
 
