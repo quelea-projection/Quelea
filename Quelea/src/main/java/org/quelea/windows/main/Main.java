@@ -199,6 +199,12 @@ public final class Main extends Application {
                 }
 
                 Platform.runLater(() -> {
+                    if (lyricsHidden) {
+                        // Prepare the unused projection canvas before anything
+                        // goes live. PiP can then mirror it without redrawing
+                        // or restarting the currently running media or timer.
+                        MainWindow.prepareHiddenPictureInPictureSource(fullScreenWindow);
+                    }
                     QueleaApp.get().setProjectionWindow(fullScreenWindow);
                 });
 

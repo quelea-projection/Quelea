@@ -316,6 +316,84 @@
     -fx-text-fill: -q-text;
 }
 
+/* Floating picture-in-picture controls remain legible over any live content. */
+.pip-window {
+    -fx-background-color: black;
+    -fx-padding: 0;
+}
+
+.pip-logo-cover {
+    -fx-background-color: #171c24;
+}
+
+.pip-return,
+.pip-return:focused,
+.pip-pin,
+.pip-pin:focused {
+    -fx-background-color: rgba(0, 0, 0, 0.72);
+    -fx-background-radius: 18;
+    -fx-padding: 8;
+    -fx-cursor: hand;
+}
+
+.pip-return:hover,
+.pip-return:focused:hover,
+.pip-pin:hover,
+.pip-pin:focused:hover {
+    -fx-background-color: rgba(35, 35, 35, 0.9);
+}
+
+.pip-return:focused {
+    -fx-border-color: white;
+    -fx-border-radius: 18;
+}
+
+/* Keep keyboard focus visible without an outline around the pin. */
+.pip-window .pip-pin:focused {
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-color: #385773;
+}
+
+.pip-return .icon,
+.pip-return:hover .icon,
+.pip-pin .icon,
+.pip-pin:hover .icon {
+    -fx-background-color: white;
+}
+
+.pip-pin:selected,
+.pip-pin:selected:hover {
+    -fx-background-color: #1672a5;
+}
+
+.pip-window .pip-pin:selected:focused {
+    -fx-background-color: #2789bc;
+}
+
+.pip-window .pip-pin:selected .icon,
+.pip-window .pip-pin:selected:hover .icon {
+    -fx-background-color: white;
+}
+
+.pip-resize-grip {
+    -fx-background-color: rgba(0, 0, 0, 0.65);
+    -fx-background-radius: 12;
+}
+
+.pip-resize-icon {
+    -fx-background-color: white;
+    -fx-shape: "M2 12L12 2V5L5 12Z M7 12L12 7V10L10 12Z";
+}
+
+.pip-hint {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-padding: 6 10;
+    -fx-wrap-text: true;
+}
+
 .toolbar-button > .arrow-button {
     -fx-padding: 0 0 0 4;
 }

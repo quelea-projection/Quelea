@@ -26,4 +26,5 @@ quelea (2027.0) stable
   * Save notices without showing them live
   * Images, PDF pages and presentation slides that don't fill the projector screen now have black bars around them instead of see-through ones
   * Add ability to countdown to time of day
+  * Picture-in-picture mode shows a compact Quelea logo while using other applications; hover to expand it into a live preview, or pin the preview open. The main projection can optionally remain visible; the stage view remains active.
   * Various minor bugfixes
