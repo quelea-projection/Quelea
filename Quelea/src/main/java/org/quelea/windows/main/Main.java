@@ -21,8 +21,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.freedesktop.gstreamer.Gst;
-import org.freedesktop.gstreamer.Version;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
@@ -110,7 +108,7 @@ public final class Main extends Application {
                 else {
                     GStreamerUtils.configurePaths();
                     try {
-                        Gst.init(Version.BASELINE, "Quelea");
+                        GStreamerUtils.init("Quelea");
                         GStreamerUtils.setFeaturePriorities();
                         gok = true;
                     } catch (UnsatisfiedLinkError err) {

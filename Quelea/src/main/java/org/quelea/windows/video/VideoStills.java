@@ -124,6 +124,7 @@ public final class VideoStills {
         PauseTransition timeout = new PauseTransition(GRAB_TIMEOUT);
         Image[] still = new Image[1];
         boolean[] seeked = new boolean[1];
+        boolean[] durationAsked = new boolean[1];
         boolean[] done = new boolean[1];
 
         Runnable finish = () -> {
@@ -155,14 +156,25 @@ public final class VideoStills {
             if (frame != null) {
                 still[0] = frame;
             }
-            long duration = vid.getDuration();
-            if (!seeked[0] && duration > 0) {
+            if (seeked[0]) {
+                finish.run();
+            } else if (!durationAsked[0]) {
                 // Keep the first frame as a fallback, then move a little way in.
-                seeked[0] = true;
-                vid.seek(Math.min(0.1, (double) GRAB_POSITION_NANOS / duration));
-                return;
+                // The duration is asked for off the FX thread: GStreamer
+                // queries can block.
+                durationAsked[0] = true;
+                vid.queryDuration(duration -> {
+                    if (done[0]) {
+                        return;
+                    }
+                    if (duration > 0) {
+                        seeked[0] = true;
+                        vid.seek(Math.min(0.1, (double) GRAB_POSITION_NANOS / duration));
+                    } else {
+                        finish.run();
+                    }
+                });
             }
-            finish.run();
         });
         timeout.setOnFinished(e -> finish.run());
         timeout.play();

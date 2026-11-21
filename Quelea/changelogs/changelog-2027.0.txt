@@ -23,4 +23,5 @@ quelea (2027.0) stable
   * Save notices without showing them live
   * Images, PDF pages and presentation slides that don't fill the projector screen now have black bars around them instead of see-through ones
   * Add ability to countdown to time of day
+  * Fix Quelea freezing or crashing (mostly on macOS) when switching between video themes or while videos play or loop; theme background and logo videos now play without sound
   * Various minor bugfixes

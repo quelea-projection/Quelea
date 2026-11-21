@@ -3,8 +3,6 @@ package org.quelea.testutil;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.scene.paint.Color;
-import org.freedesktop.gstreamer.Gst;
-import org.freedesktop.gstreamer.Version;
 import org.junit.jupiter.api.Assumptions;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
@@ -80,7 +78,7 @@ public final class VideoTestSupport {
         Platform.setImplicitExit(false);
         try {
             GStreamerUtils.configurePaths();
-            Gst.init(Version.BASELINE, "QueleaTest");
+            GStreamerUtils.init("QueleaTest");
             GStreamerInitState.INIT_SUCCESS = true;
         } catch (Throwable ex) {
             unavailableReason = "GStreamer couldn't be initialised: " + ex;

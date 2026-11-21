@@ -4,63 +4,41 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
-import org.freedesktop.gstreamer.Bus;
-import org.freedesktop.gstreamer.Format;
-import org.freedesktop.gstreamer.elements.PlayBin;
-import org.freedesktop.gstreamer.event.SeekFlags;
-import org.quelea.services.utils.GStreamerInitState;
 
 import java.net.URI;
-import java.util.EnumSet;
 import java.util.Objects;
 
+/**
+ * Plays the logo video on the projection screen, looping and without sound.
+ * Must be used on the FX thread.
+ */
 public class VidLogoDisplay {
 
     public static final VidLogoDisplay INSTANCE = new VidLogoDisplay();
 
-
-    private PlayBin playBin;
-    private FXImageSink fxImageSink;
+    private final ReadOnlyObjectWrapper<Image> image = new ReadOnlyObjectWrapper<>(new WritableImage(1, 1));
+    /** Created on first use, like any other video display (see {@link VidDisplay}). */
+    private VidDisplay display;
     private URI uri;
-    private static final Image BLANK_IMG;
-
-    static {
-        BLANK_IMG = new WritableImage(1, 1);
-        ((WritableImage) BLANK_IMG).getPixelWriter().setColor(0, 0, Color.BLACK);
-    }
 
     private VidLogoDisplay() {
-        if (GStreamerInitState.INIT_SUCCESS) {
-            fxImageSink = new FXImageSink();
-            playBin = new PlayBin("playbin logo");
-            playBin.setVideoSink(fxImageSink.getSinkElement());
-            playBin.getBus().connect((Bus.EOS) source -> {
-                playBin.seekSimple(Format.TIME, EnumSet.of(SeekFlags.FLUSH), 0);
-            });
-            playBin.setVolume(0);
-        }
     }
 
     public ReadOnlyObjectProperty<? extends Image> imageProperty() {
-        if (fxImageSink == null) {
-            return new ReadOnlyObjectWrapper<>(BLANK_IMG);
-        }
-        return fxImageSink.imageProperty();
+        return image.getReadOnlyProperty();
     }
-
 
     public void setURI(URI uri) {
         if (!Objects.equals(this.uri, uri)) {
             this.uri = uri;
-            if (playBin != null) {
-                playBin.stop();
-                fxImageSink.clear();
-                playBin.setURI(VideoUri.forGStreamer(uri));
-                playBin.play();
+            if (display == null) {
+                // Video only: a muted pipeline would still open an audio output.
+                display = new VidDisplay(false);
+                display.setLoop(true);
+                image.bind(display.imageProperty());
             }
+            display.setURI(uri);
+            display.play();
         }
     }
-
-
 }

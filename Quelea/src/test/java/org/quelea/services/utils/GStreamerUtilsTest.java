@@ -45,4 +45,28 @@ class GStreamerUtilsTest {
         Assertions.assertEquals(bin + File.separator, GStreamerUtils.findWindowsLocation(environment, true));
         Assertions.assertEquals("", GStreamerUtils.findWindowsLocation(environment, false));
     }
+
+    @Test
+    void initialisesGStreamerWithoutItsSegfaultHandler() {
+        // GStreamer's handler, installed while it loads plugins, would exit the
+        // JVM on the SIGSEGVs the JVM raises (and handles) itself.
+        org.quelea.testutil.VideoTestSupport.assumeVideoAvailable();
+        Assertions.assertEquals(0, gstreamerLibrary().getFunction("gst_segtrap_is_enabled").invokeInt(new Object[0]));
+    }
+
+    /**
+     * The library gst1-java uses, found the way it finds it. The macOS framework
+     * also has a separate copy under another name, with its own state.
+     */
+    private static com.sun.jna.NativeLibrary gstreamerLibrary() {
+        UnsatisfiedLinkError failure = null;
+        for (String name : new String[]{"gstreamer-1.0.0", "gstreamer-1.0-0", "gstreamer-1.0"}) {
+            try {
+                return com.sun.jna.NativeLibrary.getInstance(name);
+            } catch (UnsatisfiedLinkError ex) {
+                failure = ex;
+            }
+        }
+        throw failure;
+    }
 }

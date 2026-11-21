@@ -411,7 +411,11 @@ public class LyricDrawer extends WordDrawer {
             if (playVideo) {
                 var uri = ((VideoBackground) theme.getBackground()).getVideoFile().toURI();
                 if (vidDisplay == null) {
-                    vidDisplay = new VidDisplay();
+                    // Video only: a background is never meant to be heard, the
+                    // same background plays in several previews at once, and
+                    // every audio output that starts or stops (including at
+                    // each loop) risks a CoreAudio deadlock on macOS.
+                    vidDisplay = new VidDisplay(false);
                     vidDisplay.setLoop(true);
                 }
                 if (!Objects.equals(vidDisplay.getUri(), uri)) {

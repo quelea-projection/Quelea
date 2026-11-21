@@ -3,8 +3,12 @@ package org.quelea.windows.video;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -103,5 +107,71 @@ public class VidDisplayLifecycleTest {
         });
         Image image = frame.get(20, TimeUnit.SECONDS);
         Assertions.assertTrue(image.getWidth() > 1 && image.getHeight() > 1);
+    }
+
+    @Test
+    @DisplayName("Position and end-of-video callbacks arrive on the FX thread")
+    public void callbacksRunOnFxThread(@TempDir Path directory) throws Exception {
+        temporaryVideo = copyResource("short-with-audio.mp4", directory);
+        CompletableFuture<Boolean> finished = new CompletableFuture<>();
+        AtomicInteger positions = new AtomicInteger();
+        AtomicBoolean positionsOnFx = new AtomicBoolean(true);
+        onFx(() -> {
+            display = new VidDisplay(false);
+            display.setOnPosChanged(position -> {
+                positions.incrementAndGet();
+                positionsOnFx.compareAndSet(true, Platform.isFxApplicationThread());
+            });
+            display.setOnFinished(() -> finished.complete(Platform.isFxApplicationThread()));
+            display.setURI(temporaryVideo.toUri());
+            display.play();
+        });
+        Assertions.assertTrue(finished.get(20, TimeUnit.SECONDS), "onFinished must run on the FX thread");
+        Assertions.assertTrue(positions.get() > 0, "Positions should be reported while playing");
+        Assertions.assertTrue(positionsOnFx.get(), "Positions must be reported on the FX thread");
+    }
+
+    @Test
+    @DisplayName("Stopping releases the pipeline; playing another file starts a new one")
+    public void stopAndPlayAnotherFile(@TempDir Path directory) throws Exception {
+        Path first = copyResource("short-with-audio.mp4", directory);
+        temporaryVideo = copyResource("short-with-audio-2.mp4", directory);
+        onFx(() -> {
+            display = new VidDisplay(false);
+            display.setLoop(true);
+            display.setURI(first.toUri());
+            display.play();
+        });
+        Assertions.assertTrue(waitFor(() -> display.imageProperty().get().getWidth() > 1, 20_000),
+                "The first video should play");
+        Image firstFrame = onFx(() -> {
+            Image frame = display.imageProperty().get();
+            display.stop();
+            Assertions.assertEquals(1, display.imageProperty().get().getWidth(), "Stopping clears the image");
+            display.setURI(temporaryVideo.toUri());
+            display.play();
+            return frame;
+        });
+        Assertions.assertTrue(waitFor(() -> display.imageProperty().get().getWidth() > 1
+                && display.imageProperty().get() != firstFrame, 20_000), "The second video should play");
+        Assertions.assertEquals(baseline + 1, activePipelines());
+        // The first file must be let go of once its pipeline is gone.
+        Assertions.assertTrue(waitFor(() -> {
+            try {
+                Files.delete(first);
+                return true;
+            } catch (IOException ex) {
+                return false;
+            }
+        }, 10_000), "The stopped pipeline must release its file");
+    }
+
+    private static Path copyResource(String name, Path directory) throws IOException {
+        try (InputStream in = VidDisplayLifecycleTest.class.getResourceAsStream(name)) {
+            Assertions.assertNotNull(in, name);
+            Path target = directory.resolve(name);
+            Files.copy(in, target);
+            return target;
+        }
     }
 }
