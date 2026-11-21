@@ -161,7 +161,18 @@ public abstract class WordDrawer extends DisplayableDrawer {
         if (translateFont == null) {
             return null;
         }
-        return new Font(translateFont.getName(), Math.max(1, fontSize - QueleaProperties.get().getTranslationFontSizeOffset()));
+        return new Font(translateFont.getName(), getTranslateFontSize(fontSize));
+    }
+
+    /**
+     * Get the size to draw translations (and the other bible versions) at
+     * when the main text is drawn at the given size.
+     *
+     * @param fontSize the size of the main text.
+     * @return the size of the translation.
+     */
+    protected double getTranslateFontSize(double fontSize) {
+        return Math.max(1, fontSize - QueleaProperties.get().getTranslationFontSizeOffset());
     }
 
     /**

@@ -68,6 +68,12 @@ public class ThemeDTO implements Serializable {
     private Boolean isTranslateFontItalic = false;
     private int textPosition = -1;
     private int textAlignment = 0;
+    /**
+     * The size of the translation as a percentage of the main text, or 0 if
+     * not set (older themes), in which case the translation is a few points
+     * smaller than the main text.
+     */
+    private int translateFontSizePercent = 0;
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -104,6 +110,40 @@ public class ThemeDTO implements Serializable {
 
     public int getTextAlignment() {
         return textAlignment;
+    }
+
+    /**
+     * Get the size of the translation as a percentage of the size of the
+     * main text.
+     * <p/>
+     * @return the percentage, or 0 if it isn't set.
+     */
+    public int getTranslateFontSizePercent() {
+        return translateFontSizePercent;
+    }
+
+    /**
+     * Set the size of the translation as a percentage of the size of the
+     * main text.
+     * <p/>
+     * @param percent the percentage, or 0 to leave it unset.
+     */
+    public void setTranslateFontSizePercent(int percent) {
+        this.translateFontSizePercent = Math.max(0, percent);
+    }
+
+    /**
+     * Get the size to draw the translation at when the main text is drawn at
+     * the given size.
+     * <p/>
+     * @param fontSize the size of the main text.
+     * @return the size of the translation.
+     */
+    public double getTranslateFontSize(double fontSize) {
+        if (translateFontSizePercent > 0) {
+            return Math.max(1, fontSize * translateFontSizePercent / 100.0);
+        }
+        return Math.max(1, fontSize - QueleaProperties.get().getTranslationFontSizeOffset());
     }
 
     public void setTextAlignment(int textAlignment) {
@@ -247,6 +287,7 @@ public class ThemeDTO implements Serializable {
                 && Objects.equals(isTranslateFontItalic, other.isTranslateFontItalic)
                 && textPosition == other.textPosition
                 && textAlignment == other.textAlignment
+                && translateFontSizePercent == other.translateFontSizePercent
                 && (ignoreName || Objects.equals(themeName, other.themeName));
     }
 
@@ -300,6 +341,7 @@ public class ThemeDTO implements Serializable {
                 textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
                 backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidStretch, textPosition, textAlignment);
+        theme.setTranslateFontSize(translateFontSizePercent);
         return theme;
     }
 
@@ -326,6 +368,7 @@ public class ThemeDTO implements Serializable {
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), translateFont, Utils.parseColour(theme.getTranslateFontcolour()),
                 background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
         ret.themeName = theme.getName();
+        ret.setTranslateFontSizePercent(theme.getTranslateFontSize());
         return ret;
     }
 
@@ -363,6 +406,9 @@ public class ThemeDTO implements Serializable {
         ret.append("$isFontItalic:").append(isFontItalic);
         ret.append("$isTranslateFontBold:").append(isTranslateFontBold);
         ret.append("$isTranslateFontItalic:").append(isTranslateFontItalic);
+        if (translateFontSizePercent > 0) {
+            ret.append("$translatefontsize:").append(translateFontSizePercent);
+        }
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
             ret.append("$vidstretch:").append(((VideoBackground) background).getStretch());
@@ -418,6 +464,7 @@ public class ThemeDTO implements Serializable {
         String vidStretch = "false";
         String textPosition = "-1";
         String textAlignment = "0";
+        String translateFontSize = "0";
         for (String part : content.split("\\$")) {
             if (!part.contains(":")) {
                 continue;
@@ -473,6 +520,8 @@ public class ThemeDTO implements Serializable {
                 textPosition = parts[1];
             } else if (parts[0].equalsIgnoreCase("textalignment")) {
                 textAlignment = parts[1];
+            } else if (parts[0].equalsIgnoreCase("translatefontsize")) {
+                translateFontSize = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
@@ -513,6 +562,11 @@ public class ThemeDTO implements Serializable {
                 background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic),
                 Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
         ret.themeName = themeName;
+        try {
+            ret.setTranslateFontSizePercent(Integer.parseInt(translateFontSize.trim()));
+        } catch (NumberFormatException ex) {
+            LOGGER.log(Level.WARNING, "Invalid translation size in theme: " + translateFontSize);
+        }
         return ret;
     }
 

@@ -28,4 +28,5 @@ quelea (2027.0) stable
   * Add ability to countdown to time of day
   * Picture-in-picture mode shows a compact Quelea logo while using other applications; hover to expand it into a live preview, or pin the preview open. The main projection can optionally remain visible; the stage view remains active.
   * Fix picture-in-picture staying expanded when switching from keyboard navigation back to the mouse
+  * The size of translations compared to the main text can be set in the theme, so both can be the same size
   * Various minor bugfixes

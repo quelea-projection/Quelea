@@ -889,3 +889,5 @@ bible.versions.label=Bibelversioner
 bible.versions.hint=Versionerna visas i den ordning du kryssar i dem. Den första är standard, även för fjärrkontrollen. Kryssa i fler för att visa nya bibelställen i flera versioner. Du kan fortfarande byta versioner i bibelfliken.
 default.bible.badge=Standard
 bible.delete.button=Ta bort bibel
+translation.size.label=Storlek
+translation.size.tooltip=Översättningens storlek jämfört med huvudtexten (100 % är samma storlek)

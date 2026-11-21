@@ -980,3 +980,5 @@ bible.versions.label=Bible versions
 bible.versions.hint=The versions are shown in the order you tick them. The first one is the default, also for the remote control. Tick more than one to show new passages in several versions. You can still change the versions in the Bibles tab.
 default.bible.badge=Default
 bible.delete.button=Delete bible
+translation.size.label=Size
+translation.size.tooltip=Size of the translation compared to the main text (100% is the same size)
