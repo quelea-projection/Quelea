@@ -34,13 +34,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.activeSelectionColorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.additionalLineSpacingKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.advanceOnLiveKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.alwaysUseMultiBibleKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoDetectPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.bibleVersionSeparatorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoTranslateKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.autoplayVidKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.blackFadeDurationKey;
@@ -98,6 +101,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.maxCharsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.maxFontSizeKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.minLinesKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.mobLyricsPortKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.multiBibleVersionsKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBackgroundColourKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxHeightKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.noticeBoxSpeedKey;
@@ -2609,6 +2613,79 @@ public final class QueleaProperties extends SortedProperties {
     public void setUse24HourClock(boolean s24h) {
         setProperty(use24hClockKey, Boolean.toString(s24h));
         write();
+    }
+
+    /**
+     * Determine whether new passages should be shown in the versions from
+     * {@link #getMultiBibleVersions()} as well.
+     *
+     * @return true if they should, false otherwise.
+     */
+    public boolean getAlwaysUseMultiBible() {
+        return Boolean.parseBoolean(getProperty(alwaysUseMultiBibleKey, "false"));
+    }
+
+    /**
+     * Get the names of the bibles to show new passages in. Stored one per line,
+     * as a bible name can contain anything else.
+     *
+     * @return the names, in display order.
+     */
+    public List<String> getMultiBibleVersions() {
+        String versions = getProperty(multiBibleVersionsKey, "");
+        return versions.isEmpty() ? new ArrayList<>() : new ArrayList<>(Arrays.asList(versions.split("\n")));
+    }
+
+    /**
+     * Get the bible versions new passages are shown in: the default bible,
+     * followed by the other versions if they're always used.
+     *
+     * @return the names, in display order. Empty if there's no default bible.
+     */
+    public List<String> getBibleVersions() {
+        List<String> ret = new ArrayList<>();
+        String defaultBible = getDefaultBible();
+        if (defaultBible == null || defaultBible.isEmpty()) {
+            return ret;
+        }
+        ret.add(defaultBible);
+        if (getAlwaysUseMultiBible()) {
+            for (String name : getMultiBibleVersions()) {
+                if (!ret.contains(name)) {
+                    ret.add(name);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Set the bible versions new passages are shown in. The first one becomes
+     * the default bible. With only one, the other versions chosen before are
+     * kept, just not used, so they come back if more versions are chosen
+     * again.
+     *
+     * @param names the names, in display order.
+     */
+    public void setBibleVersions(List<String> names) {
+        if (names.isEmpty()) {
+            return;
+        }
+        setProperty(defaultBibleKey, names.getFirst());
+        setProperty(alwaysUseMultiBibleKey, Boolean.toString(names.size() > 1));
+        if (names.size() > 1) {
+            setProperty(multiBibleVersionsKey, String.join("\n", names.subList(1, names.size())));
+        }
+    }
+
+    /**
+     * Determine whether a line should be drawn between bible versions shown
+     * on the same slide (with a smaller gap than the empty line otherwise.)
+     *
+     * @return true if it should, false otherwise.
+     */
+    public boolean getBibleVersionSeparator() {
+        return Boolean.parseBoolean(getProperty(bibleVersionSeparatorKey, "true"));
     }
 
     public boolean getBibleSplitVerses() {

@@ -17,22 +17,19 @@
  */
 package org.quelea.windows.options;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.SingleSelectionField;
+import com.dlsc.formsfx.model.structure.StringField;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.data.bible.Bible;
-import org.quelea.data.bible.BibleManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.options.customprefs.DefaultBibleSelector;
+import org.quelea.windows.options.customprefs.BibleVersionsList;
 
 import static org.quelea.services.utils.QueleaPropertyKeys.*;
 import org.quelea.windows.style.QueleaIcon;
@@ -45,7 +42,7 @@ import org.quelea.windows.style.QueleaIcon;
  */
 public class OptionsBiblePanel {
     private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings;
-    private Setting defaultBibleSetting;
+    private Setting bibleVersionsSetting;
     private Setting showVerseNumSetting;
     private SimpleBooleanProperty showVerseNumProperty;
     private Setting splitVersesSetting;
@@ -54,6 +51,7 @@ public class OptionsBiblePanel {
     private SimpleBooleanProperty useMaxVersesProperty;
     private Setting maxVersesSetting;
     private SimpleIntegerProperty maxVersesProperty;
+    private Setting versionSeparatorSetting;
 
     /**
      * Create the options bible panel.
@@ -67,15 +65,11 @@ public class OptionsBiblePanel {
         useMaxVersesProperty = new SimpleBooleanProperty(QueleaProperties.get().getBibleUsingMaxChars());
         maxVersesProperty = new SimpleIntegerProperty(QueleaProperties.get().getMaxBibleVerses());
 
-        ArrayList<String> bibles = new ArrayList<>();
-        for (Bible b : BibleManager.get().getBibles()) {
-            bibles.add(b.getName());
-        }
-
-        ObjectProperty<String> bibleSelection = new SimpleObjectProperty<>(QueleaProperties.get().getDefaultBible());
-        SingleSelectionField<String> bibleField = Field.ofSingleSelectionType(bibles).render(new DefaultBibleSelector());
-        defaultBibleSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("default.bible.label"), bibleField, bibleSelection).customKey(defaultBibleKey);
-        bibleField.selectionProperty().bindBidirectional(bibleSelection);
+        // The default bible and the versions to show new passages in, in one list
+        StringProperty bibleVersionsProperty = new SimpleStringProperty(String.join("\n", QueleaProperties.get().getBibleVersions()));
+        StringField bibleVersionsField = Field.ofStringType(bibleVersionsProperty).render(new BibleVersionsList());
+        bibleVersionsSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("bible.versions.label"),
+                bibleVersionsField, bibleVersionsProperty).customKey(bibleVersionsKey);
 
         showVerseNumSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"),
                 showVerseNumProperty).customKey(showVerseNumbersKey);
@@ -88,17 +82,22 @@ public class OptionsBiblePanel {
 
         maxVersesSetting = Setting.of("",
                 maxVersesProperty).customKey(maxBibleVersesKey);
+
+
+        versionSeparatorSetting = Setting.of(LabelGrabber.INSTANCE.getLabel("bible.version.separator.label"),
+                new SimpleBooleanProperty(QueleaProperties.get().getBibleVersionSeparator())).customKey(bibleVersionSeparatorKey);
     }
 
     public Category getBiblesTab() {
         bindings.put((Field<?>) maxVersesSetting.getElement(), useMaxVersesProperty.not());
 
         return Category.of(LabelGrabber.INSTANCE.getLabel("bible.options.heading"), QueleaIcon.BIBLE.create(),
-                defaultBibleSetting,
+                bibleVersionsSetting,
                 showVerseNumSetting,
                 splitVersesSetting,
                 useMaxVersesSetting,
-                maxVersesSetting
+                maxVersesSetting,
+                versionSeparatorSetting
         );
     }
 }

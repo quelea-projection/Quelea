@@ -34,6 +34,8 @@ public class BibleReferenceParserTest {
         appendBook(xml, 9, "1 Korinthierbrevet", 16, 20);
         appendBook(xml, 10, "2 Korinthierbrevet", 13, 20);
         appendBook(xml, 11, "1 Johannesbrevet", 5, 10);
+        appendBook(xml, 12, "4 Mosebok", 3, 5);
+        appendBook(xml, 13, "5 Mosebok", 3, 5);
         xml.append("</XMLBIBLE>");
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .parse(new ByteArrayInputStream(xml.toString().getBytes(StandardCharsets.UTF_8)));
@@ -75,6 +77,12 @@ public class BibleReferenceParserTest {
         assertLocation("I Mos 3:1", "1 Mosebok 3:1");
         assertLocation("II Mos 3:1", "2 Mosebok 3:1");
         assertLocation("Andra Mos 3:1", "2 Mosebok 3:1");
+        assertLocation("4 Mos 3:1", "4 Mosebok 3:1");
+        assertLocation("5 mos 3:1", "5 Mosebok 3:1");
+        assertLocation("5Mos 3", "5 Mosebok 3");
+        assertLocation("IV Mos 3:1", "4 Mosebok 3:1");
+        assertLocation("V Mos 3:1", "5 Mosebok 3:1");
+        assertLocation("Femte Mos 3:1", "5 Mosebok 3:1");
         assertLocation("Första Kor 13:4-7", "1 Korinthierbrevet 13:4-7");
         assertLocation("1 Kor 13", "1 Korinthierbrevet 13");
         assertLocation("Höga Visan 2:1", "Höga Visan 2:1");
