@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -46,6 +48,7 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
@@ -63,6 +66,7 @@ import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleReferenceParser;
 import org.quelea.data.bible.BibleReferenceParser.Lookup;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.BibleVersionText;
 import org.quelea.data.bible.versification.Versification;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
@@ -148,6 +152,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     private final List<Button> chapterGridItems = new ArrayList<>();
     private final List<Button> chapterRailItems = new ArrayList<>();
     private final Set<BibleVerse> chosenVerses = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Map<String, String> chosenReferences = new HashMap<>();
+    private final TextField matchField = new TextField();
+    private final Label matchNote = new Label();
+    private final Button matchApply = new Button(LabelGrabber.INSTANCE.getLabel("bible.match.apply.button"));
+    private String chosenFor;
+    private Bible matchEditing;
+    private BiblePassage preview;
 
     private Bible shownBible;
     private BibleBook shownBook;
@@ -225,6 +236,25 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         selectionBar.getStyleClass().add("bible-selection-bar");
 
         getChildren().addAll(versionPane, searchRow, browser, selectionBar);
+
+        matchField.getStyleClass().add("bible-match-field");
+        HBox.setHgrow(matchField, Priority.ALWAYS);
+        matchField.textProperty().addListener((obs, oldText, newText) -> updateMatchNote());
+        matchField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER && !matchApply.isDisabled()) {
+                applyChosenVerses();
+                event.consume();
+            } else if (event.getCode() == KeyCode.ESCAPE) {
+                closeMatchEditor();
+                event.consume();
+            }
+        });
+        StyleManager.markPrimaryButton(matchApply);
+        matchApply.setMinWidth(Region.USE_PREF_SIZE);
+        matchApply.setOnAction(event -> applyChosenVerses());
+        matchNote.getStyleClass().add("bible-match-note");
+        matchNote.setWrapText(true);
+        matchNote.setMinHeight(Region.USE_PREF_SIZE);
 
         versions.addListener((ListChangeListener<Bible>) change -> versionsChanged());
         searchField.textProperty().addListener((obs, oldText, newText) -> {
@@ -409,7 +439,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         if (lookup.reference() == null || typingBook || versions.isEmpty()) {
             return;
         }
-        BiblePassage passage = SelectBibleVersionActionHandler.createPassage(lookup.reference(), List.copyOf(versions));
+        BiblePassage passage = SelectBibleVersionActionHandler.createPassage(lookup.reference(), List.copyOf(versions),
+                Map.copyOf(chosenReferences));
         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
         // Stay in the book, as the next passage is often from the same one
         searchField.setText(lookup.reference().book().getBookName() + " ");
@@ -658,15 +689,16 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             title = lookup.reference().getLocation();
             detail = versions.stream().map(Bible::getBibleName).collect(Collectors.joining(" + "));
             hint = chapter == null ? "" : LabelGrabber.INSTANCE.getLabel("bible.range.hint");
-            if (chapter != null) {
-                addVerseCountWarnings(chapter);
-            }
+            addMatchBoxes();
         } else if (chapter != null) {
             title = lookup.book().getBookName() + " " + lookup.chapter();
             detail = LabelGrabber.INSTANCE.getLabel("bible.pick.verses.hint");
         } else if (lookup.book() != null && !typingBook) {
             title = lookup.book().getBookName();
             detail = LabelGrabber.INSTANCE.getLabel("bible.pick.chapter.hint");
+        }
+        if (lookup.reference() == null || typingBook) {
+            preview = null;
         }
         selectionTitle.setText(title);
         selectionDetail.setText(detail);
@@ -677,44 +709,227 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     }
 
     /**
-     * Warn when another version has a different number of verses in the
-     * chapter, as its verse numbers may then not line up with the first one's.
+     * Work out how the passage will be shown in the other versions, keeping the
+     * verses the user chose for this passage.
+     *
+     * @return the passage in every version, or null if there is only one.
      */
-    /**
-     * Determine whether Quelea knows how both bibles number every verse of a
-     * chapter, so that the verses pair up even if the numbers differ.
-     */
-    private static boolean isMatchKnown(BibleChapter chapter, Bible other) {
-        for (BibleVerse verse : chapter.getVerses()) {
-            if (!Versification.match(verse, other).certain()) {
-                return false;
-            }
+    private BiblePassage createPreview() {
+        String key = getPrimaryBible().getBibleName() + "|" + lookup.reference().getLocation();
+        if (!key.equals(chosenFor)) {
+            chosenFor = key;
+            chosenReferences.clear();
+            matchEditing = null;
         }
-        return true;
+        chosenReferences.keySet().removeIf(name -> versions.stream().noneMatch(bible -> bible.getBibleName().equals(name)));
+        if (matchEditing != null && !versions.subList(1, versions.size()).contains(matchEditing)) {
+            matchEditing = null;
+        }
+        if (versions.size() < 2) {
+            return null;
+        }
+        BibleReferenceParser.Reference reference = lookup.reference();
+        return new BiblePassage(getPrimaryBible().getName(), reference.getLocation(),
+                reference.verses().toArray(new BibleVerse[0]), reference.multi()).withVersions(versions, chosenReferences);
     }
 
-    private void addVerseCountWarnings(BibleChapter chapter) {
-        Bible primary = getPrimaryBible();
-        int count = chapter.getVerses().length;
-        for (Bible other : versions.subList(1, versions.size())) {
-            BibleBook book = other.getMatchingBook(lookup.book());
-            BibleChapter otherChapter = book == null ? null : book.getChapter(lookup.chapter() - 1);
-            if (otherChapter == null || otherChapter.getVerses().length == count || isMatchKnown(chapter, other)) {
-                continue;
-            }
-            Label text = new Label(LabelGrabber.INSTANCE.getLabel("bible.verse.count.warning")
-                    .replace("$1", other.getBibleName())
-                    .replace("$2", Integer.toString(otherChapter.getVerses().length))
-                    .replace("$3", lookup.book().getBookName() + " " + lookup.chapter())
-                    .replace("$4", primary.getBibleName())
-                    .replace("$5", Integer.toString(count)));
-            text.setWrapText(true);
-            text.setMinHeight(Region.USE_PREF_SIZE);
-            HBox.setHgrow(text, Priority.ALWAYS);
-            HBox warning = new HBox(QueleaIcon.WARNING.create(14), text);
-            warning.getStyleClass().add("bible-warning");
-            warningBox.getChildren().add(warning);
+    /**
+     * Show how each of the other versions is matched with the first one: the
+     * verses it shows and a button to choose them, a warning where Quelea
+     * doesn't know its numbering, or the field to choose the verses in.
+     */
+    private void addMatchBoxes() {
+        preview = createPreview();
+        if (preview == null || !preview.isParallel()) {
+            return;
         }
+        List<BibleVersionText> texts = preview.getVersionTexts();
+        for (int i = 1; i < versions.size() && i < texts.size(); i++) {
+            Bible other = versions.get(i);
+            BibleVersionText text = texts.get(i);
+            if (other == matchEditing) {
+                warningBox.getChildren().add(matchEditor(other, text));
+            } else if (text.getMatch() != BibleVersionText.Match.CHOSEN
+                    && (text.getMatch() == BibleVersionText.Match.BY_NUMBER || text.getLocation() == null)) {
+                warningBox.getChildren().add(matchWarning(other, text));
+            } else {
+                warningBox.getChildren().add(matchStatus(other, text));
+            }
+        }
+    }
+
+    private HBox matchStatus(Bible other, BibleVersionText text) {
+        Label name = new Label(other.getBibleName());
+        name.getStyleClass().add("bible-match-name");
+        name.setMinWidth(Region.USE_PREF_SIZE);
+        Label location = new Label(text.getLocation());
+        location.setTextOverrun(OverrunStyle.ELLIPSIS);
+        location.setMinWidth(0);
+        HBox heading = new HBox(8, name, location);
+        boolean chosen = text.getMatch() == BibleVersionText.Match.CHOSEN;
+        Label status = new Label(LabelGrabber.INSTANCE.getLabel(chosen ? "bible.match.chosen" : "bible.match.automatic"));
+        status.getStyleClass().addAll("bible-match-status", chosen ? "bible-match-chosen" : "bible-match-automatic");
+        VBox body = new VBox(2, heading, status);
+        body.setMinWidth(0);
+        HBox.setHgrow(body, Priority.ALWAYS);
+        Button change = new Button(LabelGrabber.INSTANCE.getLabel("bible.match.change.button"));
+        change.setMinWidth(Region.USE_PREF_SIZE);
+        change.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("bible.match.choose.button").replace("$1", other.getBibleName())));
+        change.setOnAction(event -> openMatchEditor(other));
+        HBox ret = new HBox(8, body, change);
+        ret.setAlignment(Pos.CENTER_LEFT);
+        ret.getStyleClass().add("bible-match");
+        return ret;
+    }
+
+    private VBox matchWarning(Bible other, BibleVersionText text) {
+        Label message = new Label(LabelGrabber.INSTANCE.getLabel(text.getLocation() == null
+                ? "bible.match.missing.warning" : "bible.match.unknown.warning").replace("$1", other.getBibleName()));
+        message.setWrapText(true);
+        message.setMinHeight(Region.USE_PREF_SIZE);
+        HBox.setHgrow(message, Priority.ALWAYS);
+        HBox row = new HBox(8, QueleaIcon.WARNING.create(14), message);
+        Button choose = new Button(LabelGrabber.INSTANCE.getLabel("bible.match.choose.button").replace("$1", other.getBibleName()));
+        choose.setOnAction(event -> openMatchEditor(other));
+        VBox ret = new VBox(8, row, choose);
+        ret.getStyleClass().add("bible-warning");
+        return ret;
+    }
+
+    private VBox matchEditor(Bible other, BibleVersionText text) {
+        Label heading = new Label(LabelGrabber.INSTANCE.getLabel("bible.match.editor.label")
+                .replace("$1", lookup.reference().getLocation()).replace("$2", other.getBibleName()));
+        heading.getStyleClass().add("bible-match-name");
+        heading.setWrapText(true);
+        heading.setMinHeight(Region.USE_PREF_SIZE);
+        heading.setLabelFor(matchField);
+        Button cancel = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"));
+        cancel.setMinWidth(Region.USE_PREF_SIZE);
+        cancel.setOnAction(event -> closeMatchEditor());
+        HBox row = new HBox(6, matchField, matchApply, cancel);
+        row.setAlignment(Pos.CENTER_LEFT);
+        VBox ret = new VBox(8, heading, row, matchNote);
+        if (text.getMatch() == BibleVersionText.Match.CHOSEN) {
+            Hyperlink reset = new Hyperlink(LabelGrabber.INSTANCE.getLabel("bible.match.reset"));
+            reset.setOnAction(event -> {
+                chosenReferences.remove(other.getBibleName());
+                closeMatchEditor();
+            });
+            ret.getChildren().add(reset);
+        }
+        ret.getStyleClass().add("bible-match-editor");
+        updateMatchNote();
+        return ret;
+    }
+
+    private void openMatchEditor(Bible other) {
+        BibleVersionText text = getPreviewText(other);
+        String start = text == null ? null : text.getChosenReference() != null ? text.getChosenReference() : text.getLocation();
+        if (start == null) {
+            BibleBook book = other.getMatchingBook(lookup.reference().book());
+            start = book == null ? "" : book.getBookName() + " ";
+        }
+        matchEditing = other;
+        refresh();
+        matchField.setText(start);
+        matchField.requestFocus();
+        matchField.end();
+    }
+
+    private void closeMatchEditor() {
+        matchEditing = null;
+        refresh();
+    }
+
+    private void applyChosenVerses() {
+        BibleReferenceParser.Reference chosen = parseChosen();
+        if (matchEditing == null || chosen == null) {
+            return;
+        }
+        chosenReferences.put(matchEditing.getBibleName(), chosen.getLocation());
+        closeMatchEditor();
+    }
+
+    /**
+     * Read the passage typed in the field for choosing the verses of another
+     * version. Chapters and verses without a book, such as "31:2-4" or
+     * "2-4", are in the book and chapter shown now.
+     *
+     * @return the passage, or null if the field doesn't hold one.
+     */
+    private BibleReferenceParser.Reference parseChosen() {
+        if (matchEditing == null) {
+            return null;
+        }
+        String text = matchField.getText().trim();
+        if (text.matches("[\\d\\s:,;\\-\u2013]+")) {
+            BibleVersionText version = getPreviewText(matchEditing);
+            String location = version == null ? null : version.getLocation();
+            BibleBook book = location == null ? matchEditing.getMatchingBook(lookup.reference().book()) : null;
+            String bookName = location != null ? location.replaceFirst(" \\d+:.*$", "") : book == null ? null : book.getBookName();
+            if (bookName == null) {
+                return null;
+            }
+            if (!text.contains(":")) {
+                String chapter = location != null ? location.replaceFirst("^.* (\\d+):.*$", "$1") : Integer.toString(lookup.chapter());
+                text = chapter + ":" + text;
+            }
+            text = bookName + " " + text;
+        }
+        return BiblePassage.resolveChosen(matchEditing, text);
+    }
+
+    private void updateMatchNote() {
+        if (matchEditing == null || preview == null) {
+            return;
+        }
+        BibleReferenceParser.Reference chosen = parseChosen();
+        matchApply.setDisable(chosen == null);
+        toggleStyle(matchNote, "bible-match-error", chosen == null && !matchField.getText().isBlank());
+        String first = getPrimaryBible().getBibleName();
+        String other = matchEditing.getBibleName();
+        int rows = preview.getVerses().length;
+        if (chosen == null) {
+            matchNote.setText(LabelGrabber.INSTANCE.getLabel(matchField.getText().isBlank()
+                    ? "bible.match.note.hint" : "bible.match.note.invalid").replace("$1", other));
+        } else if (chosen.verses().size() == rows) {
+            matchNote.setText(LabelGrabber.INSTANCE.getLabel("bible.match.note.same").replace("$1", first));
+        } else if (chosen.verses().size() > rows) {
+            matchNote.setText(LabelGrabber.INSTANCE.getLabel("bible.match.note.more")
+                    .replace("$1", Integer.toString(chosen.verses().size())).replace("$2", first)
+                    .replace("$3", Integer.toString(rows)));
+        } else {
+            matchNote.setText(LabelGrabber.INSTANCE.getLabel("bible.match.note.fewer")
+                    .replace("$1", Integer.toString(chosen.verses().size())).replace("$2", first)
+                    .replace("$3", Integer.toString(rows)).replace("$4", other));
+        }
+    }
+
+    private BibleVersionText getPreviewText(Bible bible) {
+        if (preview == null) {
+            return null;
+        }
+        int index = versions.indexOf(bible);
+        List<BibleVersionText> texts = preview.getVersionTexts();
+        return index < 0 || index >= texts.size() ? null : texts.get(index);
+    }
+
+    /**
+     * Find the row of the preview a verse of the first version is shown on.
+     *
+     * @return the row, or -1 if the verse isn't in the passage.
+     */
+    private int getPreviewRow(BibleVerse verse) {
+        if (preview == null) {
+            return -1;
+        }
+        BibleVerse[] rows = preview.getVerses();
+        for (int i = 0; i < rows.length; i++) {
+            if (rows[i] == verse) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void scrollToChosen() {
@@ -954,20 +1169,36 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             text.setWrapText(chosen);
             body.getChildren().setAll(text);
             if (chosen) {
+                int row = getPreviewRow(verse);
                 for (Bible other : versions.subList(1, versions.size())) {
-                    List<BibleVerse> found = Versification.match(verse, other).verses();
-                    boolean renumbered = found.size() > 1 || (found.size() == 1
-                            && (found.get(0).getNum() != verse.getNum() || found.get(0).getChapterNum() != verse.getChapterNum()));
-                    Label name = new Label(other.getBibleName() + (renumbered ? " · " + BiblePassage.describe(found) : ""));
-                    name.getStyleClass().add("bible-other-version-name");
-                    List<String> texts = new ArrayList<>();
-                    for (BibleVerse otherVerse : found) {
-                        texts.add(clean(otherVerse.getText()));
+                    BibleVersionText version = row < 0 ? null : getPreviewText(other);
+                    String ref;
+                    String shown;
+                    if (version != null) {
+                        ref = version.getVerseRef(row);
+                        shown = version.getVerseText(row);
+                        if (shown != null && shown.isEmpty()) {
+                            shown = null;
+                            ref = null;
+                        }
+                    } else {
+                        List<BibleVerse> found = Versification.match(verse, other).verses();
+                        boolean renumbered = found.size() > 1 || (found.size() == 1
+                                && (found.get(0).getNum() != verse.getNum() || found.get(0).getChapterNum() != verse.getChapterNum()));
+                        ref = renumbered ? BiblePassage.describe(found) : null;
+                        List<String> texts = new ArrayList<>();
+                        for (BibleVerse otherVerse : found) {
+                            texts.add(clean(otherVerse.getText()));
+                        }
+                        shown = found.isEmpty() ? null : String.join(" ", texts);
                     }
-                    Label otherText = new Label(found.isEmpty()
-                            ? LabelGrabber.INSTANCE.getLabel("bible.not.in.version") : String.join(" ", texts));
+                    boolean above = version != null && "".equals(version.getVerseText(row));
+                    Label name = new Label(other.getBibleName() + (ref != null ? " · " + ref : ""));
+                    name.getStyleClass().add("bible-other-version-name");
+                    Label otherText = new Label(shown != null ? clean(shown) : LabelGrabber.INSTANCE.getLabel(above
+                            && version.getMatch() != BibleVersionText.Match.CHOSEN ? "bible.shown.above" : "bible.not.in.version"));
                     otherText.getStyleClass().add("bible-other-version-text");
-                    if (found.isEmpty()) {
+                    if (shown == null) {
                         otherText.getStyleClass().add("bible-missing");
                     }
                     otherText.setWrapText(true);

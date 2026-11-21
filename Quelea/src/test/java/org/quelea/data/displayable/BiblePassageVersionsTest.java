@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.data.bible.BibleVersionText;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.QueleaPropertyKeys;
 import org.w3c.dom.Document;
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -298,6 +300,59 @@ public class BiblePassageVersionsTest {
         BiblePassage joel = reload(numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(ENGLISH, HEBREW)));
         assertArrayEquals(new String[]{"<sup>28</sup>E 2:28 <sup>29</sup>E 2:29", "<sup>3:1</sup>H 3:1 <sup>3:2</sup>H 3:2"},
                 slide(joel, 0));
+    }
+
+    @Test
+    @DisplayName("Verses chosen for a version are lined up with the first version's")
+    void chosenVerses() {
+        QueleaProperties.get().setProperty(QueleaPropertyKeys.maxBibleVersesKey, "10");
+        BiblePassage passage = numbered(ENGLISH, JOEL, 2, 28, 29)
+                .withVersions(bibles(ENGLISH, HEBREW), Map.of(HEBREW, "Joel 3:2-3"));
+        assertArrayEquals(new String[]{"<sup>28</sup>E 2:28 <sup>29</sup>E 2:29", "<sup>3:2</sup>H 3:2 <sup>3:3</sup>H 3:3"},
+                slide(passage, 0));
+        BibleVersionText hebrew = passage.getVersionTexts().get(1);
+        assertEquals(BibleVersionText.Match.CHOSEN, hebrew.getMatch());
+        assertEquals("Joel 3:2-3", hebrew.getChosenReference());
+        assertEquals(BibleVersionText.Match.AUTOMATIC, passage.getVersionTexts().get(0).getMatch());
+    }
+
+    @Test
+    @DisplayName("Extra chosen verses go with the last verse, and missing ones leave rows empty")
+    void chosenVersesOfAnotherLength() {
+        QueleaProperties.get().setProperty(QueleaPropertyKeys.maxBibleVersesKey, "10");
+        BiblePassage more = numbered(ENGLISH, JOEL, 2, 28, 29)
+                .withVersions(bibles(ENGLISH, HEBREW), Map.of(HEBREW, "Joel 3:1-3"));
+        assertEquals("H 3:2 H 3:3", more.getVersionTexts().get(1).getVerseText(1));
+        assertEquals("3:2-3", more.getVersionTexts().get(1).getVerseRef(1));
+        BiblePassage fewer = numbered(ENGLISH, JOEL, 2, 28, 29)
+                .withVersions(bibles(ENGLISH, HEBREW), Map.of(HEBREW, "Joel 3:1"));
+        assertEquals("", fewer.getVersionTexts().get(1).getVerseText(1));
+        assertTrue(fewer.getMissingVerses().isEmpty());
+        assertArrayEquals(new String[]{"<sup>28</sup>E 2:28 <sup>29</sup>E 2:29", "<sup>3:1</sup>H 3:1"}, slide(fewer, 0));
+    }
+
+    @Test
+    @DisplayName("Chosen verses are kept in the schedule and when the versions change")
+    void chosenVersesAreKept() throws Exception {
+        BiblePassage passage = numbered(ENGLISH, JOEL, 2, 28, 29)
+                .withVersions(bibles(ENGLISH, HEBREW), Map.of(HEBREW, "Joel 3:2-3"));
+        BiblePassage reloaded = reload(passage);
+        assertEquals(Map.of(HEBREW, "Joel 3:2-3"), reloaded.getChosenReferences());
+        assertArrayEquals(slide(passage, 0), slide(reloaded, 0));
+        BiblePassage switched = reloaded.withVersions(bibles(ENGLISH, ALPHA, HEBREW));
+        assertEquals("H 3:2", switched.getVersionTexts().get(2).getVerseText(0));
+        assertTrue(numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(ENGLISH, HEBREW))
+                .getChosenReferences().isEmpty());
+    }
+
+    @Test
+    @DisplayName("A version is marked when its numbering isn't known")
+    void unknownNumberingIsMarked() throws Exception {
+        BiblePassage passage = numbered(ENGLISH, JOEL, 2, 28, 29).withVersions(bibles(ENGLISH, HEBREW));
+        assertEquals(BibleVersionText.Match.AUTOMATIC, passage.getVersionTexts().get(1).getMatch());
+        assertEquals("Joel 3:1-2", passage.getVersionTexts().get(1).getLocation());
+        BiblePassage unknown = john(16, 17).withVersions(bibles(ALPHA, BETA));
+        assertEquals(BibleVersionText.Match.AUTOMATIC, reload(unknown).getVersionTexts().get(1).getMatch());
     }
 
     private static BiblePassage numbered(String bible, int book, int chapter, int from, int to) {

@@ -29,10 +29,31 @@ import java.util.Arrays;
  */
 public final class BibleVersionText implements Serializable {
 
+    /**
+     * How a version's verses were paired with the passage's.
+     */
+    public enum Match {
+        /**
+         * Paired knowing how both bibles number the verses.
+         */
+        AUTOMATIC,
+        /**
+         * Paired by number somewhere, because the numbering of a bible wasn't
+         * known there.
+         */
+        BY_NUMBER,
+        /**
+         * Chosen by the user.
+         */
+        CHOSEN
+    }
+
     private final String bibleName;
     private final String[] verseTexts;
     private final String[] verseRefs;
-    private final boolean certain;
+    private final Match match;
+    private final String chosenReference;
+    private final String location;
 
     /**
      * Create the text of a passage in one version, numbered as the passage.
@@ -42,7 +63,7 @@ public final class BibleVersionText implements Serializable {
      *                   a verse that doesn't exist in this version.
      */
     public BibleVersionText(String bibleName, String[] verseTexts) {
-        this(bibleName, verseTexts, new String[verseTexts.length], true);
+        this(bibleName, verseTexts, new String[verseTexts.length], Match.AUTOMATIC, null, null);
     }
 
     /**
@@ -56,15 +77,20 @@ public final class BibleVersionText implements Serializable {
      * @param verseRefs  this version's own chapter and verse numbers for each
      *                   verse, such as "31:2" or "31:1-2", or null where they
      *                   are the same as the passage's.
-     * @param certain    false if the numbering of the bibles wasn't known in
-     *                   some part of the passage and verses were paired by
-     *                   number there.
+     * @param match      how the verses were paired.
+     * @param chosenReference for verses chosen by the user, the passage they
+     *                   chose in this version, such as "Psalms 31:2-4".
+     * @param location   the book, chapters and verses this version shows, or
+     *                   null if not known.
      */
-    public BibleVersionText(String bibleName, String[] verseTexts, String[] verseRefs, boolean certain) {
+    public BibleVersionText(String bibleName, String[] verseTexts, String[] verseRefs, Match match,
+                            String chosenReference, String location) {
         this.bibleName = bibleName;
         this.verseTexts = Arrays.copyOf(verseTexts, verseTexts.length);
         this.verseRefs = Arrays.copyOf(verseRefs, verseTexts.length);
-        this.certain = certain;
+        this.match = match;
+        this.chosenReference = chosenReference;
+        this.location = location;
     }
 
     /**
@@ -86,7 +112,44 @@ public final class BibleVersionText implements Serializable {
      * numbering of a bible wasn't known there.
      */
     public boolean isCertain() {
-        return certain;
+        return match != Match.BY_NUMBER;
+    }
+
+    /**
+     * Get how the verses were paired with the passage's.
+     *
+     * @return how they were paired.
+     */
+    public Match getMatch() {
+        return match;
+    }
+
+    /**
+     * Get the passage the user chose to show in this version.
+     *
+     * @return the passage, such as "Psalms 31:2-4", or null if the verses
+     * weren't chosen by the user.
+     */
+    public String getChosenReference() {
+        return chosenReference;
+    }
+
+    /**
+     * Get the book, chapters and verses this version shows.
+     *
+     * @return the location, such as "Psalms 31:2-4", or null if not known.
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * Get the number of verses of the passage.
+     *
+     * @return the number of verses.
+     */
+    public int size() {
+        return verseTexts.length;
     }
 
     /**

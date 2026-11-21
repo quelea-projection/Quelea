@@ -106,7 +106,7 @@ public class AddBibleVerseHandler {
         String summary = firstVerse.getChapter().getBook() + " " + passageNumber + "\n" + b.getBibleName();
         BiblePassage replacement = new BiblePassage(summary, newVerses.toArray(new BibleVerse[0]), theme, passage.getMulti());
         if (passage.isParallel()) {
-            replacement = replacement.withVersions(passage.getBibleVersions());
+            replacement = replacement.withVersions(passage.getBibleVersions(), passage.getChosenReferences());
             if (replacement == null) {
                 return;
             }

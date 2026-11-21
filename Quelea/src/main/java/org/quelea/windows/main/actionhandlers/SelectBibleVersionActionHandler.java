@@ -103,16 +103,34 @@ public class SelectBibleVersionActionHandler implements EventHandler<ActionEvent
      * @return the passage to add to the schedule.
      */
     public static BiblePassage createPassage(BibleReferenceParser.Reference reference, List<Bible> bibles) {
+        return createPassage(reference, bibles, Map.of());
+    }
+
+    /**
+     * Make a passage for the schedule from a reference.
+     *
+     * @param reference the passage, looked up in the first of the bibles.
+     * @param bibles the versions to show the passage in, in display order.
+     * @param chosen the passage the user chose for some of the versions, by
+     * bible name. The other versions are paired automatically.
+     * @return the passage to add to the schedule.
+     */
+    public static BiblePassage createPassage(BibleReferenceParser.Reference reference, List<Bible> bibles,
+            Map<String, String> chosen) {
         BiblePassage passage = new BiblePassage(bibles.getFirst().getName(), reference.getLocation(),
                 reference.verses().toArray(new BibleVerse[0]), reference.multi());
-        return applyVersions(passage, bibles);
+        return applyVersions(passage, bibles, chosen);
     }
 
     private static BiblePassage applyVersions(BiblePassage passage, List<Bible> bibles) {
+        return applyVersions(passage, bibles, Map.of());
+    }
+
+    private static BiblePassage applyVersions(BiblePassage passage, List<Bible> bibles, Map<String, String> chosen) {
         if (bibles.size() < 2) {
             return passage;
         }
-        BiblePassage newPassage = passage.withVersions(bibles);
+        BiblePassage newPassage = passage.withVersions(bibles, chosen);
         if (newPassage == null) {
             return passage;
         }
