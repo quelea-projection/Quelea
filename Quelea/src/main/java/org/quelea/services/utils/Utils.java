@@ -655,6 +655,8 @@ public final class Utils {
 		ret.add("PNG");
 		ret.add("tiff");
 		ret.add("TIFF");
+		ret.add("tif");
+		ret.add("TIF");
 		ret.add("jpg");
 		ret.add("JPG");
 		ret.add("jpeg");
