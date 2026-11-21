@@ -543,6 +543,7 @@ public class ScheduleList extends StackPane {
         }
         Background background = video ? new VideoBackground(stored.getName(), true) : new ImageBackground(stored.getName());
         ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), background, dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+        newTheme.setMoreTranslateFontPaints(theme.getMoreTranslateFontPaints());
         for (TextSection section : textDisplayable.getSections()) {
             section.setTheme(newTheme);
         }

@@ -83,14 +83,14 @@ public abstract class WordDrawer extends DisplayableDrawer {
             FXFontMetrics metrics = new FXFontMetrics(translation ? translateFont : font);
             if (i > 0) {
                 if (QueleaProperties.get().getBibleVersionSeparator()) {
-                    lines.add(LyricLine.separator());
+                    lines.add(LyricLine.separator(i - 1));
                     height += metrics.getLineHeight() * VERSION_SEPARATOR_GAP;
                 } else {
                     lines.add(new LyricLine(""));
                     height += metrics.getLineHeight();
                 }
             }
-            List<LyricLine> paragraphLines = wrapParagraph(metrics, paragraphs[i], width, translation);
+            List<LyricLine> paragraphLines = wrapParagraph(metrics, paragraphs[i], width, translation, i - 1);
             lines.addAll(paragraphLines);
             height += metrics.getLineHeight() * paragraphLines.size();
         }
@@ -98,7 +98,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
         return new WrapTextResult(lines, height);
     }
 
-    private List<LyricLine> wrapParagraph(FXFontMetrics metrics, String lineToWrap, double width, boolean translation) {
+    private List<LyricLine> wrapParagraph(FXFontMetrics metrics, String lineToWrap, double width, boolean translation, int translationIndex) {
         String[] words = lineToWrap.split(" ");
         StringBuilder lineBuilder = new StringBuilder();
         List<LyricLine> lines = new ArrayList<>();
@@ -106,14 +106,14 @@ public abstract class WordDrawer extends DisplayableDrawer {
             String word = words[i];
             String potentialStr = lineBuilder.toString() + word;
             if (metrics.computeStringWidth(potentialStr.replace("<sup>", "").replace("</sup>", "")) > width) {
-                lines.add(new LyricLine(translation, lineBuilder.toString()));
+                lines.add(translation ? new LyricLine(lineBuilder.toString(), translationIndex) : new LyricLine(lineBuilder.toString()));
                 lineBuilder = new StringBuilder(word + " ");
             }
             else {
                 lineBuilder.append(word).append(" ");
             }
         }
-        lines.add(new LyricLine(translation, lineBuilder.toString()));
+        lines.add(translation ? new LyricLine(lineBuilder.toString(), translationIndex) : new LyricLine(lineBuilder.toString()));
         return lines;
     }
     

@@ -36,6 +36,7 @@ public class Theme {
     private Boolean videoStretch;
     private Integer textPosition;
     private Integer textAlignment;
+    private String translateFontColours;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
@@ -80,6 +81,7 @@ public class Theme {
         this.videoStretch = theme.videoStretch;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
+        this.translateFontColours = theme.translateFontColours;
     }
 
     /**
@@ -148,6 +150,22 @@ public class Theme {
     
     public void setTextAlignment(Integer textAlignment) {
         this.textAlignment = textAlignment;
+    }
+
+    /**
+     * @return the colours of the second and later translations shown at the
+     * same time, separated by commas, or an empty string.
+     */
+    @Column(name = "translateFontColours", length = STRING_LENGTH)
+    public String getTranslateFontColours() {
+        if (translateFontColours == null) {
+            return "";
+        }
+        return translateFontColours;
+    }
+
+    public void setTranslateFontColours(String translateFontColours) {
+        this.translateFontColours = translateFontColours;
     }
 
     /**

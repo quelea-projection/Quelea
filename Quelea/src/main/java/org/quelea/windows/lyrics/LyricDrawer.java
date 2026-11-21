@@ -251,7 +251,7 @@ public class LyricDrawer extends WordDrawer {
         for (LyricLine line : newText) {
             if (line.isSeparator()) {
                 double gap = translateMetrics.getLineHeight() * VERSION_SEPARATOR_GAP;
-                newTextGroup.getChildren().add(versionSeparator(textWidth, y + gap / 2, translateMetrics.getLineHeight()));
+                newTextGroup.getChildren().add(versionSeparator(textWidth, y + gap / 2, translateMetrics.getLineHeight(), line.getTranslationIndex()));
                 y += gap + getLineSpacing();
                 continue;
             }
@@ -279,7 +279,7 @@ public class LyricDrawer extends WordDrawer {
 
             Color lineColor;
             if (line.isTranslateLine()) {
-                lineColor = theme.getTranslateFontPaint();
+                lineColor = theme.getTranslateFontPaint(line.getTranslationIndex());
             } else {
                 lineColor = theme.getFontPaint();
             }
@@ -385,9 +385,10 @@ public class LyricDrawer extends WordDrawer {
      * @param textWidth the width of the widest line of text.
      * @param y where to draw the line.
      * @param lineHeight the height of a line of the versions below it.
+     * @param translationIndex the version below it (0 for the second.)
      * @return the line.
      */
-    private Line versionSeparator(double textWidth, double y, double lineHeight) {
+    private Line versionSeparator(double textWidth, double y, double lineHeight, int translationIndex) {
         double width = textWidth * 0.6;
         double x;
         if (theme.getTextAlignment() == -1) {
@@ -398,7 +399,7 @@ public class LyricDrawer extends WordDrawer {
             x = (getCanvas().getWidth() - width) / 2;
         }
         Line separator = new Line(x, y, x + width, y);
-        Color colour = theme.getTranslateFontPaint() == null ? ThemeDTO.DEFAULT_FONT_COLOR : theme.getTranslateFontPaint();
+        Color colour = theme.getTranslateFontPaint(translationIndex) == null ? ThemeDTO.DEFAULT_FONT_COLOR : theme.getTranslateFontPaint(translationIndex);
         separator.setStroke(colour);
         separator.setOpacity(0.6);
         separator.setStrokeWidth(Math.max(1, lineHeight * 0.04));

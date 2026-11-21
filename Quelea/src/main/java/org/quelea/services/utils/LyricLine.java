@@ -28,6 +28,7 @@ public class LyricLine {
     private final boolean isTranslateLine;
     private final String line;
     private final boolean separator;
+    private final int translationIndex;
 
     /**
      * Create a new lyric line.
@@ -35,22 +36,35 @@ public class LyricLine {
      * @param line 
      */
     public LyricLine(boolean isTranslateLine, String line) {
-        this(isTranslateLine, line, false);
+        this(isTranslateLine, line, false, 0);
     }
 
-    private LyricLine(boolean isTranslateLine, String line, boolean separator) {
+    /**
+     * Create a new line of one of several translations shown at the same
+     * time (such as bible versions.)
+     * @param line the text of the line.
+     * @param translationIndex which translation: 0 for the first.
+     */
+    public LyricLine(String line, int translationIndex) {
+        this(true, line, false, translationIndex);
+    }
+
+    private LyricLine(boolean isTranslateLine, String line, boolean separator, int translationIndex) {
         this.isTranslateLine = isTranslateLine;
         this.line = line;
         this.separator = separator;
+        this.translationIndex = Math.max(0, translationIndex);
     }
 
     /**
      * Create the gap between two bible versions on one slide, which is drawn
      * as a line where it can be (and as an empty line elsewhere.)
+     * @param translationIndex the translation below the gap: 0 for the
+     * first.
      * @return the separator.
      */
-    public static LyricLine separator() {
-        return new LyricLine(false, "", true);
+    public static LyricLine separator(int translationIndex) {
+        return new LyricLine(false, "", true, translationIndex);
     }
 
     /**
@@ -58,7 +72,16 @@ public class LyricLine {
      * @param line the text for the non-translated line.
      */
     public LyricLine(String line) {
-        this(false, line, false);
+        this(false, line, false, 0);
+    }
+
+    /**
+     * Get which translation this line belongs to, when several are shown at
+     * the same time.
+     * @return 0 for the first translation (or a line that isn't translated.)
+     */
+    public int getTranslationIndex() {
+        return translationIndex;
     }
 
     /**
