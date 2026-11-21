@@ -324,7 +324,9 @@
 }
 
 .pip-return,
-.pip-return:focused {
+.pip-return:focused,
+.pip-pin,
+.pip-pin:focused {
     -fx-background-color: rgba(0, 0, 0, 0.72);
     -fx-background-radius: 18;
     -fx-padding: 8;
@@ -332,7 +334,9 @@
 }
 
 .pip-return:hover,
-.pip-return:focused:hover {
+.pip-return:focused:hover,
+.pip-pin:hover,
+.pip-pin:focused:hover {
     -fx-background-color: rgba(35, 35, 35, 0.9);
 }
 
@@ -341,8 +345,31 @@
     -fx-border-radius: 18;
 }
 
+/* Keep keyboard focus visible without an outline around the pin. */
+.pip-window .pip-pin:focused {
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-color: #385773;
+}
+
 .pip-return .icon,
-.pip-return:hover .icon {
+.pip-return:hover .icon,
+.pip-pin .icon,
+.pip-pin:hover .icon {
+    -fx-background-color: white;
+}
+
+.pip-pin:selected,
+.pip-pin:selected:hover {
+    -fx-background-color: #1672a5;
+}
+
+.pip-window .pip-pin:selected:focused {
+    -fx-background-color: #2789bc;
+}
+
+.pip-window .pip-pin:selected .icon,
+.pip-window .pip-pin:selected:hover .icon {
     -fx-background-color: white;
 }
 

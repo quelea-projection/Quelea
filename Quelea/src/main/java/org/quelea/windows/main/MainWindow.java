@@ -185,7 +185,8 @@ public class MainWindow extends Stage {
         if (pictureInPicture == null) {
             pictureInPicture = new PictureInPictureWindow(this, this::pictureInPictureSource,
                     this::pictureInPictureSlide, this::restorePictureInPictureWebView,
-                    () -> QueleaApp.get().getProjectionWindow());
+                    () -> QueleaApp.get().getProjectionWindow(),
+                    () -> QueleaProperties.get().getHideLiveViewDuringPictureInPicture());
             DisplayStage projection = QueleaApp.get().getProjectionWindow();
             if (projection != null) {
                 projection.showingProperty().addListener((obs, wasShowing, showing) -> updatePictureInPictureWebView());
@@ -202,6 +203,13 @@ public class MainWindow extends Stage {
             } else {
                 projection.hide();
             }
+        }
+    }
+
+    /** Apply a changed PiP projection preference to an already-open PiP window. */
+    public void refreshPictureInPictureProjectionVisibility() {
+        if (pictureInPicture != null) {
+            pictureInPicture.refreshProjectionVisibility();
         }
     }
 

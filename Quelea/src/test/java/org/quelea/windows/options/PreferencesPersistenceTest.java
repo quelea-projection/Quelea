@@ -2,6 +2,7 @@ package org.quelea.windows.options;
 
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.formsfx.model.structure.Field;
+import com.dlsc.formsfx.model.structure.BooleanField;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Setting;
 import java.nio.file.Path;
@@ -63,6 +64,32 @@ class PreferencesPersistenceTest {
             QueleaProperties.init(directory.toString());
             Assertions.assertTrue(QueleaProperties.get().getShowVerseNumbers());
             Assertions.assertFalse(QueleaProperties.get().getUseUniformFontSize());
+            return null;
+        });
+    }
+
+    @Test
+    void pictureInPictureProjectionSettingDefaultsOnAndPersists() throws Exception {
+        FxTestSupport.assumeAvailable();
+        FxTestSupport.onFx(() -> {
+            Assertions.assertTrue(QueleaProperties.get().getHideLiveViewDuringPictureInPicture(),
+                    "existing installations should keep the current PiP behaviour");
+            var group = OptionsDisplaySetupPanel.getPictureInPictureGroup();
+            var field = (BooleanField) group.getSettings().get(0).getElement();
+            var preferences = PreferencesFx.of(new PreferenceStorageHandler(new InMemoryPreferences()),
+                    Category.of("Display", group));
+            Assertions.assertTrue(field.getValue());
+            field.valueProperty().set(false);
+            PreferencesDialog.savePreferences(preferences);
+            QueleaProperties.init(directory.toString());
+            Assertions.assertFalse(QueleaProperties.get().getHideLiveViewDuringPictureInPicture());
+            var reloaded = (BooleanField) OptionsDisplaySetupPanel.getPictureInPictureGroup()
+                    .getSettings().get(0).getElement();
+            Assertions.assertFalse(reloaded.getValue(), "the actual Display setting should reflect the saved value");
+            field.valueProperty().set(true);
+            PreferencesDialog.savePreferences(preferences);
+            QueleaProperties.init(directory.toString());
+            Assertions.assertTrue(QueleaProperties.get().getHideLiveViewDuringPictureInPicture());
             return null;
         });
     }

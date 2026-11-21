@@ -18,10 +18,15 @@ package org.quelea.windows.options;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.preferencesfx.model.Category;
+import com.dlsc.preferencesfx.model.Group;
+import com.dlsc.preferencesfx.model.Setting;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaPropertyKeys;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
 import org.quelea.windows.main.QueleaApp;
 
@@ -63,8 +68,16 @@ public class OptionsDisplaySetupPanel {
                 controlScreen.getGroup(),
                 projectorScreen.getGroup(),
                 stageScreen.getGroup(),
+                getPictureInPictureGroup(),
                 logoGroup.getGroup()
         );
+    }
+
+    static Group getPictureInPictureGroup() {
+        return Group.of(LabelGrabber.INSTANCE.getLabel("picture.in.picture.title"),
+                Setting.of(LabelGrabber.INSTANCE.getLabel("picture.in.picture.hide.live.view"),
+                        new SimpleBooleanProperty(QueleaProperties.get().getHideLiveViewDuringPictureInPicture()))
+                        .customKey(QueleaPropertyKeys.hideLiveViewDuringPictureInPictureKey));
     }
 
 

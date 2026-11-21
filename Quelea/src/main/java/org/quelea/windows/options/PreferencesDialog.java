@@ -122,6 +122,7 @@ public class PreferencesDialog extends Stage {
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
+            QueleaApp.get().getMainWindow().refreshPictureInPictureProjectionVisibility();
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
             // Show any changed logo settings straight away

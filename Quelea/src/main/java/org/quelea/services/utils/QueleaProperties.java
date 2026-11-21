@@ -73,6 +73,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.feedbackLocationKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.globalBibleThemeFileKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.globalSongThemeFileKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.godWordsKey;
+import static org.quelea.services.utils.QueleaPropertyKeys.hideLiveViewDuringPictureInPictureKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.inactiveSelectionColorKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.itemThemeOverrideKey;
 import static org.quelea.services.utils.QueleaPropertyKeys.languageFileKey;
@@ -940,6 +941,11 @@ public final class QueleaProperties extends SortedProperties {
      */
     public boolean getShowExtraLivePanelToolbarOptions() {
         return Boolean.parseBoolean(getProperty(showExtraLivePanelToolbarOptionsKey, "false"));
+    }
+
+    /** Whether PiP temporarily hides Quelea's main projection window. */
+    public boolean getHideLiveViewDuringPictureInPicture() {
+        return Boolean.parseBoolean(getProperty(hideLiveViewDuringPictureInPictureKey, "true"));
     }
 
     /**

@@ -1,12 +1,16 @@
 package org.quelea.windows.main;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,13 +20,16 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -60,12 +67,14 @@ final class PictureInPictureWindow {
     }
     private final Stage main;
     private final Supplier<? extends Stage> projection;
+    private final BooleanSupplier hideProjection;
     private final PictureInPictureProjection projectionVisibility = new PictureInPictureProjection();
     private final Stage window = new Stage();
     private final PictureInPictureMirror mirror;
     private final ImageView slide = new ImageView();
     private final StackPane webHost = new StackPane();
     private final Button restore;
+    private final ToggleButton pin;
     private final Label restoreHint;
     private boolean positioned;
     private boolean returning;
@@ -73,6 +82,7 @@ final class PictureInPictureWindow {
     private boolean restoredFocus;
     private boolean pointerInside;
     private boolean keyboardReveal;
+    private boolean keyboardNavigating;
     private boolean interacting;
     private boolean expanded;
     private boolean anchorRight;
@@ -90,13 +100,24 @@ final class PictureInPictureWindow {
     private final PauseTransition collapseDelay = new PauseTransition(Duration.millis(180));
     private final PauseTransition viewportInit = new PauseTransition(Duration.millis(150));
     private final PauseTransition positionInit = new PauseTransition(Duration.millis(150));
+    private final PauseTransition controlsSettle = new PauseTransition(Duration.millis(50));
+    private final DoubleProperty controlsOpacity = new SimpleDoubleProperty(1);
+    private final BooleanProperty resizingGrip = new SimpleBooleanProperty();
+    private Timeline controlsFade;
     private StackPane logoCover;
     private final PauseTransition restoreCheck = new PauseTransition(Duration.seconds(1));
 
     PictureInPictureWindow(Stage main, Supplier<? extends Node> source,
             Supplier<Image> slideImage, Runnable onClosed, Supplier<? extends Stage> projection) {
+        this(main, source, slideImage, onClosed, projection, () -> true);
+    }
+
+    PictureInPictureWindow(Stage main, Supplier<? extends Node> source,
+            Supplier<Image> slideImage, Runnable onClosed, Supplier<? extends Stage> projection,
+            BooleanSupplier hideProjection) {
         this.main = main;
         this.projection = projection;
+        this.hideProjection = hideProjection;
         window.initStyle(StageStyle.UNDECORATED);
         window.setTitle(LabelGrabber.INSTANCE.getLabel("picture.in.picture.title"));
         Utils.addIconsToStage(window);
@@ -150,6 +171,33 @@ final class PictureInPictureWindow {
         StackPane.setAlignment(restore, Pos.TOP_RIGHT);
         StackPane.setMargin(restore, new Insets(8));
 
+        Region pinIcon = QueleaIcon.PIN.create(18);
+        pinIcon.setMinWidth(11);
+        pinIcon.setPrefWidth(11);
+        pinIcon.setMaxWidth(11);
+        pin = new ToggleButton("", pinIcon);
+        pin.setMinSize(34, 34);
+        pin.setPrefSize(34, 34);
+        pin.setMaxSize(34, 34);
+        pin.getStyleClass().add("pip-pin");
+        pin.setVisible(false);
+        pin.setManaged(false);
+        Tooltip pinTooltip = new Tooltip();
+        pin.setTooltip(pinTooltip);
+        Runnable updatePinLabel = () -> {
+            String label = LabelGrabber.INSTANCE.getLabel(pin.isSelected()
+                    ? "picture.in.picture.unpin" : "picture.in.picture.pin");
+            pin.setAccessibleText(label);
+            pinTooltip.setText(label);
+        };
+        updatePinLabel.run();
+        pin.selectedProperty().addListener((obs, wasPinned, pinned) -> {
+            updatePinLabel.run();
+            updateExpansion();
+        });
+        StackPane.setAlignment(pin, Pos.TOP_RIGHT);
+        StackPane.setMargin(pin, new Insets(8, 50, 8, 8));
+
         Region resizeIcon = new Region();
         resizeIcon.getStyleClass().add("pip-resize-icon");
         resizeIcon.setMinSize(12, 12);
@@ -164,6 +212,21 @@ final class PictureInPictureWindow {
         Tooltip.install(resizeGrip, new Tooltip(LabelGrabber.INSTANCE.getLabel("picture.in.picture.resize")));
         StackPane.setAlignment(resizeGrip, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(resizeGrip, new Insets(5));
+
+        restore.opacityProperty().bind(controlsOpacity);
+        pin.opacityProperty().bind(controlsOpacity);
+        resizeGrip.opacityProperty().bind(controlsOpacity);
+        restore.mouseTransparentProperty().bind(controlsOpacity.lessThan(0.98));
+        pin.mouseTransparentProperty().bind(controlsOpacity.lessThan(0.98));
+        // The resize grip must retain the mouse grab until the drag ends.
+        resizeGrip.mouseTransparentProperty().bind(controlsOpacity.lessThan(0.98).and(resizingGrip.not()));
+        controlsSettle.setOnFinished(e -> {
+            if (transition == null && !resizingGrip.get() && window.isShowing()) {
+                controlsFade = new Timeline(new KeyFrame(Duration.millis(75),
+                        new KeyValue(controlsOpacity, 1, Interpolator.EASE_BOTH)));
+                controlsFade.play();
+            }
+        });
 
         restoreHint = new Label(LabelGrabber.INSTANCE.getLabel("picture.in.picture.return.taskbar"));
         restoreHint.getStyleClass().add("pip-hint");
@@ -186,21 +249,28 @@ final class PictureInPictureWindow {
         queleaLogo.fitWidthProperty().bind(Bindings.min(44, logoCover.widthProperty().multiply(0.5)));
         queleaLogo.fitHeightProperty().bind(Bindings.min(44, logoCover.heightProperty().multiply(0.5)));
 
-        StackPane root = new StackPane(preview, logoCover, restore, resizeGrip, restoreHint);
+        StackPane root = new StackPane(preview, logoCover, restore, pin, resizeGrip, restoreHint);
         root.setMinSize(0, 0);
         root.getStyleClass().add("pip-window");
         root.setOnMouseEntered(e -> { pointerInside = true; updateExpansion(); });
         root.setOnMouseExited(e -> { pointerInside = false; updateExpansion(); });
-        collapseDelay.setOnFinished(e -> { if (!pointerInside && !keyboardReveal && !interacting) setExpanded(false); });
+        collapseDelay.setOnFinished(e -> {
+            if (!wantsExpanded() && !interacting) setExpanded(false);
+        });
         installMoveAndReturn(preview);
         installResize(resizeGrip);
         Scene scene = new Scene(root, Color.BLACK);
+        scene.widthProperty().addListener((obs, before, after) -> sceneResized());
+        scene.heightProperty().addListener((obs, before, after) -> sceneResized());
         StyleManager.applyWithoutDialogPolish(scene);
         scene.getAccelerators().put(MainWindow.PICTURE_IN_PICTURE_SHORTCUT, this::returnToMain);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB && !event.isAltDown() && !event.isControlDown() && !event.isMetaDown()) {
+                keyboardNavigating = true;
+            }
             if (event.getCode() == KeyCode.SPACE && !event.isShortcutDown()
                     && !event.isAltDown() && !event.isControlDown() && !event.isMetaDown()
-                    && !(scene.getFocusOwner() instanceof Button)) {
+                    && !(scene.getFocusOwner() instanceof ButtonBase)) {
                 keyboardReveal = true;
                 updateExpansion();
                 event.consume();
@@ -232,6 +302,13 @@ final class PictureInPictureWindow {
                 event.consume();
             }
         });
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (keyboardNavigating) {
+                keyboardNavigating = false;
+                updateExpansion();
+            }
+        });
+        scene.focusOwnerProperty().addListener((obs, before, focused) -> updateExpansion());
         window.setScene(scene);
         viewportInit.setOnFinished(e -> {
             if (!window.isShowing()) return;
@@ -275,6 +352,7 @@ final class PictureInPictureWindow {
         window.focusedProperty().addListener((obs, before, focused) -> {
             if (!focused) {
                 keyboardReveal = false;
+                keyboardNavigating = false;
                 updateExpansion();
             }
         });
@@ -284,11 +362,17 @@ final class PictureInPictureWindow {
         });
         window.setOnHidden(e -> {
             keyboardReveal = false;
+            keyboardNavigating = false;
             pointerInside = false;
             interacting = false;
             collapseDelay.stop();
             viewportInit.stop();
             positionInit.stop();
+            controlsSettle.stop();
+            if (controlsFade != null) controlsFade.stop();
+            controlsFade = null;
+            controlsOpacity.set(1);
+            resizingGrip.set(false);
             window.setOpacity(1);
             viewportReady = false;
             if (transition != null) transition.stop();
@@ -301,6 +385,8 @@ final class PictureInPictureWindow {
             double y = expanded && anchorBottom ? window.getY() + window.getHeight() - compactHeight : window.getY();
             moveWindow(x, y);
             expanded = false;
+            pin.setVisible(false);
+            pin.setManaged(false);
             logoCover.setOpacity(1);
             window.setWidth(compactWidth);
             window.setHeight(compactHeight);
@@ -339,7 +425,7 @@ final class PictureInPictureWindow {
                     viewportInit.playFromStart();
                     keyboardReveal = true;
                     updateExpansion();
-                    projectionVisibility.begin(projection.get());
+                    projectionVisibility.begin(projection.get(), hideProjection.getAsBoolean());
                     mirror.start();
                 } else {
                     // Some window managers reject deiconification. Re-showing
@@ -366,7 +452,7 @@ final class PictureInPictureWindow {
 
     private void updateExpansion() {
         if (!window.isShowing() || !viewportReady) return;
-        if (pointerInside || keyboardReveal) {
+        if (wantsExpanded()) {
             collapseDelay.stop();
             setExpanded(true);
         } else if (!interacting) {
@@ -374,11 +460,18 @@ final class PictureInPictureWindow {
         }
     }
 
+    private boolean wantsExpanded() {
+        Node focus = window.getScene().getFocusOwner();
+        return pointerInside || keyboardReveal || pin.isSelected()
+                || (keyboardNavigating && (focus == pin || focus == restore));
+    }
+
     private void setExpanded(boolean reveal) {
         if (expanded == reveal) return;
         boolean reversing = transition != null;
         boolean reversingCollapse = reveal && reversing && !expanded;
         if (transition != null) transition.stop();
+        stopControlsRestore();
         if (reveal && !reversingCollapse) {
             var screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
             Rectangle2D bounds = (screens.isEmpty() ? Screen.getPrimary() : screens.get(0)).getVisualBounds();
@@ -408,9 +501,18 @@ final class PictureInPictureWindow {
             }
             logoCover.setOpacity(startOpacity + ((reveal ? 0 : 1) - startOpacity) * amount);
         });
-        transition = new Timeline(new KeyFrame(Duration.millis(180),
-                new KeyValue(progress, 1, Interpolator.EASE_BOTH)));
-        transition.setOnFinished(e -> transition = null);
+        // Fade controls before resizing: native window and scene geometry can
+        // settle on different pulses, making edge-aligned icons appear to jump.
+        transition = new Timeline(
+                new KeyFrame(Duration.millis(40), e -> setPinVisible(reveal),
+                        new KeyValue(controlsOpacity, 0, Interpolator.EASE_BOTH),
+                        new KeyValue(progress, 0)),
+                new KeyFrame(Duration.millis(220), new KeyValue(progress, 1, Interpolator.EASE_BOTH)));
+        transition.setOnFinished(e -> {
+            transition = null;
+            setPinVisible(expanded);
+            scheduleControlsRestore();
+        });
         transition.play();
     }
 
@@ -419,6 +521,35 @@ final class PictureInPictureWindow {
             transition.jumpTo(transition.getTotalDuration());
             transition.stop();
             transition = null;
+            setPinVisible(expanded);
+            scheduleControlsRestore();
+        }
+    }
+
+    private void setPinVisible(boolean visible) {
+        pin.setVisible(visible);
+        pin.setManaged(visible);
+    }
+
+    private void stopControlsRestore() {
+        controlsSettle.stop();
+        if (controlsFade != null) controlsFade.stop();
+        controlsFade = null;
+    }
+
+    private void scheduleControlsRestore() {
+        if (transition == null && !resizingGrip.get() && window.isShowing()) {
+            controlsSettle.playFromStart();
+        }
+    }
+
+    private void sceneResized() {
+        if (transition == null && !resizingGrip.get() && controlsOpacity.get() < 1) {
+            // A late native resize should not make the controls reappear at an
+            // intermediate position while the window manager is still settling.
+            stopControlsRestore();
+            controlsOpacity.set(0);
+            scheduleControlsRestore();
         }
     }
 
@@ -443,7 +574,7 @@ final class PictureInPictureWindow {
             window.show();
             viewportInit.playFromStart();
             try {
-                projectionVisibility.begin(projection.get());
+                projectionVisibility.begin(projection.get(), hideProjection.getAsBoolean());
                 mirror.start();
                 main.setIconified(true);
             } catch (RuntimeException ex) {
@@ -455,6 +586,10 @@ final class PictureInPictureWindow {
 
     boolean setProjectionShowing(Stage target, boolean showing) {
         return projectionVisibility.request(target, showing);
+    }
+
+    void refreshProjectionVisibility() {
+        projectionVisibility.setHiding(hideProjection.getAsBoolean(), projection.get());
     }
 
     private void installMoveAndReturn(StackPane preview) {
@@ -500,7 +635,10 @@ final class PictureInPictureWindow {
         grip.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 interacting = true;
+                resizingGrip.set(true);
                 finishTransition();
+                stopControlsRestore();
+                controlsOpacity.set(0);
                 origin[0] = event.getScreenX();
                 origin[1] = event.getScreenY();
                 origin[2] = window.getWidth();
@@ -517,7 +655,13 @@ final class PictureInPictureWindow {
                 event.consume();
             }
         });
-        grip.setOnMouseReleased(event -> { interacting = false; updateExpansion(); event.consume(); });
+        grip.setOnMouseReleased(event -> {
+            resizingGrip.set(false);
+            interacting = false;
+            updateExpansion();
+            scheduleControlsRestore();
+            event.consume();
+        });
     }
 
     private void resizeBy(double widthDelta) {
@@ -526,8 +670,11 @@ final class PictureInPictureWindow {
         previewWidth = Math.max(MIN_PREVIEW_WIDTH, previewWidth + widthDelta);
         previewHeight = Math.max(MIN_PREVIEW_HEIGHT, previewWidth / ratio);
         if (expanded) {
+            stopControlsRestore();
+            controlsOpacity.set(0);
             window.setWidth(previewWidth + frameWidth);
             window.setHeight(previewHeight + frameHeight);
+            scheduleControlsRestore();
         }
     }
 

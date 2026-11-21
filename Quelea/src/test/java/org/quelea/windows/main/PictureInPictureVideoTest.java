@@ -40,6 +40,15 @@ class PictureInPictureVideoTest {
 
     @Test
     void mirrorsRealPlayingVideoWithoutCreatingAnotherPlayer() throws Exception {
+        exerciseVideo(true);
+    }
+
+    @Test
+    void mirrorsRealVideoWhenTheProjectionRemainsVisible() throws Exception {
+        exerciseVideo(false);
+    }
+
+    private void exerciseVideo(boolean hideProjection) throws Exception {
         VideoTestSupport.assumeVideoAvailable();
         int baseline = activePipelines();
         VidDisplay[] video = new VidDisplay[1];
@@ -62,14 +71,14 @@ class PictureInPictureVideoTest {
                 stages[1].setScene(new Scene(new StackPane(), 320, 180));
                 stages[1].show();
                 pip[0] = new PictureInPictureWindow(stages[1], () -> source, () -> null,
-                        () -> { }, () -> stages[0]);
+                        () -> { }, () -> stages[0], () -> hideProjection);
                 video[0].setURI(VideoTestSupport.TEST_VIDEO.toURI());
                 video[0].play();
             });
             assertTrue(waitFor(() -> hasVisibleColor(video[0].imageProperty().get()), 20_000), "video produces a frame");
             onFx(() -> {
                 pip[0].toggle();
-                assertFalse(stages[0].isShowing(), "the projection is hidden while PiP is open");
+                assertEquals(!hideProjection, stages[0].isShowing(), "projection visibility should follow the preference");
                 floating[0] = Window.getWindows().stream().filter(w -> w instanceof Stage && w != stages[0] && w != stages[1])
                         .map(w -> (Stage) w).filter(w -> org.quelea.services.languages.LabelGrabber.INSTANCE
                                 .getLabel("picture.in.picture.title").equals(w.getTitle())).findFirst().orElseThrow();
@@ -82,7 +91,7 @@ class PictureInPictureVideoTest {
             assertTrue(waitFor(() -> hasVisibleColor(output[0].getImage()), 10_000), "the preview paints a video frame");
             long first = onFx(() -> fingerprint(output[0].getImage()));
             assertTrue(waitFor(() -> fingerprint(output[0].getImage()) != first, 15_000),
-                    "the floating image must keep updating while the source window is hidden");
+                    "the floating image must keep updating during PiP");
             onFx(() -> PictureInPictureLogoTest.hover(floating[0], true));
             assertTrue(waitFor(() -> floating[0].getScene().getRoot().lookup(".pip-logo-cover").getOpacity() < 0.01, 5_000),
                     "hover should reveal the playing video");

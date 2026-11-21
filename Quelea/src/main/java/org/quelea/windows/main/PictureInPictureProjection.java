@@ -6,23 +6,37 @@ import javafx.stage.Stage;
 final class PictureInPictureProjection {
     private Stage projection;
     private boolean active;
+    private boolean hiding;
     private boolean shouldShow;
 
-    void begin(Stage projection) {
+    void begin(Stage projection, boolean hide) {
         if (active) {
             return;
         }
-        this.projection = projection;
         active = true;
-        shouldShow = projection != null && projection.isShowing();
-        if (shouldShow) {
-            projection.hide();
+        setHiding(hide, projection);
+    }
+
+    void setHiding(boolean hide, Stage currentProjection) {
+        if (!active || hiding == hide) return;
+        if (hide) {
+            projection = currentProjection;
+            shouldShow = projection != null && projection.isShowing();
+            hiding = true;
+            if (shouldShow) projection.hide();
+        } else {
+            Stage previous = projection;
+            boolean show = shouldShow && previous != null && previous == currentProjection;
+            hiding = false;
+            projection = null;
+            shouldShow = false;
+            if (show && !previous.isShowing()) previous.show();
         }
     }
 
     /** @return true if the request was deferred until PiP closes. */
     boolean request(Stage target, boolean showing) {
-        if (!active || target == null) {
+        if (!active || !hiding || target == null) {
             return false;
         }
         if (target != projection) {
@@ -37,8 +51,9 @@ final class PictureInPictureProjection {
 
     void end(boolean restore, Stage currentProjection) {
         Stage previous = projection;
-        boolean show = restore && shouldShow;
+        boolean show = hiding && restore && shouldShow;
         active = false;
+        hiding = false;
         projection = null;
         shouldShow = false;
         if (show && previous != null && previous == currentProjection && !previous.isShowing()) {

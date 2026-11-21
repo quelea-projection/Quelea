@@ -2,6 +2,7 @@ package org.quelea.windows.main;
 
 import javafx.concurrent.Worker;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
@@ -13,6 +14,61 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.quelea.testutil.FxTestSupport.onFx;
 
 class PictureInPictureWebTest {
+    @Test
+    void visibleProjectionKeepsItsWebViewAndPipMirrorsUpdates() throws Exception {
+        FxTestSupport.assumeAvailable();
+        Stage[] main = new Stage[1], projection = new Stage[1];
+        WebView[] web = new WebView[1];
+        PictureInPictureWindow[] pip = new PictureInPictureWindow[1];
+        try {
+            onFx(() -> {
+                web[0] = new WebView();
+                StackPane root = new StackPane(web[0]);
+                projection[0] = new Stage();
+                projection[0].setScene(new Scene(root, 400, 225));
+                projection[0].show();
+                main[0] = new Stage();
+                main[0].setScene(new Scene(new StackPane(), 400, 225));
+                main[0].show();
+                pip[0] = new PictureInPictureWindow(main[0], () -> root, () -> null,
+                        () -> { }, () -> projection[0], () -> false);
+                web[0].getEngine().loadContent("<html><body style='margin:0;background:red'></body></html>");
+                return null;
+            });
+            waitUntil(() -> web[0].getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED);
+            waitUntil(() -> matches(web[0], Color.RED));
+            onFx(() -> {
+                pip[0].toggle();
+                assertTrue(projection[0].isShowing());
+                assertSame(projection[0].getScene().getRoot(), web[0].getParent());
+                assertFalse(pip[0].containsWebView(web[0]));
+                web[0].getEngine().executeScript("document.body.style.background = 'blue'");
+                return null;
+            });
+            waitUntil(() -> matches(web[0], Color.BLUE));
+            waitUntil(() -> javafx.stage.Window.getWindows().stream().filter(w -> w instanceof Stage && w != main[0] && w != projection[0])
+                    .map(w -> w.getScene().getRoot().lookup(".pip-frame"))
+                    .filter(node -> node instanceof ImageView)
+                    .map(node -> ((ImageView) node).getImage())
+                    .filter(image -> image != null && image.getPixelReader() != null)
+                    .anyMatch(image -> Color.BLUE.equals(image.getPixelReader().getColor(
+                            (int) image.getWidth() / 2, (int) image.getHeight() / 2))));
+            onFx(() -> {
+                assertTrue(projection[0].isShowing());
+                assertSame(projection[0].getScene().getRoot(), web[0].getParent());
+                pip[0].toggle();
+                assertTrue(projection[0].isShowing());
+                return null;
+            });
+        } finally {
+            onFx(() -> {
+                if (main[0] != null) main[0].hide();
+                if (projection[0] != null) projection[0].hide();
+                return null;
+            });
+        }
+    }
+
     @Test
     void hidingAVisibleProjectionKeepsItsWebPageLiveAndRestoresIt() throws Exception {
         FxTestSupport.assumeAvailable();
