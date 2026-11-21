@@ -17,6 +17,7 @@
  */
 package org.quelea.data.bible;
 
+import org.quelea.data.bible.versification.BookCodes;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public final class BibleBook implements BibleInterface, Serializable {
     private List<Integer> caretPosList;
     private Bible bible;
     private String bsname;
+    private String bookCode;
+    private boolean bookCodeKnown;
 
     /**
      * Create a new book.
@@ -282,6 +285,50 @@ public final class BibleBook implements BibleInterface, Serializable {
 
     public String getBSName() {
         return bsname;
+    }
+
+    /**
+     * Get which book this is, worked out from its name, number and content.
+     * The code is the same in every bible, so it pairs books between bibles
+     * even when they are numbered differently.
+     *
+     * @return the USFM code of the book, such as GEN or WIS, or null if it
+     * can't be told.
+     */
+    public synchronized String getBookCode() {
+        if (!bookCodeKnown) {
+            bookCode = BookCodes.get().identify(bookName, bsname, bookNumber, getVerseCounts());
+            bookCodeKnown = true;
+        }
+        return bookCode;
+    }
+
+    /**
+     * Set which book this is, for a book that holds only part of the book it
+     * was copied from.
+     *
+     * @param bookCode the USFM code of the book, or null if it isn't known.
+     */
+    public synchronized void setBookCode(String bookCode) {
+        this.bookCode = bookCode;
+        bookCodeKnown = true;
+    }
+
+    /**
+     * Get the highest verse number in each chapter, leaving out empty verses.
+     *
+     * @return the highest verse number of each chapter, in order.
+     */
+    public int[] getVerseCounts() {
+        int[] ret = new int[chapters.size()];
+        for (int i = 0; i < ret.length; i++) {
+            for (BibleVerse verse : chapters.get(i).getVerses()) {
+                if (verse.getText() != null && !verse.getText().isBlank()) {
+                    ret[i] = Math.max(ret[i], verse.getNum());
+                }
+            }
+        }
+        return ret;
     }
 
     @Override

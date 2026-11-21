@@ -121,6 +121,27 @@ public final class BibleManager {
     }
 
     /**
+     * Get the bibles a new passage should be shown in.
+     * <p/>
+     * @param bible the bible the passage was picked from, which is shown first.
+     * @return that bible, followed by any other versions set in the options
+     * that are installed.
+     */
+    public List<Bible> getDefaultVersions(Bible bible) {
+        List<Bible> ret = new ArrayList<>();
+        ret.add(bible);
+        if (QueleaProperties.get().getAlwaysUseMultiBible()) {
+            for (String name : QueleaProperties.get().getMultiBibleVersions()) {
+                Bible version = getBibleFromName(name);
+                if (version != null && !ret.contains(version)) {
+                    ret.add(version);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Get the underlying search index used by this bible manager.
      * <p/>
      * @return the search index.
