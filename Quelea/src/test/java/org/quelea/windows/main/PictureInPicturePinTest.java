@@ -179,6 +179,11 @@ class PictureInPicturePinTest {
             Event.fireEvent(scene, new KeyEvent(KeyEvent.KEY_RELEASED, " ", " ", KeyCode.SPACE,
                     false, false, false, false));
             PictureInPictureLogoTest.hover(floating(), false);
+            // A window resize can generate a mouse-moved event without the
+            // pointer changing screen position. It must not end keyboard use.
+            Event.fireEvent(scene, new MouseEvent(MouseEvent.MOUSE_MOVED, 20, 20, 20, 20,
+                    MouseButton.NONE, 0, false, false, false, false, false, false, false,
+                    false, false, true, null));
             return null;
         });
         Thread.sleep(800);
@@ -196,5 +201,60 @@ class PictureInPicturePinTest {
         });
         assertTrue(waitFor(() -> floating().getScene().getWidth() <= 97, 5000),
                 "switching back to the mouse should restore hover behaviour");
+    }
+
+    @Test
+    void movingMouseAfterKeyboardNavigationRestoresHoverBehaviour() throws Exception {
+        expand();
+        onFx(() -> {
+            var scene = floating().getScene();
+            Event.fireEvent(scene, new KeyEvent(KeyEvent.KEY_PRESSED, "\t", "\t", KeyCode.TAB,
+                    false, false, false, false));
+            ((Button) scene.getRoot().lookup(".pip-return")).requestFocus();
+            Event.fireEvent(scene, new MouseEvent(MouseEvent.MOUSE_MOVED, 45, 40, 45, 40,
+                    MouseButton.NONE, 0, false, false, false, false, false, false, false,
+                    false, false, true, null));
+            PictureInPictureLogoTest.hover(floating(), false);
+            return null;
+        });
+        assertTrue(waitFor(() -> floating().getScene().getWidth() <= 97, 5_000),
+                "moving the pointer away should leave keyboard navigation and collapse the preview");
+    }
+
+    @Test
+    void leavingDirectlyAfterKeyboardNavigationRestoresHoverBehaviour() throws Exception {
+        expand();
+        onFx(() -> {
+            var scene = floating().getScene();
+            Event.fireEvent(scene, new KeyEvent(KeyEvent.KEY_PRESSED, "\t", "\t", KeyCode.TAB,
+                    false, false, false, false));
+            ((Button) scene.getRoot().lookup(".pip-return")).requestFocus();
+            Event.fireEvent(scene.getRoot(), new MouseEvent(MouseEvent.MOUSE_EXITED, 120, 120, 120, 120,
+                    MouseButton.NONE, 0, false, false, false, false, false, false, false,
+                    false, false, true, null));
+            return null;
+        });
+        assertTrue(waitFor(() -> floating().getScene().getWidth() <= 97, 5_000),
+                "a mouse exit at a new screen position should end keyboard navigation");
+    }
+
+    @Test
+    void movingMouseAfterKeyboardNavigationDoesNotCollapsePinnedPreview() throws Exception {
+        expand();
+        onFx(() -> {
+            var scene = floating().getScene();
+            Event.fireEvent(scene, new KeyEvent(KeyEvent.KEY_PRESSED, "\t", "\t", KeyCode.TAB,
+                    false, false, false, false));
+            ToggleButton pin = (ToggleButton) scene.getRoot().lookup(".pip-pin");
+            pin.requestFocus();
+            pin.fire();
+            assertTrue(pin.isSelected());
+            Event.fireEvent(scene.getRoot(), new MouseEvent(MouseEvent.MOUSE_EXITED, 120, 120, 120, 120,
+                    MouseButton.NONE, 0, false, false, false, false, false, false, false,
+                    false, false, true, null));
+            return null;
+        });
+        Thread.sleep(800);
+        assertTrue(onFx(() -> floating().getScene().getWidth() >= 399), "pinning should keep the preview expanded");
     }
 }

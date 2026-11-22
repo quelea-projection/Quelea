@@ -81,6 +81,8 @@ final class PictureInPictureWindow {
     private boolean ownerHiding;
     private boolean restoredFocus;
     private boolean pointerInside;
+    private double pointerScreenX = Double.NaN;
+    private double pointerScreenY = Double.NaN;
     private boolean keyboardReveal;
     private boolean keyboardNavigating;
     private boolean interacting;
@@ -253,8 +255,8 @@ final class PictureInPictureWindow {
         StackPane root = new StackPane(preview, logoCover, restore, pin, resizeGrip, restoreHint);
         root.setMinSize(0, 0);
         root.getStyleClass().add("pip-window");
-        root.setOnMouseEntered(e -> { pointerInside = true; updateExpansion(); });
-        root.setOnMouseExited(e -> { pointerInside = false; updateExpansion(); });
+        root.setOnMouseEntered(e -> { notePointerPosition(e); pointerInside = true; updateExpansion(); });
+        root.setOnMouseExited(e -> { notePointerPosition(e); pointerInside = false; updateExpansion(); });
         collapseDelay.setOnFinished(e -> {
             if (!wantsExpanded() && !interacting) setExpanded(false);
         });
@@ -304,10 +306,15 @@ final class PictureInPictureWindow {
             }
         });
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            boolean changed = notePointerPosition(event);
             if (keyboardNavigating) {
                 keyboardNavigating = false;
-                updateExpansion();
+                changed = true;
             }
+            if (changed) updateExpansion();
+        });
+        scene.addEventFilter(MouseEvent.MOUSE_MOVED, event -> {
+            if (notePointerPosition(event)) updateExpansion();
         });
         scene.focusOwnerProperty().addListener((obs, before, focused) -> updateExpansion());
         window.setScene(scene);
@@ -365,6 +372,7 @@ final class PictureInPictureWindow {
             keyboardReveal = false;
             keyboardNavigating = false;
             pointerInside = false;
+            pointerScreenX = pointerScreenY = Double.NaN;
             interacting = false;
             collapseDelay.stop();
             viewportInit.stop();
@@ -479,6 +487,20 @@ final class PictureInPictureWindow {
         Node focus = window.getScene().getFocusOwner();
         return pointerInside || keyboardReveal || pin.isSelected()
                 || (keyboardNavigating && (focus == pin || focus == restore));
+    }
+
+    /** Return to mouse hover after real pointer movement, not a window resize. */
+    private boolean notePointerPosition(MouseEvent event) {
+        double x = event.getScreenX();
+        double y = event.getScreenY();
+        boolean moved = !Double.isNaN(pointerScreenX) && (x != pointerScreenX || y != pointerScreenY);
+        pointerScreenX = x;
+        pointerScreenY = y;
+        if (moved && keyboardNavigating) {
+            keyboardNavigating = false;
+            return true;
+        }
+        return false;
     }
 
     private void setExpanded(boolean reveal) {

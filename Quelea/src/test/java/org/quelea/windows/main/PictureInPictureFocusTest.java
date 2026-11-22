@@ -102,7 +102,7 @@ class PictureInPictureFocusTest {
     }
 
     /** Start a separate application and wait until the window manager focuses it. */
-    private static Process showOtherApplication(Path directory) throws Exception {
+    static Process showOtherApplication(Path directory) throws Exception {
         Path source = directory.resolve("OtherWindow.java");
         Files.writeString(source, """
                 import javax.swing.JFrame;
