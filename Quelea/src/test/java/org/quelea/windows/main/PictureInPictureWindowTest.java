@@ -252,6 +252,8 @@ class PictureInPictureWindowTest {
                     assertTrue(floating.isShowing(), "if restoration was rejected, keep the preview available");
                     assertTrue(floating.getScene().getRoot().lookup(".pip-hint").isVisible(),
                             "explain how to restore the main window without hiding the dialog");
+                } else {
+                    assertFalse(pictureInPicture.isShowing(), "a restored owner must not reopen the preview over its dialog");
                 }
                 return null;
             });

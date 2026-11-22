@@ -106,6 +106,7 @@ final class PictureInPictureWindow {
     private Timeline controlsFade;
     private StackPane logoCover;
     private final PauseTransition restoreCheck = new PauseTransition(Duration.seconds(1));
+    private final PauseTransition activationCheck = new PauseTransition(Duration.millis(250));
 
     PictureInPictureWindow(Stage main, Supplier<? extends Node> source,
             Supplier<Image> slideImage, Runnable onClosed, Supplier<? extends Stage> projection) {
@@ -396,11 +397,13 @@ final class PictureInPictureWindow {
             onClosed.run();
             if (!ownerHiding && main.isShowing() && !main.isIconified()) {
                 main.toFront();
+                main.requestFocus();
             }
         });
         main.addEventHandler(WindowEvent.WINDOW_HIDING, e -> {
             ownerHiding = true;
             restoreCheck.stop();
+            activationCheck.stop();
             window.hide();
         });
         main.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> ownerHiding = false);
@@ -408,13 +411,24 @@ final class PictureInPictureWindow {
             if (focused) {
                 restoredFocus = true;
                 restoreCheck.stop();
+                activationCheck.stop();
+            }
+        });
+        activationCheck.setOnFinished(e -> {
+            if (!restoredFocus && !window.isShowing() && main.isShowing() && !main.isIconified() && !main.isFocused()
+                    && !hasOwnedDialog()) {
+                // Some Linux window managers unminimise without raising the
+                // window and ignore focus requests. Re-show it once, promptly
+                // after the user's return action, if no dialog can be hidden.
+                main.hide();
+                main.show();
+                main.toFront();
+                main.requestFocus();
             }
         });
         restoreCheck.setOnFinished(e -> {
             if (!restoredFocus && !window.isShowing() && main.isShowing() && main.isIconified()) {
-                boolean ownedDialogOpen = Window.getWindows().stream().anyMatch(w -> w instanceof Stage stage
-                        && stage.getOwner() == main && stage.isShowing());
-                if (ownedDialogOpen) {
+                if (hasOwnedDialog()) {
                     // Hiding the owner would also hide its dialogs. Keep the
                     // preview available and let the user activate the owner
                     // with the window manager instead.
@@ -434,6 +448,7 @@ final class PictureInPictureWindow {
                     main.setIconified(false);
                     main.show();
                     main.toFront();
+                    main.requestFocus();
                 }
             }
         });
@@ -560,6 +575,7 @@ final class PictureInPictureWindow {
 
     void toggle() {
         restoreCheck.stop();
+        activationCheck.stop();
         if (window.isShowing()) {
             returnToMain();
         } else {
@@ -685,15 +701,26 @@ final class PictureInPictureWindow {
         returning = true;
         restoredFocus = false;
         try {
-            if (main.isShowing() && main.isIconified()) {
-                main.setIconified(false);
+            if (main.isShowing()) {
+                if (main.isIconified()) {
+                    main.setIconified(false);
+                }
                 main.toFront();
+                main.requestFocus();
             }
             window.hide();
-            if (main.isShowing() && !restoredFocus) restoreCheck.playFromStart();
+            if (main.isShowing() && !restoredFocus) {
+                restoreCheck.playFromStart();
+                if (Utils.isLinux()) activationCheck.playFromStart();
+            }
         } finally {
             returning = false;
         }
+    }
+
+    private boolean hasOwnedDialog() {
+        return Window.getWindows().stream().anyMatch(w -> w instanceof Stage stage
+                && stage.getOwner() == main && stage.isShowing());
     }
 
     boolean isShowing() {
