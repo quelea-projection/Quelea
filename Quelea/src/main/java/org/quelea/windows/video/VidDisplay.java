@@ -19,12 +19,14 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
@@ -46,9 +48,10 @@ import java.util.logging.Logger;
  * Audio outputs are only started and stopped as often as needed: a looping
  * video loops with segment seeks, which don't flush the pipeline, instead of a
  * flushing seek back to the start (which pauses and restarts the audio output)
- * at the end of every pass. Before an audio output is stopped, or a playing
- * video with sound is seeked, the pipeline is paused and the output is given
- * time to settle (see {@link #AUDIO_SETTLE_MILLIS}).
+ * at the end of every pass. After a video with sound has been paused, its
+ * audio output is given time to settle (see {@link #AUDIO_SETTLE_MILLIS})
+ * before it's started again, stopped or seeked; a playing video with sound is
+ * paused before it's seeked or stopped.
  * <p>
  * Each pipeline only goes from NULL to playing and back to NULL once:
  * {@link #stop()} and a change of URI release the current pipeline, and the
@@ -63,15 +66,19 @@ public class VidDisplay {
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
     /** Number of displays that haven't been disposed (each may hold a native pipeline). */
     private static final AtomicInteger ACTIVE_PIPELINES = new AtomicInteger();
+    /** Numbers PlayBins in the order they're created. */
+    private static final AtomicLong PIPELINE_SEQUENCE = new AtomicLong();
+    /** Numbers of the PlayBins that have been created and not yet shut down and disposed. */
+    private static final Set<Long> NATIVE_PIPELINES = ConcurrentHashMap.newKeySet();
     private static final long POSITION_INTERVAL_MILLIS = 100;
     /** How long to wait for a state change, e.g. for a paused pipeline to preroll. */
     private static final long STATE_TIMEOUT_SECONDS = 5;
     /**
-     * How long a paused audio output is left alone before it is stopped or
-     * restarted. osxaudiosink finishes pausing on CoreAudio's IO thread, in the
-     * next IO cycle (a few milliseconds); starting or stopping the output
-     * before then can deadlock CoreAudio, and with it every audio output of
-     * the process.
+     * How long a paused audio output is left alone before it is stopped,
+     * restarted or flushed. osxaudiosink finishes pausing on CoreAudio's IO
+     * thread, in the next IO cycle (a few milliseconds); starting or stopping
+     * the output before then can deadlock CoreAudio, and with it every audio
+     * output of the process.
      */
     private static final long AUDIO_SETTLE_MILLIS = 100;
     private static final Image BLANK_IMG;
@@ -135,6 +142,38 @@ public class VidDisplay {
      */
     public static int getActivePipelineCount() {
         return ACTIVE_PIPELINES.get();
+    }
+
+    /**
+     * Mark the current point in time, so that the native pipelines created
+     * from now on can be counted with {@link #getNativePipelineCount(long)},
+     * ignoring older ones that are still being shut down.
+     *
+     * @return the mark.
+     */
+    public static long nativePipelineMark() {
+        return PIPELINE_SEQUENCE.get();
+    }
+
+    /**
+     * Get the number of native GStreamer pipelines created since a mark that
+     * still exist. Releasing a pipeline happens on its own thread, after
+     * {@link #stop()} or {@link #dispose()} has returned, so pipelines can
+     * still be counted here after their display has been disposed. A pipeline
+     * holds its file open (Windows won't let it be deleted) until it's no
+     * longer counted.
+     *
+     * @param mark a mark from {@link #nativePipelineMark()}.
+     * @return the number of those pipelines that haven't been shut down.
+     */
+    public static int getNativePipelineCount(long mark) {
+        int count = 0;
+        for (long pipeline : NATIVE_PIPELINES) {
+            if (pipeline >= mark) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public ReadOnlyObjectProperty<? extends Image> imageProperty() {
@@ -265,6 +304,17 @@ public class VidDisplay {
         }
     }
 
+    /**
+     * Handle the end of a loop pass now, as if GStreamer had just reported it,
+     * after any calls made before. Only for tests: it puts the end of a pass
+     * after a pause, an order that otherwise depends on timing.
+     */
+    void simulateSegmentDone() {
+        if (player != null) {
+            player.run(player::segmentDone);
+        }
+    }
+
     /** The current pipeline, created if needed; null if there can't be one. */
     private Player player() {
         if (player == null && available && !disposed) {
@@ -288,6 +338,7 @@ public class VidDisplay {
      */
     private final class Player {
 
+        private final long sequence = PIPELINE_SEQUENCE.getAndIncrement();
         private final PlayBin playBin;
         private final FXImageSink sink;
         private final ScheduledThreadPoolExecutor thread;
@@ -299,6 +350,10 @@ public class VidDisplay {
         // Only used on the pipeline thread:
         private boolean playing;
         private boolean everPlayed;
+        /** True if an audio output was paused and may not have settled yet. */
+        private boolean settling;
+        /** When the audio output paused last will have settled (System.nanoTime()). */
+        private long settledAt;
         private volatile double position;
         private volatile boolean released;
         private volatile long duration = -1;
@@ -312,31 +367,39 @@ public class VidDisplay {
                 }
             });
             playBin = new PlayBin(name);
-            playBin.setVideoSink(sink.getSinkElement());
-            if (!withAudio) {
-                Set<PlayFlags> flags = EnumSet.noneOf(PlayFlags.class);
-                flags.addAll(playBin.getFlags());
-                flags.remove(PlayFlags.AUDIO);
-                flags.remove(PlayFlags.TEXT);
-                playBin.setFlags(flags);
-            } else if (volume != null) {
-                playBin.setVolume(volume);
+            NATIVE_PIPELINES.add(sequence);
+            try {
+                playBin.setVideoSink(sink.getSinkElement());
+                if (!withAudio) {
+                    Set<PlayFlags> flags = EnumSet.noneOf(PlayFlags.class);
+                    flags.addAll(playBin.getFlags());
+                    flags.remove(PlayFlags.AUDIO);
+                    flags.remove(PlayFlags.TEXT);
+                    playBin.setFlags(flags);
+                } else if (volume != null) {
+                    playBin.setVolume(volume);
+                }
+                if (uri != null) {
+                    playBin.setURI(VideoUri.forGStreamer(uri));
+                }
+                // Bus messages arrive on gst1-java's single dispatch thread, shared
+                // by all pipelines; don't block that with a seek either.
+                playBin.getBus().connect((Bus.EOS) source -> run(this::endOfStream));
+                playBin.getBus().connect((Bus.SEGMENT_DONE) (source, format, position) -> run(this::segmentDone));
+                playBin.getBus().connect((Bus.ERROR) (source, code, message)
+                        -> LOGGER.log(Level.WARNING, "Video error in {0}: {1}", new Object[]{name, message}));
+                thread = new ScheduledThreadPoolExecutor(1, r -> {
+                    Thread t = new Thread(r, "Video " + name);
+                    t.setDaemon(true);
+                    return t;
+                });
+                thread.setRemoveOnCancelPolicy(true);
+            } catch (RuntimeException | Error ex) {
+                // Never started, so it can be disposed of straight away.
+                sink.dispose();
+                disposeNative();
+                throw ex;
             }
-            if (uri != null) {
-                playBin.setURI(VideoUri.forGStreamer(uri));
-            }
-            // Bus messages arrive on gst1-java's single dispatch thread, shared
-            // by all pipelines; don't block that with a seek either.
-            playBin.getBus().connect((Bus.EOS) source -> run(this::endOfStream));
-            playBin.getBus().connect((Bus.SEGMENT_DONE) (source, format, position) -> run(this::segmentDone));
-            playBin.getBus().connect((Bus.ERROR) (source, code, message)
-                    -> LOGGER.log(Level.WARNING, "Video error in {0}: {1}", new Object[]{name, message}));
-            thread = new ScheduledThreadPoolExecutor(1, r -> {
-                Thread t = new Thread(r, "Video " + name);
-                t.setDaemon(true);
-                return t;
-            });
-            thread.setRemoveOnCancelPolicy(true);
             image.bind(sink.imageProperty());
         }
 
@@ -355,10 +418,7 @@ public class VidDisplay {
 
         void pause() {
             started = true;
-            run(() -> {
-                playBin.pause();
-                playing = false;
-            });
+            run(this::pausePlayback);
         }
 
         void setVolume(double volume) {
@@ -406,6 +466,9 @@ public class VidDisplay {
                 long position = Math.max(0, playBin.queryPosition(Format.TIME));
                 segmentSeek(EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT), position);
             }
+            // Paused just now (pause and play clicked quickly): don't start
+            // the audio output again before it has finished pausing.
+            awaitAudioSettled();
             everPlayed = true;
             playBin.play();
             playing = true;
@@ -424,12 +487,20 @@ public class VidDisplay {
 
         /** Called on the pipeline thread, at the end of a pass in segment mode. */
         private void segmentDone() {
-            if (loop) {
+            if (!loop) {
+                finished();
+            } else if (playing) {
                 // Not flushing: playback carries on seamlessly from the start,
                 // without pausing or restarting the audio output.
                 segmentSeek(EnumSet.of(SeekFlags.SEGMENT), 0);
             } else {
-                finished();
+                // The pass ended while playing, but the pipeline has been
+                // paused since: a non-flushing seek in the paused state can
+                // block for ever (the sinks hold on to the streaming threads
+                // while they wait to preroll), and with it everything queued
+                // for this pipeline, including its shutdown. Go back to the
+                // start with a flushing seek, and stay paused.
+                flushingSeek(0);
             }
         }
 
@@ -449,14 +520,16 @@ public class VidDisplay {
          */
         private void flushingSeek(long position) {
             boolean resume = playing;
-            if (withAudio && everPlayed) {
-                pauseAndSettle();
+            if (withAudio && playing) {
+                pausePlayback();
             }
+            awaitAudioSettled();
             Set<SeekFlags> flags = loop ? EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT) : EnumSet.of(SeekFlags.FLUSH);
             segmentSeek(flags, position);
             if (resume && withAudio) {
                 playBin.getState(STATE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
                 playBin.play();
+                playing = true;
             }
         }
 
@@ -465,14 +538,39 @@ public class VidDisplay {
             playBin.seek(1.0, Format.TIME, flags, SeekType.SET, position, SeekType.NONE, -1);
         }
 
-        /** Pause, and give an audio output time to settle. Called on the pipeline thread. */
-        private void pauseAndSettle() {
+        /**
+         * Pause, and note when a running audio output will have settled.
+         * Doesn't wait for the pause to complete: the audio sink pauses its
+         * output while the state is changed, and waiting for the video to
+         * preroll again can take seconds (e.g. at the end of the video).
+         * Called on the pipeline thread.
+         */
+        private void pausePlayback() {
             playBin.pause();
-            playBin.getState(STATE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            try {
-                Thread.sleep(AUDIO_SETTLE_MILLIS);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+            if (playing && withAudio) {
+                settling = true;
+                settledAt = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(AUDIO_SETTLE_MILLIS);
+            }
+            playing = false;
+        }
+
+        /**
+         * Wait until the audio output paused last has settled, if it was
+         * paused less than {@link #AUDIO_SETTLE_MILLIS} ago. Called on the
+         * pipeline thread.
+         */
+        private void awaitAudioSettled() {
+            if (!settling) {
+                return;
+            }
+            settling = false;
+            long wait = settledAt - System.nanoTime();
+            if (wait > 0) {
+                try {
+                    TimeUnit.NANOSECONDS.sleep(wait);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
 
@@ -526,20 +624,31 @@ public class VidDisplay {
             try {
                 thread.execute(() -> {
                     try {
-                        if (withAudio && everPlayed) {
+                        if (withAudio && playing) {
                             // Going straight from playing to NULL stops the
                             // audio output right after pausing it.
-                            pauseAndSettle();
+                            pausePlayback();
                         }
+                        // Also if it was paused just before.
+                        awaitAudioSettled();
                         playBin.stop();
                     } finally {
-                        playBin.dispose();
+                        disposeNative();
                     }
                 });
             } catch (RejectedExecutionException ex) {
                 LOGGER.log(Level.WARNING, "Couldn't release video pipeline", ex);
             }
             thread.shutdown();
+        }
+
+        /** Dispose of the PlayBin, which must be in the NULL state, and count it out. */
+        private void disposeNative() {
+            try {
+                playBin.dispose();
+            } finally {
+                NATIVE_PIPELINES.remove(sequence);
+            }
         }
     }
 }

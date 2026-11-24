@@ -19,8 +19,10 @@ import org.junit.jupiter.api.io.TempDir;
 import org.quelea.testutil.VideoTestSupport;
 
 import static org.quelea.testutil.VideoTestSupport.activePipelines;
+import static org.quelea.testutil.VideoTestSupport.nativePipelineMark;
 import static org.quelea.testutil.VideoTestSupport.onFx;
 import static org.quelea.testutil.VideoTestSupport.waitFor;
+import static org.quelea.testutil.VideoTestSupport.waitForNativePipelines;
 
 /** Player lifecycle tests use GStreamer; the playback test uses the bundled video. */
 @DisplayName("VidDisplay lifecycle")
@@ -29,11 +31,13 @@ public class VidDisplayLifecycleTest {
     private VidDisplay display;
     private Path temporaryVideo;
     private int baseline;
+    private long nativeMark;
 
     @BeforeEach
     public void setUp() {
         VideoTestSupport.assumeVideoAvailable();
         baseline = activePipelines();
+        nativeMark = nativePipelineMark();
     }
 
     @AfterEach
@@ -42,6 +46,8 @@ public class VidDisplayLifecycleTest {
             onFx(display::dispose);
             Assertions.assertTrue(waitFor(() -> activePipelines() == baseline, 5_000),
                     "The test player must not leave a pipeline active");
+            Assertions.assertTrue(waitForNativePipelines(nativeMark, 20_000),
+                    "Every native pipeline must be shut down");
         }
         if (temporaryVideo != null) {
             Assertions.assertTrue(waitFor(() -> {
@@ -164,6 +170,34 @@ public class VidDisplayLifecycleTest {
                 return false;
             }
         }, 10_000), "The stopped pipeline must release its file");
+    }
+
+    @Test
+    @DisplayName("Resuming works when a loop pass ends just after pausing")
+    public void loopPassEndsWhilePaused(@TempDir Path directory) throws Exception {
+        temporaryVideo = copyResource("short-with-audio.mp4", directory);
+        AtomicInteger frames = new AtomicInteger();
+        onFx(() -> {
+            // With sound, like a looping video item in the live panel.
+            display = new VidDisplay();
+            display.setLoop(true);
+            display.setOnFrame(frames::incrementAndGet);
+            display.setURI(temporaryVideo.toUri());
+            display.play();
+        });
+        Assertions.assertTrue(waitFor(() -> frames.get() > 0, 20_000), "The video should play");
+        onFx(() -> {
+            // GStreamer reported the end of a pass while playing, but it's
+            // only handled after the pause: the next pass must not be started
+            // with a seek that blocks in the paused state.
+            display.pause();
+            display.simulateSegmentDone();
+        });
+        Thread.sleep(500);
+        int paused = frames.get();
+        onFx(display::play);
+        Assertions.assertTrue(waitFor(() -> frames.get() > paused + 5, 10_000),
+                "Playback should resume after the pause");
     }
 
     private static Path copyResource(String name, Path directory) throws IOException {

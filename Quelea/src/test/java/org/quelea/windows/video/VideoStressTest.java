@@ -58,7 +58,8 @@ import static org.quelea.testutil.VideoTestSupport.waitFor;
  * Stress tests for the GStreamer video paths that used to crash the JVM or
  * freeze the FX thread: video theme backgrounds switched quickly in several
  * visible previews (issue #718), and short looping videos with sound, whose
- * loop seek restarts the audio output every time while the position is polled.
+ * loop seek restarts the audio output every time while the position is polled,
+ * and which are seeked, restarted, paused and resumed meanwhile.
  * <p>
  * Each test fails as soon as the FX thread stops responding, and prints the
  * Java thread stacks. A native crash ends the test JVM instead. The run time
@@ -77,11 +78,13 @@ public class VideoStressTest {
     private final List<LyricDrawer> drawers = new ArrayList<>();
     private final List<VidDisplay> displays = new ArrayList<>();
     private int baseline;
+    private long nativeMark;
 
     @BeforeEach
     public void setUp() {
         VideoTestSupport.assumeVideoAvailable();
         baseline = VideoTestSupport.activePipelines();
+        nativeMark = VideoTestSupport.nativePipelineMark();
     }
 
     @AfterEach
@@ -93,6 +96,15 @@ public class VideoStressTest {
         }, "tear down");
         assertTrue(waitFor(() -> VideoTestSupport.activePipelines() == baseline, 10_000),
                 "Every video pipeline should be released");
+        // Players shut their pipelines down on their own threads: wait for
+        // that, or the temporary videos can still be open (and on Windows,
+        // can't be deleted).
+        if (!VideoTestSupport.waitForNativePipelines(nativeMark, 30_000)) {
+            String stacks = threadStacks();
+            holdForInspection();
+            fail(VideoTestSupport.nativePipelines(nativeMark) + " native pipelines weren't shut down (pid "
+                    + ProcessHandle.current().pid() + ")" + stacks);
+        }
     }
 
     @Test
@@ -197,11 +209,15 @@ public class VideoStressTest {
             VidDisplay display = displays.get(random.nextInt(displays.size()));
             int action = random.nextInt(10);
             onFxWithin(() -> {
-                // Mostly let them loop, sometimes seek or restart like an operator.
+                // Mostly let them loop, sometimes seek, restart or pause and
+                // resume quickly like an operator.
                 if (action == 0) {
                     display.seek(random.nextDouble());
                 } else if (action == 1) {
                     display.stop();
+                    display.play();
+                } else if (action == 2) {
+                    display.pause();
                     display.play();
                 }
             }, "tick " + ++ticks);

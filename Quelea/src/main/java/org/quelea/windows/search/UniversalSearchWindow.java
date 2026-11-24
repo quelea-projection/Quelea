@@ -39,7 +39,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -421,15 +420,15 @@ public class UniversalSearchWindow extends Stage {
     private Image loadPreview(Result result) {
         File file = result.previewFile();
         try {
+            // Loaded at twice the size it's shown at, for HiDPI screens
+            double width = PREVIEW_WIDTH - PREVIEW_PADDING;
             if (result.kind() == Kind.VIDEO) {
                 if (videoPreview == null) {
                     videoPreview = new VidPreviewDisplay();
                 }
-                // Copied, because the frame is only on loan from the video player
-                Image frame = videoPreview.getPreviewImg(file.toURI());
-                return new WritableImage(frame.getPixelReader(), (int) frame.getWidth(), (int) frame.getHeight());
+                // Already a copy of its own, scaled down by GStreamer
+                return videoPreview.getPreviewImg(file.toURI(), (int) (width * 2), (int) (width * 2));
             }
-            double width = PREVIEW_WIDTH - PREVIEW_PADDING;
             return ImageManager.INSTANCE.getImage(file.toURI().toString(), width * 2, width * 2, true);
         } catch (RuntimeException ex) {
             LOGGER.log(Level.WARNING, "Couldn't create a preview of " + file, ex);

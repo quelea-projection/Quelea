@@ -146,6 +146,35 @@ public final class VideoTestSupport {
     }
 
     /**
+     * @return a mark for {@link #nativePipelines(long)}: take it at the start
+     * of a test, so pipelines that other tests left shutting down aren't
+     * counted.
+     */
+    public static long nativePipelineMark() {
+        return VidDisplay.nativePipelineMark();
+    }
+
+    /**
+     * @return the number of native video pipelines created since the mark
+     * that haven't been shut down yet; that happens on their own threads,
+     * after the players have been stopped or disposed.
+     */
+    public static int nativePipelines(long mark) {
+        return VidDisplay.getNativePipelineCount(mark);
+    }
+
+    /**
+     * Wait until every native pipeline created since a mark (see
+     * {@link #nativePipelineMark()}) has been shut down, so the files they
+     * played can be deleted (on Windows, an open file can't be).
+     *
+     * @return true if that happened before the timeout.
+     */
+    public static boolean waitForNativePipelines(long mark, long timeoutMillis) throws Exception {
+        return waitFor(() -> nativePipelines(mark) == 0, timeoutMillis);
+    }
+
+    /**
      * A theme with the test video as its background and the given shadow
      * radius, like the theme editor produces while the shadow slider is moved.
      */
