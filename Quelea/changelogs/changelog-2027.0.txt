@@ -28,4 +28,5 @@ quelea (2027.0) stable
   * Add ability to countdown to time of day
   * Picture-in-picture mode shows a compact Quelea logo while using other applications; hover to expand it into a live preview, or pin the preview open. The main projection can optionally remain visible; the stage view remains active.
   * Fix picture-in-picture staying expanded when switching from keyboard navigation back to the mouse
+  * Each bible version on a slide can have its own colour, set in the theme
   * Various minor bugfixes

@@ -81,6 +81,8 @@ public class ThemeToolbar extends VBox {
     private final ThemePanel themePanel;
     private final TextStyleRow mainText;
     private final TextStyleRow translationText;
+    /** The translation colour, and the colours of later bible versions. */
+    private final MultiColourSelection translationColours;
     private final ToggleButton leftAlignButton;
     private final ToggleButton centreAlignButton;
     private final ToggleButton rightAlignButton;
@@ -198,6 +200,7 @@ public class ThemeToolbar extends VBox {
         mainText.addTo(textGrid, 2);
         textGrid.add(heading("translation.font.text"), 0, 3);
         textGrid.add(caption("color.theme.label"), 1, 3);
+        translationColours = new MultiColourSelection(translationText.colour, () -> themePanel.updateTheme(false));
         translationText.addTo(textGrid, 4);
 
         // ---- Text shadow ----------------------------------------------------
@@ -432,6 +435,7 @@ public class ThemeToolbar extends VBox {
         }
         mainText.set(theme.getFont().getFamily(), theme.getFontPaint(), theme.isBold(), theme.isItalic());
         translationText.set(theme.getTranslateFont().getFamily(), theme.getTranslateFontPaint(), theme.isTranslateBold(), theme.isTranslateItalic());
+        translationColours.setMoreColours(theme.getMoreTranslateFontPaints());
         int align = theme.getTextAlignment();
         if (align == -1) {
             leftAlignButton.setSelected(true);
@@ -483,9 +487,11 @@ public class ThemeToolbar extends VBox {
         }
         SerializableDropShadow shadow = new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(),
                 shadowOffsetSlider.getValue(), shadowRadiusSlider.getValue(), shadowSpreadSlider.getValue(), useShadowSwitch.isSelected());
-        return new ThemeDTO(new SerializableFont(mainText.toFont()), mainText.colour.getValue(),
+        ThemeDTO theme = new ThemeDTO(new SerializableFont(mainText.toFont()), mainText.colour.getValue(),
                 new SerializableFont(translationText.toFont()), translationText.colour.getValue(),
                 background, shadow, mainText.bold.isSelected(), mainText.italic.isSelected(),
                 translationText.bold.isSelected(), translationText.italic.isSelected(), -1, getAlignmentVal());
+        theme.setMoreTranslateFontPaints(translationColours.getMoreColours());
+        return theme;
     }
 }

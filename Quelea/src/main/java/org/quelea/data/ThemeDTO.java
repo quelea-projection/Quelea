@@ -17,6 +17,8 @@
  */
 package org.quelea.data;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -68,6 +70,12 @@ public class ThemeDTO implements Serializable {
     private Boolean isTranslateFontItalic = false;
     private int textPosition = -1;
     private int textAlignment = 0;
+    /**
+     * The colours of the second, third and later translations shown at the
+     * same time (bible versions), if they differ from the first. Versions
+     * without a colour of their own use the last colour.
+     */
+    private final List<SerializableColor> moreTranslateFontColors = new ArrayList<>();
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -222,6 +230,87 @@ public class ThemeDTO implements Serializable {
     }
 
     /**
+     * Get the colour of a translation when several are shown at the same
+     * time (such as bible versions.) A translation without a colour of its
+     * own has the colour of the one before it, so with one colour they all
+     * have that colour.
+     * <p/>
+     * @param index which translation: 0 for the first.
+     * @return the colour of that translation.
+     */
+    public Color getTranslateFontPaint(int index) {
+        if (index <= 0 || moreTranslateFontColors.isEmpty()) {
+            return getTranslateFontPaint();
+        }
+        return moreTranslateFontColors.get(Math.min(index, moreTranslateFontColors.size()) - 1).getColor();
+    }
+
+    /**
+     * Get the colours of the second and later translations.
+     * <p/>
+     * @return the colours, which may be empty.
+     */
+    public List<Color> getMoreTranslateFontPaints() {
+        List<Color> ret = new ArrayList<>();
+        for (SerializableColor colour : moreTranslateFontColors) {
+            ret.add(colour.getColor());
+        }
+        return ret;
+    }
+
+    /**
+     * Set the colours of the second and later translations.
+     * <p/>
+     * @param colours the colours, or an empty list (or null) to show all
+     * translations in the first translation colour.
+     */
+    public void setMoreTranslateFontPaints(List<Color> colours) {
+        moreTranslateFontColors.clear();
+        if (colours != null) {
+            for (Color colour : colours) {
+                if (colour != null) {
+                    moreTranslateFontColors.add(new SerializableColor(colour));
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the colours of the second and later translations as text, for
+     * storing.
+     * <p/>
+     * @return the colours separated by commas, or an empty string.
+     */
+    public String getMoreTranslateFontPaintsString() {
+        StringBuilder ret = new StringBuilder();
+        for (SerializableColor colour : moreTranslateFontColors) {
+            if (ret.length() > 0) {
+                ret.append(',');
+            }
+            ret.append(colour.toString());
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Set the colours of the second and later translations from text stored
+     * by {@link #getMoreTranslateFontPaintsString()}.
+     * <p/>
+     * @param colours the colours separated by commas, or null or empty.
+     */
+    public void setMoreTranslateFontPaintsString(String colours) {
+        List<Color> list = new ArrayList<>();
+        if (colours != null) {
+            for (String colour : colours.split(",")) {
+                if (!colour.trim().isEmpty()) {
+                    list.add(Utils.parseColour(colour.trim()));
+                }
+            }
+        }
+        setMoreTranslateFontPaints(list);
+    }
+
+    /**
      * Determine if this theme is equal to another object.
      * <p/>
      * @param obj the other object.
@@ -247,6 +336,7 @@ public class ThemeDTO implements Serializable {
                 && Objects.equals(isTranslateFontItalic, other.isTranslateFontItalic)
                 && textPosition == other.textPosition
                 && textAlignment == other.textAlignment
+                && moreTranslateFontColors.equals(other.moreTranslateFontColors)
                 && (ignoreName || Objects.equals(themeName, other.themeName));
     }
 
@@ -300,6 +390,7 @@ public class ThemeDTO implements Serializable {
                 textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
                 backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidStretch, textPosition, textAlignment);
+        theme.setTranslateFontColours(getMoreTranslateFontPaintsString());
         return theme;
     }
 
@@ -326,6 +417,7 @@ public class ThemeDTO implements Serializable {
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), translateFont, Utils.parseColour(theme.getTranslateFontcolour()),
                 background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
         ret.themeName = theme.getName();
+        ret.setMoreTranslateFontPaintsString(theme.getTranslateFontColours());
         return ret;
     }
 
@@ -345,6 +437,9 @@ public class ThemeDTO implements Serializable {
         ret.append("$translatefontname:").append(translateFont.getFont().getFamily());
         ret.append("$fontcolour:").append(fontColor.toString());
         ret.append("$translatefontcolour:").append(translateFontColor.toString());
+        if (!moreTranslateFontColors.isEmpty()) {
+            ret.append("$translatefontcolours:").append(getMoreTranslateFontPaintsString());
+        }
         if (!themeName.isEmpty()) {
             int dollar = themeName.indexOf('$');
             if (dollar < 0) {
@@ -418,6 +513,7 @@ public class ThemeDTO implements Serializable {
         String vidStretch = "false";
         String textPosition = "-1";
         String textAlignment = "0";
+        String moreTranslateFontColours = "";
         for (String part : content.split("\\$")) {
             if (!part.contains(":")) {
                 continue;
@@ -473,6 +569,8 @@ public class ThemeDTO implements Serializable {
                 textPosition = parts[1];
             } else if (parts[0].equalsIgnoreCase("textalignment")) {
                 textAlignment = parts[1];
+            } else if (parts[0].equalsIgnoreCase("translatefontcolours")) {
+                moreTranslateFontColours = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
@@ -513,6 +611,7 @@ public class ThemeDTO implements Serializable {
                 background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic),
                 Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
         ret.themeName = themeName;
+        ret.setMoreTranslateFontPaintsString(moreTranslateFontColours);
         return ret;
     }
 

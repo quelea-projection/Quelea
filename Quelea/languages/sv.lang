@@ -889,3 +889,5 @@ bible.versions.label=Bibelversioner
 bible.versions.hint=Versionerna visas i den ordning du kryssar i dem. Den första är standard, även för fjärrkontrollen. Kryssa i fler för att visa nya bibelställen i flera versioner. Du kan fortfarande byta versioner i bibelfliken.
 default.bible.badge=Standard
 bible.delete.button=Ta bort bibel
+theme.version.colour.tooltip=Färg för bibelversion $1
+theme.multi.colour.hint=Håll ned Ctrl (Cmd på Mac) och klicka på färger för att välja flera: en för varje bibelversion
