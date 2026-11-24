@@ -31,6 +31,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.ShortcutManager;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.actionhandlers.LiveTextActionHandler;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
@@ -84,6 +85,11 @@ public class ToolsMenu extends Menu {
             dialog.show();
         });
         getItems().add(testItem);
+
+        MenuItem pictureInPicture = new MenuItem(LabelGrabber.INSTANCE.getLabel("picture.in.picture.title"));
+        pictureInPicture.setAccelerator(MainWindow.PICTURE_IN_PICTURE_SHORTCUT);
+        pictureInPicture.setOnAction(e -> QueleaApp.get().getMainWindow().togglePictureInPicture());
+        getItems().add(pictureInPicture);
 
         liveTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("send.live.text"), QueleaIcon.LIVE_TEXT.create());
         liveTextItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));

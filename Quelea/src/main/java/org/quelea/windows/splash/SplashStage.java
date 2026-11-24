@@ -18,18 +18,27 @@
 package org.quelea.windows.splash;
 
 import java.io.File;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -43,7 +52,11 @@ import org.quelea.windows.style.StyleManager;
  */
 public class SplashStage extends Stage {
 
-    public static final Font VERSION_FONT = new Font("Arial", 14);
+    private static final double MAX_WIDTH = 640;
+    private static final Duration PROGRESS_ANIMATION_DURATION = Duration.millis(220);
+    private final ProgressBar progressBar = new ProgressBar(0);
+    private Timeline progressAnimation;
+    private double targetProgress;
 
     /**
      * Create a new splash window.
@@ -53,19 +66,6 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
-        ImageView imageView = new ImageView(splashImage);
-        Text version = new Text(QueleaProperties.VERSION.getVersionString());
-        version.setFont(VERSION_FONT);
-        version.setX(321);
-        version.setY(208);
-        Group mainPane = new Group();
-        mainPane.getChildren().add(imageView);
-        mainPane.getChildren().add(version);
-        Scene scene = new Scene(mainPane);
-        StyleManager.apply(scene);
-        setScene(scene);
-
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         int controlScreenProp = QueleaProperties.get().getControlScreen();
@@ -76,7 +76,75 @@ public class SplashStage extends Stage {
         }
 
         Rectangle2D bounds = screen.getVisualBounds();
-        setX(bounds.getMinX() + ((bounds.getWidth() / 2) - splashImage.getWidth() / 2));
-        setY(bounds.getMinY() + ((bounds.getHeight() / 2) - splashImage.getHeight() / 2));
+        Image splashImage = new Image(new File(QueleaProperties.VERSION.getUnstableName().getSplashPath()).getAbsoluteFile().toURI().toString());
+        double aspect = splashImage.getWidth() / splashImage.getHeight();
+        double width = Math.min(MAX_WIDTH, Math.min(bounds.getWidth() * 0.9, bounds.getHeight() * 0.9 * aspect));
+        double height = width / aspect;
+        ImageView imageView = new ImageView(splashImage);
+        imageView.setFitWidth(width);
+        imageView.setPreserveRatio(true);
+
+        // The artwork has a white version badge near its top-right corner.
+        Text version = new Text(QueleaProperties.VERSION.getVersionString());
+        version.setId("splash-version");
+        version.setFill(Color.web("#10102b"));
+        version.setFont(new Font("Arial", 14 * width / MAX_WIDTH));
+        double availableVersionWidth = width * 0.073;
+        if (version.getLayoutBounds().getWidth() > availableVersionWidth) {
+            version.setFont(new Font("Arial", version.getFont().getSize() * availableVersionWidth / version.getLayoutBounds().getWidth()));
+        }
+        version.setTextOrigin(VPos.CENTER);
+        version.setX(width * 0.926 - version.getLayoutBounds().getWidth() / 2);
+        version.setY(height * 0.075);
+
+        progressBar.setId("splash-progress");
+        progressBar.getStyleClass().add("splash-progress");
+        progressBar.setAccessibleText(LabelGrabber.INSTANCE.getLabel("loading.text"));
+        progressBar.setPrefSize(width * 0.82, Math.max(4, height * 0.014));
+        progressBar.setLayoutX(width * 0.14);
+        progressBar.setLayoutY(height * 0.913 - progressBar.getPrefHeight() / 2);
+
+        Group mainPane = new Group(imageView, version, progressBar);
+        Scene scene = new Scene(mainPane, width, height);
+        StyleManager.apply(scene);
+        setScene(scene);
+        setX(bounds.getMinX() + (bounds.getWidth() - width) / 2);
+        setY(bounds.getMinY() + (bounds.getHeight() - height) / 2);
+    }
+
+    /** Update completed startup milestones; safe to call from the startup thread. */
+    public void setProgress(double progress) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> setProgress(progress));
+            return;
+        }
+        double next = Math.max(0, Math.min(1, progress));
+        if (Double.isNaN(next) || next <= targetProgress) {
+            return;
+        }
+        targetProgress = next;
+        animateProgress(next, null);
+    }
+
+    /** Finish the bar before continuing with the final startup steps. */
+    public void finish(Runnable onFinished) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> finish(onFinished));
+            return;
+        }
+        targetProgress = 1;
+        animateProgress(1, onFinished);
+    }
+
+    private void animateProgress(double progress, Runnable onFinished) {
+        if (progressAnimation != null) {
+            progressAnimation.stop();
+        }
+        progressAnimation = new Timeline(new KeyFrame(PROGRESS_ANIMATION_DURATION,
+                new KeyValue(progressBar.progressProperty(), progress, Interpolator.EASE_OUT)));
+        if (onFinished != null) {
+            progressAnimation.setOnFinished(event -> onFinished.run());
+        }
+        progressAnimation.play();
     }
 }

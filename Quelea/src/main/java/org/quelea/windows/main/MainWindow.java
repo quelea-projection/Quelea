@@ -44,6 +44,15 @@ import org.quelea.windows.options.PreferencesDialog;
 import org.quelea.windows.search.UniversalSearchWindow;
 
 import javafx.scene.Parent;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Region;
+import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.WebDisplayable;
+import org.quelea.data.powerpoint.PresentationSlide;
 
 import org.quelea.windows.style.StyleManager;
 
@@ -56,6 +65,8 @@ import org.quelea.windows.style.StyleManager;
 public class MainWindow extends Stage {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    public static final KeyCombination PICTURE_IN_PICTURE_SHORTCUT = new KeyCodeCombination(KeyCode.P,
+            KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
     private final MainPanel mainpanel;
     private SongEntryWindow songEntryWindow;
     private UniversalSearchWindow universalSearchWindow;
@@ -67,6 +78,7 @@ public class MainWindow extends Stage {
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
     private final GlobalThemeStore globalThemeStore;
+    private PictureInPictureWindow pictureInPicture;
 
     /**
      * Create a new main window.
@@ -166,6 +178,113 @@ public class MainWindow extends Stage {
      */
     public MainPanel getMainPanel() {
         return mainpanel;
+    }
+
+    /** Show the live output in a small independent window, or return to Quelea. */
+    public void togglePictureInPicture() {
+        if (pictureInPicture == null) {
+            pictureInPicture = new PictureInPictureWindow(this, this::pictureInPictureSource,
+                    this::pictureInPictureSlide, this::restorePictureInPictureWebView,
+                    () -> QueleaApp.get().getProjectionWindow(),
+                    () -> QueleaProperties.get().getHideLiveViewDuringPictureInPicture());
+            DisplayStage projection = QueleaApp.get().getProjectionWindow();
+            if (projection != null) {
+                projection.showingProperty().addListener((obs, wasShowing, showing) -> updatePictureInPictureWebView());
+            }
+        }
+        pictureInPicture.toggle();
+    }
+
+    /** Change projection visibility, deferring it while picture-in-picture is open. */
+    public void setProjectionShowing(DisplayStage projection, boolean showing) {
+        if (pictureInPicture == null || !pictureInPicture.setProjectionShowing(projection, showing)) {
+            if (showing) {
+                projection.show();
+            } else {
+                projection.hide();
+            }
+        }
+    }
+
+    /** Apply a changed PiP projection preference to an already-open PiP window. */
+    public void refreshPictureInPictureProjectionVisibility() {
+        if (pictureInPicture != null) {
+            pictureInPicture.refreshProjectionVisibility();
+        }
+    }
+
+    private Node pictureInPictureSource() {
+        updatePictureInPictureWebView();
+        DisplayStage projection = QueleaApp.get().getProjectionWindow();
+        if (projection == null) {
+            return null;
+        }
+        // The display root also contains the projector's test-pattern overlay.
+        return projection.getScene().getRoot();
+    }
+
+    /** Lay out a disabled projector before it receives its first live item. */
+    static boolean prepareHiddenPictureInPictureSource(DisplayStage projection) {
+        DisplayCanvas canvas = projection.getCanvas();
+        if (!projection.isShowing() && (canvas.getWidth() <= 0 || canvas.getHeight() <= 0)
+                && projection.getScene().getRoot() instanceof Region root
+                && projection.getWidth() > 0 && projection.getHeight() > 0) {
+            root.resize(projection.getWidth(), projection.getHeight());
+            root.applyCss();
+            root.layout();
+            return canvas.getWidth() > 0 && canvas.getHeight() > 0;
+        }
+        return false;
+    }
+
+    private Image pictureInPictureSlide() {
+        LivePanel live = mainpanel.getLivePanel();
+        if (live.getDisplayable() instanceof PresentationDisplayable) {
+            PresentationSlide slide = live.getPresentationPanel().getPresentationPreview().getSelectedSlide();
+            return slide == null ? null : slide.getImage();
+        }
+        return null;
+    }
+
+    private void updatePictureInPictureWebView() {
+        LivePanel live = mainpanel.getLivePanel();
+        DisplayStage projection = QueleaApp.get().getProjectionWindow();
+        if (pictureInPicture == null || !pictureInPicture.isShowing()) {
+            return;
+        }
+        if (projection != null && !projection.isShowing() && live.getDisplayable() instanceof WebDisplayable web) {
+            // With no projector, the sole WebView normally lives in the main
+            // window. A minimised WebView stops painting, so keep that same
+            // instance visible here until the operator or projector returns.
+            pictureInPicture.setWebView(web.getWebView());
+        } else {
+            restorePictureInPictureWebView();
+        }
+    }
+
+    /** Whether the floating window temporarily holds this live web view. */
+    boolean isPictureInPictureHostingWebView(Node view) {
+        return pictureInPicture != null && pictureInPicture.isShowing()
+                && pictureInPicture.containsWebView(view);
+    }
+
+    private void restorePictureInPictureWebView() {
+        if (pictureInPicture == null) {
+            return;
+        }
+        LivePanel live = mainpanel.getLivePanel();
+        if (live.getDisplayable() instanceof WebDisplayable web
+                && pictureInPicture.containsWebView(web.getWebView())) {
+            pictureInPicture.setWebView(null);
+            DisplayStage projection = QueleaApp.get().getProjectionWindow();
+            if (projection != null && projection.isShowing() && live.isContentShowing()) {
+                projection.getCanvas().getChildren().add(web.getWebView());
+            } else {
+                live.getWebPanel().addWebView(web);
+            }
+        } else {
+            pictureInPicture.setWebView(null);
+        }
     }
 
     /**

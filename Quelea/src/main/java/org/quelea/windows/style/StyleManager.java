@@ -115,13 +115,24 @@ public final class StyleManager {
      * @return the same scene, for chaining.
      */
     public static Scene apply(Scene scene) {
+        return apply(scene, true);
+    }
+
+    /** Apply the theme to a window whose content must extend to its edges. */
+    public static Scene applyWithoutDialogPolish(Scene scene) {
+        return apply(scene, false);
+    }
+
+    private static Scene apply(Scene scene, boolean polish) {
         scene.getStylesheets().addAll(getStylesheets());
         STYLED_SCENES.put(scene, Boolean.TRUE);
-        scene.windowProperty().addListener((obs, oldWindow, window) -> {
-            if (window != null && !(window instanceof MainWindow) && !(window instanceof SplashStage)) {
-                window.addEventHandler(WindowEvent.WINDOW_SHOWING, e -> polishDialog(scene.getRoot()));
-            }
-        });
+        if (polish) {
+            scene.windowProperty().addListener((obs, oldWindow, window) -> {
+                if (window != null && !(window instanceof MainWindow) && !(window instanceof SplashStage)) {
+                    window.addEventHandler(WindowEvent.WINDOW_SHOWING, e -> polishDialog(scene.getRoot()));
+                }
+            });
+        }
         return scene;
     }
 
