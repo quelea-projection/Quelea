@@ -262,11 +262,7 @@ public class LivePanel extends LivePreviewPanel {
             }
 
             if (!lyricsHidden) {
-                if (hide.isSelected()) {
-                    appWindow.hide();
-                } else {
-                    appWindow.show();
-                }
+                QueleaApp.get().getMainWindow().setProjectionShowing(appWindow, !hide.isSelected());
             }
             if (!stageHidden) {
                 if (hide.isSelected()) {
@@ -681,7 +677,10 @@ public class LivePanel extends LivePreviewPanel {
             }
             return webPreviewImage;
         } else {
-            getWebPanel().addWebView((WebDisplayable) getDisplayable());
+            WebDisplayable web = (WebDisplayable) getDisplayable();
+            if (!QueleaApp.get().getMainWindow().isPictureInPictureHostingWebView(web.getWebView())) {
+                getWebPanel().addWebView(web);
+            }
             return new Image("file:icons/web preview.png");
         }
     }

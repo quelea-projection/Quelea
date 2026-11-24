@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
+import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -45,7 +47,6 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.utils.Chord;
-import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -445,7 +446,7 @@ public class MobileLyricsServer {
             if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
                 String response = lp.getDisplayable().getPreviewText();
                 if (lp.getDisplayable() instanceof BiblePassage) {
-                    final LibraryBiblePanel lbp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel();
+                    List<Bible> bibles = List.of(BibleManager.get().getBibles());
                     int chapterPos = 0;
 
                     for (int i = 1; i < response.length(); i++) {
@@ -455,18 +456,18 @@ public class MobileLyricsServer {
                             break;
                         }
                     }
-                    String bible = response.substring(response.indexOf("\n") + 1);
+                    String bible = ((BiblePassage) lp.getDisplayable()).getPrimaryBibleName();
                     String book = response.substring(0, chapterPos);
                     int bookNumber = 0;
                     int bibleNumber = 0;
 
-                    for (int i = 0; i < lbp.getBibleSelector().getItems().size(); i++) {
-                        if (lbp.getBibleSelector().getItems().get(i).toString().toLowerCase().contains(bible.toLowerCase())) {
+                    for (int i = 0; i < bibles.size(); i++) {
+                        if (bibles.get(i).toString().toLowerCase().contains(bible.toLowerCase())) {
                             bibleNumber = i;
                         }
                     }
 
-                    BibleBook[] books = lbp.getBibleSelector().getItems().get(bibleNumber).getBooks();
+                    BibleBook[] books = bibles.get(bibleNumber).getBooks();
                     for (int i = 0; i < books.length; i++) {
                         if (books[i].getBookName().equalsIgnoreCase(book)) {
                             bookNumber = i + 1;

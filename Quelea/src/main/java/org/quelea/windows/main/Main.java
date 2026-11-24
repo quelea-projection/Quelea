@@ -118,9 +118,12 @@ public final class Main extends Application {
                 }
                 GStreamerInitState.INIT_SUCCESS = gok;
                 final boolean gstreamerOk = gok;
+                splashWindow.setProgress(0.12);
 
                 new FontInstaller().setupBundledFonts();
+                splashWindow.setProgress(0.20);
                 new UserFileChecker(QueleaProperties.get().getQueleaUserHome()).checkUserFiles();
+                splashWindow.setProgress(0.28);
 
                 final ObservableList<Screen> monitors = Screen.getScreens();
                 LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
@@ -170,6 +173,7 @@ public final class Main extends Application {
                 } else {
                     LOGGER.log(Level.INFO, "Auto-detect servers disabled");
                 }
+                splashWindow.setProgress(0.38);
 
                 if (QueleaProperties.get().getWebProxyHost() != null && QueleaProperties.get().getWebProxyPort() != null && QueleaProperties.get().getWebProxyUser() != null && QueleaProperties.get().getWebProxyPassword() != null) {
                     System.setProperty("http.proxyHost", QueleaProperties.get().getWebProxyHost());
@@ -197,6 +201,12 @@ public final class Main extends Application {
                 }
 
                 Platform.runLater(() -> {
+                    if (lyricsHidden) {
+                        // Prepare the unused projection canvas before anything
+                        // goes live. PiP can then mirror it without redrawing
+                        // or restarting the currently running media or timer.
+                        MainWindow.prepareHiddenPictureInPictureSource(fullScreenWindow);
+                    }
                     QueleaApp.get().setProjectionWindow(fullScreenWindow);
                 });
 
@@ -221,6 +231,7 @@ public final class Main extends Application {
                 Platform.runLater(() -> {
                     QueleaApp.get().setStageWindow(stageWindow);
                 });
+                splashWindow.setProgress(0.48);
 
                 backgroundExecutor.submit(() -> {
                     LOGGER.log(Level.INFO, "Loading bibles");
@@ -234,9 +245,12 @@ public final class Main extends Application {
                         System.exit(1);
                     });
                 }
+                splashWindow.setProgress(0.60);
                 OOUtils.attemptInit();
+                splashWindow.setProgress(0.66);
                 Platform.runLater(() -> {
                     mainWindow = new MainWindow(true, gstreamerOk);
+                    splashWindow.setProgress(0.85);
                 });
 
                 backgroundExecutor.submit(() -> {
@@ -260,11 +274,13 @@ public final class Main extends Application {
                     } else {
                         stageWindow.show();
                     }
+                    splashWindow.setProgress(0.94);
                 });
 
                 LOGGER.log(Level.INFO, "Adding shortcuts.");
                 Platform.runLater(() -> {
                     new ShortcutManager().addShortcuts(mainWindow);
+                    splashWindow.setProgress(0.97);
                 });
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
@@ -293,7 +309,7 @@ public final class Main extends Application {
                     }
                 }
 
-                Platform.runLater(() -> {
+                Platform.runLater(() -> splashWindow.finish(() -> {
                     splashWindow.hide();
                     mainWindow.getMainPanel().setSliderPos();
                     if (!Utils.isLinux()) {
@@ -320,7 +336,7 @@ public final class Main extends Application {
                     }
                     mainWindow.show();
                     QueleaApp.get().doneLoading();
-                });
+                }));
             } catch (Throwable ex) {
                 LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
                 Platform.runLater(() -> {

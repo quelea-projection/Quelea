@@ -330,9 +330,10 @@ public class UniversalSearchWindow extends Stage {
         Kind filter = (Kind) filters.getSelectedToggle().getUserData();
         LibraryPanel library = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         UniversalSearch.Sources sources = new UniversalSearch.Sources(
-                library.getBiblePanel().getBibleSelector().getValue(),
+                library.getBiblePanel().getPrimaryBible(),
                 List.copyOf(library.getTimerPanel().getTimerPanel().getListView().getItems()),
-                List.copyOf(QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems()));
+                List.copyOf(QueleaApp.get().getMainWindow().getNoticeDialog().getTemplates().getItems()),
+                library.getBiblePanel().getVersions());
         pendingSearch = searchService.submit(() -> {
             List<Result> results = List.of();
             try {

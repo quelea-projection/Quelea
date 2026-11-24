@@ -11,13 +11,13 @@ package org.quelea.services.utils;
  */
 public enum VersionType {
 
-    BETA("icons/splash-beta.png"), CI("icons/splash-bare-nightly.png"), RELEASE("icons/splash-bare.png");
+    BETA("icons/splash-beta-new.png"), CI("icons/splash-ci-new.png"), RELEASE("icons/splash-new.png");
 
     VersionType(String splashPath) {
         this.splashPath = splashPath;
     }
 
-    private String splashPath;
+    private final String splashPath;
 
     public String getSplashPath() {
         return splashPath;
