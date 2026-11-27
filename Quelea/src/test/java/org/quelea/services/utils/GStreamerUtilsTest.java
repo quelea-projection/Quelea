@@ -1,13 +1,21 @@
 package org.quelea.services.utils;
 
+import org.freedesktop.gstreamer.Gst;
+import org.freedesktop.gstreamer.Pipeline;
+import org.freedesktop.gstreamer.elements.AppSrc;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 class GStreamerUtilsTest {
     @TempDir
@@ -52,6 +60,27 @@ class GStreamerUtilsTest {
         // JVM on the SIGSEGVs the JVM raises (and handles) itself.
         org.quelea.testutil.VideoTestSupport.assumeVideoAvailable();
         Assertions.assertEquals(0, gstreamerLibrary().getFunction("gst_segtrap_is_enabled").invokeInt(new Object[0]));
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void streamingThreadDetachesAfterCallback() throws Exception {
+        org.quelea.testutil.VideoTestSupport.assumeVideoAvailable();
+        try (Pipeline pipeline = (Pipeline) Gst.parseLaunch("appsrc name=source ! fakesink");
+             AppSrc source = (AppSrc) pipeline.getElementByName("source")) {
+            CompletableFuture<Thread> callback = new CompletableFuture<>();
+            source.connect((AppSrc.NEED_DATA) (src, size) -> callback.complete(Thread.currentThread()));
+            try {
+                pipeline.play();
+                // With no data supplied, the native thread stays alive waiting for input.
+                // Its Java Thread terminates when JNA detaches it on callback return.
+                Thread thread = callback.get(5, TimeUnit.SECONDS);
+                Assertions.assertTrue(thread.join(Duration.ofSeconds(5)),
+                        "GStreamer left its idle streaming thread attached to the JVM");
+            } finally {
+                pipeline.stop();
+            }
+        }
     }
 
     /**

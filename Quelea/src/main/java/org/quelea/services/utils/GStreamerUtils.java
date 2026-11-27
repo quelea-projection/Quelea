@@ -41,6 +41,13 @@ public class GStreamerUtils {
      * @param programName the program name passed to GStreamer.
      */
     public static void init(String programName) {
+        if (Platform.isWindows()) {
+            // gst1-java reads this when it initializes its callback handlers.
+            // If a streaming thread stays attached after a callback, JNA can
+            // call DetachCurrentThread from DLL_THREAD_DETACH while holding
+            // the Windows loader lock, deadlocking a JVM that is exiting.
+            System.setProperty("glib.detachCallbackThreads", "true");
+        }
         Gst.init(Version.BASELINE, programName, "--gst-disable-segtrap");
     }
 
