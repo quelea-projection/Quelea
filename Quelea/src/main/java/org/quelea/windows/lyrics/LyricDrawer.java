@@ -169,7 +169,7 @@ public class LyricDrawer extends WordDrawer {
         translateFont = Font.font(translateFont.getFamily(),
                 theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                fontSize - QueleaProperties.get().getTranslationFontSizeOffset());
+                getTranslateFontSize(fontSize));
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
 
@@ -658,6 +658,11 @@ public class LyricDrawer extends WordDrawer {
      * @param displayable the displayable to check.
      * @return the font size to use
      */
+    @Override
+    protected double getTranslateFontSize(double fontSize) {
+        return theme.getTranslateFontSize(fontSize);
+    }
+
     private Font getTranslateFont(double fontSize) {
         String translateFamily = theme.getFont().getFamily();
         if (theme.getTranslateFont() != null) {

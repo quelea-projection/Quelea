@@ -36,6 +36,7 @@ public class Theme {
     private Boolean videoStretch;
     private Integer textPosition;
     private Integer textAlignment;
+    private Integer translateFontSize;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
@@ -80,6 +81,7 @@ public class Theme {
         this.videoStretch = theme.videoStretch;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
+        this.translateFontSize = theme.translateFontSize;
     }
 
     /**
@@ -148,6 +150,22 @@ public class Theme {
     
     public void setTextAlignment(Integer textAlignment) {
         this.textAlignment = textAlignment;
+    }
+
+    /**
+     * @return the size of the translation as a percentage of the main text,
+     * or 0 if it isn't set.
+     */
+    @Column(name = "translateFontSize")
+    public Integer getTranslateFontSize() {
+        if (translateFontSize == null) {
+            return 0;
+        }
+        return translateFontSize;
+    }
+
+    public void setTranslateFontSize(Integer translateFontSize) {
+        this.translateFontSize = translateFontSize;
     }
 
     /**

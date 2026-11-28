@@ -35,6 +35,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -77,10 +78,14 @@ import org.quelea.windows.style.QueleaIcon;
 public class ThemeToolbar extends VBox {
 
     private static FontSelectionDialog fontSelectionDialog;
+    /** The translation size shown for themes that don't set one. */
+    private static final int DEFAULT_TRANSLATION_SIZE = 95;
+    private static final int MIN_TRANSLATION_SIZE = 25;
 
     private final ThemePanel themePanel;
     private final TextStyleRow mainText;
     private final TextStyleRow translationText;
+    private final Spinner<Integer> translationSize;
     private final ToggleButton leftAlignButton;
     private final ToggleButton centreAlignButton;
     private final ToggleButton rightAlignButton;
@@ -196,9 +201,22 @@ public class ThemeToolbar extends VBox {
         textGrid.add(heading("theme.main.text.label"), 0, 1);
         textGrid.add(caption("color.theme.label"), 1, 1);
         mainText.addTo(textGrid, 2);
-        textGrid.add(heading("translation.font.text"), 0, 3);
         textGrid.add(caption("color.theme.label"), 1, 3);
         translationText.addTo(textGrid, 4);
+        translationSize = new Spinner<>(MIN_TRANSLATION_SIZE, 100, DEFAULT_TRANSLATION_SIZE, 5);
+        translationSize.setEditable(true);
+        translationSize.setPrefWidth(80);
+        translationSize.valueProperty().addListener((ov, t, t1) -> themePanel.updateTheme(false));
+        translationSize.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("translation.size.tooltip")));
+        Label translationSizeLabel = fixedLabel("translation.size.label");
+        translationSizeLabel.setLabelFor(translationSize);
+        // On the heading row, so the editor doesn't take room from the preview
+        Region translationHeadingGap = new Region();
+        HBox.setHgrow(translationHeadingGap, Priority.ALWAYS);
+        HBox translationHeading = new HBox(4, heading("translation.font.text"), translationHeadingGap,
+                translationSizeLabel, translationSize, new Label("%"));
+        translationHeading.setAlignment(Pos.CENTER_LEFT);
+        textGrid.add(translationHeading, 0, 3);
 
         // ---- Text shadow ----------------------------------------------------
         useShadowSwitch = new ToggleButton();
@@ -432,6 +450,8 @@ public class ThemeToolbar extends VBox {
         }
         mainText.set(theme.getFont().getFamily(), theme.getFontPaint(), theme.isBold(), theme.isItalic());
         translationText.set(theme.getTranslateFont().getFamily(), theme.getTranslateFontPaint(), theme.isTranslateBold(), theme.isTranslateItalic());
+        int translationPercent = theme.getTranslateFontSizePercent();
+        translationSize.getValueFactory().setValue(translationPercent > 0 ? translationPercent : DEFAULT_TRANSLATION_SIZE);
         int align = theme.getTextAlignment();
         if (align == -1) {
             leftAlignButton.setSelected(true);
@@ -483,9 +503,11 @@ public class ThemeToolbar extends VBox {
         }
         SerializableDropShadow shadow = new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(),
                 shadowOffsetSlider.getValue(), shadowRadiusSlider.getValue(), shadowSpreadSlider.getValue(), useShadowSwitch.isSelected());
-        return new ThemeDTO(new SerializableFont(mainText.toFont()), mainText.colour.getValue(),
+        ThemeDTO theme = new ThemeDTO(new SerializableFont(mainText.toFont()), mainText.colour.getValue(),
                 new SerializableFont(translationText.toFont()), translationText.colour.getValue(),
                 background, shadow, mainText.bold.isSelected(), mainText.italic.isSelected(),
                 translationText.bold.isSelected(), translationText.italic.isSelected(), -1, getAlignmentVal());
+        theme.setTranslateFontSizePercent(translationSize.getValue());
+        return theme;
     }
 }
