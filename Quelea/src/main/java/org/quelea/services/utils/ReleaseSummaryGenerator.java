@@ -19,11 +19,15 @@ package org.quelea.services.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,13 +41,13 @@ public class ReleaseSummaryGenerator {
         Map<String, String> hashes = new HashMap<>();
         for(File releaseFile : new File("dist/standalone").listFiles()) {
             if(releaseFile.getName().toLowerCase().contains("windows") && releaseFile.getName().toLowerCase().contains("x64")) {
-                hashes.put("Windows x64", sha256(releaseFile.getAbsolutePath()));
+                hashes.put("Windows x64", sha256(releaseFile.toPath()));
             }
             else if(releaseFile.getName().toLowerCase().contains("crossplatform")) {
-                hashes.put("Crossplatform", sha256(releaseFile.getAbsolutePath()));
+                hashes.put("Crossplatform", sha256(releaseFile.toPath()));
             }
             else if(releaseFile.getName().toLowerCase().contains("mac")) {
-                hashes.put("Mac", sha256(releaseFile.getAbsolutePath()));
+                hashes.put("Mac", sha256(releaseFile.toPath()));
             }
         }
         
@@ -84,14 +88,12 @@ public class ReleaseSummaryGenerator {
         return ret;
     }
     
-    private static String sha256(String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA-256");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < result.length; i++) {
-            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+    static String sha256(Path file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (InputStream input = new DigestInputStream(Files.newInputStream(file), digest)) {
+            input.transferTo(java.io.OutputStream.nullOutputStream());
         }
-        return sb.toString();
+        return HexFormat.of().formatHex(digest.digest());
     }
     
 }
