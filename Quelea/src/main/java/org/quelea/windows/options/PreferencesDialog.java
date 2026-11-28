@@ -38,8 +38,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -54,6 +52,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.quelea.windows.style.ScreenFit;
 import org.quelea.windows.style.StyleManager;
