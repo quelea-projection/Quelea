@@ -42,6 +42,7 @@ import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Version;
 import org.quelea.utils.DesktopApi;
 
 import org.quelea.windows.style.StyleManager;
@@ -66,12 +67,13 @@ public class AboutDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
 
         BorderPane newLayout = new BorderPane();
+        newLayout.getStyleClass().add("about-dialog");
         ImageView logo = new ImageView(new Image("file:icons/full logo.png"));
         BorderPane.setAlignment(logo, Pos.CENTER);
         newLayout.setTop(logo);
 
         VBox subLayout = new VBox();
-        Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString());
+        Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + displayVersion(QueleaProperties.VERSION));
         headingText.getStyleClass().addAll("text", "about-heading");
         subLayout.getChildren().add(headingText);
         subLayout.getChildren().add(new Text(" "));
@@ -110,5 +112,14 @@ public class AboutDialog extends Stage {
         Scene scene = new Scene(newLayout);
         StyleManager.apply(scene);
         setScene(scene);
+    }
+
+    static String displayVersion(Version version) {
+        String suffix = switch (version.getUnstableName()) {
+            case CI -> " CI";
+            case BETA -> " Beta";
+            case RELEASE -> "";
+        };
+        return version.getVersionString() + suffix;
     }
 }
