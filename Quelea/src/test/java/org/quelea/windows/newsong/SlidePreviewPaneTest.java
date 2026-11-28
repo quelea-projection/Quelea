@@ -37,10 +37,12 @@ public class SlidePreviewPaneTest {
             + "If every slide of the song is to have the same size";
 
     private static DisplayStage previousProjection;
+    private static boolean previousPreviewSetting;
 
     @BeforeAll
     public static void setUp() throws Exception {
         QueleaProperties.init(Files.createTempDirectory("quelea-slide-preview-test").toString());
+        previousPreviewSetting = QueleaProperties.get().getShowSongEditorPreview();
         CountDownLatch started = new CountDownLatch(1);
         try {
             Platform.startup(started::countDown);
@@ -60,6 +62,7 @@ public class SlidePreviewPaneTest {
 
     @AfterAll
     public static void tearDown() throws Exception {
+        QueleaProperties.get().setShowSongEditorPreview(previousPreviewSetting);
         onFx(() -> {
             QueleaApp.get().setProjectionWindow(previousProjection);
             return null;
@@ -84,6 +87,7 @@ public class SlidePreviewPaneTest {
 
     @Test
     public void previewFollowsTheCaretAtTheSongsFontSize() throws Exception {
+        QueleaProperties.get().setShowSongEditorPreview(true);
         SongEntryWindow window = onFx(() -> {
             SongEntryWindow w = new SongEntryWindow();
             w.resetNewSong();

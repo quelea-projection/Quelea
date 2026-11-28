@@ -536,10 +536,10 @@ public final class QueleaProperties extends SortedProperties {
     /**
      * Whether the song editor shows a preview of the slides beside the lyrics.
      *
-     * @return true to show the preview (the default.)
+     * @return true to show the preview (hidden by default.)
      */
     public boolean getShowSongEditorPreview() {
-        return Boolean.parseBoolean(getProperty(songEditorPreviewKey, "true"));
+        return Boolean.parseBoolean(getProperty(songEditorPreviewKey, "false"));
     }
 
     /**
