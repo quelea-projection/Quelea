@@ -95,7 +95,7 @@ public class VidDisplay {
     /** The current pipeline, or null if none has been needed since the last stop. */
     private Player player;
     private int playerCount;
-    private volatile boolean loop;
+    private boolean loop;
     private URI uri;
     private Double volume;
     private Consumer<Double> posChanged;
@@ -246,7 +246,12 @@ public class VidDisplay {
     }
 
     public void setLoop(boolean loop) {
-        this.loop = loop;
+        if (this.loop != loop) {
+            this.loop = loop;
+            if (player != null) {
+                player.setLoop(loop);
+            }
+        }
     }
 
     /**
@@ -348,6 +353,8 @@ public class VidDisplay {
         private final AtomicBoolean positionPending = new AtomicBoolean();
         private final AtomicReference<Double> pendingSeek = new AtomicReference<>();
         // Only used on the pipeline thread:
+        private boolean looping = loop;
+        private boolean segmentMode;
         private boolean playing;
         private boolean everPlayed;
         /** True if an audio output was paused and may not have settled yet. */
@@ -427,6 +434,18 @@ public class VidDisplay {
             }
         }
 
+        void setLoop(boolean enabled) {
+            run(() -> {
+                looping = enabled;
+                if (!enabled && segmentMode) {
+                    // A non-flushing seek may already have queued another pass.
+                    // Drop it and play from the current position to a real EOS.
+                    long pos = playBin.queryPosition(Format.TIME);
+                    flushingSeek(pos >= 0 ? pos : Math.max(0, (long) (position * duration)));
+                }
+            });
+        }
+
         void seek(double seekPos) {
             if (!started) {
                 return;
@@ -457,7 +476,7 @@ public class VidDisplay {
 
         /** Called on the pipeline thread. */
         private void startPlaying() {
-            if (!everPlayed && loop) {
+            if (!everPlayed && looping) {
                 // Start in segment mode, so the end of each pass is a
                 // SEGMENT_DONE message instead of EOS. Seek while paused, so
                 // no audio output is running yet.
@@ -476,7 +495,7 @@ public class VidDisplay {
 
         /** Called on the pipeline thread, at the end of a video that isn't in segment mode. */
         private void endOfStream() {
-            if (loop) {
+            if (looping) {
                 // Looping was turned on while playing: go back to the start,
                 // and loop in segment mode from now on.
                 flushingSeek(0);
@@ -487,7 +506,13 @@ public class VidDisplay {
 
         /** Called on the pipeline thread, at the end of a pass in segment mode. */
         private void segmentDone() {
-            if (!loop) {
+            if (!segmentMode) {
+                // The bus can deliver an old segment message after a flushing
+                // seek switched to ordinary playback. Only EOS ends that pass.
+                return;
+            }
+            if (!looping) {
+                // The source rejected the seek out of segment mode.
                 finished();
             } else if (playing) {
                 // Not flushing: playback carries on seamlessly from the start,
@@ -524,7 +549,7 @@ public class VidDisplay {
                 pausePlayback();
             }
             awaitAudioSettled();
-            Set<SeekFlags> flags = loop ? EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT) : EnumSet.of(SeekFlags.FLUSH);
+            Set<SeekFlags> flags = looping ? EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT) : EnumSet.of(SeekFlags.FLUSH);
             segmentSeek(flags, position);
             if (resume && withAudio) {
                 playBin.getState(STATE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -535,7 +560,9 @@ public class VidDisplay {
 
         /** Seek to a position, playing on to the end. Called on the pipeline thread. */
         private void segmentSeek(Set<SeekFlags> flags, long position) {
-            playBin.seek(1.0, Format.TIME, flags, SeekType.SET, position, SeekType.NONE, -1);
+            if (playBin.seek(1.0, Format.TIME, flags, SeekType.SET, position, SeekType.NONE, -1)) {
+                segmentMode = flags.contains(SeekFlags.SEGMENT);
+            }
         }
 
         /**

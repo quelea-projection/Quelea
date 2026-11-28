@@ -200,6 +200,51 @@ public class VidDisplayLifecycleTest {
                 "Playback should resume after the pause");
     }
 
+    @Test
+    public void turningLoopOffEarlyFinishesTheCurrentPass(@TempDir Path directory) throws Exception {
+        checkFinalPass(directory, 1.0 / 3);
+    }
+
+    @Test
+    public void turningLoopOffLateFinishesTheCurrentPass(@TempDir Path directory) throws Exception {
+        checkFinalPass(directory, 2.0 / 3);
+    }
+
+    private void checkFinalPass(Path directory, double toggleBrightness) throws Exception {
+        // Six seconds: black opening, dark grey at 1 s, light grey at 5.4 s,
+        // white ending at 5.8 s. Observe rendered frames, independent of how
+        // far ahead of the sinks the demuxer posts SEGMENT_DONE.
+        Path clip = copyResource("loop-markers.mp4", directory);
+        CompletableFuture<Void> finished = new CompletableFuture<>();
+        onFx(() -> {
+            display = new VidDisplay();
+            display.setURI(clip.toUri());
+            display.setLoop(true);
+            display.setOnFrame(() -> {
+                double brightness = frameBrightness();
+                if (display.isLoop() && Math.abs(brightness - toggleBrightness) < 0.05) {
+                    display.setLoop(false);
+                } else if (!display.isLoop() && brightness < 0.1) {
+                    finished.completeExceptionally(new AssertionError("Playback repeated the opening after Loop was disabled"));
+                }
+            });
+            display.setOnFinished(() -> {
+                if (!display.isLoop() && frameBrightness() > 0.9) {
+                    finished.complete(null);
+                } else {
+                    finished.completeExceptionally(new AssertionError("Playback finished before showing the white ending"));
+                }
+                display.stop(); // Same action as the live controls.
+            });
+            display.play();
+        });
+        finished.get(20, TimeUnit.SECONDS);
+    }
+
+    private double frameBrightness() {
+        return display.imageProperty().get().getPixelReader().getColor(0, 0).getBrightness();
+    }
+
     private static Path copyResource(String name, Path directory) throws IOException {
         try (InputStream in = VidDisplayLifecycleTest.class.getResourceAsStream(name)) {
             Assertions.assertNotNull(in, name);

@@ -79,16 +79,21 @@ public class VideoStressTest {
     private final List<VidDisplay> displays = new ArrayList<>();
     private int baseline;
     private long nativeMark;
+    private boolean videoAvailable;
 
     @BeforeEach
     public void setUp() {
         VideoTestSupport.assumeVideoAvailable();
+        videoAvailable = true;
         baseline = VideoTestSupport.activePipelines();
         nativeMark = VideoTestSupport.nativePipelineMark();
     }
 
     @AfterEach
     public void tearDown() throws Exception {
+        if (!videoAvailable) {
+            return;
+        }
         onFxWithin(() -> {
             drawers.forEach(d -> d.setPlayVideo(false));
             displays.forEach(VidDisplay::dispose);
