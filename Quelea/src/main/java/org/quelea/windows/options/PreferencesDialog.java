@@ -45,7 +45,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -55,8 +54,8 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
-import java.util.List;
 
+import org.quelea.windows.style.ScreenFit;
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
 
@@ -203,41 +202,10 @@ public class PreferencesDialog extends Stage {
      * content itself is scrollable, so it just shrinks to fit.
      */
     private void fitToScreen() {
-        Rectangle2D screenBounds = getScreenBounds();
-        double maxWidth = screenBounds.getWidth();
-        double maxHeight = screenBounds.getHeight();
-
-        setMaxWidth(maxWidth);
-        setMaxHeight(maxHeight);
-        mainPane.setMinWidth(Math.min(PREFERRED_MIN_WIDTH, maxWidth));
-        mainPane.setMinHeight(Math.min(PREFERRED_MIN_HEIGHT, maxHeight));
-
-        if (getWidth() > maxWidth) {
-            setWidth(maxWidth);
-        }
-        if (getHeight() > maxHeight) {
-            setHeight(maxHeight);
-        }
-
-        // Keep the whole window (including the title bar) inside the screen
-        setX(Math.max(screenBounds.getMinX(), Math.min(getX(), screenBounds.getMaxX() - getWidth())));
-        setY(Math.max(screenBounds.getMinY(), Math.min(getY(), screenBounds.getMaxY() - getHeight())));
-    }
-
-    /**
-     * Get the usable bounds (excluding taskbar / menu bar) of the screen the
-     * main window is on, falling back to the primary screen.
-     */
-    private Rectangle2D getScreenBounds() {
-        Window owner = getOwner();
-        if (owner != null && !Double.isNaN(owner.getX()) && !Double.isNaN(owner.getY())) {
-            List<Screen> screens = Screen.getScreensForRectangle(
-                    owner.getX(), owner.getY(), Math.max(1, owner.getWidth()), Math.max(1, owner.getHeight()));
-            if (!screens.isEmpty()) {
-                return screens.get(0).getVisualBounds();
-            }
-        }
-        return Screen.getPrimary().getVisualBounds();
+        Rectangle2D screenBounds = ScreenFit.getScreenBounds(this);
+        mainPane.setMinWidth(Math.min(PREFERRED_MIN_WIDTH, screenBounds.getWidth()));
+        mainPane.setMinHeight(Math.min(PREFERRED_MIN_HEIGHT, screenBounds.getHeight()));
+        ScreenFit.fit(this);
     }
 
     private void bind(Field<?> field, ObservableValue<? extends Boolean> booleanProperty) {
