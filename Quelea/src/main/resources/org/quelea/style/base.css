@@ -30,17 +30,20 @@
     -fx-padding: 0;
 }
 
+/* The dividers look like a 1px line, but stay 7px thick so they can still
+   be grabbed and dragged: the line is drawn with background insets and the
+   rest of the divider is transparent. SplitPaneSkin takes the thickness of
+   every divider from its left + right padding, also in vertical split
+   panes, so the padding must stay on the left and right in both
+   orientations (top/bottom padding makes a vertical divider 0px thick). */
 .split-pane > .split-pane-divider {
-    -fx-background-color: -q-border;
-    -fx-padding: 0 1 0 0;
-}
-
-.split-pane:horizontal > .split-pane-divider {
-    -fx-padding: 0 1 0 0;
+    -fx-background-color: transparent, -q-border;
+    -fx-background-insets: 0, 0 3 0 3;
+    -fx-padding: 0 3.5 0 3.5;
 }
 
 .split-pane:vertical > .split-pane-divider {
-    -fx-padding: 1 0 0 0;
+    -fx-background-insets: 0, 3 0 3 0;
 }
 
 /* ======================================================================
@@ -313,6 +316,84 @@
     -fx-text-fill: -q-text;
 }
 
+/* Floating picture-in-picture controls remain legible over any live content. */
+.pip-window {
+    -fx-background-color: black;
+    -fx-padding: 0;
+}
+
+.pip-logo-cover {
+    -fx-background-color: #171c24;
+}
+
+.pip-return,
+.pip-return:focused,
+.pip-pin,
+.pip-pin:focused {
+    -fx-background-color: rgba(0, 0, 0, 0.72);
+    -fx-background-radius: 18;
+    -fx-padding: 8;
+    -fx-cursor: hand;
+}
+
+.pip-return:hover,
+.pip-return:focused:hover,
+.pip-pin:hover,
+.pip-pin:focused:hover {
+    -fx-background-color: rgba(35, 35, 35, 0.9);
+}
+
+.pip-return:focused {
+    -fx-border-color: white;
+    -fx-border-radius: 18;
+}
+
+/* Keep keyboard focus visible without an outline around the pin. */
+.pip-window .pip-pin:focused {
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-color: #385773;
+}
+
+.pip-return .icon,
+.pip-return:hover .icon,
+.pip-pin .icon,
+.pip-pin:hover .icon {
+    -fx-background-color: white;
+}
+
+.pip-pin:selected,
+.pip-pin:selected:hover {
+    -fx-background-color: #1672a5;
+}
+
+.pip-window .pip-pin:selected:focused {
+    -fx-background-color: #2789bc;
+}
+
+.pip-window .pip-pin:selected .icon,
+.pip-window .pip-pin:selected:hover .icon {
+    -fx-background-color: white;
+}
+
+.pip-resize-grip {
+    -fx-background-color: rgba(0, 0, 0, 0.65);
+    -fx-background-radius: 12;
+}
+
+.pip-resize-icon {
+    -fx-background-color: white;
+    -fx-shape: "M2 12L12 2V5L5 12Z M7 12L12 7V10L10 12Z";
+}
+
+.pip-hint {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-padding: 6 10;
+    -fx-wrap-text: true;
+}
+
 .toolbar-button > .arrow-button {
     -fx-padding: 0 0 0 4;
 }
@@ -566,6 +647,16 @@
 .progress-bar > .track {
     -fx-background-color: -q-border;
     -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+.splash-progress > .bar {
+    -fx-background-color: rgba(255, 255, 255, 0.68);
+    -fx-background-radius: 4;
+}
+
+.splash-progress > .track {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
     -fx-background-radius: 4;
 }
 
@@ -1512,6 +1603,22 @@
     -fx-text-fill: -q-on-accent;
 }
 
+/* A ticked box would be the colour of the row, so it's turned inside out */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .check-box:selected > .box,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .check-box:selected > .box {
+    -fx-background-color: -q-on-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .check-box:selected > .box > .mark,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected .check-box:selected > .box > .mark {
+    -fx-background-color: -q-accent;
+}
+
+/* A button keeps its own background, so it keeps its own text colour */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .bible-version-change .text {
+    -fx-fill: -q-text;
+}
+
 /* A scrollable list area shown as a card (e.g. song selection dialogs) */
 .scroll-pane.content-card {
     -fx-background-color: -q-border, -q-surface;
@@ -1595,4 +1702,439 @@
 
 .tooltip > .text {
     -fx-fill: #ffffff;
+}
+
+/* ======================================================================
+ * Bibles tab in the library (LibraryBiblePanel)
+ * ==================================================================== */
+
+.bible-panel {
+    -fx-background-color: -q-surface;
+}
+
+/* The versions the passage is shown in, as removable chips */
+.bible-version-chip {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 999;
+    -fx-padding: 3 4 3 6;
+    -fx-spacing: 6;
+    -fx-alignment: center-left;
+    -fx-min-height: 30;
+}
+
+.bible-version-drop-slot {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-radius: 999;
+    -fx-border-color: -q-accent;
+    -fx-border-style: dashed;
+    -fx-border-radius: 999;
+}
+
+.bible-version-chip > .label {
+    -fx-text-fill: -q-accent;
+    -fx-font-family: "Inter SemiBold";
+}
+
+.bible-version-chip > .bible-version-number {
+    -fx-background-color: -q-accent;
+    -fx-background-radius: 999;
+    -fx-text-fill: -q-on-accent;
+    -fx-font-size: 0.85em;
+    -fx-alignment: center;
+    -fx-min-width: 18;
+    -fx-min-height: 18;
+    -fx-max-width: 18;
+    -fx-max-height: 18;
+}
+
+.bible-version-remove,
+.bible-version-remove:focused {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-padding: 4;
+}
+
+.bible-version-remove:hover {
+    -fx-background-color: -q-hover;
+}
+
+.bible-version-remove .icon {
+    -fx-background-color: -q-accent;
+}
+
+.bible-add-version,
+.bible-add-version:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: -q-border-strong;
+    -fx-border-style: segments(4, 3);
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-min-height: 30;
+    -fx-padding: 0 10 0 8;
+}
+
+.bible-add-version:hover {
+    -fx-background-color: -q-hover;
+}
+
+/* The books, chapters and verses under the search field */
+.bible-browser {
+    -fx-border-color: -q-border transparent -q-border transparent;
+    -fx-background-color: -q-surface;
+}
+
+.bible-browser .scroll-pane,
+.bible-browser .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.bible-grid-pane {
+    -fx-padding: 12 14 12 14;
+    -fx-spacing: 10;
+}
+
+.bible-grid-heading {
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-size: 0.92em;
+}
+
+.bible-grid-note,
+.bible-legend {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.85em;
+}
+
+.bible-cell,
+.bible-cell:focused {
+    -fx-background-color: -q-surface;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 0 2 0 2;
+    -fx-font-size: 0.92em;
+    -fx-text-fill: -q-text;
+}
+
+/* A faint tint for every other group of books, so the grid is easier to scan */
+.bible-cell.bible-genre-a {
+    -fx-background-color: -q-surface, rgba(37, 99, 235, 0.08);
+    -fx-background-insets: 0, 1;
+}
+
+.bible-cell.bible-genre-b {
+    -fx-background-color: -q-surface, rgba(124, 58, 237, 0.08);
+    -fx-background-insets: 0, 1;
+}
+
+.bible-legend-swatch {
+    -fx-background-color: -q-surface;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-min-width: 10;
+    -fx-min-height: 10;
+    -fx-max-width: 10;
+    -fx-max-height: 10;
+}
+
+.bible-legend-swatch.bible-genre-a {
+    -fx-background-color: -q-surface, rgba(37, 99, 235, 0.08);
+}
+
+.bible-legend-swatch.bible-genre-b {
+    -fx-background-color: -q-surface, rgba(124, 58, 237, 0.08);
+}
+
+.bible-cell:hover,
+.bible-cell:focused {
+    -fx-border-color: -q-accent;
+}
+
+.bible-cell.bible-match {
+    -fx-background-color: -q-accent-soft;
+    -fx-border-color: -q-accent-soft;
+    -fx-text-fill: -q-accent;
+    -fx-font-family: "Inter SemiBold";
+}
+
+.bible-cell.bible-first-match {
+    -fx-border-color: -q-accent;
+    -fx-border-width: 2;
+}
+
+.bible-cell.bible-dimmed {
+    -fx-opacity: 0.35;
+}
+
+.bible-cell.bible-chosen,
+.bible-cell.bible-chosen:hover {
+    -fx-background-color: -q-accent;
+    -fx-border-color: -q-accent;
+    -fx-text-fill: -q-on-accent;
+    -fx-font-family: "Inter SemiBold";
+}
+
+/* The narrow columns that the books and chapters shrink to */
+.bible-rail {
+    -fx-border-color: transparent -q-border transparent transparent;
+}
+
+.bible-rail.bible-book-rail,
+.bible-rail.bible-book-rail .bible-rail-head {
+    -fx-background-color: -q-surface-alt;
+}
+
+.bible-rail .bible-rail-head,
+.bible-rail .bible-rail-head:focused {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent transparent -q-border transparent;
+    -fx-padding: 6 0 5 0;
+    -fx-font-size: 0.77em;
+    -fx-font-family: "Inter SemiBold";
+    -fx-content-display: top;
+    -fx-graphic-text-gap: 2;
+}
+
+.bible-rail .bible-rail-head:hover {
+    -fx-background-color: -q-control-hover;
+    -fx-text-fill: -q-accent;
+}
+
+.bible-rail-label {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.77em;
+    -fx-font-family: "Inter SemiBold";
+    -fx-padding: 8 0 3 0;
+}
+
+.bible-rail-item,
+.bible-rail-item:focused {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 5 0 5 0;
+    -fx-font-size: 0.92em;
+    -fx-text-fill: -q-text;
+}
+
+.bible-rail-item:hover {
+    -fx-background-color: -q-hover;
+}
+
+.bible-rail-item.bible-group-start {
+    -fx-border-color: -q-border transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.bible-rail-item.bible-chosen,
+.bible-rail-item.bible-chosen:hover {
+    -fx-background-color: -q-accent, -q-accent-soft;
+    -fx-background-insets: 0, 0 0 0 3;
+    -fx-text-fill: -q-accent;
+    -fx-font-family: "Inter SemiBold";
+}
+
+/* The verses of a chapter */
+.bible-verse-list,
+.bible-verse-list:focused {
+    -fx-background-color: -q-surface;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.bible-verse-list .list-cell,
+.bible-verse-list .list-cell:odd,
+.bible-verse-list .list-cell:filled:selected,
+.bible-verse-list:focused .list-cell:filled:selected {
+    -fx-background-color: -q-surface, -q-border, -q-surface;
+    -fx-background-insets: 0, 0 0 0 0, 0 0 1 0;
+    -fx-padding: 7 10 7 10;
+    -fx-text-fill: -q-text;
+}
+
+.bible-verse-list .list-cell:filled:hover {
+    -fx-background-color: -q-surface, -q-border, -q-control-hover;
+}
+
+.bible-verse-list .list-cell.bible-chosen,
+.bible-verse-list .list-cell.bible-chosen:hover {
+    -fx-background-color: -q-accent-soft;
+    -fx-background-insets: 0;
+}
+
+.bible-verse-number {
+    -fx-text-fill: -q-live;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-size: 0.92em;
+    -fx-alignment: top-right;
+    -fx-min-width: 22;
+    -fx-pref-width: 22;
+}
+
+.bible-chosen .bible-verse-number {
+    -fx-text-fill: -q-accent;
+}
+
+.bible-verse-text {
+    -fx-text-fill: -q-text;
+    -fx-line-spacing: 1;
+}
+
+.bible-other-version {
+    -fx-border-color: transparent transparent transparent -q-accent;
+    -fx-border-width: 0 0 0 2;
+    -fx-padding: 0 0 0 8;
+    -fx-spacing: 2;
+}
+
+.bible-other-version-name {
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-size: 0.85em;
+    -fx-text-fill: -fx-mid-text-color;
+}
+
+.bible-other-version-text {
+    -fx-font-size: 0.92em;
+    -fx-text-fill: -q-text;
+}
+
+.bible-other-version-text.bible-missing {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-style: italic;
+}
+
+/* The chosen passage, at the bottom */
+.bible-selection-bar {
+    -fx-background-color: -q-header;
+    -fx-padding: 10 14 10 14;
+    -fx-spacing: 8;
+}
+
+.bible-selection-title {
+    -fx-font-family: "Inter SemiBold";
+}
+
+.bible-selection-detail,
+.bible-selection-hint {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.92em;
+}
+
+.bible-selection-hint {
+    -fx-font-size: 0.85em;
+}
+
+.bible-warning {
+    -fx-background-color: -q-surface, rgba(217, 119, 6, 0.12);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -q-warning;
+    -fx-border-radius: 6;
+    -fx-padding: 8 10 8 10;
+    -fx-spacing: 8;
+    -fx-alignment: top-left;
+}
+
+.bible-warning > .label {
+    -fx-text-fill: -q-text;
+    -fx-font-size: 0.92em;
+}
+
+.bible-warning .icon {
+    -fx-background-color: -q-warning;
+}
+
+/* How another version is matched with the first one, under the passage */
+.bible-match-box,
+.bible-match-editor {
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -q-border;
+    -fx-border-radius: 6;
+    -fx-padding: 8 10 8 10;
+}
+
+.bible-match-editor {
+    -fx-border-color: -q-accent;
+    -fx-spacing: 8;
+}
+
+.bible-match-box .label {
+    -fx-font-size: 0.92em;
+}
+
+.bible-match-name {
+    -fx-font-family: "Inter SemiBold";
+}
+
+.bible-match-box .bible-match-status {
+    -fx-font-size: 0.85em;
+}
+
+.bible-match-box .bible-match-automatic {
+    -fx-text-fill: -q-success;
+}
+
+.bible-match-box .bible-match-chosen {
+    -fx-text-fill: -q-warning;
+}
+
+.bible-version-location {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.92em;
+}
+
+.list-view .list-cell .bible-version-location .text {
+    -fx-fill: -q-text-muted;
+}
+
+.list-view .list-cell .bible-version-location.bible-match-chosen .text {
+    -fx-fill: -q-warning;
+}
+
+.bible-version-location.bible-match-unknown .icon {
+    -fx-background-color: -q-warning;
+}
+
+.bible-match-note {
+    -fx-text-fill: -q-text-muted;
+    -fx-font-size: 0.85em;
+}
+
+.bible-match-note.bible-match-error {
+    -fx-text-fill: -q-error;
+}
+
+/* The bible versions list in the options (BibleVersionsList) */
+.bible-versions-position {
+    -fx-font-family: "Inter SemiBold";
+    -fx-text-fill: -q-accent;
+}
+
+.bible-versions-default {
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-size: 0.85em;
+    -fx-text-fill: -q-accent;
+    -fx-background-color: -q-surface;
+    -fx-background-radius: 999;
+    -fx-border-color: -q-accent-soft;
+    -fx-border-radius: 999;
+    -fx-padding: 1 8 1 8;
+}
+
+.bible-versions-list .list-cell:filled:selected .bible-versions-position {
+    -fx-text-fill: -q-on-accent;
+}
+
+/* The badge keeps its own background, so it keeps its own text colour */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .label.bible-versions-default {
+    -fx-text-fill: -q-accent;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected .bible-versions-default .text {
+    -fx-fill: -q-accent;
 }

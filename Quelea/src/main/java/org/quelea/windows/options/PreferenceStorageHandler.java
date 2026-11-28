@@ -182,6 +182,9 @@ public class PreferenceStorageHandler implements StorageHandler {
             return;
         }
         switch (breadcrumb) {
+            case QueleaPropertyKeys.bibleVersionsKey:
+                QueleaProperties.get().setBibleVersions(object.toString().lines().filter(name -> !name.isBlank()).toList());
+                break;
             case QueleaPropertyKeys.languageFileKey:
                 if (object instanceof LanguageFile && !object.equals(new LanguageFile(QueleaProperties.get().getLanguageFile()))) {
                     QueleaProperties.get().setLanguageFile(((LanguageFile) object).getFile().getName());
@@ -331,6 +334,9 @@ public class PreferenceStorageHandler implements StorageHandler {
     public Object loadObject(String breadcrumb, Object defaultObject) {
         if (breadcrumb.equals(QueleaPropertyKeys.languageFileKey)) {
             return LanguageFileManager.INSTANCE.getCurrentFile();
+        }
+        if (breadcrumb.equals(QueleaPropertyKeys.bibleVersionsKey)) {
+            return String.join("\n", QueleaProperties.get().getBibleVersions());
         }
         if (LogoOptionsGroup.isLogoKey(breadcrumb)) {
             // Always known (with defaults), and also changed from the logo button

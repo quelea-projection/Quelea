@@ -40,6 +40,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -86,6 +87,7 @@ public class LyricDrawer extends WordDrawer {
     private Group oldTextGroup;
     private String[] oldText;
     private boolean newItem;
+    private boolean useFontSizeCache = true;
     /**
      * Player for video backgrounds. Created lazily the first time a video
      * theme is set and released again as soon as a non-video theme is set, so
@@ -130,14 +132,7 @@ public class LyricDrawer extends WordDrawer {
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 defaultFontSize);
-        String translateFamily = theme.getFont().getFamily();
-        if (theme.getTranslateFont() != null) {
-            translateFamily = theme.getTranslateFont().getFamily();
-        }
-        Font translateFont = Font.font(translateFamily,
-                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                defaultFontSize);
+        Font translateFont = getTranslateFont(defaultFontSize);
 
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
@@ -157,7 +152,7 @@ public class LyricDrawer extends WordDrawer {
                 fontSize = 1;
                 newText = new ArrayList<>();
             } else {
-                WrapTextResult result = normalWrapText(font, text[0], getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+                WrapTextResult result = normalWrapText(font, translateFont, text, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
                 newText = result.getNewText();
                 fontSize = result.getFontSize();
             }
@@ -246,8 +241,21 @@ public class LyricDrawer extends WordDrawer {
         getCanvas().pushLogoNoticeToFront();
 
         int y = 0;
+        double textWidth = 0;
+        for (LyricLine line : newText) {
+            if (!line.isSeparator()) {
+                FXFontMetrics lineMetrics = line.isTranslateLine() ? translateMetrics : metrics;
+                textWidth = Math.max(textWidth, lineMetrics.computeStringWidth(line.getLine().replaceAll("\\<\\/?sup\\>", "").trim()));
+            }
+        }
         ParallelTransition paintTransition = new ParallelTransition();
         for (LyricLine line : newText) {
+            if (line.isSeparator()) {
+                double gap = translateMetrics.getLineHeight() * VERSION_SEPARATOR_GAP;
+                newTextGroup.getChildren().add(versionSeparator(textWidth, y + gap / 2, translateMetrics.getLineHeight()));
+                y += gap + getLineSpacing();
+                continue;
+            }
             FXFontMetrics loopMetrics;
             if (line.isTranslateLine()) {
                 loopMetrics = translateMetrics;
@@ -368,6 +376,34 @@ public class LyricDrawer extends WordDrawer {
                 fadeIn.play();
             }
         }
+    }
+
+    /**
+     * Create the line drawn between two bible versions: thin, in the colour
+     * of the versions below it, and shorter than the text, placed like the
+     * text (left, centre or right.)
+     *
+     * @param textWidth the width of the widest line of text.
+     * @param y where to draw the line.
+     * @param lineHeight the height of a line of the versions below it.
+     * @return the line.
+     */
+    private Line versionSeparator(double textWidth, double y, double lineHeight) {
+        double width = textWidth * 0.6;
+        double x;
+        if (theme.getTextAlignment() == -1) {
+            x = 0;
+        } else if (theme.getTextAlignment() == 1) {
+            x = getCanvas().getWidth() - width;
+        } else {
+            x = (getCanvas().getWidth() - width) / 2;
+        }
+        Line separator = new Line(x, y, x + width, y);
+        Color colour = theme.getTranslateFontPaint() == null ? ThemeDTO.DEFAULT_FONT_COLOR : theme.getTranslateFontPaint();
+        separator.setStroke(colour);
+        separator.setOpacity(0.6);
+        separator.setStrokeWidth(Math.max(1, lineHeight * 0.04));
+        return separator;
     }
 
     private void setPositionX(FormattedText t, FXFontMetrics metrics, String line, boolean biblePassage) {
@@ -603,6 +639,18 @@ public class LyricDrawer extends WordDrawer {
     }
 
     /**
+     * Set whether the uniform font size of a displayable may be cached in (and
+     * read from) the displayable. The cache isn't keyed by theme, so a drawer
+     * whose theme keeps changing, like the theme editor's preview, must not
+     * use it.
+     *
+     * @param useFontSizeCache false to work the size out on every draw.
+     */
+    public void setUseFontSizeCache(boolean useFontSizeCache) {
+        this.useFontSizeCache = useFontSizeCache;
+    }
+
+    /**
      * Determine the largest font size we can safely use for every section of a
      * text displayable.
      * <p>
@@ -610,6 +658,17 @@ public class LyricDrawer extends WordDrawer {
      * @param displayable the displayable to check.
      * @return the font size to use
      */
+    private Font getTranslateFont(double fontSize) {
+        String translateFamily = theme.getFont().getFamily();
+        if (theme.getTranslateFont() != null) {
+            translateFamily = theme.getTranslateFont().getFamily();
+        }
+        return Font.font(translateFamily,
+                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                fontSize);
+    }
+
     private double getUniformFontSize(TextDisplayable displayable) {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
@@ -628,7 +687,7 @@ public class LyricDrawer extends WordDrawer {
             height *= 1 - QueleaProperties.get().getSmallSongTextSize();
         }
 
-        Double cachedSize = displayable.getCachedUniformFontSize(new Dimension(width, height));
+        Double cachedSize = useFontSizeCache ? displayable.getCachedUniformFontSize(new Dimension(width, height)) : null;
         if (cachedSize != null) {
             return cachedSize;
         }
@@ -645,7 +704,7 @@ public class LyricDrawer extends WordDrawer {
             List<LyricLine> processedText;
             double newSize;
             if (displayable instanceof BiblePassage) {
-                WrapTextResult result = normalWrapText(font, textArr[0], width, height);
+                WrapTextResult result = normalWrapText(font, getTranslateFont(maxFontSizeForCanvas), textArr, width, height);
                 if (result.getFontSize() < fontSize) {
                     fontSize = result.getFontSize();
                 }
@@ -665,7 +724,9 @@ public class LyricDrawer extends WordDrawer {
         if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
-        displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
+        if (useFontSizeCache) {
+            displayable.setCachedUniformFontSize(new Dimension(width, height), fontSize);
+        }
         return fontSize;
     }
 

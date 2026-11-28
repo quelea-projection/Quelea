@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.newsong;
 
+import java.util.function.Supplier;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +37,7 @@ import javafx.stage.WindowEvent;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -47,6 +49,7 @@ import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
 import org.quelea.windows.stage.StageDrawer;
+import org.quelea.windows.style.ScreenFit;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -63,9 +66,17 @@ public class ThemePanel extends BorderPane {
     /** Extra width for the font lists when the labels of a language are long. */
     private static final double DIALOG_FONT_ROOM = 60;
     private static final String DIALOG_SIZED_KEY = "quelea.theme.dialog.sized";
+    /** Preferred height of the preview below the theme controls. */
+    private static final double PREVIEW_PREF_HEIGHT = 220;
 
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
+    /**
+     * Where the preview gets its slide from, or null to show plain text. The
+     * preview draws the first slide of this item the way the live view does:
+     * with the font size of the whole item and any translation lines.
+     */
+    private Supplier<? extends TextDisplayable> previewSource;
     private final DisplayPreview preview;
     /**
      * Single drawer reused for every preview update. Creating a new drawer per
@@ -104,8 +115,13 @@ public class ThemePanel extends BorderPane {
     public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton, boolean showThemeCopyPanel) {
         this.confirmButton = confirmButton;
         positionSelector = new DisplayPositionSelector(this);
-        positionSelector.prefWidthProperty().bind(widthProperty());
-        positionSelector.prefHeightProperty().bind(heightProperty());
+        // The selector and the preview fill the space left below the
+        // toolbar. Their own sizes must not feed back into that space: the
+        // selector used to ask for the whole panel's size, so the preview
+        // started out too big (covering the dialog's buttons) and only fitted
+        // once the window was resized.
+        positionSelector.setMinSize(0, 0);
+        positionSelector.setPrefSize(0, 0);
         DisplayCanvas canvas = new DisplayCanvas(false, () -> updateTheme(true), Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
@@ -117,6 +133,11 @@ public class ThemePanel extends BorderPane {
         themePreviewPane.getStyleClass().add("text-area");
         themePreviewPane.getChildren().add(preview);
         themePreviewPane.getChildren().add(positionSelector);
+        themePreviewPane.setMinSize(0, 0);
+        // A fixed preferred height (not one taken from the preview's current
+        // size), so windows sized to their content get a usable preview
+        themePreviewPane.setPrefHeight(PREVIEW_PREF_HEIGHT);
+        VBox.setVgrow(themePreviewPane, javafx.scene.layout.Priority.ALWAYS);
         centrePane.getChildren().add(themePreviewPane);
         setCenter(centrePane);
         if (canvas.isStageView()) {
@@ -125,6 +146,10 @@ public class ThemePanel extends BorderPane {
             drawer = new LyricDrawer();
         }
         drawer.setCanvas(canvas);
+        if (drawer instanceof LyricDrawer) {
+            // The theme changes all the time here, so don't cache font sizes
+            ((LyricDrawer) drawer).setUseFontSizeCache(false);
+        }
         showing = sceneProperty().flatMap(Scene::windowProperty).flatMap(Window::showingProperty).orElse(false);
         setPreviewVideo(showing.getValue());
         showing.addListener((ov, wasShowing, isShowing) -> {
@@ -150,6 +175,11 @@ public class ThemePanel extends BorderPane {
                 updateTheme(false);
             };
             wordsArea.textProperty().addListener(cl);
+            previewSource = () -> {
+                SongDisplayable song = new SongDisplayable("", "");
+                song.setLyrics(wordsArea.getText());
+                return song;
+            };
             cl.changed(null, null, wordsArea.getText());
         }
 
@@ -203,6 +233,7 @@ public class ThemePanel extends BorderPane {
             if (dialog.getWidth() < needed || (firstShow && dialog.getWidth() < comfortable)) {
                 dialog.setWidth(firstShow ? comfortable : needed);
             }
+            ScreenFit.fit(dialog);
         });
     }
 
@@ -248,10 +279,44 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
+        final TextDisplayable source = previewSource == null ? null : previewSource.get();
         Platform.runLater(() -> {
             drawer.setTheme(theme);
-            drawer.setText(text, null, null, false, -1);
+            if (hasText(source)) {
+                drawer.setText(source, 0);
+            } else if (text == SAMPLE_LYRICS) {
+                // Sample translation lines, so the translation settings show
+                drawer.setText(text, sampleTranslation(), null, false, -1);
+            } else {
+                drawer.setText(text, null, null, false, -1);
+            }
         });
+    }
+
+    /**
+     * Show the first slide of an item in the preview, drawn as the live view
+     * draws it (with the font size of the whole item, translation lines and
+     * so on), instead of the plain text of its first section.
+     *
+     * @param previewSource gives the item to show, asked again on every
+     * update; it should give a new item when the content changes. Null to go
+     * back to plain text.
+     */
+    public void setPreviewSource(Supplier<? extends TextDisplayable> previewSource) {
+        this.previewSource = previewSource;
+        updateTheme(false);
+    }
+
+    private boolean hasText(TextDisplayable displayable) {
+        return displayable != null && displayable.getSections().length > 0
+                && !isEmpty(displayable.getSections()[0].getText(false, false));
+    }
+
+    private static String[] sampleTranslation() {
+        String line = LabelGrabber.INSTANCE.getLabel("theme.sample.translation");
+        String[] ret = new String[SAMPLE_LYRICS.length];
+        java.util.Arrays.fill(ret, line);
+        return ret;
     }
 
     private void setPreviewVideo(boolean play) {

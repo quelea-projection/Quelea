@@ -45,7 +45,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -55,8 +54,8 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.options.customprefs.ColorPickerPreference;
 
 import java.util.HashMap;
-import java.util.List;
 
+import org.quelea.windows.style.ScreenFit;
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
 
@@ -77,6 +76,7 @@ public class PreferencesDialog extends Stage {
     private final OptionsImportExportPanel importExportPanel;
     private HashMap<Field<?>, ObservableValue<? extends Boolean>> bindings = new HashMap<>();
     private boolean previousLinkPreviewLiveDividers;
+    private List<Object> previousBibleVersions;
 
     /**
      * Create a new preference dialog.
@@ -122,8 +122,12 @@ public class PreferencesDialog extends Stage {
             if (displayPanel.isDisplayChange()) {
                 updatePos();
             }
+            QueleaApp.get().getMainWindow().refreshPictureInPictureProjectionVisibility();
             displayPanel.setDisplayChange(false);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().refresh();
+            if (!getBibleVersionSettings().equals(previousBibleVersions)) {
+                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel().resetVersions();
+            }
             // Show any changed logo settings straight away
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refreshLogo();
 
@@ -176,6 +180,15 @@ public class PreferencesDialog extends Stage {
         // Before showing the preferences dialog we save the current state of the link preview and live dividers so
         // that we can tell if it has been changed and whether we need to action anything
         previousLinkPreviewLiveDividers = QueleaProperties.get().getLinkPreviewAndLiveDividers();
+        previousBibleVersions = getBibleVersionSettings();
+    }
+
+    /**
+     * The settings that decide which versions the bibles tab starts with.
+     */
+    private static List<Object> getBibleVersionSettings() {
+        return List.of(String.valueOf(QueleaProperties.get().getDefaultBible()), QueleaProperties.get().getAlwaysUseMultiBible(),
+                List.copyOf(QueleaProperties.get().getMultiBibleVersions()));
     }
 
     static void savePreferences(PreferencesFx preferencesFx) {
@@ -189,41 +202,10 @@ public class PreferencesDialog extends Stage {
      * content itself is scrollable, so it just shrinks to fit.
      */
     private void fitToScreen() {
-        Rectangle2D screenBounds = getScreenBounds();
-        double maxWidth = screenBounds.getWidth();
-        double maxHeight = screenBounds.getHeight();
-
-        setMaxWidth(maxWidth);
-        setMaxHeight(maxHeight);
-        mainPane.setMinWidth(Math.min(PREFERRED_MIN_WIDTH, maxWidth));
-        mainPane.setMinHeight(Math.min(PREFERRED_MIN_HEIGHT, maxHeight));
-
-        if (getWidth() > maxWidth) {
-            setWidth(maxWidth);
-        }
-        if (getHeight() > maxHeight) {
-            setHeight(maxHeight);
-        }
-
-        // Keep the whole window (including the title bar) inside the screen
-        setX(Math.max(screenBounds.getMinX(), Math.min(getX(), screenBounds.getMaxX() - getWidth())));
-        setY(Math.max(screenBounds.getMinY(), Math.min(getY(), screenBounds.getMaxY() - getHeight())));
-    }
-
-    /**
-     * Get the usable bounds (excluding taskbar / menu bar) of the screen the
-     * main window is on, falling back to the primary screen.
-     */
-    private Rectangle2D getScreenBounds() {
-        Window owner = getOwner();
-        if (owner != null && !Double.isNaN(owner.getX()) && !Double.isNaN(owner.getY())) {
-            List<Screen> screens = Screen.getScreensForRectangle(
-                    owner.getX(), owner.getY(), Math.max(1, owner.getWidth()), Math.max(1, owner.getHeight()));
-            if (!screens.isEmpty()) {
-                return screens.get(0).getVisualBounds();
-            }
-        }
-        return Screen.getPrimary().getVisualBounds();
+        Rectangle2D screenBounds = ScreenFit.getScreenBounds(this);
+        mainPane.setMinWidth(Math.min(PREFERRED_MIN_WIDTH, screenBounds.getWidth()));
+        mainPane.setMinHeight(Math.min(PREFERRED_MIN_HEIGHT, screenBounds.getHeight()));
+        ScreenFit.fit(this);
     }
 
     private void bind(Field<?> field, ObservableValue<? extends Boolean> booleanProperty) {
@@ -285,13 +267,13 @@ public class PreferencesDialog extends Stage {
             }
             fiLyricWindow.setAreaImmediate(bounds);
             if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
-                fiLyricWindow.show();
+                QueleaApp.get().getMainWindow().setProjectionShowing(fiLyricWindow, true);
             }
 
             // non-custom positioned windows are fullscreen
             if (!QueleaProperties.get().isProjectorModeCoords()) {
                 if (QueleaProperties.get().getProjectorScreen() == -1) {
-                    fiLyricWindow.hide();
+                    QueleaApp.get().getMainWindow().setProjectionShowing(fiLyricWindow, false);
                 } else {
                     fiLyricWindow.setFullScreenAlwaysOnTop(true);
                 }
