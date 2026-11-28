@@ -119,7 +119,7 @@ parts:
         [ -n "$HTTPS_PROXY_PORT" ] && GRADLE_PROXY_OPTS="$GRADLE_PROXY_OPTS -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
       fi
 
-      gradle --no-daemon $GRADLE_PROXY_OPTS -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
+      gradle --no-daemon $GRADLE_PROXY_OPTS -Dversionsuffix=CI-UNSTABLE clean labelcheck jar copyToDist
 
       wget -O jre.tar.gz https://cdn.azul.com/zulu/bin/zulu25.28.85-ca-fx-jre25.0.0-linux_x64.tar.gz
       tar -xf jre.tar.gz -C jre --strip-components 1

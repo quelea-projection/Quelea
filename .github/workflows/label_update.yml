@@ -31,7 +31,7 @@ jobs:
           cd main/Quelea
           chmod +x gradlew
           chmod +x build-install.sh
-          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE labelcheck
+          ./gradlew -Dversionsuffix=CI-UNSTABLE labelcheck
           cd ../..
           cp main/Quelea/dist/missinglabels.js doc/lang/
           cd doc

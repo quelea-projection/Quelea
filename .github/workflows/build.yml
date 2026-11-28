@@ -22,6 +22,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Select signing policy
+        if: ${{ github.event_name == 'push' }}
+        id: signing-policy
+        run: |
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import re
+
+          source = pathlib.Path('Quelea/src/main/java/org/quelea/services/utils/QueleaProperties.java')
+          declarations = re.findall(
+              r'(?m)^[ \t]*public\s+static\s+final\s+Version\s+VERSION\s*=\s*([^;]+);',
+              source.read_text(encoding='utf-8'),
+          )
+          if len(declarations) != 1:
+              raise SystemExit('Expected exactly one Quelea VERSION declaration')
+          version = re.fullmatch(
+              r'\s*new\s+Version\s*\(\s*"[^"]+"\s*,\s*VersionType\.(CI|BETA|RELEASE)\s*\)\s*',
+              declarations[0],
+          )
+          if not version:
+              raise SystemExit('Unrecognised Quelea VERSION declaration or version type')
+          version_type = version.group(1)
+          policy = 'test-signing' if version_type == 'CI' else 'release-signing'
+          print(f'Version type {version_type} uses {policy}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'slug={policy}\n')
+          PY
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -61,7 +90,7 @@ jobs:
       - name: Build
         run: |
           cd Quelea
-          ./gradlew -Dnightly=true -Dversionsuffix=CI-UNSTABLE clean dist
+          ./gradlew -Dversionsuffix=CI-UNSTABLE clean dist
 
       - name: Cache Flatpak
         uses: actions/cache@v4
@@ -97,7 +126,7 @@ jobs:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '47d2e61b-2716-4b94-b15a-91240cb1d14c'
           project-slug: 'Quelea'
-          signing-policy-slug: 'test-signing'
+          signing-policy-slug: '${{ steps.signing-policy.outputs.slug }}'
           github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'Quelea/dist/standalone/'
