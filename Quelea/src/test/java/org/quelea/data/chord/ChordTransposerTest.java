@@ -50,6 +50,21 @@ public class ChordTransposerTest {
     }
 
     @Test
+    @DisplayName("Transposes parenthesised chords without moving punctuation or spacing")
+    public void transposesParenthesisedChords() {
+        Assertions.assertEquals("   ( Cm   G   Ab )", new ChordLineTransposer("   ( Am   E   F )").transpose(3, "Cm"));
+        Assertions.assertEquals("   ( Eb   Cm   G   Ab )", new ChordLineTransposer("   ( C   Am   E   F )").transpose(3, "Cm"));
+        Assertions.assertEquals("\t(D)  A/C# \t", new ChordLineTransposer("\t(C)  G/B \t").transpose(2, null));
+    }
+
+    @Test
+    @DisplayName("Preserves hyphens, repeat markers and explicit chord markers")
+    public void preservesChordLineNotation() {
+        Assertions.assertEquals("(D-A)x2  2x Bm //ChOrDs", new ChordLineTransposer("(C-G)x2  2x Am //ChOrDs").transpose(2, null));
+        Assertions.assertEquals("D2x-A X3", new ChordLineTransposer("C2x-G X3").transpose(2, null));
+    }
+
+    @Test
     @DisplayName("Preserves the explicit chord marker when transposing a line")
     public void preservesChordMarker() {
         Assertions.assertEquals("D A //chords", new ChordLineTransposer("C G //chords").transpose(2, null));
