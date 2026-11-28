@@ -36,7 +36,8 @@ public class TimerDrawer extends DisplayableDrawer {
 
     public TimerDrawer(TimerControls controlPanel) {
         this.controlPanel = controlPanel;
-        this.vidDisplay = new VidDisplay();
+        // A theme background: video only, like LyricDrawer's.
+        this.vidDisplay = new VidDisplay(false);
     }
 
     @Override

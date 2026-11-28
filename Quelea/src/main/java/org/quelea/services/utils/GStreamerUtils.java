@@ -2,8 +2,10 @@ package org.quelea.services.utils;
 
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Kernel32;
+import org.freedesktop.gstreamer.Gst;
 import org.freedesktop.gstreamer.PluginFeature;
 import org.freedesktop.gstreamer.Registry;
+import org.freedesktop.gstreamer.Version;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -23,6 +25,30 @@ public class GStreamerUtils {
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     private GStreamerUtils() {
+    }
+
+    /**
+     * Initialise GStreamer. Call {@link #configurePaths()} first.
+     * <p>
+     * Segfault trapping is turned off: while GStreamer loads a plugin (at
+     * start-up, and whenever an element from a plugin that isn't loaded yet is
+     * first needed, e.g. a decoder) it installs a process-wide SIGSEGV
+     * handler that exits the process. The JVM uses SIGSEGV internally (e.g. for
+     * implicit null checks in compiled code) on any thread, so a JVM that
+     * happened to raise one in that window was killed with "Caught a
+     * segmentation fault while loading plugin file: (null)" and exit code 255.
+     *
+     * @param programName the program name passed to GStreamer.
+     */
+    public static void init(String programName) {
+        if (Platform.isWindows()) {
+            // gst1-java reads this when it initializes its callback handlers.
+            // If a streaming thread stays attached after a callback, JNA can
+            // call DetachCurrentThread from DLL_THREAD_DETACH while holding
+            // the Windows loader lock, deadlocking a JVM that is exiting.
+            System.setProperty("glib.detachCallbackThreads", "true");
+        }
+        Gst.init(Version.BASELINE, programName, "--gst-disable-segtrap");
     }
 
     /**

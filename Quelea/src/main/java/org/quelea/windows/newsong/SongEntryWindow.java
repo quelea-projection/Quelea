@@ -50,6 +50,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslatePanel;
 import org.quelea.windows.main.QueleaApp;
 
+import org.quelea.windows.style.ScreenFit;
 import org.quelea.windows.style.StyleManager;
 import org.quelea.windows.style.QueleaIcon;
 import org.quelea.windows.style.UiEffects;
@@ -180,6 +181,8 @@ public class SongEntryWindow extends Stage {
         Scene scene = new Scene(mainPane);
         StyleManager.apply(scene);
         setScene(scene);
+        // Small screens: keep the window (and its buttons) inside the screen
+        ScreenFit.keepInsideScreen(this);
     }
 
     /**
