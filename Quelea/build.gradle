@@ -276,6 +276,13 @@ tasks.register('runPackr', JavaExec) {
                     "\t<string>Quelea controls Microsoft PowerPoint to run presentations in its slide show.</string>\n" +
                     text.substring(end)
         }
+        // Packr strips one leading dash from each vmarg and adds one back only
+        // if none is left, so "--add-opens=..." reaches the launcher as
+        // "-add-opens=...", which the JVM ignores. Restore the double dash.
+        def launcherConfig = file("out-mac/Quelea.app/Contents/Resources/Quelea.json")
+        if (launcherConfig.exists()) {
+            launcherConfig.text = launcherConfig.text.replaceAll(/"-add-(opens|exports)=/, '"--add-$1=')
+        }
     }
 }
 
