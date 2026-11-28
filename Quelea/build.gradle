@@ -13,7 +13,6 @@ import java.security.MessageDigest
 buildscript {
     dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:4.0.0'
-        classpath 'com.bmuschko:gradle-izpack-plugin:3.2'
     }
 }
 
@@ -21,7 +20,6 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'io.github.ben-manes.versions' version '0.67.0'
-    id 'com.bmuschko.izpack' version '3.2'
 }
 
 configurations.all {
@@ -146,21 +144,21 @@ tasks.register('downloadGStreamer') {
 }
 
 tasks.register('downloadJres') {
-    def mf = new File('macjre.zip')
+    def mf = file('macjre.zip')
     if (!mf.exists()) {
         new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-macosx_x64.zip').withInputStream { i -> mf.withOutputStream { it << i } }
     }
 
-    def wf = new File('winjre64.zip')
+    def wf = file('winjre64.zip')
     if (!wf.exists()) {
         new URL('https://cdn.azul.com/zulu/bin/zulu25.38.109-ca-fx-jre25.0.5.0.3-win_x64.zip').withInputStream { i -> wf.withOutputStream { it << i } }
     }
 
     doLast {
-        ant.move file: "macjre.zip",
-                todir: "bundlejre"
-        ant.move file: "winjre64.zip",
-                todir: "bundlejre"
+        def bundleDir = file("bundlejre").toPath()
+        Files.createDirectories(bundleDir)
+        Files.move(mf.toPath(), bundleDir.resolve(mf.name), StandardCopyOption.REPLACE_EXISTING)
+        Files.move(wf.toPath(), bundleDir.resolve(wf.name), StandardCopyOption.REPLACE_EXISTING)
     }
 }
 
@@ -214,10 +212,28 @@ tasks.register('grabNative') {
 }
 copyToDist.finalizedBy(grabNative)
 
-izPackCreateInstaller {
-    installFile = file("izpack/config.xml")
-    outputFile = file(CPInstaller)
-    baseDir = file("dist")
+// Run IzPack's compiler directly; its Gradle plugin depends on deprecated
+// configuration and Ant APIs.
+configurations.create('izpack') {
+    canBeConsumed = false
+    canBeResolved = true
+    transitive = true
+    description = 'The IzPack standalone compiler libraries to be used for this project.'
+}
+
+tasks.register('izPackCreateInstaller', JavaExec) {
+    group = 'installation'
+    description = 'Creates an IzPack-based installer'
+    classpath = configurations.izpack
+    mainClass = 'com.izforge.izpack.compiler.bootstrap.CompilerLauncher'
+    def installerConfig = file("izpack/config.xml")
+    def installerBase = file("dist")
+    def installerOutput = file(CPInstaller)
+    inputs.file(installerConfig)
+    inputs.dir(installerBase)
+    outputs.file(installerOutput)
+    args installerConfig.absolutePath, '-b', installerBase.absolutePath,
+            '-o', installerOutput.absolutePath, '-k', 'standard', '-c', 'default', '-l', '-1'
 }
 
 tasks.register('innosetup', Exec) {
