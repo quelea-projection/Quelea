@@ -17,12 +17,18 @@
  */
 package org.quelea.data.chord;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Transposes a line of chords down or up a certain amount of semitones.
  * @author Michael
  */
 public class ChordLineTransposer {
 
+    // Keep the same parentheses, hyphens and repeat markers accepted by LineTypeChecker.
+    private static final Pattern CHORD_OR_REPEAT = Pattern.compile(
+            "(?<repeat>(?i:[0-9]+x|x[0-9]+))|(?:(?![xX][0-9]|[0-9]+[xX])[^\\s()\\-])+");
     private final String line;
 
     /**
@@ -50,27 +56,16 @@ public class ChordLineTransposer {
             marker = chordLine.substring(markerStart);
             chordLine = chordLine.substring(0, markerStart);
         }
-        if (chordLine.isBlank()) {
-            return chordLine + marker;
+        Matcher matcher = CHORD_OR_REPEAT.matcher(chordLine);
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            String token = matcher.group();
+            String replacement = matcher.group("repeat") != null
+                    ? token : new ChordTransposer(token).transpose(semitones, newKey);
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
         }
-        boolean startSpace = chordLine.startsWith(" ");
-        if(!startSpace) {
-            chordLine = " " + chordLine;
-        }
-        String[] chords = chordLine.split("\\s+");
-        String[] whitespace = chordLine.split("[A-Za-z0-9#/]+");
-        StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < chords.length; i++) {
-            ret.append(new ChordTransposer(chords[i]).transpose(semitones, newKey));
-            if (i < whitespace.length) {
-                ret.append(whitespace[i]);
-            }
-        }
-        String str = ret.toString();
-        if(!startSpace) {
-            str = str.substring(1);
-        }
-        return str + marker;
+        matcher.appendTail(result);
+        return result.append(marker).toString();
     }
 
 }
