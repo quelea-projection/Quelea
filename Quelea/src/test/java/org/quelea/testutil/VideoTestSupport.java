@@ -3,8 +3,6 @@ package org.quelea.testutil;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.scene.paint.Color;
-import org.freedesktop.gstreamer.Gst;
-import org.freedesktop.gstreamer.Version;
 import org.junit.jupiter.api.Assumptions;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
@@ -80,7 +78,7 @@ public final class VideoTestSupport {
         Platform.setImplicitExit(false);
         try {
             GStreamerUtils.configurePaths();
-            Gst.init(Version.BASELINE, "QueleaTest");
+            GStreamerUtils.init("QueleaTest");
             GStreamerInitState.INIT_SUCCESS = true;
         } catch (Throwable ex) {
             unavailableReason = "GStreamer couldn't be initialised: " + ex;
@@ -145,6 +143,35 @@ public final class VideoTestSupport {
      */
     public static int activePipelines() {
         return VidDisplay.getActivePipelineCount();
+    }
+
+    /**
+     * @return a mark for {@link #nativePipelines(long)}: take it at the start
+     * of a test, so pipelines that other tests left shutting down aren't
+     * counted.
+     */
+    public static long nativePipelineMark() {
+        return VidDisplay.nativePipelineMark();
+    }
+
+    /**
+     * @return the number of native video pipelines created since the mark
+     * that haven't been shut down yet; that happens on their own threads,
+     * after the players have been stopped or disposed.
+     */
+    public static int nativePipelines(long mark) {
+        return VidDisplay.getNativePipelineCount(mark);
+    }
+
+    /**
+     * Wait until every native pipeline created since a mark (see
+     * {@link #nativePipelineMark()}) has been shut down, so the files they
+     * played can be deleted (on Windows, an open file can't be).
+     *
+     * @return true if that happened before the timeout.
+     */
+    public static boolean waitForNativePipelines(long mark, long timeoutMillis) throws Exception {
+        return waitFor(() -> nativePipelines(mark) == 0, timeoutMillis);
     }
 
     /**

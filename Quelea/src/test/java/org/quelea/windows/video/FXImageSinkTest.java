@@ -37,7 +37,11 @@ public class FXImageSinkTest {
             source = new AppSrc("frames");
             source.set("is-live", true);
             pipeline = new Pipeline();
-            pipeline.addMany(source, sink.getSinkElement());
+            // Not addMany: gst1-java passes gst_bin_add_many's varargs without
+            // the terminating NULL, so it reads past them and can crash the JVM
+            // (seen as SIGSEGV/SIGABRT in gst_bin_add_many on Apple Silicon).
+            pipeline.add(source);
+            pipeline.add(sink.getSinkElement());
             source.link(sink.getSinkElement());
             pipeline.play();
         });
