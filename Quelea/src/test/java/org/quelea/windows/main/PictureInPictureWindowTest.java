@@ -118,15 +118,18 @@ class PictureInPictureWindowTest {
     @Test
     void previewCanBeMovedAndResizedWithoutWindowDecorations() throws Exception {
         onFx(() -> { pictureInPicture.toggle(); PictureInPictureLogoTest.hover(floatingWindow(), true); return null; });
-        assertTrue(org.quelea.testutil.VideoTestSupport.waitFor(() -> floatingWindow().getScene().getWidth() >= 399, 5000));
+        assertTrue(org.quelea.testutil.VideoTestSupport.waitFor(() -> floatingWindow().getScene().getWidth() >= 399
+                && floatingWindow().getScene().getRoot().lookup(".pip-logo-cover").getOpacity() < 0.01, 5000));
         double[] origin = new double[2];
         onFx(() -> {
             Stage floating = floatingWindow();
             StackPane root = (StackPane) floating.getScene().getRoot();
             root.applyCss();
             Node preview = root.getChildren().get(0);
-            origin[0] = floating.getX(); origin[1] = floating.getY();
             Event.fireEvent(preview, mouse(MouseEvent.MOUSE_PRESSED, 100, 100, MouseButton.PRIMARY, 1, true, true));
+            // Pressing finishes any remaining expansion, which can move an
+            // anchored window. Measure the position the drag actually uses.
+            origin[0] = floating.getX(); origin[1] = floating.getY();
             Event.fireEvent(preview, mouse(MouseEvent.MOUSE_DRAGGED, 145, 125, MouseButton.PRIMARY, 1, true, false));
             return null;
         });
