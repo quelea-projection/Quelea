@@ -30,4 +30,5 @@ quelea (2027.0) stable
   * Notices are shown on the live preview in the main window as well as on the projector
   * Picture-in-picture mode shows a compact Quelea logo while using other applications; hover to expand it into a live preview, or pin the preview open. The main projection can optionally remain visible; the stage view remains active.
   * Fix picture-in-picture staying expanded when switching from keyboard navigation back to the mouse
+  * The song editor shows the slide being edited as it will look live, in a floating panel that can be turned off
   * Various minor bugfixes

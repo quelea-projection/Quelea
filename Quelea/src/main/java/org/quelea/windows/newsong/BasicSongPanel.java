@@ -23,6 +23,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -30,6 +31,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -41,6 +43,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Pos;
+import javafx.scene.layout.StackPane;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.chord.ChordLineTransposer;
 import org.quelea.data.chord.ChordTransposer;
@@ -70,7 +74,12 @@ import javafx.geometry.Insets;
 public class BasicSongPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    /** Space around the slide preview, leaving room for the lyrics' scroll bar. */
+    private static final Insets PREVIEW_MARGIN = new Insets(10, 22, 0, 0);
     private final SpellTextArea lyricsArea;
+    private final VBox mainPanel;
+    private final ToggleButton previewToggle;
+    private Node slidePreview;
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
@@ -128,7 +137,7 @@ public class BasicSongPanel extends BorderPane {
         sequenceField = new TextField();
         sequenceButton = getSequenceButton();
 
-        final VBox mainPanel = new VBox();
+        mainPanel = new VBox();
         ToolBar lyricsToolbar = new ToolBar();
         transposeButton = getTransposeButton();
         nonBreakingLineButton = getNonBreakingLineButton();
@@ -150,6 +159,17 @@ public class BasicSongPanel extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
+        previewToggle = new ToggleButton("", QueleaIcon.PREVIEW.create());
+        previewToggle.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("song.preview.toggle.tooltip")));
+        previewToggle.setSelected(QueleaProperties.get().getShowSongEditorPreview());
+        previewToggle.setVisible(false); // until a preview is set
+        previewToggle.setManaged(false);
+        previewToggle.selectedProperty().addListener((ov, was, show) -> {
+            QueleaProperties.get().setShowSongEditorPreview(show);
+            updatePreviewVisibility();
+        });
+        Utils.setToolbarButtonStyle(previewToggle);
+        lyricsToolbar.getItems().add(previewToggle);
         if (QueleaProperties.get().isDictionaryEnabled()) {
             dictSelector = new ComboBox<>();
             Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
@@ -185,6 +205,38 @@ public class BasicSongPanel extends BorderPane {
 
         centrePanel.getChildren().add(mainPanel);
         setCenter(centrePanel);
+    }
+
+    /**
+     * Float a slide preview over the top right corner of the lyrics. It
+     * lets clicks through, and the user can hide it with a toolbar button.
+     *
+     * @param preview the preview.
+     */
+    public void setSlidePreview(Node preview) {
+        int lyricsPos = mainPanel.getChildren().indexOf(lyricsArea);
+        slidePreview = preview;
+        StackPane lyricsStack = new StackPane(lyricsArea, preview);
+        StackPane.setAlignment(preview, Pos.TOP_RIGHT);
+        StackPane.setMargin(preview, PREVIEW_MARGIN);
+        VBox.setVgrow(lyricsStack, Priority.ALWAYS);
+        mainPanel.getChildren().add(lyricsPos, lyricsStack);
+        previewToggle.setVisible(true);
+        previewToggle.setManaged(true);
+        updatePreviewVisibility();
+    }
+
+    /**
+     * @return true if the slide preview is there and not hidden.
+     */
+    public boolean isSlidePreviewShown() {
+        return slidePreview != null && previewToggle.isSelected();
+    }
+
+    private void updatePreviewVisibility() {
+        if (slidePreview != null) {
+            slidePreview.setVisible(previewToggle.isSelected());
+        }
     }
 
     public void resetSaveHash() {
