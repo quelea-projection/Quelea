@@ -46,9 +46,12 @@ import java.util.logging.Logger;
  * thread, that froze the whole application.
  * <p>
  * Audio outputs are only started and stopped as often as needed: a looping
- * video loops with segment seeks, which don't flush the pipeline, instead of a
- * flushing seek back to the start (which pauses and restarts the audio output)
- * at the end of every pass. After a video with sound has been paused, its
+ * video with sound loops with segment seeks, which don't flush the pipeline,
+ * instead of a flushing seek back to the start (which pauses and restarts the
+ * audio output) at the end of every pass. A video without sound has no audio
+ * output to protect, and loops with a flushing seek at EOS: without a flush,
+ * some decoders (macOS VideoToolbox) keep the previous pass's timestamps and
+ * the sink stalls. After a video with sound has been paused, its
  * audio output is given time to settle (see {@link #AUDIO_SETTLE_MILLIS})
  * before it's started again, stopped or seeked; a playing video with sound is
  * paused before it's seeked or stopped.
@@ -476,7 +479,7 @@ public class VidDisplay {
 
         /** Called on the pipeline thread. */
         private void startPlaying() {
-            if (!everPlayed && looping) {
+            if (!everPlayed && looping && withAudio) {
                 // Start in segment mode, so the end of each pass is a
                 // SEGMENT_DONE message instead of EOS. Seek while paused, so
                 // no audio output is running yet.
@@ -496,7 +499,8 @@ public class VidDisplay {
         /** Called on the pipeline thread, at the end of a video that isn't in segment mode. */
         private void endOfStream() {
             if (looping) {
-                // Looping was turned on while playing: go back to the start,
+                // Video without sound loops this way every pass. With sound,
+                // looping was turned on while playing: go back to the start,
                 // and loop in segment mode from now on.
                 flushingSeek(0);
             } else {
@@ -549,7 +553,7 @@ public class VidDisplay {
                 pausePlayback();
             }
             awaitAudioSettled();
-            Set<SeekFlags> flags = looping ? EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT) : EnumSet.of(SeekFlags.FLUSH);
+            Set<SeekFlags> flags = looping && withAudio ? EnumSet.of(SeekFlags.FLUSH, SeekFlags.SEGMENT) : EnumSet.of(SeekFlags.FLUSH);
             segmentSeek(flags, position);
             if (resume && withAudio) {
                 playBin.getState(STATE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
