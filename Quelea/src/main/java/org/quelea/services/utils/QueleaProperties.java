@@ -193,7 +193,7 @@ import static org.quelea.services.utils.QueleaPropertyKeys.wikiPageKey;
  */
 public final class QueleaProperties extends SortedProperties {
 
-    public static final Version VERSION = new Version("2027.0", VersionType.CI);
+    public static final Version VERSION = new Version("2027.0", VersionType.BETA);
     /**
      * The logo shown when the user hasn't chosen one.
      */
