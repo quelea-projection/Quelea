@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.newsong;
 
+import java.util.function.Supplier;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +37,7 @@ import javafx.stage.WindowEvent;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -67,6 +69,12 @@ public class ThemePanel extends BorderPane {
 
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
+    /**
+     * Where the preview gets its slide from, or null to show plain text. The
+     * preview draws the first slide of this item the way the live view does:
+     * with the font size of the whole item and any translation lines.
+     */
+    private Supplier<? extends TextDisplayable> previewSource;
     private final DisplayPreview preview;
     /**
      * Single drawer reused for every preview update. Creating a new drawer per
@@ -126,6 +134,10 @@ public class ThemePanel extends BorderPane {
             drawer = new LyricDrawer();
         }
         drawer.setCanvas(canvas);
+        if (drawer instanceof LyricDrawer) {
+            // The theme changes all the time here, so don't cache font sizes
+            ((LyricDrawer) drawer).setUseFontSizeCache(false);
+        }
         showing = sceneProperty().flatMap(Scene::windowProperty).flatMap(Window::showingProperty).orElse(false);
         setPreviewVideo(showing.getValue());
         showing.addListener((ov, wasShowing, isShowing) -> {
@@ -151,6 +163,11 @@ public class ThemePanel extends BorderPane {
                 updateTheme(false);
             };
             wordsArea.textProperty().addListener(cl);
+            previewSource = () -> {
+                SongDisplayable song = new SongDisplayable("", "");
+                song.setLyrics(wordsArea.getText());
+                return song;
+            };
             cl.changed(null, null, wordsArea.getText());
         }
 
@@ -250,10 +267,44 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
+        final TextDisplayable source = previewSource == null ? null : previewSource.get();
         Platform.runLater(() -> {
             drawer.setTheme(theme);
-            drawer.setText(text, null, null, false, -1);
+            if (hasText(source)) {
+                drawer.setText(source, 0);
+            } else if (text == SAMPLE_LYRICS) {
+                // Sample translation lines, so the translation settings show
+                drawer.setText(text, sampleTranslation(), null, false, -1);
+            } else {
+                drawer.setText(text, null, null, false, -1);
+            }
         });
+    }
+
+    /**
+     * Show the first slide of an item in the preview, drawn as the live view
+     * draws it (with the font size of the whole item, translation lines and
+     * so on), instead of the plain text of its first section.
+     *
+     * @param previewSource gives the item to show, asked again on every
+     * update; it should give a new item when the content changes. Null to go
+     * back to plain text.
+     */
+    public void setPreviewSource(Supplier<? extends TextDisplayable> previewSource) {
+        this.previewSource = previewSource;
+        updateTheme(false);
+    }
+
+    private boolean hasText(TextDisplayable displayable) {
+        return displayable != null && displayable.getSections().length > 0
+                && !isEmpty(displayable.getSections()[0].getText(false, false));
+    }
+
+    private static String[] sampleTranslation() {
+        String line = LabelGrabber.INSTANCE.getLabel("theme.sample.translation");
+        String[] ret = new String[SAMPLE_LYRICS.length];
+        java.util.Arrays.fill(ret, line);
+        return ret;
     }
 
     private void setPreviewVideo(boolean play) {

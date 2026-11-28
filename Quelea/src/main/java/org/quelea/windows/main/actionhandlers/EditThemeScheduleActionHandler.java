@@ -88,6 +88,10 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton, true);
         tp.sizeDialog(s);
+        // Preview the item itself, so bible passages wrap and translations
+        // show as they do live
+        final TextDisplayable previewItem = firstSelected;
+        tp.setPreviewSource(() -> previewItem);
         if (firstSelected.getSections().length > 0) {
             tp.setTheme(firstSelected.getSections()[0].getTheme());
         }

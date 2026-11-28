@@ -414,6 +414,7 @@ chosen.fonts.label=Valda typsnitt
 test.patterns.explanation=Testmönstret här bör hjälpa dig kalibrera din skärms fokus- och färginställningar. Klicka på en testbild för att visa den på både huvudskärmen och scenskärmen.
 ignored.fonts.label=Ignorerade typsnitt
 hover.for.position.label=För muspekaren över bilden för att ställa in textposition
+theme.sample.translation=Översatt rad
 background.text=Bakgrund
 easyworship.button=EasyWorship 2009
 filefilters.description.songs.mb=Easyworship Songs.MB-databas
