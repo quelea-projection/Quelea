@@ -289,6 +289,10 @@ tasks.register('runPackr', JavaExec) {
 tasks.register('zipMacPackr', Zip) {
     archiveFileName = MacInstallerName
     destinationDirectory = file("dist/standalone")
+    // Since Gradle 9 archives get normalised permissions (rw-r--r--) by
+    // default, which drops the executable bit from the app's launcher and
+    // its JRE: macOS then refuses to open Quelea.app.
+    useFileSystemPermissions()
 
     from "out-mac"
 
