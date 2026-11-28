@@ -210,6 +210,49 @@ public class VidDisplayLifecycleTest {
         checkFinalPass(directory, 2.0 / 3);
     }
 
+    @Test
+    @DisplayName("A looping video-only player keeps showing frames after each pass")
+    public void videoOnlyLoopKeepsPlaying(@TempDir Path directory) throws Exception {
+        temporaryVideo = copyResource("loop-markers.mp4", directory);
+        CompletableFuture<Void> loopedTwice = new CompletableFuture<>();
+        long[] lastFrameAt = {0};
+        long[] longestGap = {0};
+        int[] passes = {0};
+        boolean[] atEnd = {false};
+        onFx(() -> {
+            // Without sound, like a song's video background.
+            display = new VidDisplay(false);
+            display.setLoop(true);
+            display.setOnFrame(() -> {
+                long now = System.nanoTime();
+                if (lastFrameAt[0] != 0) {
+                    longestGap[0] = Math.max(longestGap[0], now - lastFrameAt[0]);
+                }
+                lastFrameAt[0] = now;
+                double brightness = frameBrightness();
+                if (brightness > 0.9) {
+                    atEnd[0] = true;
+                } else if (atEnd[0] && brightness < 0.1) {
+                    atEnd[0] = false;
+                    passes[0]++;
+                    if (passes[0] == 2) {
+                        loopedTwice.complete(null);
+                    }
+                }
+            });
+            display.setURI(temporaryVideo.toUri());
+            display.play();
+        });
+        try {
+            loopedTwice.get(30, TimeUnit.SECONDS);
+        } catch (java.util.concurrent.TimeoutException ex) {
+            Assertions.fail("The video should start again twice; passes started: " + onFx(() -> passes[0]));
+        }
+        Thread.sleep(2_000);
+        long gapMillis = onFx(() -> TimeUnit.NANOSECONDS.toMillis(Math.max(longestGap[0], System.nanoTime() - lastFrameAt[0])));
+        Assertions.assertTrue(gapMillis < 1_000, "Frames stalled for " + gapMillis + " ms while looping");
+    }
+
     private void checkFinalPass(Path directory, double toggleBrightness) throws Exception {
         // Six seconds: black opening, dark grey at 1 s, light grey at 5.4 s,
         // white ending at 5.8 s. Observe rendered frames, independent of how
