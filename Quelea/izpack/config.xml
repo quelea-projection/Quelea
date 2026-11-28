@@ -41,10 +41,10 @@
     </listeners>
 
     <natives>
-        <native type="3rdparty" name="COIOSHelper.dll" stage="both">
+        <native type="3rdparty" name="COIOSHelper.dll" uninstaller="true">
             <os family="windows"/>
         </native>
-        <native type="3rdparty" name="COIOSHelper_x64.dll" stage="both">
+        <native type="3rdparty" name="COIOSHelper_x64.dll" uninstaller="true">
             <os family="windows"/>
         </native>
         <native type="izpack" name="ShellLink.dll"/>
