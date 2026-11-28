@@ -259,8 +259,19 @@ tasks.register('labelcheck', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+// Packr bundles Log4j's Java 9+ classes but omits the manifest attribute
+// needed to load them. Prepare a copy without changing the checked-in jar.
+tasks.register('packrRuntimeJar', Jar) {
+    archiveFileName = 'packr-runtime.jar'
+    destinationDirectory = layout.buildDirectory.dir('packr')
+    from(zipTree('packr.jar')) {
+        exclude 'META-INF/MANIFEST.MF'
+    }
+    manifest.attributes('Multi-Release': 'true')
+}
+
 tasks.register('runPackr', JavaExec) {
-    classpath = files('packr.jar')
+    classpath = files(tasks.named('packrRuntimeJar'))
     mainClass = "com.badlogicgames.packr.Packr"
     args = ["packr.json"]
 
